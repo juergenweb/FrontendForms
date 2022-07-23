@@ -1,0 +1,1181 @@
+<?php
+declare(strict_types=1);
+
+namespace ProcessWire;
+
+/*
+ * FrontendForms module for ProcessWire to create and validate forms on the frontend
+ *
+ * Created by Jürgen K.
+ * https://github.com/juergenweb
+ * File name: FrontendForms.module
+ * Created: 03.07.2022
+ */
+
+use Exception;
+use Valitron\Validator;
+
+class FrontendForms extends WireData implements Module, ConfigurableModule
+{
+    protected Validator $Validator;
+    protected object $defaultClasses; // all class names for the form
+    protected array $emailTemplates = []; // email template names as numeric array
+    protected string $emailTemplatesPath = ''; // path to the email templates folder
+    protected string $modulePath = ''; // path to this module folder
+    protected string $input_uploadPath = ''; // the path to the folder for uploaded files
+    protected string $lang = 'en'; // default language
+    protected array $mailPlaceholders = []; //  array the holds all custom mail properties for placeholder attributes as placeholder => value
+    protected string $input_framework = 'none.json'; // default framework selection
+    protected string|int $input_showasterisk = 1; // show asterisk on required fields
+    protected string $input_emailTemplate = 'template_1'; // default email template
+    protected array $mailProperties = []; // array of placeholder variables for HTML templates
+    protected string|int $input_removeJS = 0; // remove module JS or not (frontend)
+    protected string|int $input_removeCSS = 0; // remove module CSS or not (frontend)
+    protected string $input_requiredHintPosition = 'top'; // default position for the required text hint
+    protected array $input_wrappers = []; // hold the name of the wrappers which should be removed
+    protected string|int $input_addHTML5req = 0; // add HTML5 required attribute or not
+    protected array $input_appendLabel = []; // array which contains checkboxes and/or radios
+    protected string|int $input_wrapperFormElements = 0; // add extra div over all form elements
+    protected string $input_wrapperFormElementsCSSClass = ''; // the CSS class for the wrapperFormeElements div
+    protected string|int $input_maxAttempts = 5; // the max number of failed attempts to submit a form
+    protected string|int $input_minTime = 3; // min time before a form should be submitted
+    protected string|int $input_maxTime = 3600; // max time until a form should be submitted
+    protected string|int $input_logFailedAttempts = 0; // by default, failed login attempts will not be logged
+    protected string|int $input_useIPBan = 1; // by default, IP addresses on the blacklist cannot view the forms
+    protected string $input_preventIPs = ''; // These IP addresses are excluded from visiting a form in on the site
+    protected string $input_requiredText = ''; // Text that should be displayed on each form for required fields
+    protected string $input_alertSuccessText = ''; // Text that should be displayed after successful submission
+    protected string $input_alertErrorText = ''; // Text that should be displayed after failed submission
+    protected string $bodyHTML = ''; // declare property from WireMail class
+    protected string $body = ''; // declare property from WireMail class
+
+    /**
+     * Get all meta data for the module
+     * @return array
+     */
+    public static function getModuleInfo(): array
+    {
+        return [
+            'title' => 'FrontendForms',
+            'summary' => 'Create forms and validate them using the Valitron library.',
+            'author' => "Jürgen Kern",
+            'href' => 'https://github.com/juergenweb/FrontendForms',
+            'version' => '2.1.4',
+            'singular' => true,
+            'autoload' => true,
+            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
+        ];
+    }
+
+    /**
+     * Set default values for configuration fields
+     * These values will be stored in the DB during the installation process
+     * This is necessaray to get them via getModuleConfig() without saving the configuration page
+     * @return string[]
+     */
+    public static function getDefaultData(): array
+    {
+        return [
+            'input_showasterisk' => 1,
+            'input_requiredHintPosition' => 'top',
+            'input_wrappers' => ['inputwrapper', 'fieldwrapper'],
+            'input_wrapperFormElements' => 0,
+            'input_wrapperFormElementsCSSClass' => '',
+            'input_removeJS' => 0,
+            'input_removeCSS' => 0,
+            'input_addHTML5req' => 0,
+            'input_framework' => 'none.json',
+            'input_appendLabel' => [],
+            'input_emailTemplate' => 'template_1',
+            'input_privacy' => '',
+            'input_maxAttempts' => 5,
+            'input_minTime' => 5,
+            'input_maxTime' => 3600,
+            'input_useHoneypot' => 1,
+            'input_logFailedAttempts' => 0,
+            'input_useIPBan' => 1,
+            'input_preventIPs' => '',
+            'input_requiredText' => '',
+            'input_input_alertSuccessText' => '',
+            'input_input_alertErrorText' => ''
+        ];
+    }
+
+    /**
+     * @throws WireException
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        //  set relative path to this module
+        $this->modulePath = $this->wire('config')->paths->$this;
+        // set the path to the upload folder for files
+        $this->input_uploadPath = $this->wire('config')->paths->$this . 'temp_uploads';
+        //  set the property values from the configuration settings from DB
+        foreach ($this->wire('modules')->getConfig($this->className) as $key => $value) {
+            $this->$key = $value;
+        }
+        //  set the path to the email templates folder
+        $this->emailTemplatesPath = $this->wire('config')->paths->$this . 'email_templates';
+
+        // create numeric array of all available email templates inside the email folder
+        $this->setEmailTemplates();
+
+        //  Include all classes with PW autoload function
+        $this->wire('classLoader')->addNamespace('Valitron', __DIR__ . '/valitron/src');
+        $this->wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements');
+        $this->wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Textelements');
+        $this->wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements');
+        $this->wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Miscellaneous');
+        $this->wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Wrapper');
+        $this->wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Datalist');
+        $this->wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Inputs');
+        $this->wire('classLoader')->addNamespace('FrontendForms',
+            __DIR__ . '/Formelements/Inputelements/Inputs/defaults');
+        $this->wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Select');
+        $this->wire('classLoader')->addNamespace('FrontendForms',
+            __DIR__ . '/Formelements/Inputelements/Select/defaults');
+        $this->wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Textarea');
+        $this->wire('classLoader')->addNamespace('FrontendForms',
+            __DIR__ . '/Formelements/Inputelements/Textarea/defaults');
+        // Create Valitron Validator instance
+        $this->Validator = new Validator();
+        //  set lang directory for validator
+        $this->Validator::langDir(__DIR__ . DIRECTORY_SEPARATOR . 'lang');
+        //  set lang for validator
+        $this->Validator::lang($this->getLang());
+        include_once(__DIR__ . '/valitron/customValidators.php');
+
+        //get all classes from the currently loaded framework from the folder CSSClasses
+        $this->defaultClasses = json_decode(file_get_contents($this->modulePath . 'CSSClasses' . DIRECTORY_SEPARATOR . $this->input_framework));
+
+        /**
+         * Additional Hook method add/change the email template that should be used for sending emails
+         * $mail->mailTemplate('template_1');
+         */
+        $this->wire()->addHookMethod('WireMail::mailTemplate', function ($event) {
+            $mail = $event->object;
+            $template = $event->arguments(0);
+            //  run only if a template was selected
+            if ($template != 'none') {
+                $this->useEmailTemplate($mail, $template);
+            }
+            return $mail;
+        });
+
+        /**
+         * Method sendAttachements()
+         * This method is an extension of the WireMail attachement() method
+         * It takes the files from the temp_uploads folder and send it with the email
+         * Afterwards the files will be removed from the temp folder
+         * $mail->sendAttachements();
+         */
+        $this->wire()->addHookMethod('WireMail::sendAttachements', function ($event) {
+            $mail = $event->object;
+            // get files from the upload folder
+            $fileNames = array_slice(scandir($this->input_uploadPath), 2);
+            if ($fileNames) {
+                foreach ($fileNames as $file) {
+                    $mail->attachment($this->input_uploadPath . DIRECTORY_SEPARATOR . $file);
+                }
+            }
+            return $mail;
+        });
+
+        /**
+         * Add a new method to save a new property to the WireMailClass
+         * This can be used as to create new placeholders in email templates
+         * $mail->setPlaceholder('Greeting', 'Hello')
+         */
+        $this->wire()->addHookMethod('WireMail::setPlaceholder', function ($event) {
+
+            $mail = $event->object;
+            if ($event->arguments(0) && $event->arguments(1)) {
+                $placeholderName = trim((string)$event->arguments(0));
+                $value = trim((string)$event->arguments(1));
+                $this->setNewProperty($placeholderName, $value);
+            }
+            return $mail;
+        });
+
+        /**
+         * add the new property "title" to WireMailClass
+         * This can be used as additional information under the subject
+         * $mail->title = 'My title'
+         */
+        $this->wire()->addHookMethod('WireMail::title', function ($event) {
+            $mail = $event->object;
+            $title = $event->arguments(0);
+            $mail['title'] = trim((string)$title);
+            return $mail;
+        });
+    }
+
+    /**
+     * Grab all email template files inside the email template folder
+     * Create an array of all email template names without extension
+     * @return void
+     * @throws WireException
+     */
+    protected function setEmailTemplates(): void
+    {
+        $templateFiles = $this->wire('files')->find($this->emailTemplatesPath, ['extensions' => 'php']);
+        $fileNames = [];
+        foreach ($templateFiles as $file) {
+            $fileNames[] = pathinfo($file, PATHINFO_FILENAME);
+        }
+        $this->emailTemplates = $fileNames; // set it to property emailTemplates
+    }
+    /**
+     * Get the names of all email templates inside the email_templates folder without the file extension (only names)
+     * @return array - a numeric array of email template names
+     * @throws WireException
+     */
+    protected function getEmailTemplates(): array
+    {
+        return $this->emailTemplates;
+    }
+
+    /**
+     * Get the language code
+     * @return string
+     */
+    protected function getLang(): string
+    {
+        return $this->lang;
+    }
+
+    /**
+     * Set the language as language code (fe en, de,..)
+     * Please take a look inside the lang folder which languages are available (the name of the folder is the language code)
+     * @param string $lang
+     * @return void
+     */
+    public function setLang(string $lang): void
+    {
+        $this->lang = trim($lang);
+        $this->Validator::lang($this->lang);
+    }
+
+    /**
+     * Method to add an email template to the WireMail class
+     * Will be used with the mailTemplate method from the WireMail class
+     * @param WireMail $mail - the mail object of the WireMail class
+     * @param string $templateName - the name of the template that should be used to render the email
+     * @return WireMail
+     * @throws Exception
+     */
+    protected function useEmailTemplate(WireMail $mail, string $templateName): WireMail
+    {
+        if ($templateName !== 'none') {
+            //  run only if a template was chosen
+            if ($templateName === 'inherit') {
+                $templateName = $this->input_emailTemplate; //  use the template form FrontendForms settings
+            } else {
+                if (!in_array($templateName, $this->emailTemplates)) {
+                    //  check if an email template with this name exists
+                    throw new Exception(sprintf('Email template with the name %s does not exist. Possible templates are: %s',
+                        $templateName, implode(', ', $this->emailTemplates)));
+                }
+            }
+        }
+        $this->input_emailTemplate = $templateName;
+        return $mail;
+    }
+
+    /**
+     * Render the email template including php code and output it as a string
+     * @param string $templatePath - the path to the template that should be rendered
+     * @return string - the html template in HTML
+     */
+    protected function getEmailMarkup(string $templatePath): string
+    {
+        ob_start();
+        include($templatePath);
+        $var = ob_get_contents();
+        ob_end_clean();
+        return $var;
+    }
+
+    /**
+     * Method to replace all placeholder variables in email templates with values
+     * @param WireMail $mail
+     * @param string $templateContent
+     * @return string
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function replacePlaceholders(WireData $mail, string $templateContent): string
+    {
+        $keys = array_keys($this->combineMailPlaceholders($mail));
+        $values = array_values($this->combineMailPlaceholders($mail));
+        $content = str_replace($keys, $values, $templateContent);
+        //  remove empty placeholder and return the content
+        return trim(preg_replace('/\s*\{[^)]*}/', '', $content));
+    }
+
+    /**
+     * Combine default and custom email placeholder variables
+     * @param WireMail $mail
+     * @return array
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function combineMailPlaceholders(WireMail $mail): array
+    {
+        //  Default placeholders for usage in mail templates
+        $defaultPlaceholders = [
+            '{TITLE}' => $mail->title,
+            '{SUBJECT}' => $mail->subject,
+            '{BODY}' => $mail->body,
+            '{USERNAME}' => wire('user')->name,
+            '{DOMAIN}' => wire('pages')->get('/')->httpUrl
+        ];
+        return array_merge($defaultPlaceholders, $this->getMailPlaceholders());
+    }
+
+    /**
+     * Return array of email template placeholder variables
+     * @return array
+     */
+    protected function getMailPlaceholders(): array
+    {
+        return array_filter($this->mailPlaceholders);
+    }
+
+    /**
+     * Merge new property to the mailProperties array
+     * @param string $key
+     * @param string $value
+     */
+    protected function setNewProperty(string $key, string $value): void
+    {
+        $newProperty = ['{' . strtoupper($key) . '}' => $value];
+        $this->mailProperties = array_merge($this->mailPlaceholders, $newProperty);
+    }
+
+    /**
+     * Static method to return the content of a template file
+     * Created for usage in modules based on this module
+     * @param string $class
+     * @param string $moduleName
+     * @return string
+     * @throws WireException
+     */
+    public static function getTemplateContent(string $class, string $moduleName): string
+    {
+        $contentTemplate = FrontendForms::getSiteProfileName();
+        $self = new self();
+        $content = $self->wire('files')->fileGetContents($self->wire('config')->paths->siteModules . $moduleName . '/content-templates/' . $contentTemplate);
+        return str_replace('{CLASS}', $class, $content);
+    }
+
+    /**
+     * Get the name of the site profile installed by extracting the readme file inside the templates' folder
+     * Created for future usage in modules based on this module
+     * If pages were created by a modul - the markup could be adapted to the site profile installed
+     * @return string
+     * @throws WireException
+     */
+    public static function getSiteProfileName(): string
+    {
+        // grab readme file if present
+        $self = new self();
+        $readme = $self->wire('files')->fileGetContents($self->wire('config')->paths->templates . '/readme.txt');
+        if ($readme) {
+            //find and extract the link
+            preg_match_all('!https?://\S+!', $readme, $matches);
+            return basename($matches[0][0]) . '.txt';
+        } else {
+            return 'default.txt';
+        }
+    }
+
+    /**
+     * @throws WireException
+     */
+    public function init()
+    {
+        //set language id inside a session variable for later usage in url hook
+        $this->wire('session')->set('userlang', $this->wire('user')->language->id);
+
+        // add CSS and JS to the backend
+        $version = $this->getModuleInfo()['version'];
+        $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version);
+        $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version);
+
+        // add CSS and JS links to the frontend template
+        $this->addHookAfter('Page::render', $this, 'addAssets');
+        // add the label "Seconds" next to the inputfield
+        $this->addHookAfter('InputfieldInteger::render', $this, 'addSecondsLabel');
+        // add the label "Attempts" next to the inputfield
+        $this->addHookAfter('InputfieldInteger::render', $this, 'addAttemptsLabel');
+        // outputs examples how to overwrite global settings
+        $this->addHookAfter('Inputfield::render', $this, 'overwriteExamplesNotes');
+        // takes mail values and put them inside the email template
+        $this->addHookBefore('WireMail::send', $this, 'renderEmailTemplate');
+        // remove uploaded attachements after successful sending
+        $this->addHookAfter('WireMail::send', $this, 'removeUploadedFilesAfterSending');
+        // Show details about the blocked IP address inside a panel
+        $this->wire->addHook('/detail-view/{ip}', function ($event) {
+            // grab current user lang from session
+            $this->wire('user')->language = $this->wire('session')->get('userlang');
+            $out = '';
+            // load the detail viel template file
+            include_once($this->wire('config')->paths->siteModules . $this->className . '/detail-view.php');
+            return $out;
+        });
+    }
+
+    /**
+     * Use the configuration settings to send the email with a template or as plain text
+     * @param HookEvent $event
+     * @return void
+     * @throws Exception
+     */
+    protected function renderEmailTemplate(HookEvent $event): void
+    {
+        if ($this->input_emailTemplate != 'none') {
+            $templateFile = $this->emailTemplatesPath . DIRECTORY_SEPARATOR . $this->input_emailTemplate . '.php';
+            if ($this->wire('files')->exists($templateFile)) {
+                $WireMail = $event->object;
+                if ($WireMail->bodyHTML) {
+                    $WireMail->body($WireMail->bodyHTML);
+                }
+                $WireMail->bodyHTML = '';
+                $templateContent = $this->getEmailMarkup($templateFile);
+                $WireMail->bodyHTML = $this->replacePlaceholders($WireMail, $templateContent);
+            } else {
+                throw new Exception(sprintf('The HTML template file %s does not exist', $this->input_emailTemplate));
+            }
+        }
+    }
+
+    /**
+     * Method to delete all uploaded files after email was sent
+     * @return void
+     * @throws WireException
+     */
+    protected function removeUploadedFilesAfterSending(): void
+    {
+        $fileNames = $this->wire('files')->find($this->input_uploadPath);
+        if ($fileNames) {
+            foreach ($fileNames as $file) {
+                $this->wire('files')->unlink($file);
+            }
+        }
+    }
+
+    /**
+     * Internal method to create additional texts under the notes
+     * @param array $methods
+     * @return string
+     */
+    protected function createAdditionalNotesText(array $methods): string
+    {
+        $text = $this->_n($this->_('This can be overwritten on the form by using this method'),
+            $this->_('This can be overwritten on the form by using these methods'), count($methods));
+        $methodsMarkup = [];
+        foreach ($methods as $method) {
+            $methodsMarkup[] = '<b>' . $method . '</b>';
+        }
+        $methodText = implode('<br>', $methodsMarkup);
+        return '<pre>' . $text . ':<br>' . $methodText . '</pre>';
+    }
+
+    /**
+     * Array that holds all examples on how to overwrite global setting on per form base
+     * These examples will be displayed under the input fields in the module configuration
+     * @param HookEvent $event
+     * @return void
+     */
+    protected function overwriteExamplesNotes(HookEvent $event): void
+    {
+        $field = $event->object;
+        $fields = [
+            'input_minTime' => ['$form->setMinTime(3);'],
+            'input_maxTime' => ['$form->setMaxTime(600);'],
+            'input_maxAttempts' => ['$form->setMaxAttempts(4);'],
+            'input_logFailedAttempts' => ['$form->logFailedAttempts(false); // true, false'],
+            'input_requiredHintPosition' => ['$form->setRequiredTextPosition("bottom"); // top, bottom, none'],
+            'input_requiredText' => ['$form->setRequiredText("This is my custom text");'],
+            'input_alertSuccessText' => ['$form->setSuccessMsg("All is good");'],
+            'input_alertErrorText' => ['$form->setErrorMsg("Something went wrong");'],
+            'input_wrappers' => [
+                '$form->useInputWrapper(true); // true, false',
+                '$form->useFieldWrapper(false); // true, false'
+            ],
+            'input_wrapperFormElements' => ['$form->useFormElementsWrapper(true); // true, false'],
+            'input_wrapperFormElementsCSSClass' => ['$form->getFormElementsWrapper()->removeAttribute("class")->setAttribute("class", "myClass");'],
+            'input_appendLabel' => [
+                '$form->appendLabelOnCheckboxes(true); // true, false',
+                '$form->appendLabelOnRadios(true); // true, false'
+            ],
+            'input_emailTemplate' => ['$mail->mailTemplate("template_2"); // has to be added to the WireMail object not to the form'],
+            'input_useIPBan' => ['$form->useIPBan(false); // true, false',],
+            'input_preventIPs' => [
+                '$form->useIPBan(false); // true, false',
+                '$form->testIPBan("146.70.36.200"); // ' . $this->_('Use this method to test, if IP ban works. Enter the IP address that should be tested.') . '<br>' . $this->_('This method is only for testing purposes, so do not forget to remove it afterwards.')
+            ],
+            'input_useHoneypot' => ['$form->useHoneypot(true); // true,false'],
+        ];
+        if (!array_key_exists($field->name, $fields)) {
+            return;
+        }
+        $field->entityEncodeText = false;
+        $field->notes .= $this->createAdditionalNotesText($fields[$field->name]);
+    }
+
+    /**
+     * Add the module javascript file to the frontend before the closing body tag
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     * @noinspection PhpUnused
+     */
+    protected function addAssets(HookEvent $event): void
+    {
+        $page = $event->object;
+        // don't add this to the admin pages
+        if ($page->template === 'admin') {
+            return;
+        }
+        $version = $this->getModuleInfo()['version'];
+        if (!$this->input_removeJS) {
+            $js = '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '"></script>' . PHP_EOL;
+            $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
+        }
+        if (!$this->input_removeCSS) {
+            $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css' . '"/>' . PHP_EOL;
+            $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
+        }
+    }
+
+    /**
+     * Add the label "Seconds" next to the input of input_minTime and input_maxTime
+     * @param HookEvent $event
+     * @return void
+     */
+    protected function addSecondsLabel(HookEvent $event): void
+    {
+        $inputfield = $event->object;
+        if (($inputfield->name === 'input_minTime') || ($inputfield->name === 'input_maxTime')) {
+            $input = $event->return;
+            $event->return = '<div id="label-' . $inputfield->name . '" class="fieldlabel">' . $input . ' ' . $this->_n('Second',
+                    'Seconds', $inputfield->value) . '</div>';
+        }
+    }
+
+    /**
+     * Add the label "Attempts" next to the input of input_minAttempts
+     * @param HookEvent $event
+     * @return void
+     */
+    protected function addAttemptsLabel(HookEvent $event): void
+    {
+        $inputfield = $event->object;
+        if ($inputfield->name === 'input_maxAttempts') {
+            $input = $event->return;
+            $event->return = '<div id="label-' . $inputfield->name . '" class="fieldlabel">' . $input . ' ' . $this->_n('Attempt',
+                    'Attempts', $inputfield->value) . '</div>';
+        }
+    }
+
+    /**
+     * Render a link to domaintools.com for further information about the IP address
+     * @param string $ip
+     * @return string
+     */
+    public function executeWhoisLookUp(string $ip): string
+    {
+        $whoislookup = '<div id="linkwrapper"><a href="https://whois.domaintools.com/' . $ip . '" title="' . $this->_('Opens in a new window') . '" target="_blank">';
+        $whoislookup .= sprintf($this->_('More detailed information about the IP %s at www.domaintools.com'),
+                $ip) . '</a></div>';
+        return $whoislookup;
+    }
+
+    /**
+     * Render a detail view table for a given IP address inside the panel
+     * @param string $ip
+     * @return string
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    public function executeViewDetailsTable(string $ip): string
+    {
+        $logs = $this->wire('log')->getEntries('failed-attempts-frontendforms');
+
+        $table = $this->wire('modules')->get('MarkupAdminDataTable');
+        $table->caption = sprintf($this->_('Failed attempts for IP %s'), $ip);
+        $table->headerRow([
+            $this->_('Date'),
+            $this->_('URL'),
+            $this->_('Form-ID')
+        ]);
+
+        foreach ($logs as $log) {
+            $text = json_decode($log['text']);
+            // grab only log with the given IP
+            if ($text->IP == $ip) {
+                $table->row([$log['date'], $log['url'], $text->FormID]);
+            }
+        }
+        return $table->render();
+    }
+
+    /**
+     * @param array $data
+     * @return string
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    public function ___executeTable(array $data = []): string
+    {
+        if ($data) {
+            $table = $this->wire('modules')->get('MarkupAdminDataTable');
+            $table->setEncodeEntities(false);
+            $table->setSortable(false);
+            $table->headerRow([
+                $this->_('IP address'),
+                $this->_('User'),
+                $this->_('Blacklist entry'),
+                $this->_('Number of blocks'),
+                $this->_('Details'),
+                $this->_('Add/remove IP from blacklist'),
+            ]);
+            $blackListIPs = preg_split('/\r\n|\r|\n/', $this->input_preventIPs);
+
+            // create all table rows
+            foreach ($data as $ip => $entry) {
+                // create link to open panel
+                $details = '';
+                if (!$this->input->get('modal')) {
+                    $button = $this->modules->get('InputfieldButton');
+                    $button->value = $this->_('View details');
+                    $button->attr('data-href', '/detail-view/' . $ip);
+                    $button->addClass('pw-panel');
+                    $button->setSmall();
+                    $details .= $button->render();
+                }
+
+                // instantiate button object
+                $button = $this->wire('modules')->get('InputfieldSubmit');
+                $button->setSmall();
+                $button->name = 'submit_save_module';
+                $button->value = $ip;
+                if (in_array($ip, $blackListIPs)) {
+                    $fa = 'fa-check';
+                    // remove button
+                    $button->attr('onclick', 'addIP(this, 0)');
+                    $button->text = $this->_('Remove from blacklist');
+                    $button->setSecondary();
+                    $out = $button->render();
+                } else {
+                    // create add button
+                    $button->attr('onclick', 'addIP(this, 1)');
+                    $button->text = $this->_('Add to blacklist');
+                    $out = $button->render();
+                    $fa = 'fa-times';
+                }
+                $table->row([
+                    $ip,
+                    $entry['user'],
+                    '<i class="fa fa-fw ' . $fa . '"></i>',
+                    $entry['count'],
+                    $details,
+                    $out
+                ]);
+            }
+            return $table->render();
+        } else {
+            return $this->_('Sorry, but there is not data available. Please check if logging is enabled.');
+        }
+    }
+
+    /**
+     * Module config
+     * @param InputfieldWrapper $inputfields
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    public function getModuleConfigInputfields(InputfieldWrapper $inputfields)
+    {
+        $modules = $this->wire()->modules;
+        $fieldset1 = $modules->get('InputfieldFieldset');
+        $fieldset1->label = $this->_('Markup and styling settings for the forms');
+        $fieldset1->description = $this->_('Make your global settings for the output. Most of the settings can be overwritten on per form base if needed.');
+        $fieldset1->collapsed = 1;
+        $fieldset1->icon = 'fa-cog';
+
+            /* Required fields settings */
+            $fieldsetRequired = $modules->get('InputfieldFieldset');
+            $fieldsetRequired->label = $this->_('Settings for required fields');
+            $fieldsetRequired->collapsed = 1;
+
+                // Show asterisk on required fields
+                $showasterisk = $modules->get('InputfieldCheckbox');
+                $showasterisk->attr('name', 'input_showasterisk');
+                $showasterisk->attr('checked', $this->input_showasterisk ? 'checked' : '');
+                $showasterisk->label = $this->_('Required fields setting');
+                $showasterisk->label2 = $this->_('Add asterisk on required fields');
+                $showasterisk->description = $this->_('Adds a span element with an asterisk after the field label on required fields.');
+                $showasterisk->notes = $this->_('You can also use CSS pseudo class :after to add an asterisk to the label tag. For this reason you can disable the asterisk markup.');
+                $fieldsetRequired->add($showasterisk);
+
+                // Required hint position
+                $requiredHintPosition = $modules->get('InputfieldRadios');
+                $requiredHintPosition->attr('name', 'input_requiredHintPosition');
+                $requiredHintPosition->addOptions([
+                    'none' => $this->_('None'),
+                    'top' => $this->_('Top'),
+                    'bottom' => $this->_('Bottom')
+                ]);
+                $requiredHintPosition->defaultValue = 'top';
+                $requiredHintPosition->required = 1;
+                $requiredHintPosition->attr('value', $this->input_requiredHintPosition);
+                $requiredHintPosition->description = $this->_('Disable displaying of the text (none), place the text before (top) or after (bottom) the form.');
+                $requiredHintPosition->label = $this->_('Enable/disable the display of the required text and set the position');
+                $requiredHintPosition->notes = $this->_('Can be overwritten on each form.');
+                $fieldsetRequired->add($requiredHintPosition);
+
+                // Required hint custom text
+                $requiredText = wire('modules')->get('InputfieldText');
+                $requiredText->name = 'input_requiredText';
+                $requiredText->label = $this->_('Hint for visitors that all required fields have to be filled out');
+                $requiredText->value = $this->input_requiredText;
+                $reqText = $this->_('This text will be displayed on the form depending on your settings.') . ' ';
+                $reqText .= $this->_('If nothing is entered, a default text will be displayed instead.');
+                $requiredText->description = $reqText;
+                $requiredText->notes = $this->_('Can be overwritten on each form.');
+                $requiredText->useLanguages = true;
+                $requiredText->showIf = "input_requiredHintPosition!=none";
+                $fieldsetRequired->add($requiredText);
+
+                // Render HTML5 required tag
+                $addHTML5req = $modules->get('InputfieldCheckbox');
+                $addHTML5req->attr('name', 'input_addHTML5req');
+                $addHTML5req->attr('checked', $this->input_addHTML5req === 1 ? 'checked' : '');
+                $addHTML5req->label = $this->_('HTML5 required attribute setting');
+                $addHTML5req->label2 = $this->_('Add HTML5 required attribute to inputs');
+                $addHTML5req->notes = $this->_('By default the HTML5 required attribute will not be added to form inputs if they are required. If you want to add it to all required fields please check the box.');
+                $fieldsetRequired->add($addHTML5req);
+
+        $fieldset1->add($fieldsetRequired);
+
+        /* Alert messages settings */
+        $fieldsetAlerts = $modules->get('InputfieldFieldset');
+        $fieldsetAlerts->label = $this->_('Settings for alert messages');
+        $fieldsetAlerts->collapsed = 1;
+
+            // Success message after submission
+            $alertSuccessText = wire('modules')->get('InputfieldText');
+            $alertSuccessText->name = 'input_alertSuccessText';
+            $alertSuccessText->label = $this->_('The message after successful submission');
+            $alertSuccessText->value = $this->input_alertSuccessText;
+            $alertText = $this->_('This text will be displayed after a form was submitted successfully.') . ' ';
+            $alertText .= $this->_('If nothing is entered, a default text will be displayed instead.');
+            $alertSuccessText->description = $alertText;
+            $alertSuccessText->notes = $this->_('Can be overwritten on each form.');
+            $alertSuccessText->useLanguages = true;
+            $fieldsetAlerts->add($alertSuccessText);
+
+            // Error message after failed submission
+            $alertErrorText = wire('modules')->get('InputfieldText');
+            $alertErrorText->name = 'input_alertErrorText';
+            $alertErrorText->label = $this->_('The message after submission failed');
+            $alertErrorText->value = $this->input_alertErrorText;
+            $alertText = $this->_('This text will be displayed after errors on form submission.') . ' ';
+            $alertText .= $this->_('If nothing is entered, a default text will be displayed instead.');
+            $alertErrorText->description = $alertText;
+            $alertErrorText->notes = $this->_('Can be overwritten on each form.');
+            $alertErrorText->useLanguages = true;
+            $fieldsetAlerts->add($alertErrorText);
+
+        $fieldset1->add($fieldsetAlerts);
+
+        /* Markup and styling settings */
+        $fieldsetMarkup = $modules->get('InputfieldFieldset');
+        $fieldsetMarkup->label = $this->_('Settings for the markup and styling of the form and the inputfields');
+        $fieldsetMarkup->collapsed = 1;
+
+            // Remove wrappers from input fields
+            $wrappers = $this->modules->get('InputfieldCheckboxes');
+            $wrappers->label = $this->_('Add wrappers to the form fields');
+            $wrappers->name = 'input_wrappers';
+            $wrappers->addOption('inputwrapper', $this->_('Add wrapper div for the inputfield (input wrapper)'));
+            $wrappers->addOption('fieldwrapper', $this->_('Add outer wrapper div for each formfield (field wrapper)'));
+            $wrappers->value = $this->input_wrappers;
+            $fieldsetMarkup->add($wrappers);
+
+            // Add wrapper div after form tag to wrapp all elements of the form
+            $wrapperFormElements = $modules->get('InputfieldCheckbox');
+            $wrapperFormElements->attr('name', 'input_wrapperFormElements');
+            $wrapperFormElements->attr('checked', $this->input_wrapperFormElements === 1 ? 'checked' : '');
+            $wrapperFormElements->label = $this->_('Add an additional wrapper div after opening and before closing form tag');
+            $wrapperFormElements->label2 = $this->_('Add a wrapper div over all form elements');
+            $wrapperFormElements->notes = $this->_('In some rare cases you need to wrap all form elements inside an extra wrapper div, which is between the opening and closing form tag. For this case you can add the div by checking the box.');
+            $wrapperFormElements->columnWidth = 50;
+            $fieldsetMarkup->add($wrapperFormElements);
+
+            $wrapperFormElementsCSSClass = $modules->get('InputfieldText');
+            $wrapperFormElementsCSSClass->attr('name', 'input_wrapperFormElementsCSSClass');
+            $wrapperFormElementsCSSClass->attr('value', $this->input_wrapperFormElementsCSSClass);
+            $wrapperFormElementsCSSClass->label = $this->_('Add a CSS class to to the extra wrapper div');
+            $wrapperFormElementsCSSClass->notes = $this->_('By default, an unique id will be added, but if you need a special styling class, you can enter the name of the class in this field.');
+            $wrapperFormElementsCSSClass->showIf = "input_wrapperFormElements=1";
+            $wrapperFormElementsCSSClass->columnWidth = 50;
+            $fieldsetMarkup->add($wrapperFormElementsCSSClass);
+
+            // Select CSS framework
+            $frameworkSelect = $modules->get('InputfieldSelect');
+            $frameworkSelect->attr('name', 'input_framework');
+            $frameworkSelect->label = $this->_('Output rendering');
+            $frameworkSelect->description = $this->_('Select a framework for the markup output if you want');
+            $frameWorkFiles = scandir($this->modulePath . 'CSSClasses' . DIRECTORY_SEPARATOR);
+            unset($frameWorkFiles['none.json']);
+            array_unshift($frameWorkFiles, 'none.json');
+            $frameWorkOptions = [];
+            foreach ($frameWorkFiles as $option) {
+                if ($option != '.' && $option != '..') {
+                    $file_parts = pathinfo($option);
+                    $ext = $file_parts['extension'];
+                    if ($ext == 'json') {
+                        $label = ucfirst(str_replace('.json', '', $option));
+                        if ($label == 'None') {
+                            $label = $this->_('No framework');
+                        }
+                        $frameWorkOptions[$option] = $label;
+                    }
+                }
+            }
+            $frameworkSelect->addOptions(array_unique($frameWorkOptions));
+            $frameworkSelect->attr('value', $this->input_framework);
+            $frameworkSelect->required = 1;
+            $fieldsetMarkup->add($frameworkSelect);
+
+            // Append labels on checkboxes and radio buttons after input tag
+            $appendLabels = $this->modules->get('InputfieldCheckboxes');
+            $appendLabels->label = $this->_('Append the label after the input tag on checkboxes and radios');
+            $appendLabels->name = 'input_appendLabel';
+            $appendLabels->addOption('appendcheckbox', $this->_('Append label on checkboxes'));
+            $appendLabels->addOption('appendradio', $this->_('Append label on radio buttons'));
+            $appendLabels->value = $this->input_appendLabel;
+            $appendLabels->description = $this->_('By default, radio and checkbox tags are wrapped by their label tag. If you want to append the label tag after the input tag, please check the appropriate box.');
+            $appendLabels->notes = $this->_('Can be overwritten on each form.');
+            $fieldsetMarkup->add($appendLabels);
+
+            $fieldsetStyle = $modules->get('InputfieldFieldset');
+            $fieldsetStyle->label = $this->_('Custom CSS classes');
+            $fieldsetStyle->collapsed = 1;// by default, this fieldset should be collapsed
+            $fieldsetStyle->description = $this->_('You can overwrite each CSS class with your own class name(s). If you want to add multiple classes at the same time please separate them with a whitspace (fe class1 class2).');
+
+                // Add your own CSS classes
+                //  get all class field names as an array
+                $cssClassFields = array_keys((array)$this->defaultClasses);
+                $fields = [];
+                foreach ($cssClassFields as $field) {
+                    $label = substr(str_replace('_', ' ', $field), 0, -5);
+                    $fields['input_' . $field] = sprintf($this->_('CSS class for the %s'), $this->_($label));
+                }
+                $i = 0;
+                foreach ($fields as $fieldName => $label) {
+                    $i++;
+                    $fieldClass = substr($fieldName, 6);
+                    ${'css-' . $i} = $modules->get('InputfieldText');
+                    ${'css-' . $i}->label = $label;
+                    ${'css-' . $i}->attr('name', $fieldName);
+                    ${'css-' . $i}->attr('value', $this->$fieldName ?: '');
+                    if (isset($this->defaultClasses->$fieldClass)) {
+                        ${'css-' . $i}->notes($this->_('Current class') . ': ' . $this->defaultClasses->$fieldClass);
+                    }
+                    $fieldsetStyle->add(${'css-' . $i});
+                }
+                $fieldsetMarkup->add($fieldsetStyle);
+        $fieldset1->add($fieldsetMarkup);
+
+        $fieldsetAssets = $modules->get('InputfieldFieldset');
+        $fieldsetAssets->label = $this->_('Remove stylesheets and scripts');
+        $fieldsetAssets->collapsed = 1;
+
+            // Remove JS on Frontend
+            $removeJS = $modules->get('InputfieldCheckbox');
+            $removeJS->attr('name', 'input_removeJS');
+            $removeJS->attr('checked', $this->input_removeJS === 1 ? 'checked' : '');
+            $removeJS->label = $this->_('Javascript setting');
+            $removeJS->label2 = $this->_('Remove frontendforms.js from template');
+            $removeJS->notes = $this->_('A small JavaScript for a seconds counter and show/hide passwords will be added to the template by default before the closing body tag. You can remove it by checking the box.');
+            $removeJS->columnWidth = 50;
+            $fieldsetAssets->add($removeJS);
+
+            // Remove CSS on Frontend
+            $removeCSS = $modules->get('InputfieldCheckbox');
+            $removeCSS->attr('name', 'input_removeCSS');
+            $removeCSS->attr('checked', $this->input_removeCSS === 1 ? 'checked' : '');
+            $removeCSS->label = $this->_('CSS setting');
+            $removeCSS->label2 = $this->_('Remove frontendforms.css from template');
+            $removeCSS->notes = $this->_('A small CSS file to hide the honeypot input field will be added to the template by default. If you want to add this small code to your own CSS files you can remove the embedding of this file by checking the box.');
+            $removeCSS->columnWidth = 50;
+            $fieldsetAssets->add($removeCSS);
+
+        $fieldset1->add($fieldsetAssets);
+        $inputfields->add($fieldset1);
+
+        $fieldset3 = $modules->get('InputfieldFieldset');
+        $fieldset3->label = $this->_('Email settings');
+        $fieldset3->collapsed = 1;
+        $fieldset3->icon = 'fa-envelope';
+
+        //  Select an email template or not
+        if ($this->emailTemplates) {
+            $emailTemplate = $modules->get('InputfieldSelect');
+            $emailTemplate->label = $this->_('HTML email template setting');
+            $emailTemplate->attr('name', 'input_emailTemplate');
+            //  create options
+            $templates = [];
+            $templates['none'] = $this->_('no HTML template');
+            foreach ($this->emailTemplates as $template) {
+                $name = explode('_', $template);
+                if (count($name) > 1) {
+                    array_walk($name, function (&$value) {
+                        $value = ucfirst($value);//  make all parts of the name starting with a capital letter
+                    });
+                    $name = implode(' ', $name);
+                } else {
+                    $name = ucfirst($template);
+                }
+                $templates[$template] = $name;
+            }
+            $emailTemplate->addOptions($templates);
+            $emailTemplate->attr('value', $this->input_emailTemplate);
+            $emailTemplate->required = 1;
+            $emailTemplate->description = $this->_('Choose whether you want to use the HTML template for your emails and if so, which one.');
+            $emailTemplate->notes = $this->_('If you are using FrontendForms with the PW WireMail class to send emails, you can use a HTML email template by adding the useEmailTemplate() method to the WireMail object.');
+            $fieldset3->add($emailTemplate);
+        }
+
+        $inputfields->add($fieldset3);
+
+        $fieldset4 = $modules->get('InputfieldFieldset');
+        $fieldset4->label = $this->_('Data privacy settings');
+        $fieldset4->collapsed = 1;
+        $fieldset4->icon = 'fa-list';
+
+        // Select the data privacy page
+        $dataPrivacySelect = $modules->get('InputfieldSelect');
+        $dataPrivacySelect->attr('name', 'input_privacy');
+        $dataPrivacySelect->label = $this->_('Privacy policy page');
+        $dataPrivacySelect->description = $this->_('Select the page which contains your privacy policy.');
+        $dataPrivacySelect->notes = $this->_('The link to this page will be used inside the Privacy class for generating the "Accept the privacy policy" checkbox.');
+        foreach ($this->wire('pages')->find("has_parent!=2,id!=2|7,status<" . Page::statusTrash . ",include=all") as $page) {
+            $dataPrivacySelect->addOption($page->id, $page->title);
+        }
+        $dataPrivacySelect->attr('value', $this->input_privacy);
+        $fieldset4->add($dataPrivacySelect);
+
+        $inputfields->add($fieldset4);
+
+        $fieldset5 = $modules->get('InputfieldFieldset');
+        $fieldset5->label = $this->_('Security settings for the forms');
+        $fieldset5->description = $this->_('Make your global settings for security. Most of the settings can be overwritten on per form base if needed.');
+        $fieldset5->collapsed = 1;
+        $fieldset5->icon = 'fa-shield';
+
+        $fieldsetsecurity1 = $modules->get('InputfieldFieldset');
+        $fieldsetsecurity1->label = $this->_('Security measure 1: Maximum failed attempts');
+        $fieldsetsecurity1->collapsed = 1;
+
+            // set max number of failed attempts
+            $maxAttempts = $this->modules->get('InputfieldInteger');
+            $maxAttempts->label = $this->_('Max number of failed attempts');
+            $maxAttempts->name = 'input_maxAttempts';
+            $maxAttempts->value = $this->input_maxAttempts;
+            $maxAttempts->min = 0;
+            $maxAttempts->description = $this->_('Please set the max number of failed attempts for submitting a form.');
+            $maxAttempts->notes = $this->_('If set to 0 then this feature is disabled. After reaching the limit the user will be blocked by using a session and all browser windows have to be closed to remove the blocking.');
+            $maxAttempts->columnWidth = 50;
+            $fieldsetsecurity1->add($maxAttempts);
+
+            $logFailedAttempts = $modules->get('InputfieldCheckbox');
+            $logFailedAttempts->attr('name', 'input_logFailedAttempts');
+            $logFailedAttempts->attr('checked', $this->input_logFailedAttempts == '1' ? 'checked' : '');
+            $logFailedAttempts->label = $this->_('Log IPs of blocked visitors');
+            $logFailedAttempts->description = $this->_('If the box is checked, an entry with the IP address of the visitor, the form id and the date will be stored in the logfiles after the visitor was blocked.');
+            $logFailedAttempts->notes = $this->_('Please note, that you have to inform your users in your privacy policy, that the IP address will be stored in this case.');
+            $logFailedAttempts->columnWidth = 50;
+            $fieldsetsecurity1->add($logFailedAttempts);
+
+        $fieldset5->add($fieldsetsecurity1);
+
+        $fieldsetsecurity2 = $modules->get('InputfieldFieldset');
+        $fieldsetsecurity2->label = $this->_('Security measure 2: Minimum and maximum time to fill out the form');
+        $fieldsetsecurity2->collapsed = 1;
+
+            // add min time in seconds
+            $minTime = $this->modules->get('InputfieldInteger');
+            $minTime->label = $this->_('Min time before form submission');
+            $minTime->name = 'input_minTime';
+            $minTime->value = $this->input_minTime;
+            $minTime->min = 0;
+            $minTime->description = $this->_('Please set the min time in seconds before a form should be submitted.');
+            $minTime->notes = $this->_('If set to 0 then this feature is disabled. This feature measures the time between loading and submitting a form. If it is to fast (fe a spam bot) it will lead to a form error. ');
+            $minTime->columnWidth = 50;
+            $fieldsetsecurity2->add($minTime);
+
+            // add max time in seconds
+            $maxTime = $this->modules->get('InputfieldInteger');
+            $maxTime->label = $this->_('Max time until form submission');
+            $maxTime->name = 'input_maxTime';
+            $maxTime->value = $this->input_maxTime;
+            $maxTime->min = 0;
+            $maxTime->description = $this->_('Please set the max time in seconds until a form should be submitted.');
+            $maxTime->notes = $this->_('If set to 0 then this feature is disabled. This feature measures the time between loading and submitting a form. If it is to slow (fe a spam bot analyizing the form) it will lead to a form error. ');
+            $maxTime->columnWidth = 50;
+            $fieldsetsecurity2->add($maxTime);
+
+        $fieldset5->add($fieldsetsecurity2);
+
+        $fieldsetsecurity3 = $modules->get('InputfieldFieldset');
+        $fieldsetsecurity3->label = $this->_('Security measure 3: Honeypot field');
+        $fieldsetsecurity3->collapsed = 1;
+
+            $useHoneypot = $modules->get('InputfieldCheckbox');
+            $useHoneypot->attr('name', 'input_useHoneypot');
+            $useHoneypot->attr('checked', $this->input_useHoneypot == '1' ? 'checked' : '');
+            $useHoneypot->label = $this->_('Add honeypot field to form');
+            $useHoneypot->description = $this->_('If the box is checked, an invisible honeypot field for spam protection will be added to the form.');
+            $useHoneypot->notes = $this->_('It is recommended to use a honepot field. Disable this feature only if you have a good reason to do so.');
+            $fieldsetsecurity3->add($useHoneypot);
+
+        $fieldset5->add($fieldsetsecurity3);
+
+        $fieldsetsecurity4 = $modules->get('InputfieldFieldset');
+        $fieldsetsecurity4->label = $this->_('Security measure 4: Using IP blacklist ');
+        $fieldsetsecurity4->collapsed = 1;
+
+            // Add wrapper div after form tag to wrapp all elements of the form
+            $useIPBan = $modules->get('InputfieldCheckbox');
+            $useIPBan->attr('name', 'input_useIPBan');
+            $useIPBan->attr('checked', $this->input_useIPBan === 1 ? 'checked' : '');
+            $useIPBan->label = $this->_('Check IP of visitors');
+            $useIPBan->label2 = $this->_('Enable checking of visitors IP against blacklist');
+            $useIPBan->description = $this->_('You can prevent IP addresses from viewing your forms, if they might be harmful to your site. By checking/unchecking the box, you can enable/disable the checking against the blacklist.');
+            $useIPBan->notes = $this->_('This only works, if there is at least 1 entry in the next input field');
+            $useIPBan->columnWidth = 50;
+            $fieldsetsecurity4->add($useIPBan);
+
+            // prevent the following IP adresses from visiting sites of this module on the frontend
+            $preventIPs = $modules->get('InputfieldTextarea');
+            $preventIPs->attr('name', 'input_preventIPs');
+            $preventIPs->label = $this->_('Blacklist of forbidden IPs');
+            $preventIPs->description = $this->_('Please enter every IP address on a new line. Every visit of an IP address listed below prevents the form to be rendered on the frontend. Visitors see an alert box instead, that informs about the banned IP address.');
+            $preventIPs->notes = $this->_('Tip: You can take a look at the logfile for failed login attempts and enter fe. IP addresses that appear very often. Works only if logging failed attempts is enabled.');
+            $preventIPs->attr('value', $this->input_preventIPs);
+            $preventIPs->columnWidth = 50;
+            $fieldsetsecurity4->add($preventIPs);
+
+        $fieldset5->add($fieldsetsecurity4);
+
+        $inputfields->add($fieldset5);
+
+
+        $fieldset6 = $modules->get('InputfieldFieldset');
+        $fieldset6->label = $this->_('Statistics of blocked visitors');
+        $fieldset6->description = $this->_('Get information about blocked visitors (IP, form) from the log files');
+        $fieldset6->collapsed = 1;
+        $fieldset6->icon = 'fa-bar-chart';
+
+        // grab data from the log file if present
+
+        $stat = $this->wire('modules')->get("InputfieldMarkup");
+        $stat->attr('name', 'statistics');
+        $stat->label = "";
+        if ($this->wire('log')->exists('Failed-attempts-frontendforms')) {
+
+            $logs = $this->wire('log')->getEntries('failed-attempts-frontendforms');
+
+            $result = array();
+            foreach ($logs as $element) {
+                $date = $element['date'];
+                $url = $element['url'];
+                $user = $element['user'];
+                $text = json_decode($element['text']);
+                $ip = $text->IP;
+                (isset($result[$ip])) ?
+                    $result[$ip]['count'] += 1 :
+                    $result[$ip] = array('data' => $date, 'user' => $user, 'url' => $url, 'count' => 1);
+            }
+            // sort array by count descending
+            array_multisort(array_column($result, 'count'), SORT_DESC, SORT_NUMERIC, $result);
+            // output table
+            $value = $this->___executeTable($result);
+        } else {
+            $value = $this->_('Nothing to show - logfile does not exist');
+        }
+        $stat->value = '<p>' . $value . '</p>';
+        $fieldset6->append($stat);
+
+        $inputfields->add($fieldset6);
+    }
+
+    /**
+     * Create new directory and copy files from other directory to this directory
+     * Afterwards delete the old directory
+     * These files are images for email templates
+     * @param string $from
+     * @param string $to
+     * @return void
+     * @throws WireException
+     */
+    protected function createFilesDir(string $from, string $to): void
+    {
+        // check if directory exists
+        if (!$this->wire('files')->exists($to)) {
+            // create directory if not present
+            if ($this->wire('files')->mkdir($to)) {
+                // check if files exists in the modules assets folder
+                if ($this->wire('files')->exists($from)) {
+                    // scan directory if it contains files
+                    $files = $this->wire('files')->find($from);
+                    if ($files) {
+                        // copy all files to the newly created FrontendForms directory under site/assests/files
+                        $this->wire('files')->copy($from, $to);
+                        // now remove the assets folder and its content form FrontendForms/assets
+                        $this->wire('files')->rmdir($from, true);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Run during install
+     * @return void
+     * @throws WireException
+     */
+    public function ___install(): void
+    {
+        //save default module configurations on install
+        wire('modules')->saveModuleConfigData($this, self::getDefaultData());
+        // copy files from FrontendForms/assets to site/assets/files/Frontendforms
+        $to = $this->wire('config')->paths->assets . 'files/FrontendForms/';
+        $from = $this->wire('config')->paths->siteModules . 'FrontendForms/assets/';
+        $this->createFilesDir($from, $to);
+    }
+
+    /**
+     * Run during uninstall
+     * @return void
+     * @throws WireException
+     */
+    public
+    function ___uninstall(): void
+    {
+        // copy files from site/assets/files/Frontendforms to FrontendForms/assets
+        $from = $this->wire('config')->paths->assets . 'files/FrontendForms/';
+        $to = $this->wire('config')->paths->siteModules . 'FrontendForms/assets/';
+        $this->createFilesDir($from, $to);
+    }
+
+}
+

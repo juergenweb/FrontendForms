@@ -1,0 +1,176 @@
+en,de,description,file,hash
+"must be unique. This username is already in use. Please choose another username","wird bereits verwendet, daher wählen Sie bitte einen anderen Benutzernamen aus",,site/modules/FrontendForms/valitron/customValidators.php,5dd80c9d209051243e4959d64001d57a
+"and username do not match","und Benutzername passen nicht zusammen",,site/modules/FrontendForms/valitron/customValidators.php,3229770810a6a1a1718b75115246b5ff
+"does not meet the conditions.","erfüllt nicht die Bedingungen",,site/modules/FrontendForms/valitron/customValidators.php,a19a1f724a26244cf7542e78fce6082d
+"contains not allowed characters. Please use only lowercase digits, numbers, underscore, periods and hyphen (no whitespaces).","enthält nicht erlaubte Zeichen (bitte verwenden Sie nur Kleinbuchstaben, Zahlen, Unterstrich, Punkte und Bindestriche und keine Leerzeichen)",,site/modules/FrontendForms/valitron/customValidators.php,76e8868bf761df8ac58a00d815a79c31
+"must be unique. This email is already in use. Please use another email address.","wird bereits verwendet, daher wählen Sie bitte eine andere E-Mail Adresse aus",,site/modules/FrontendForms/valitron/customValidators.php,b413595e71b40c70836a66e8f056896d
+"entered is not the same password as the one, that is stored in the database.",", welches eingegeben wurde ist nicht das Gleiche, welches in der Datenbank gespeichert ist",,site/modules/FrontendForms/valitron/customValidators.php,8233c64b0291b99ef0d07c47db79105a
+"and email do not match","und E-Mail passen nicht zusammen",,site/modules/FrontendForms/valitron/customValidators.php,90c16357ff18d8fcc293125326b677b3
+"is not Boolean true","ist nicht Boolean true",,site/modules/FrontendForms/valitron/customValidators.php,abf3b0cec80ccb2d4566a6261246e663
+"is not Boolean false","ist nicht Boolean false",,site/modules/FrontendForms/valitron/customValidators.php,82e64791d4a2fc245441b452d8c01206
+"does not have the expected value","entspricht nicht den vorgegebenen Wert",,site/modules/FrontendForms/valitron/customValidators.php,128d6324f673627af8028138001238d9
+"is not correct","ist nicht korrekt",,site/modules/FrontendForms/valitron/customValidators.php,171f609c4663182c03be73b1e40fa35e
+"entered must be different than the value specified.",", welches eingegeben wurde, muss einen anderen als den vorgegebenen Wert haben",,site/modules/FrontendForms/valitron/customValidators.php,d5aa7f638be76a8922285c2a5fffe4c7
+"entered must be different from the old password.","muss unterschiedlich gegenüber dem alten Passwort sein",,site/modules/FrontendForms/valitron/customValidators.php,9dc911237765edb7f22808f0b2102b63
+en,de,description,file,hash
+Email,E-Mail,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Email.php,ce8ae9da5b7cd6c3df2929543a9af92d
+en,de,description,file,hash
+"This email was generated automatically. So please do not reply to this email.","Diese E-Mail wurde automatisch erstellt. Bitte antworten Sie daher nicht auf diese E-Mail Adresse.",,site/modules/FrontendForms/Formelements/Form.php,fa1cb3adb3f8108c13402b3f24ca237b
+"%s is not a valid IP address.","%s ist keine gültige IP-Adresse",,site/modules/FrontendForms/Formelements/Form.php,cae724dd18de0c8ca83d1e05bc546dbd
+"All fields marked with (*) are mandatory and must be completed.","Alle Felder, welche mit (*) markiert sind, stellen Pflichtfelder dar und müssen in jeden Fall ausgefüllt werden.",,site/modules/FrontendForms/Formelements/Form.php,feaed8b52507d421a9953e0a9ec9a687
+"Thank you for your message.","Vielen Dank für Ihre Nachricht.",,site/modules/FrontendForms/Formelements/Form.php,a0e0f33630289d49200c61cac7900200
+"Sorry, some errors occur. Please check your inputs once more.","Es sind leider Fehler aufgetreten. Bitte überprüfen Sie Ihre Eingaben noch einmal.",,site/modules/FrontendForms/Formelements/Form.php,552663e8ba6eb0a7c5c16727f8d19bcc
+"Please do not fill out this field","Bitte dieses Feld nicht ausfüllen",,site/modules/FrontendForms/Formelements/Form.php,e02d8cd38e0f708a9633f46793e31a27
+attempts,Versuche,,site/modules/FrontendForms/Formelements/Form.php,79845fb11e473b1a0811ca2543f04b9c
+attempt,Versuch,,site/modules/FrontendForms/Formelements/Form.php,1db222fece0e7454c122788bf892adf8
+"You have %s %s left until you will be blocked due to security reasons.","Sie haben noch %s %s übrig, bis Sie aus Sicherheitsgründen gesperrt werden.",,site/modules/FrontendForms/Formelements/Form.php,45010ad705310127fdc90740a9ffd232
+"We are sorry, but your IP address %s is on the list of forbidden IP addresses. Therefore the form will not be displayed. If you think your IP address is mistakenly on the list, please contact the administrator of the site.","Es tut uns leid, aber Ihre IP-Adresse %s steht auf der Liste der verbotenen IP-Adressen. Daher wird das Formular nicht angezeigt. Wenn Sie glauben, dass Ihre IP-Adresse fälschlicherweise auf der Liste steht, wenden Sie sich bitte an den Administrator der Website.",,site/modules/FrontendForms/Formelements/Form.php,092284a62a0f8c62fa528c0cfd3d157c
+"You have reached the max. number of allowed attempts and therefore you cannot submit the form once more. To reset the blocking and to submit the form anyway you have to close this browser, open it again and visit this page once more.","Sie haben die max. Anzahl von Versuchen erreicht und aus diesem Grund können Sie das Formular nun nicht mehr absenden. Um die Sperrung aufzuheben und das Formular dennoch abzusenden schließen Sie bitte den Browser, öffnen ihn erneut und besuchen Sie diese Seite noch einmal.",,site/modules/FrontendForms/Formelements/Form.php,9604672fb8882c926b1fcf42c89576d7
+"Email could not be sent due to possible wrong email configuration settings.","E-Mail konnte aufgrund einer fehlerhaften Konfiguration in den Einstellungen nicht gesendet werden.",,site/modules/FrontendForms/Formelements/Form.php,72cf6df09879e3c5e34778bf6f1bc965
+en,de,description,file,hash
+"This can be overwritten on the form by using this method","Diese Einstellung kann mit dieser Methode auf dem Formular überschrieben werden",,site/modules/FrontendForms/FrontendForms.module,2047dbfc9f2dc1e1932ba5b3e5348e1e
+"This can be overwritten on the form by using these methods","Dies Einstellungen können mit diesen Methoden auf dem Formular überschrieben werden",,site/modules/FrontendForms/FrontendForms.module,d248bc06fcb2345c55dfd44c687e8210
+"Use this method to test, if IP ban works. Enter the IP address that should be tested.","Verwenden Sie diese Methode, um zu testen, ob das IP-Verbot funktioniert. Geben Sie die IP-Adresse ein, die getestet werden soll.",,site/modules/FrontendForms/FrontendForms.module,ae3f9d4b86fc69e0ada3f76bf6e57e52
+"Opens in a new window","Öffnet in einem neuen Fenster",,site/modules/FrontendForms/FrontendForms.module,de25d7fa7d62d750a846b81dcb3b37f9
+"More detailed information about the IP %s at www.domaintools.com","Genauere Informationen über die IP-Adresse %s auf www.domaintools.com",,site/modules/FrontendForms/FrontendForms.module,294f7882d547e02ee8934197e3ee43f7
+"Failed attempts for IP %s","Fehlerhafte Versuche für die IP-Adresse %s",,site/modules/FrontendForms/FrontendForms.module,c7c54e3411829686d669490ff05d0094
+Date,Datum,,site/modules/FrontendForms/FrontendForms.module,44749712dbec183e983dcd78a7736c41
+URL,=,,site/modules/FrontendForms/FrontendForms.module,e6b391a8d2c4d45902a23a8b6585703d
+Form-ID,Formular-ID,,site/modules/FrontendForms/FrontendForms.module,de2beed414f268855270166b3474b45a
+"IP address",IP-Adresse,,site/modules/FrontendForms/FrontendForms.module,75ba8d70e3692ba200f0e0df37b4d2ae
+User,Benutzer,,site/modules/FrontendForms/FrontendForms.module,8f9bfe9d1345237cb3b2b205864da075
+"Blacklist entry","Blacklist Eintrag",,site/modules/FrontendForms/FrontendForms.module,59deadcbf685b2ad32b7668720ce083d
+"Number of blocks","Anzahl der Sperrungen",,site/modules/FrontendForms/FrontendForms.module,02281719187ced2a9763531b2d5cde35
+Details,=,,site/modules/FrontendForms/FrontendForms.module,3ec365dd533ddb7ef3d1c111186ce872
+"Add/remove IP from blacklist","Hinzufügen/entfernen der IP von der Black List",,site/modules/FrontendForms/FrontendForms.module,9b63ca019aacfd9a7917473e1720afbb
+"View details","Details anzeigen",,site/modules/FrontendForms/FrontendForms.module,6e9783376d951cfd780e9fdb67a0f02c
+"Remove from blacklist","Von der Blacklist entfernen",,site/modules/FrontendForms/FrontendForms.module,5ad3137edf46035a9faf9432f7cd0522
+"Add to blacklist","Zur Blacklist hinzufügen",,site/modules/FrontendForms/FrontendForms.module,218ccb4c1ea08f5bfb6cd390c3ba94e5
+"Sorry, but there is not data available. Please check if logging is enabled.","Es sind leider keine Daten vorhanden. Bitte überprüfen Sie ob das loggen aktiviert is.",,site/modules/FrontendForms/FrontendForms.module,ee765dab27b2a05c8e2f670c2e6968ad
+"Markup and styling settings for the forms","Markup und Styling Einstellung für die Formulare",,site/modules/FrontendForms/FrontendForms.module,7a07ed63e2a6c4a1c8119b711075aff2
+"Make your global settings for the output. Most of the settings can be overwritten on per form base if needed.","Tätigen Sie Ihre globalen Einstellungen für die Ausgabe. Die meisten dieser Einstellungen können für jedes Formular überschrieben werden.",,site/modules/FrontendForms/FrontendForms.module,93acc85a7149f81e94ce8c38c98301b0
+"Settings for required fields","Einstellungen für die Pflichtfelder",,site/modules/FrontendForms/FrontendForms.module,6175c8574382c56b54af9989e0bbf521
+"Required fields setting","Pflichtfelder Einstellungen",,site/modules/FrontendForms/FrontendForms.module,d159aa88cb827bf0011a041e90b5567d
+"Add asterisk on required fields","Einen Asterisk bei Pflichtfeldern hinzufügen",,site/modules/FrontendForms/FrontendForms.module,cfb2041be23a5d67d9a2ab9b55afc30a
+"Adds a span element with an asterisk after the field label on required fields.","Fügt ein span Element mit einem Asterisk nach dem Label Tag bei Pflichtfeldern ein.",,site/modules/FrontendForms/FrontendForms.module,5a794347b17c4bfc0712504a53c9c4de
+"You can also use CSS pseudo class :after to add an asterisk to the label tag. For this reason you can disable the asterisk markup.","Sie können auch die CSS Pseudo-Klasse :after nutzen um einen Asterisk nach dem Label Tag einzufügen. Aus diesem Grund können Sie die Einfügung des Asterisk Mark-up unterbinden.",,site/modules/FrontendForms/FrontendForms.module,52fe89faf69cb2128424b868ece04de9
+None,kein,,site/modules/FrontendForms/FrontendForms.module,6adf97f83acf6453d4a6a4b1070f3754
+Top,oben,,site/modules/FrontendForms/FrontendForms.module,a4ffdcf0dc1f31b9acaf295d75b51d00
+Bottom,unten,,site/modules/FrontendForms/FrontendForms.module,2ad9d63b69c4a10a5cc9cad923133bc4
+"Disable displaying of the text (none), place the text before (top) or after (bottom) the form.","Die Anzeige des Textes unterbinden (kein), den Text vor (oben) oder nach (unten) dem Formular anzeigen.",,site/modules/FrontendForms/FrontendForms.module,8842b7eaca395f94ccf4247a3dec7fb2
+"Enable/disable the display of the required text and set the position","Anzeigen/verstecken der Anzeige des Textes für die Pflichtfelder und Festsetzung der Position",,site/modules/FrontendForms/FrontendForms.module,419482be203a6d6e6ca5dfab534db3c4
+"Can be overwritten on each form.","Kann bei jedem Formular überschrieben werden.",,site/modules/FrontendForms/FrontendForms.module,a310d89389c61c1262dc8b170e54b418
+"Hint for visitors that all required fields have to be filled out","Ein Hinweis für Besucher, dass alle Pflichtfelder ausgefüllt werden müssen",,site/modules/FrontendForms/FrontendForms.module,5119a3299816914535285e9a1ce65c89
+"This text will be displayed on the form depending on your settings.","Dieser Text wird entsprechend ihren Einstellungen angezeigt.",,site/modules/FrontendForms/FrontendForms.module,d7c2c8b972d23974722479d00df373b9
+"If nothing is entered, a default text will be displayed instead.","Wenn nichts eingegeben wird, dann wird stattdessen ein Standardtext angezeigt.",,site/modules/FrontendForms/FrontendForms.module,4f391e9c54871cb2ba07440e4dcde2f8
+"HTML5 required attribute setting","HTML5 Pflichtfeld Attribut Einstellungen",,site/modules/FrontendForms/FrontendForms.module,9354ec4ea74a63b6b84ec8f7dab4f5a9
+"Add HTML5 required attribute to inputs","HTML5 required Attribute zu Eingabefeldern hinzufügen",,site/modules/FrontendForms/FrontendForms.module,224e7105ad450ae2ed2358c26078d8aa
+"By default the HTML5 required attribute will not be added to form inputs if they are required. If you want to add it to all required fields please check the box.","Standardmäßig wird das HTML5 Attribute required nicht bei Pflichtfeldern eingebunden. Wenn Sie dieses Attribut einfügen wollen, dann markieren Sie bitte diese Box.",,site/modules/FrontendForms/FrontendForms.module,f6fa51f65c1493aa0e1310fef5d833a4
+"Settings for alert messages","Einstellungen für die (Warn)Meldungen",,site/modules/FrontendForms/FrontendForms.module,fe594d37b52076531f0e6d6dc0281de1
+"The message after successful submission","Text nach erfolgreicher Absendung des Formulars",,site/modules/FrontendForms/FrontendForms.module,a30590d3607a49d08ba70125889fdc4c
+"This text will be displayed after a form was submitted successfully.","Dieser Text wird angezeigt, nachdem das Formular erfolgreich gesendet wurde.",,site/modules/FrontendForms/FrontendForms.module,b9490a4a1dbf80bf51629efa398fd4c4
+"The message after submission failed","Text nach fehlgeschlagener Absendung des Formulars",,site/modules/FrontendForms/FrontendForms.module,98a115741f55482456b6723baeced037
+"This text will be displayed after errors on form submission.","Dieser Text wird angezeigt, nachdem Fehler beim Versuch das Formular zu senden aufgetreten sind.",,site/modules/FrontendForms/FrontendForms.module,99bc0368b6b8e031527fc78678727a3a
+"Settings for the markup and styling of the form and the inputfields","Einstellungen für das Markup und Styling der Formulare und Eingabefelder",,site/modules/FrontendForms/FrontendForms.module,22f488f1a01ec8aea437ac2d2edbdd8e
+"Add wrappers to the form fields","Wrapper Container zu Formularfelder hinzufügen",,site/modules/FrontendForms/FrontendForms.module,498dd7c80478c5b43acfd468ce925bf6
+"Add wrapper div for the inputfield (input wrapper)","Einen Wrapper Container zum Input-Feld hinzufügen (input wrapper)",,site/modules/FrontendForms/FrontendForms.module,418fa1a1a214848b688ca0929d30fdf1
+"Add outer wrapper div for each formfield (field wrapper)","Einen äußeren Wrapper-Conainer zu jedem Formular-Feld hinzufügen (field wrapper)",,site/modules/FrontendForms/FrontendForms.module,02edb6924c99d44eac912630d17ee98b
+"Add an additional wrapper div after opening and before closing form tag","Einen zusätzlichen Wrapper-Container zwischen dem öffnenden und schließenden Form Tag hinzufügen",,site/modules/FrontendForms/FrontendForms.module,bccc224dcd0922cf59461e2d3f29dc14
+"Add a wrapper div over all form elements","Einen Wrapper-Container über alle Formularfelder hinzufügen",,site/modules/FrontendForms/FrontendForms.module,276d962ba9474e7cd0f834019b88c00a
+"In some rare cases you need to wrap all form elements inside an extra wrapper div, which is between the opening and closing form tag. For this case you can add the div by checking the box.","In seltenen Fällen wird ein extra Container über alle Formular-Elemente benötigt, welche sich zwischen dem öffnenden und schließenden form tag befindet. Für diesen Fall kann der Container durch anklicken der Box hinzugefügt werden.",,site/modules/FrontendForms/FrontendForms.module,31d74429df3f5c9334d1f91751e0f73e
+"Add a CSS class to to the extra wrapper div","Eine CSS-Klasse zu diesem extra Container hinzufügen",,site/modules/FrontendForms/FrontendForms.module,dca03e2707a55b83d6d2eb3aa549ff24
+"By default, an unique id will be added, but if you need a special styling class, you can enter the name of the class in this field.","Standardmäßig wird eine einzigartige ID hinzugefügt, aber wenn Sie zur Gestaltung des Containers eine spezielle CSS-Klasse benötigen, dann können Sie diese in das Feld eintragen.",,site/modules/FrontendForms/FrontendForms.module,fddbf871807bca492cfdce44610e6f71
+"Output rendering","Ausgabe rendern",,site/modules/FrontendForms/FrontendForms.module,e22428c686e2484d13fe958b6dd96ded
+"Select a framework for the markup output if you want","Wählen Sie ein Framework aus, wenn Sie möchten",,site/modules/FrontendForms/FrontendForms.module,14b846454644dd336e00af738a46bf19
+"No framework",Keines,,site/modules/FrontendForms/FrontendForms.module,672c694e3c32de003ed77fa07f6420cc
+"Append the label after the input tag on checkboxes and radios","Den Label-Tag nach dem Input Tag bei Checkboxen und Radio Buttons anzeigen",,site/modules/FrontendForms/FrontendForms.module,3d40631076ed8bbd19e7aaa78cd4f123
+"Append label on checkboxes","Label bei Checkboxen nach dem Input Tag anzeigen",,site/modules/FrontendForms/FrontendForms.module,cf44c50f0e34ccaa350623b45fb893ab
+"Append label on radio buttons","Label bei Radio Buttons nach dem Input Tag anzeigen",,site/modules/FrontendForms/FrontendForms.module,0e575171cddf029c5b9fdc05725397cc
+"By default, radio and checkbox tags are wrapped by their label tag. If you want to append the label tag after the input tag, please check the appropriate box.","Standardmäßig werdem Checkboxen und Radio Buttons mit dem Label Tag umgeben. Wenn Sie aber möchten, dass der Label Tag erst nach dem Input Tag angezeigt wird, dann markieren Sie die entsprechende Box.",,site/modules/FrontendForms/FrontendForms.module,420b58ba111ac466843ceb296be2b1c4
+"Custom CSS classes","Eigene CSS Klassen",,site/modules/FrontendForms/FrontendForms.module,2aa8d951a33a4ede2260e61e9030b6d7
+"You can overwrite each CSS class with your own class name(s). If you want to add multiple classes at the same time please separate them with a whitspace (fe class1 class2).","Sie können jede CSS-Klasse mit Ihren eigenen Klassennamen überschreiben. Wenn Sie mehrere Klassen gleichzeitig hinzufügen möchten, trennen Sie diese bitte mit einem Leerzeichen (z. B. Klasse1 Klasse2).",,site/modules/FrontendForms/FrontendForms.module,95260bb49a493a6f17b7cddd82b6907c
+"CSS class for the %s","CSS Klasse für %s",,site/modules/FrontendForms/FrontendForms.module,3e17fd7790ba1feceace786e775d2ba7
+"Current class","Aktuelle Klasse",,site/modules/FrontendForms/FrontendForms.module,e7a61cfa8747480af7070c6f8e63c812
+"Remove stylesheets and scripts","Stylesheets und Skripte entfernen",,site/modules/FrontendForms/FrontendForms.module,0b6d45e98b7b1d82cb6fd88cedff9ce0
+"Javascript setting","JavaScript Einstellung",,site/modules/FrontendForms/FrontendForms.module,c454d41006c3a47ef050056608a6b7d9
+"Remove frontendforms.js from template","Die Einbindung der JavaScript Datei frontendform.js beim Template unterbinden",,site/modules/FrontendForms/FrontendForms.module,408055a818bddf79f9d303fca270a4d4
+"A small JavaScript for a seconds counter and show/hide passwords will be added to the template by default before the closing body tag. You can remove it by checking the box.","Eine kleine JavaScript Datei für einen Sekundenzähler und für die anzeigen/verstecken Funktion bei Passwortfeldern wird vor dem schließenden Body Tag im Template eingefügt. Durch Markieren der Box kann dies unterbunden werden.",,site/modules/FrontendForms/FrontendForms.module,66962fb2a0ec9c78cce2a46df5613175
+"CSS setting","CSS Einstellungen",,site/modules/FrontendForms/FrontendForms.module,6bfa90ae9f841ec2adedb46975347afd
+"Remove frontendforms.css from template","Die Einbindung der CSS-Datei frontendforms.css beim Template unterbinden",,site/modules/FrontendForms/FrontendForms.module,40332d3353119c2a3709b3207527f745
+"A small CSS file to hide the honeypot input field will be added to the template by default. If you want to add this small code to your own CSS files you can remove the embedding of this file by checking the box.","Eine kleine CSS-Datei zum verbergen des Honeypot-Feldes wird standardmäßig der Vorlage hinzugefügt. Wenn Sie diesen Code-Schnippsel lieber bei Ihrer eigenen CSS-Datei hinzufügen möchten, dann können Sie die Einbindung dieser CSS-Datei durch das Markieren der Box unterbinden.",,site/modules/FrontendForms/FrontendForms.module,5b0af290bd650670d90832c20d7f79b0
+"Email settings","E-Mail Einstellungen",,site/modules/FrontendForms/FrontendForms.module,5386484801d01d2ece73fbc5f605f739
+"HTML email template setting","HTML E-Mail Template Einstellungen",,site/modules/FrontendForms/FrontendForms.module,7ba64fb164e72d97660308b67acfefbe
+"no HTML template","kein HTML Template",,site/modules/FrontendForms/FrontendForms.module,7a646761a1d8fa416125a58d609c221d
+"Choose whether you want to use the HTML template for your emails and if so, which one.","Entscheiden Sie, ob Sie ein HTML Template für Ihre E-Mails verwenden wollen, oder nicht",,site/modules/FrontendForms/FrontendForms.module,cebf3687d25bd4915ed8816bf8f91604
+"If you are using FrontendForms with the PW WireMail class to send emails, you can use a HTML email template by adding the useEmailTemplate() method to the WireMail object.","Wenn Sie FrontendForms mit der PW WireMail Klasse verwenden um E-Mails zu senden, dann können Sie ein HTML E-Mail Template durch die Nutzung der useEmailTemplate() Methode verwenden.",,site/modules/FrontendForms/FrontendForms.module,b973f0687e96314eb13c77e7aa244db7
+"Data privacy settings","Datenschutz Einstellungen",,site/modules/FrontendForms/FrontendForms.module,3d68b09877695bf8ec9113899ff693ad
+"Privacy policy page","Seite für die Datenschutz Richtlinien",,site/modules/FrontendForms/FrontendForms.module,3b75aac75dc5f26614dab746da7b081d
+"Select the page which contains your privacy policy.","Bitte wählen Sie die Seite aus, welche die Datenschutz Richtlinien enthält.",,site/modules/FrontendForms/FrontendForms.module,0173fcee477397758380b28828c54433
+"The link to this page will be used inside the Privacy class for generating the ""Accept the privacy policy"" checkbox.","Der Link zu dieser Seite wird innerhalb der Privacy Klasse für die Erstellung der ""Datenschutz Richtlinie  akzeptieren"" Checkbox genutzt.",,site/modules/FrontendForms/FrontendForms.module,b2037d2cf34d31283e27629ce628a7b1
+"Security settings for the forms","Sicherheitseinstellungen für die Formulare",,site/modules/FrontendForms/FrontendForms.module,e3c4cbd13a34c344a3a9ed99a4d3e5bc
+"Make your global settings for security. Most of the settings can be overwritten on per form base if needed.","Nehmen Sie Ihre globalen Einstellungen zur Sicherheit vor. Die meisten Einstellungen können bei Bedarf pro Formular überschrieben werden.",,site/modules/FrontendForms/FrontendForms.module,df06bcb0931d695e55373cac13a01f2e
+"Security measure 1: Maximum failed attempts","Sicherheitsmaßnahme 1: Maximale Anzahl von Fehlversuchen",,site/modules/FrontendForms/FrontendForms.module,ee123b0cc51c3719a44c02762dc86d88
+"Max number of failed attempts","Maximale Anzahl fehlgeschlagener Versuche",,site/modules/FrontendForms/FrontendForms.module,e446ef24e3fe0ea378879d31137081d6
+"Please set the max number of failed attempts for submitting a form.","Bitte legen Sie die maximal erlaubte Anzahl fehlgeschlagener Versuche zum Absenden eines Formulars fest.",,site/modules/FrontendForms/FrontendForms.module,12aed548ee688777aedc68a3ffeaa02d
+"If set to 0 then this feature is disabled. After reaching the limit the user will be blocked by using a session and all browser windows have to be closed to remove the blocking.","Wenn auf 0 gesetzt, ist diese Funktion deaktiviert. Nach Erreichen des Limits wird der Benutzer für die aktuelle Sitzung blockiert und alle Browserfenster müssen geschlossen werden, um die Blockierung aufzuheben.",,site/modules/FrontendForms/FrontendForms.module,754b0201c107af8438c3fc0dff871d81
+"Log IPs of blocked visitors","IP-Adressen blockierter Besucher loggen",,site/modules/FrontendForms/FrontendForms.module,f61c8434d727f79a4ed033ae983a64b9
+"If the box is checked, an entry with the IP address of the visitor, the form id and the date will be stored in the logfiles after the visitor was blocked.","Wenn diese Box markiert ist, dann wird ein Eintrag mit der IP-Adresse des Besuchers, der Formular ID und dem Datum in die Log-Dateien geschrieben, sobald ein Besucher gesperrt wurde.",,site/modules/FrontendForms/FrontendForms.module,b5df7d3e871c3e99fe9235b5e95ab2fe
+"Please note, that you have to inform your users in your privacy policy, that the IP address will be stored in this case.","Bitte beachten Sie, dass Sie Ihre Nutzer in Ihrer Datenschutzerklärung darauf hinweisen müssen, dass in diesem Fall die IP-Adresse gespeichert wird.",,site/modules/FrontendForms/FrontendForms.module,78a1cef918f4226af7097ed07914ea7d
+"Security measure 2: Minimum and maximum time to fill out the form","Sicherheitsmaßnahme 2: Minimale und maximale Zeit zum Ausfüllen des Formulars",,site/modules/FrontendForms/FrontendForms.module,6c140828dd3de04e7874384e044c097a
+"Min time before form submission","Mindestzeit für das Absenden des Formulars",,site/modules/FrontendForms/FrontendForms.module,c18393d954f62604d9f34be940b2b4ab
+"Please set the min time in seconds before a form should be submitted.","Bitte legen Sie die Mindestzeit in Sekunden fest, bevor ein Formular abgesendet werden darf.",,site/modules/FrontendForms/FrontendForms.module,0485473a9712015f60760549e57e2c6d
+"If set to 0 then this feature is disabled. This feature measures the time between loading and submitting a form. If it is to fast (fe a spam bot) it will lead to a form error. ","Wenn auf 0 gesetzt, ist diese Funktion deaktiviert. Diese Funktion misst die Zeit zwischen dem Laden und Absenden eines Formulars. Wenn es zu schnell abgesendet wird (z. B. ein Spam-Bot), führt dies zu einem Formularfehler.",,site/modules/FrontendForms/FrontendForms.module,7c7ae07258f9227ba85f1f8ee9e005eb
+"Max time until form submission","Maximale Zeit bis zum Absenden des Formulars",,site/modules/FrontendForms/FrontendForms.module,5622c3cbb7ef8c0fae9e2e28120a2e38
+"Please set the max time in seconds until a form should be submitted.","Bitte stellen Sie die maximale Zeit in Sekunden ein, bis zu der ein Formular abgesendet werden muss.",,site/modules/FrontendForms/FrontendForms.module,9e3909f2bb5f12b4b6b4514d23f41bdf
+"If set to 0 then this feature is disabled. This feature measures the time between loading and submitting a form. If it is to slow (fe a spam bot analyizing the form) it will lead to a form error. ","Wenn auf 0 gesetzt, ist diese Funktion deaktiviert. Diese Funktion misst die Zeit zwischen dem Laden und Absenden eines Formulars. Wenn die Zeitspanne zu lange ist (z. B. wenn ein Spam-Bot das Formular analysiert), führt dies zu einem Formularfehler.",,site/modules/FrontendForms/FrontendForms.module,d00ed763a952bbacf6d87638a0824b14
+"Security measure 3: Honeypot field","Sicherheitsmaßnahme 3: Honeypot Feld",,site/modules/FrontendForms/FrontendForms.module,e7e62e9f43190eeaa12b7e1cddd84d05
+"Add honeypot field to form","Ein Honeypot-Feld zum Formular hinzufügen",,site/modules/FrontendForms/FrontendForms.module,81644780bcc7945b7e9a887d8c959f4b
+"If the box is checked, an invisible honeypot field for spam protection will be added to the form.","Wenn die Box markiert ist, dann wird ein unsichtbares Honeypot-Feld als Spam-Schutz zum Formular hinzugefügt.",,site/modules/FrontendForms/FrontendForms.module,ccc4f0013866de7c16f450c3697e17e5
+"It is recommended to use a honepot field. Disable this feature only if you have a good reason to do so.","Es wird empfohlen das Honeypot-Feld zu verwenden. Deaktivieren Sie diese Funktion nur, wenn Sie einen wirklich guten Grund dazu haben.",,site/modules/FrontendForms/FrontendForms.module,1f3f3154d6e78998a1b4c8ee9993e57e
+"Security measure 4: Using IP blacklist ","Sicherheitsmaßnahme 4: IP-Adressen Blacklist verwenden",,site/modules/FrontendForms/FrontendForms.module,3c1d7d8f0cabcd79242665a9c9413865
+"Check IP of visitors","Die IP-Adresse von Besuchern überprüfen",,site/modules/FrontendForms/FrontendForms.module,938c38d175ad8e62e626c1cde8188ab9
+"Enable checking of visitors IP against blacklist","Die Prüfung der Besucher IP-Adressen in Bezug auf die Blacklist aktivieren",,site/modules/FrontendForms/FrontendForms.module,df6cc1214358a05197841883566dc289
+"You can prevent IP addresses from viewing your forms, if they might be harmful to your site. By checking/unchecking the box, you can enable/disable the checking against the blacklist.","Sie können IP-Adressen, welche möglicherweise Schaden auf der Seite verursachen könnten, von der Anzeige der Formulare ausschließen. Durch ankreuzen/entfernen des Hakens bei der Box können sie die Prüfung aktivieren oder unterbinden.",,site/modules/FrontendForms/FrontendForms.module,98c877cac3653e94f97c9bafcbc1b769
+"This only works, if there is at least 1 entry in the next input field","Dies funktioniert aber nur, sofern mindestens 1 Eintrag im nächsten Eingabefeld vorhanden ist",,site/modules/FrontendForms/FrontendForms.module,55f5519cb2dac23306b2462b50f77aa2
+"Blacklist of forbidden IPs","Blacklist der verbotenen IP-Adressen",,site/modules/FrontendForms/FrontendForms.module,dfe3af10424e82fb310981855ad187b8
+"Please enter every IP address on a new line. Every visit of an IP address listed below prevents the form to be rendered on the frontend. Visitors see an alert box instead, that informs about the banned IP address.","Bitte geben Sie jede IP-Adresse in einer neuen Zeile ein. Jeder Besuch einer unten aufgeführten IP-Adresse verhindert die Darstellung des Formulars im Frontend. Besucher sehen stattdessen eine Meldung, die über die gesperrte IP-Adresse informiert.",,site/modules/FrontendForms/FrontendForms.module,581afc9021929d07a2eaf6015e23df2e
+"Tip: You can take a look at the logfile for failed login attempts and enter fe. IP addresses that appear very often. Works only if logging failed attempts is enabled.","Tipp: Sie können sich die Logdatei für fehlgeschlagene Anmeldeversuche ansehen und dort z. IP-Adressen herausfiltern, die sehr häufig vorkommen . Funktioniert nur, wenn die Protokollierung fehlgeschlagener Versuche aktiviert ist.",,site/modules/FrontendForms/FrontendForms.module,ac2812338c71d2f2dee5988591a7758a
+"Statistics of blocked visitors","Statistiken blockierter Besucher",,site/modules/FrontendForms/FrontendForms.module,8f2bb91c583e42fa3e2b720a6c8a192f
+"Get information about blocked visitors (IP, form) from the log files","Lassen Sie sich Informationen über blockierte Besucher (IP-Adresse, Formular) aus den Log-Dateien anzeigen",,site/modules/FrontendForms/FrontendForms.module,af58911ece7a676214c04009bdf307f6
+"Nothing to show - logfile does not exist","Es gibt leider nichts anzuzeigen - Die Log-Datei existiert nicht.",,site/modules/FrontendForms/FrontendForms.module,ceb9f0db8a96d4c417d41c44f465a2e6
+Second,Sekunde,"Singular Version",site/modules/FrontendForms/FrontendForms.module,c22cf8376b1893dcfcef0649fe1a7d87
+Seconds,Sekunden,"Plural Version",site/modules/FrontendForms/FrontendForms.module,8f19a8c7566af54ea8981029730e5465
+Attempt,Versuch,"Singular Version",site/modules/FrontendForms/FrontendForms.module,cb1856ec07fdc866c21f13566e3d5bcd
+Attempts,Versuche,"Plural Version",site/modules/FrontendForms/FrontendForms.module,7ba3b8236d48d4f4c5ec03c3fe6b75a9
+en,de,description,file,hash
+Gender,Anrede,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,019ec3132cdf8ee0f2e2a75cf5d3e459
+"I prefer not to say","Ich möchte keine Angabe machen",,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,b8ce55ba025e0b423379182b33ea6773
+Mister,Herr,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,c4f448df316abb13eb7eada722c57902
+Miss,Frau,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,e7ddb7cd777b59610b220bcfa80bd95f
+Diverse,Divers,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,e67561dfc51195ce1ac515406291900e
+en,de,description,file,hash
+"Show password","Passwort anzeigen",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,a1cc7ba89ca3016cf59d7c31506a9681
+"The password must be at least %s characters and must contain characters of the following categories: %s.","Das Passwort muss mindestes %s Zeichen lang sein und folgende Zeichen enthalten: %s.",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,8bc6641f570b88866300ca703223bf6b
+"The password must be at least %s characters.","Das Passwort muss mindestes %s Zeichen lang sein.",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,3d55c273179acb11e30d1a53f8d8625e
+en,de,description,file,hash
+Message,Nachricht,,site/modules/FrontendForms/Formelements/Inputelements/Textarea/defaults/Message.php,4c2a8fe7eaf24721cc7a9f0175115bd4
+en,de,description,file,hash
+Name,Vorname,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Name.php,49ee3087348e8d44e1feda1917443987
+en,de,description,file,hash
+Password,Passwort,"set default label",site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Password.php,dc647eb65e6711e155375218212b3964
+en,de,description,file,hash
+"Password Confirmation","Passwort Bestätigung","set default label",site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/PasswordConfirmation.php,c2b7527a6421ad4a0c0089d87290d1cd
+en,de,description,file,hash
+"I accept the privacy policy","Ich akzeptiere die Datenschutzrichtlinien",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Privacy.php,28f678f8feb29d236b6dfcb02190ba21
+"You have to accept our privacy policy","Sie müssen die Datenschutzrichtlinien akzeptieren",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Privacy.php,9a5b98e025ebe5fd1adbddccc94ad638
+"Privacy Policy",Datenschutz-Richtlinien,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Privacy.php,fa2ead697d9998cbc65c81384e6533d5
+"To the Privacy Policy page","Zur Seite mit den Datenschutz-Richtlininen",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Privacy.php,2b91037b0240c93155085ce8c0768cb9
+en,de,description,file,hash
+"Send a copy of my message to me","Eine Kopie dieser Nachricht an mich senden",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/SendCopy.php,7313e5cce02f10d1d6a22dea1aedc9eb
+en,de,description,file,hash
+Subject,Betreff,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Subject.php,c7892ebbb139886662c6f2fc8c450710
+en,de,description,file,hash
+Surname,Nachname,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Surname.php,8e55577a8ed3b20bff65d23c000280d4
+en,de,description,file,hash
+Username,Benutzername,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Username.php,f6039d44b29456b20f8f373155ae4973
+

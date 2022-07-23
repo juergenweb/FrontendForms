@@ -1,0 +1,18 @@
+/*
+CSS to hide the honeypot field in forms
+
+Created by Jürgen K.
+https://github.com/juergenweb 
+File name: frontendforms.css
+Created: 08.07.2022 
+ */
+
+.seca {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 0;
+    width: 0;
+    z-index: -1;
+}
