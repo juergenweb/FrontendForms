@@ -368,10 +368,10 @@ These methods overwrite the settings in the module configuration.
 ```php
 $form = new Form('myForm');
 // field wrapper
-$form->useFieldWrapper(true); // add the field wrapper to all input elements - this is the defauls setting
+$form->useFieldWrapper(true); // add the field wrapper to all input elements - this is the defaults setting
 $form->useFieldWrapper(false); // remove the field wrapper from all input elements
 // same for input wrapper 
-$form->useInputWrapper(true); // add the input wrapper to all input elements - this is the defauls setting
+$form->useInputWrapper(true); // add the input wrapper to all input elements - this is the defaults setting
 $form->useInputWrapper(false); // remove the input wrapper from all input elements
 ```
 
@@ -398,7 +398,7 @@ This will add or remove the honeypot field. Enter true or false as parameter
 This will enable/disable the checking of double form submission. This is useful on profile forms, where you can change your data multiple times.
 
 ```php
-  $form->useDoubleFormSubmissionCheck(true); // double form submission check will be endabled - this is the default setting
+  $form->useDoubleFormSubmissionCheck(true); // double form submission check will be enabled - this is the default setting
   $form->useDoubleFormSubmissionCheck(false); // double form submission check will be disabled on the form
 ```
 
@@ -525,7 +525,7 @@ Sometimes it is necessary (fe. by using certain CSS frameworks), that the label 
 <input type="checkbox"><label>Checkbox Label</label>
 ```
 For this case you can use these two methods, which should be added to the form object.
-You can set this behavior globaly in the module configuration, but you can overwrite it on per form base if needed.
+You can set this behavior globally in the module configuration, but you can overwrite it on per form base if needed.
 
 ```php
 $form->appendLabelOnCheckboxes(); // or
@@ -535,13 +535,13 @@ $form->appendLabelOnCheckboxes(true); //appends the label after the input tag
 ```php
 $form->appendLabelOnCheckboxes(false); // the input tag will be wrapped by the label tag
 ```
-You can do the same for radion buttons by using the appendLabelOnRadios() method.
+You can do the same for radio buttons by using the appendLabelOnRadios() method.
 
 #### setUploadPath()
 If you are using a file upload field on your form, by default all uploaded files will be stored inside the "temp_uploads"
-folder of this module. This is the default folder, for storing the files and if you are sending emails with attachement,
-the module grabs the files for attachements from this "temp_uploads" folder and remove all files inside this folder after
-successfull submission.
+folder of this module. This is the default folder, for storing the files and if you are sending emails with attachment,
+the module grabs the files for attachments from this "temp_uploads" folder and remove all files inside this folder after
+successful submission.
 So this folder will not be the right place if you want to store files permanently. For this case you have the possibility
 to change the upload folder. 
 If you are adding true as second parameter inside the parenthesis, the folder will be created if it does not exist, otherwise you will get 
@@ -571,7 +571,7 @@ $form->useIPBan(false); // IP checking will be disabled on this form
 ```
 ##### testIPBan()
 This is only a testing method to check if IP banning works.
-Enter an IP address inside the module configuration and then use this method on the form by entering the IP inside the paranthesis.
+Enter an IP address inside the module configuration and then use this method on the form by entering the IP inside the parenthesis.
 
 ```php
 $form->testIPBan('146.70.36.200'); // 
@@ -743,7 +743,7 @@ $multifield = new InputCheckboxMultiple('hobbies')
 $multifield->setDefaultValue(['Tennis', 'Polo', 'Swimming']);
 ```
 
-There is no wrong or right: it depends on your preferation of writing.
+There is no wrong or right: it depends on your preference of writing.
 
 #### setChecked() for single checkboxes without values
 As written above, setDefaultValue() can only be used for inputs with values.
@@ -829,24 +829,28 @@ $password = new InputPassword('password');
 $password->showPasswordToggle();
 ```
 
-#### sendAttachement() for file input fields
-This method has to be used with the WireMail class. It is the same as the WireMail attachement() method, but it has some
+#### sendAttachment() for file input fields
+This method has to be used with the WireMail class. It is the same as the WireMail attachment() method, but it has some
 extra functionality. It saves the uploaded files in a pre-defined temp folder called "temp_uploads".
 You do not need to enter the path to the files manually. After the files were sent, all files in the temp folder will be
 deleted.
+You can disable the deletion of the files afterwards if you enter true inside the parenthesis.
 Just to mention, you have the possibility at the form object to change the path to your upload folder with the
-setUploadPath() method to your own preference. Do not do this on forms that send emails with attachements. It will only
-work if the attachement files will be uploaded in the "temp_uploads" folder.
+setUploadPath() method to your own preference. Do not do this on forms that send emails with attachments. It will only
+work if the attachment files will be uploaded in the "temp_uploads" folder.
 
 ```php
 $m = wireMail();
-$m->sendAttachement();
+$m->sendAttachment(); // attachments will be deleted after sending
+
+$m = wireMail();
+$m->sendAttachment(true); // attachments will not be deleted after sending
 ```
 Take a look at the contact form in the example folder which uses file upload too.
 
 #### allowMultiple() for file input fields
 By default, file upload fields only allow to upload 1 file. With this method you can change this behaviour by adding true
-or false inside the paranthesis:
+or false inside the parenthesis:
 True: renders a multiple upload field
 False: renders a single upload field 
 
@@ -1048,14 +1052,14 @@ If you have created a template add it to the email_templates folder as the other
 Using this method renders your email as a stylish HTML email using the selected email template.
 
 ### Storage place for images for email templates
-This module creates a new folder inside the site/assests/files folder of PW called FrontendForms during the module
+This module creates a new folder inside the site/assets/files folder of PW called FrontendForms during the module
 installation. This folder is for images that you will use with the email templates. This folder has public readability 
-and can be reached from outside. This is neccessary to view the images inside the emails. 
+and can be reached from outside. This is necessary to view the images inside the emails. 
 Before the module will be installed, there is also a folder called assets inside this module. It contains images for the 
 ready to use email templates.
 During the installation process, these images will be copied from this assets folder to the newly created FrontedForms
 directory. The assets folder will be deleted afterwards. 
-If you deinstall the module, the assets folder will be created again and every image file inside the FrontendForms
+If you uninstall the module, the assets folder will be created again and every image file inside the FrontendForms
 directory will be copied back to this assets folder. Afterwards the FrontendForms folder will be removed.
 In this way, no image is lost.
 So if you are adding your own email template, please put the images, if you are using one, inside the FrontendForms
