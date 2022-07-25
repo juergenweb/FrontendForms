@@ -48,6 +48,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     protected string $input_alertErrorText = ''; // Text that should be displayed after failed submission
     protected string $bodyHTML = ''; // declare property from WireMail class
     protected string $body = ''; // declare property from WireMail class
+    protected bool $keepFiles = false; // keep files after attachments were sent (true) or delete them (false)
 
     /**
      * Get all meta data for the module
@@ -173,6 +174,11 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
          */
         $this->wire()->addHookMethod('WireMail::sendAttachments', function ($event) {
             $mail = $event->object;
+            if (!is_null($event->arguments(0))) {
+                // should be the files kept inside the temp_uploads folder (false) or not(true)
+                $this->keepFiles = $event->arguments(0);
+            }
+
             // get files from the upload folder
             $fileNames = array_slice(scandir($this->input_uploadPath), 2);
             if ($fileNames) {
@@ -227,6 +233,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         }
         $this->emailTemplates = $fileNames; // set it to property emailTemplates
     }
+
     /**
      * Get the names of all email templates inside the email_templates folder without the file extension (only names)
      * @return array - a numeric array of email template names
@@ -419,13 +426,15 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         // takes mail values and put them inside the email template
         $this->addHookBefore('WireMail::send', $this, 'renderEmailTemplate');
         // remove uploaded attachments after successful sending
-        $this->addHookAfter('WireMail::send', $this, 'removeUploadedFilesAfterSending');
+        $removeHookID = $this->addHookAfter('WireMail::send', $this, 'removeUploadedFilesAfterSending');
+
+
         // Show details about the blocked IP address inside a panel
         $this->wire->addHook('/detail-view/{ip}', function ($event) {
-        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
-            // grab current user lang from session
-            $this->wire('user')->language = $this->wire('session')->get('userlang');
-        }
+            if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+                // grab current user lang from session
+                $this->wire('user')->language = $this->wire('session')->get('userlang');
+            }
             $out = '';
             // load the detail-view template file
             include_once($this->wire('config')->paths->siteModules . $this->className . '/detail-view.php');
@@ -457,6 +466,11 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         }
     }
 
+    public function doNotDeleteFilesAfterSending()
+    {
+
+    }
+
     /**
      * Method to delete all uploaded files after email was sent
      * @return void
@@ -464,10 +478,12 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      */
     protected function removeUploadedFilesAfterSending(): void
     {
-        $fileNames = $this->wire('files')->find($this->input_uploadPath);
-        if ($fileNames) {
-            foreach ($fileNames as $file) {
-                $this->wire('files')->unlink($file);
+        if (!$this->keepFiles) {
+            $fileNames = $this->wire('files')->find($this->input_uploadPath);
+            if ($fileNames) {
+                foreach ($fileNames as $file) {
+                    $this->wire('files')->unlink($file);
+                }
             }
         }
     }
@@ -713,58 +729,58 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $fieldset1->collapsed = 1;
         $fieldset1->icon = 'fa-cog';
 
-            /* Required fields settings */
-            $fieldsetRequired = $modules->get('InputfieldFieldset');
-            $fieldsetRequired->label = $this->_('Settings for required fields');
-            $fieldsetRequired->collapsed = 1;
+        /* Required fields settings */
+        $fieldsetRequired = $modules->get('InputfieldFieldset');
+        $fieldsetRequired->label = $this->_('Settings for required fields');
+        $fieldsetRequired->collapsed = 1;
 
-                // Show asterisk on required fields
-                $showasterisk = $modules->get('InputfieldCheckbox');
-                $showasterisk->attr('name', 'input_showasterisk');
-                $showasterisk->attr('checked', $this->input_showasterisk ? 'checked' : '');
-                $showasterisk->label = $this->_('Required fields setting');
-                $showasterisk->label2 = $this->_('Add asterisk on required fields');
-                $showasterisk->description = $this->_('Adds a span element with an asterisk after the field label on required fields.');
-                $showasterisk->notes = $this->_('You can also use CSS pseudo class :after to add an asterisk to the label tag. For this reason you can disable the asterisk markup.');
-                $fieldsetRequired->add($showasterisk);
+        // Show asterisk on required fields
+        $showasterisk = $modules->get('InputfieldCheckbox');
+        $showasterisk->attr('name', 'input_showasterisk');
+        $showasterisk->attr('checked', $this->input_showasterisk ? 'checked' : '');
+        $showasterisk->label = $this->_('Required fields setting');
+        $showasterisk->label2 = $this->_('Add asterisk on required fields');
+        $showasterisk->description = $this->_('Adds a span element with an asterisk after the field label on required fields.');
+        $showasterisk->notes = $this->_('You can also use CSS pseudo class :after to add an asterisk to the label tag. For this reason you can disable the asterisk markup.');
+        $fieldsetRequired->add($showasterisk);
 
-                // Required hint position
-                $requiredHintPosition = $modules->get('InputfieldRadios');
-                $requiredHintPosition->attr('name', 'input_requiredHintPosition');
-                $requiredHintPosition->addOptions([
-                    'none' => $this->_('None'),
-                    'top' => $this->_('Top'),
-                    'bottom' => $this->_('Bottom')
-                ]);
-                $requiredHintPosition->defaultValue = 'top';
-                $requiredHintPosition->required = 1;
-                $requiredHintPosition->attr('value', $this->input_requiredHintPosition);
-                $requiredHintPosition->description = $this->_('Disable displaying of the text (none), place the text before (top) or after (bottom) the form.');
-                $requiredHintPosition->label = $this->_('Enable/disable the display of the required text and set the position');
-                $requiredHintPosition->notes = $this->_('Can be overwritten on each form.');
-                $fieldsetRequired->add($requiredHintPosition);
+        // Required hint position
+        $requiredHintPosition = $modules->get('InputfieldRadios');
+        $requiredHintPosition->attr('name', 'input_requiredHintPosition');
+        $requiredHintPosition->addOptions([
+            'none' => $this->_('None'),
+            'top' => $this->_('Top'),
+            'bottom' => $this->_('Bottom')
+        ]);
+        $requiredHintPosition->defaultValue = 'top';
+        $requiredHintPosition->required = 1;
+        $requiredHintPosition->attr('value', $this->input_requiredHintPosition);
+        $requiredHintPosition->description = $this->_('Disable displaying of the text (none), place the text before (top) or after (bottom) the form.');
+        $requiredHintPosition->label = $this->_('Enable/disable the display of the required text and set the position');
+        $requiredHintPosition->notes = $this->_('Can be overwritten on each form.');
+        $fieldsetRequired->add($requiredHintPosition);
 
-                // Required hint custom text
-                $requiredText = wire('modules')->get('InputfieldText');
-                $requiredText->name = 'input_requiredText';
-                $requiredText->label = $this->_('Hint for visitors that all required fields have to be filled out');
-                $requiredText->value = $this->input_requiredText;
-                $reqText = $this->_('This text will be displayed on the form depending on your settings.') . ' ';
-                $reqText .= $this->_('If nothing is entered, a default text will be displayed instead.');
-                $requiredText->description = $reqText;
-                $requiredText->notes = $this->_('Can be overwritten on each form.');
-                $requiredText->useLanguages = true;
-                $requiredText->showIf = "input_requiredHintPosition!=none";
-                $fieldsetRequired->add($requiredText);
+        // Required hint custom text
+        $requiredText = wire('modules')->get('InputfieldText');
+        $requiredText->name = 'input_requiredText';
+        $requiredText->label = $this->_('Hint for visitors that all required fields have to be filled out');
+        $requiredText->value = $this->input_requiredText;
+        $reqText = $this->_('This text will be displayed on the form depending on your settings.') . ' ';
+        $reqText .= $this->_('If nothing is entered, a default text will be displayed instead.');
+        $requiredText->description = $reqText;
+        $requiredText->notes = $this->_('Can be overwritten on each form.');
+        $requiredText->useLanguages = true;
+        $requiredText->showIf = "input_requiredHintPosition!=none";
+        $fieldsetRequired->add($requiredText);
 
-                // Render HTML5 required tag
-                $addHTML5req = $modules->get('InputfieldCheckbox');
-                $addHTML5req->attr('name', 'input_addHTML5req');
-                $addHTML5req->attr('checked', $this->input_addHTML5req === 1 ? 'checked' : '');
-                $addHTML5req->label = $this->_('HTML5 required attribute setting');
-                $addHTML5req->label2 = $this->_('Add HTML5 required attribute to inputs');
-                $addHTML5req->notes = $this->_('By default the HTML5 required attribute will not be added to form inputs if they are required. If you want to add it to all required fields please check the box.');
-                $fieldsetRequired->add($addHTML5req);
+        // Render HTML5 required tag
+        $addHTML5req = $modules->get('InputfieldCheckbox');
+        $addHTML5req->attr('name', 'input_addHTML5req');
+        $addHTML5req->attr('checked', $this->input_addHTML5req === 1 ? 'checked' : '');
+        $addHTML5req->label = $this->_('HTML5 required attribute setting');
+        $addHTML5req->label2 = $this->_('Add HTML5 required attribute to inputs');
+        $addHTML5req->notes = $this->_('By default the HTML5 required attribute will not be added to form inputs if they are required. If you want to add it to all required fields please check the box.');
+        $fieldsetRequired->add($addHTML5req);
 
         $fieldset1->add($fieldsetRequired);
 
@@ -773,29 +789,29 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $fieldsetAlerts->label = $this->_('Settings for alert messages');
         $fieldsetAlerts->collapsed = 1;
 
-            // Success message after submission
-            $alertSuccessText = wire('modules')->get('InputfieldText');
-            $alertSuccessText->name = 'input_alertSuccessText';
-            $alertSuccessText->label = $this->_('The message after successful submission');
-            $alertSuccessText->value = $this->input_alertSuccessText;
-            $alertText = $this->_('This text will be displayed after a form was submitted successfully.') . ' ';
-            $alertText .= $this->_('If nothing is entered, a default text will be displayed instead.');
-            $alertSuccessText->description = $alertText;
-            $alertSuccessText->notes = $this->_('Can be overwritten on each form.');
-            $alertSuccessText->useLanguages = true;
-            $fieldsetAlerts->add($alertSuccessText);
+        // Success message after submission
+        $alertSuccessText = wire('modules')->get('InputfieldText');
+        $alertSuccessText->name = 'input_alertSuccessText';
+        $alertSuccessText->label = $this->_('The message after successful submission');
+        $alertSuccessText->value = $this->input_alertSuccessText;
+        $alertText = $this->_('This text will be displayed after a form was submitted successfully.') . ' ';
+        $alertText .= $this->_('If nothing is entered, a default text will be displayed instead.');
+        $alertSuccessText->description = $alertText;
+        $alertSuccessText->notes = $this->_('Can be overwritten on each form.');
+        $alertSuccessText->useLanguages = true;
+        $fieldsetAlerts->add($alertSuccessText);
 
-            // Error message after failed submission
-            $alertErrorText = wire('modules')->get('InputfieldText');
-            $alertErrorText->name = 'input_alertErrorText';
-            $alertErrorText->label = $this->_('The message after submission failed');
-            $alertErrorText->value = $this->input_alertErrorText;
-            $alertText = $this->_('This text will be displayed after errors on form submission.') . ' ';
-            $alertText .= $this->_('If nothing is entered, a default text will be displayed instead.');
-            $alertErrorText->description = $alertText;
-            $alertErrorText->notes = $this->_('Can be overwritten on each form.');
-            $alertErrorText->useLanguages = true;
-            $fieldsetAlerts->add($alertErrorText);
+        // Error message after failed submission
+        $alertErrorText = wire('modules')->get('InputfieldText');
+        $alertErrorText->name = 'input_alertErrorText';
+        $alertErrorText->label = $this->_('The message after submission failed');
+        $alertErrorText->value = $this->input_alertErrorText;
+        $alertText = $this->_('This text will be displayed after errors on form submission.') . ' ';
+        $alertText .= $this->_('If nothing is entered, a default text will be displayed instead.');
+        $alertErrorText->description = $alertText;
+        $alertErrorText->notes = $this->_('Can be overwritten on each form.');
+        $alertErrorText->useLanguages = true;
+        $fieldsetAlerts->add($alertErrorText);
 
         $fieldset1->add($fieldsetAlerts);
 
@@ -804,124 +820,124 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $fieldsetMarkup->label = $this->_('Settings for the markup and styling of the form and the input fields');
         $fieldsetMarkup->collapsed = 1;
 
-            // Remove wrappers from input fields
-            $wrappers = $this->modules->get('InputfieldCheckboxes');
-            $wrappers->label = $this->_('Add wrappers to the form fields');
-            $wrappers->name = 'input_wrappers';
-            $wrappers->addOption('inputwrapper', $this->_('Add wrapper div for the inputfield (input wrapper)'));
-            $wrappers->addOption('fieldwrapper', $this->_('Add outer wrapper div for each formfield (field wrapper)'));
-            $wrappers->value = $this->input_wrappers;
-            $fieldsetMarkup->add($wrappers);
+        // Remove wrappers from input fields
+        $wrappers = $this->modules->get('InputfieldCheckboxes');
+        $wrappers->label = $this->_('Add wrappers to the form fields');
+        $wrappers->name = 'input_wrappers';
+        $wrappers->addOption('inputwrapper', $this->_('Add wrapper div for the inputfield (input wrapper)'));
+        $wrappers->addOption('fieldwrapper', $this->_('Add outer wrapper div for each formfield (field wrapper)'));
+        $wrappers->value = $this->input_wrappers;
+        $fieldsetMarkup->add($wrappers);
 
-            // Add wrapper div after form tag to wrap all elements of the form
-            $wrapperFormElements = $modules->get('InputfieldCheckbox');
-            $wrapperFormElements->attr('name', 'input_wrapperFormElements');
-            $wrapperFormElements->attr('checked', $this->input_wrapperFormElements === 1 ? 'checked' : '');
-            $wrapperFormElements->label = $this->_('Add an additional wrapper div after opening and before closing form tag');
-            $wrapperFormElements->label2 = $this->_('Add a wrapper div over all form elements');
-            $wrapperFormElements->notes = $this->_('In some rare cases you need to wrap all form elements inside an extra wrapper div, which is between the opening and closing form tag. For this case you can add the div by checking the box.');
-            $wrapperFormElements->columnWidth = 50;
-            $fieldsetMarkup->add($wrapperFormElements);
+        // Add wrapper div after form tag to wrap all elements of the form
+        $wrapperFormElements = $modules->get('InputfieldCheckbox');
+        $wrapperFormElements->attr('name', 'input_wrapperFormElements');
+        $wrapperFormElements->attr('checked', $this->input_wrapperFormElements === 1 ? 'checked' : '');
+        $wrapperFormElements->label = $this->_('Add an additional wrapper div after opening and before closing form tag');
+        $wrapperFormElements->label2 = $this->_('Add a wrapper div over all form elements');
+        $wrapperFormElements->notes = $this->_('In some rare cases you need to wrap all form elements inside an extra wrapper div, which is between the opening and closing form tag. For this case you can add the div by checking the box.');
+        $wrapperFormElements->columnWidth = 50;
+        $fieldsetMarkup->add($wrapperFormElements);
 
-            $wrapperFormElementsCSSClass = $modules->get('InputfieldText');
-            $wrapperFormElementsCSSClass->attr('name', 'input_wrapperFormElementsCSSClass');
-            $wrapperFormElementsCSSClass->attr('value', $this->input_wrapperFormElementsCSSClass);
-            $wrapperFormElementsCSSClass->label = $this->_('Add a CSS class to to the extra wrapper div');
-            $wrapperFormElementsCSSClass->notes = $this->_('By default, an unique id will be added, but if you need a special styling class, you can enter the name of the class in this field.');
-            $wrapperFormElementsCSSClass->showIf = "input_wrapperFormElements=1";
-            $wrapperFormElementsCSSClass->columnWidth = 50;
-            $fieldsetMarkup->add($wrapperFormElementsCSSClass);
+        $wrapperFormElementsCSSClass = $modules->get('InputfieldText');
+        $wrapperFormElementsCSSClass->attr('name', 'input_wrapperFormElementsCSSClass');
+        $wrapperFormElementsCSSClass->attr('value', $this->input_wrapperFormElementsCSSClass);
+        $wrapperFormElementsCSSClass->label = $this->_('Add a CSS class to to the extra wrapper div');
+        $wrapperFormElementsCSSClass->notes = $this->_('By default, an unique id will be added, but if you need a special styling class, you can enter the name of the class in this field.');
+        $wrapperFormElementsCSSClass->showIf = "input_wrapperFormElements=1";
+        $wrapperFormElementsCSSClass->columnWidth = 50;
+        $fieldsetMarkup->add($wrapperFormElementsCSSClass);
 
-            // Select CSS framework
-            $frameworkSelect = $modules->get('InputfieldSelect');
-            $frameworkSelect->attr('name', 'input_framework');
-            $frameworkSelect->label = $this->_('Output rendering');
-            $frameworkSelect->description = $this->_('Select a framework for the markup output if you want');
-            $frameWorkFiles = scandir($this->modulePath . 'CSSClasses' . DIRECTORY_SEPARATOR);
-            unset($frameWorkFiles['none.json']);
-            array_unshift($frameWorkFiles, 'none.json');
-            $frameWorkOptions = [];
-            foreach ($frameWorkFiles as $option) {
-                if ($option != '.' && $option != '..') {
-                    $file_parts = pathinfo($option);
-                    $ext = $file_parts['extension'];
-                    if ($ext == 'json') {
-                        $label = ucfirst(str_replace('.json', '', $option));
-                        if ($label == 'None') {
-                            $label = $this->_('No framework');
-                        }
-                        $frameWorkOptions[$option] = $label;
+        // Select CSS framework
+        $frameworkSelect = $modules->get('InputfieldSelect');
+        $frameworkSelect->attr('name', 'input_framework');
+        $frameworkSelect->label = $this->_('Output rendering');
+        $frameworkSelect->description = $this->_('Select a framework for the markup output if you want');
+        $frameWorkFiles = scandir($this->modulePath . 'CSSClasses' . DIRECTORY_SEPARATOR);
+        unset($frameWorkFiles['none.json']);
+        array_unshift($frameWorkFiles, 'none.json');
+        $frameWorkOptions = [];
+        foreach ($frameWorkFiles as $option) {
+            if ($option != '.' && $option != '..') {
+                $file_parts = pathinfo($option);
+                $ext = $file_parts['extension'];
+                if ($ext == 'json') {
+                    $label = ucfirst(str_replace('.json', '', $option));
+                    if ($label == 'None') {
+                        $label = $this->_('No framework');
                     }
+                    $frameWorkOptions[$option] = $label;
                 }
             }
-            $frameworkSelect->addOptions(array_unique($frameWorkOptions));
-            $frameworkSelect->attr('value', $this->input_framework);
-            $frameworkSelect->required = 1;
-            $fieldsetMarkup->add($frameworkSelect);
+        }
+        $frameworkSelect->addOptions(array_unique($frameWorkOptions));
+        $frameworkSelect->attr('value', $this->input_framework);
+        $frameworkSelect->required = 1;
+        $fieldsetMarkup->add($frameworkSelect);
 
-            // Append labels on checkboxes and radio buttons after input tag
-            $appendLabels = $this->modules->get('InputfieldCheckboxes');
-            $appendLabels->label = $this->_('Append the label after the input tag on checkboxes and radios');
-            $appendLabels->name = 'input_appendLabel';
-            $appendLabels->addOption('appendcheckbox', $this->_('Append label on checkboxes'));
-            $appendLabels->addOption('appendradio', $this->_('Append label on radio buttons'));
-            $appendLabels->value = $this->input_appendLabel;
-            $appendLabels->description = $this->_('By default, radio and checkbox tags are wrapped by their label tag. If you want to append the label tag after the input tag, please check the appropriate box.');
-            $appendLabels->notes = $this->_('Can be overwritten on each form.');
-            $fieldsetMarkup->add($appendLabels);
+        // Append labels on checkboxes and radio buttons after input tag
+        $appendLabels = $this->modules->get('InputfieldCheckboxes');
+        $appendLabels->label = $this->_('Append the label after the input tag on checkboxes and radios');
+        $appendLabels->name = 'input_appendLabel';
+        $appendLabels->addOption('appendcheckbox', $this->_('Append label on checkboxes'));
+        $appendLabels->addOption('appendradio', $this->_('Append label on radio buttons'));
+        $appendLabels->value = $this->input_appendLabel;
+        $appendLabels->description = $this->_('By default, radio and checkbox tags are wrapped by their label tag. If you want to append the label tag after the input tag, please check the appropriate box.');
+        $appendLabels->notes = $this->_('Can be overwritten on each form.');
+        $fieldsetMarkup->add($appendLabels);
 
-            $fieldsetStyle = $modules->get('InputfieldFieldset');
-            $fieldsetStyle->label = $this->_('Custom CSS classes');
-            $fieldsetStyle->collapsed = 1;// by default, this fieldset should be collapsed
-            $fieldsetStyle->description = $this->_('You can overwrite each CSS class with your own class name(s). If you want to add multiple classes at the same time please separate them with a whitespace (fe class1 class2).');
+        $fieldsetStyle = $modules->get('InputfieldFieldset');
+        $fieldsetStyle->label = $this->_('Custom CSS classes');
+        $fieldsetStyle->collapsed = 1;// by default, this fieldset should be collapsed
+        $fieldsetStyle->description = $this->_('You can overwrite each CSS class with your own class name(s). If you want to add multiple classes at the same time please separate them with a whitespace (fe class1 class2).');
 
-                // Add your own CSS classes
-                //  get all class field names as an array
-                $cssClassFields = array_keys((array)$this->defaultClasses);
-                $fields = [];
-                foreach ($cssClassFields as $field) {
-                    $label = substr(str_replace('_', ' ', $field), 0, -5);
-                    $fields['input_' . $field] = sprintf($this->_('CSS class for the %s'), $this->_($label));
-                }
-                $i = 0;
-                foreach ($fields as $fieldName => $label) {
-                    $i++;
-                    $fieldClass = substr($fieldName, 6);
-                    ${'css-' . $i} = $modules->get('InputfieldText');
-                    ${'css-' . $i}->label = $label;
-                    ${'css-' . $i}->attr('name', $fieldName);
-                    ${'css-' . $i}->attr('value', $this->$fieldName ?: '');
-                    if (isset($this->defaultClasses->$fieldClass)) {
-                        ${'css-' . $i}->notes($this->_('Current class') . ': ' . $this->defaultClasses->$fieldClass);
-                    }
-                    $fieldsetStyle->add(${'css-' . $i});
-                }
-                $fieldsetMarkup->add($fieldsetStyle);
+        // Add your own CSS classes
+        //  get all class field names as an array
+        $cssClassFields = array_keys((array)$this->defaultClasses);
+        $fields = [];
+        foreach ($cssClassFields as $field) {
+            $label = substr(str_replace('_', ' ', $field), 0, -5);
+            $fields['input_' . $field] = sprintf($this->_('CSS class for the %s'), $this->_($label));
+        }
+        $i = 0;
+        foreach ($fields as $fieldName => $label) {
+            $i++;
+            $fieldClass = substr($fieldName, 6);
+            ${'css-' . $i} = $modules->get('InputfieldText');
+            ${'css-' . $i}->label = $label;
+            ${'css-' . $i}->attr('name', $fieldName);
+            ${'css-' . $i}->attr('value', $this->$fieldName ?: '');
+            if (isset($this->defaultClasses->$fieldClass)) {
+                ${'css-' . $i}->notes($this->_('Current class') . ': ' . $this->defaultClasses->$fieldClass);
+            }
+            $fieldsetStyle->add(${'css-' . $i});
+        }
+        $fieldsetMarkup->add($fieldsetStyle);
         $fieldset1->add($fieldsetMarkup);
 
         $fieldsetAssets = $modules->get('InputfieldFieldset');
         $fieldsetAssets->label = $this->_('Remove stylesheets and scripts');
         $fieldsetAssets->collapsed = 1;
 
-            // Remove JS on Frontend
-            $removeJS = $modules->get('InputfieldCheckbox');
-            $removeJS->attr('name', 'input_removeJS');
-            $removeJS->attr('checked', $this->input_removeJS === 1 ? 'checked' : '');
-            $removeJS->label = $this->_('Javascript setting');
-            $removeJS->label2 = $this->_('Remove frontendforms.js from template');
-            $removeJS->notes = $this->_('A small JavaScript for a seconds counter and show/hide passwords will be added to the template by default before the closing body tag. You can remove it by checking the box.');
-            $removeJS->columnWidth = 50;
-            $fieldsetAssets->add($removeJS);
+        // Remove JS on Frontend
+        $removeJS = $modules->get('InputfieldCheckbox');
+        $removeJS->attr('name', 'input_removeJS');
+        $removeJS->attr('checked', $this->input_removeJS === 1 ? 'checked' : '');
+        $removeJS->label = $this->_('Javascript setting');
+        $removeJS->label2 = $this->_('Remove frontendforms.js from template');
+        $removeJS->notes = $this->_('A small JavaScript for a seconds counter and show/hide passwords will be added to the template by default before the closing body tag. You can remove it by checking the box.');
+        $removeJS->columnWidth = 50;
+        $fieldsetAssets->add($removeJS);
 
-            // Remove CSS on Frontend
-            $removeCSS = $modules->get('InputfieldCheckbox');
-            $removeCSS->attr('name', 'input_removeCSS');
-            $removeCSS->attr('checked', $this->input_removeCSS === 1 ? 'checked' : '');
-            $removeCSS->label = $this->_('CSS setting');
-            $removeCSS->label2 = $this->_('Remove frontendforms.css from template');
-            $removeCSS->notes = $this->_('A small CSS file to hide the honeypot input field will be added to the template by default. If you want to add this small code to your own CSS files you can remove the embedding of this file by checking the box.');
-            $removeCSS->columnWidth = 50;
-            $fieldsetAssets->add($removeCSS);
+        // Remove CSS on Frontend
+        $removeCSS = $modules->get('InputfieldCheckbox');
+        $removeCSS->attr('name', 'input_removeCSS');
+        $removeCSS->attr('checked', $this->input_removeCSS === 1 ? 'checked' : '');
+        $removeCSS->label = $this->_('CSS setting');
+        $removeCSS->label2 = $this->_('Remove frontendforms.css from template');
+        $removeCSS->notes = $this->_('A small CSS file to hide the honeypot input field will be added to the template by default. If you want to add this small code to your own CSS files you can remove the embedding of this file by checking the box.');
+        $removeCSS->columnWidth = 50;
+        $fieldsetAssets->add($removeCSS);
 
         $fieldset1->add($fieldsetAssets);
         $inputfields->add($fieldset1);
@@ -990,25 +1006,25 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $fieldsetsecurity1->label = $this->_('Security measure 1: Maximum failed attempts');
         $fieldsetsecurity1->collapsed = 1;
 
-            // set max number of failed attempts
-            $maxAttempts = $this->modules->get('InputfieldInteger');
-            $maxAttempts->label = $this->_('Max number of failed attempts');
-            $maxAttempts->name = 'input_maxAttempts';
-            $maxAttempts->value = $this->input_maxAttempts;
-            $maxAttempts->min = 0;
-            $maxAttempts->description = $this->_('Please set the max number of failed attempts for submitting a form.');
-            $maxAttempts->notes = $this->_('If set to 0 then this feature is disabled. After reaching the limit the user will be blocked by using a session and all browser windows have to be closed to remove the blocking.');
-            $maxAttempts->columnWidth = 50;
-            $fieldsetsecurity1->add($maxAttempts);
+        // set max number of failed attempts
+        $maxAttempts = $this->modules->get('InputfieldInteger');
+        $maxAttempts->label = $this->_('Max number of failed attempts');
+        $maxAttempts->name = 'input_maxAttempts';
+        $maxAttempts->value = $this->input_maxAttempts;
+        $maxAttempts->min = 0;
+        $maxAttempts->description = $this->_('Please set the max number of failed attempts for submitting a form.');
+        $maxAttempts->notes = $this->_('If set to 0 then this feature is disabled. After reaching the limit the user will be blocked by using a session and all browser windows have to be closed to remove the blocking.');
+        $maxAttempts->columnWidth = 50;
+        $fieldsetsecurity1->add($maxAttempts);
 
-            $logFailedAttempts = $modules->get('InputfieldCheckbox');
-            $logFailedAttempts->attr('name', 'input_logFailedAttempts');
-            $logFailedAttempts->attr('checked', $this->input_logFailedAttempts == '1' ? 'checked' : '');
-            $logFailedAttempts->label = $this->_('Log IPs of blocked visitors');
-            $logFailedAttempts->description = $this->_('If the box is checked, an entry with the IP address of the visitor, the form id and the date will be stored in the logfiles after the visitor was blocked.');
-            $logFailedAttempts->notes = $this->_('Please note, that you have to inform your users in your privacy policy, that the IP address will be stored in this case.');
-            $logFailedAttempts->columnWidth = 50;
-            $fieldsetsecurity1->add($logFailedAttempts);
+        $logFailedAttempts = $modules->get('InputfieldCheckbox');
+        $logFailedAttempts->attr('name', 'input_logFailedAttempts');
+        $logFailedAttempts->attr('checked', $this->input_logFailedAttempts == '1' ? 'checked' : '');
+        $logFailedAttempts->label = $this->_('Log IPs of blocked visitors');
+        $logFailedAttempts->description = $this->_('If the box is checked, an entry with the IP address of the visitor, the form id and the date will be stored in the logfiles after the visitor was blocked.');
+        $logFailedAttempts->notes = $this->_('Please note, that you have to inform your users in your privacy policy, that the IP address will be stored in this case.');
+        $logFailedAttempts->columnWidth = 50;
+        $fieldsetsecurity1->add($logFailedAttempts);
 
         $fieldset5->add($fieldsetsecurity1);
 
@@ -1016,27 +1032,27 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $fieldsetsecurity2->label = $this->_('Security measure 2: Minimum and maximum time to fill out the form');
         $fieldsetsecurity2->collapsed = 1;
 
-            // add min time in seconds
-            $minTime = $this->modules->get('InputfieldInteger');
-            $minTime->label = $this->_('Min time before form submission');
-            $minTime->name = 'input_minTime';
-            $minTime->value = $this->input_minTime;
-            $minTime->min = 0;
-            $minTime->description = $this->_('Please set the min time in seconds before a form should be submitted.');
-            $minTime->notes = $this->_('If set to 0 then this feature is disabled. This feature measures the time between loading and submitting a form. If it is to fast (fe a spam bot) it will lead to a form error. ');
-            $minTime->columnWidth = 50;
-            $fieldsetsecurity2->add($minTime);
+        // add min time in seconds
+        $minTime = $this->modules->get('InputfieldInteger');
+        $minTime->label = $this->_('Min time before form submission');
+        $minTime->name = 'input_minTime';
+        $minTime->value = $this->input_minTime;
+        $minTime->min = 0;
+        $minTime->description = $this->_('Please set the min time in seconds before a form should be submitted.');
+        $minTime->notes = $this->_('If set to 0 then this feature is disabled. This feature measures the time between loading and submitting a form. If it is to fast (fe a spam bot) it will lead to a form error. ');
+        $minTime->columnWidth = 50;
+        $fieldsetsecurity2->add($minTime);
 
-            // add max time in seconds
-            $maxTime = $this->modules->get('InputfieldInteger');
-            $maxTime->label = $this->_('Max time until form submission');
-            $maxTime->name = 'input_maxTime';
-            $maxTime->value = $this->input_maxTime;
-            $maxTime->min = 0;
-            $maxTime->description = $this->_('Please set the max time in seconds until a form should be submitted.');
-            $maxTime->notes = $this->_('If set to 0 then this feature is disabled. This feature measures the time between loading and submitting a form. If it is to slow (fe a spam bot analyzing the form) it will lead to a form error. ');
-            $maxTime->columnWidth = 50;
-            $fieldsetsecurity2->add($maxTime);
+        // add max time in seconds
+        $maxTime = $this->modules->get('InputfieldInteger');
+        $maxTime->label = $this->_('Max time until form submission');
+        $maxTime->name = 'input_maxTime';
+        $maxTime->value = $this->input_maxTime;
+        $maxTime->min = 0;
+        $maxTime->description = $this->_('Please set the max time in seconds until a form should be submitted.');
+        $maxTime->notes = $this->_('If set to 0 then this feature is disabled. This feature measures the time between loading and submitting a form. If it is to slow (fe a spam bot analyzing the form) it will lead to a form error. ');
+        $maxTime->columnWidth = 50;
+        $fieldsetsecurity2->add($maxTime);
 
         $fieldset5->add($fieldsetsecurity2);
 
@@ -1044,13 +1060,13 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $fieldsetsecurity3->label = $this->_('Security measure 3: Honeypot field');
         $fieldsetsecurity3->collapsed = 1;
 
-            $useHoneypot = $modules->get('InputfieldCheckbox');
-            $useHoneypot->attr('name', 'input_useHoneypot');
-            $useHoneypot->attr('checked', $this->input_useHoneypot == '1' ? 'checked' : '');
-            $useHoneypot->label = $this->_('Add honeypot field to form');
-            $useHoneypot->description = $this->_('If the box is checked, an invisible honeypot field for spam protection will be added to the form.');
-            $useHoneypot->notes = $this->_('It is recommended to use a honeypot field. Disable this feature only if you have a good reason to do so.');
-            $fieldsetsecurity3->add($useHoneypot);
+        $useHoneypot = $modules->get('InputfieldCheckbox');
+        $useHoneypot->attr('name', 'input_useHoneypot');
+        $useHoneypot->attr('checked', $this->input_useHoneypot == '1' ? 'checked' : '');
+        $useHoneypot->label = $this->_('Add honeypot field to form');
+        $useHoneypot->description = $this->_('If the box is checked, an invisible honeypot field for spam protection will be added to the form.');
+        $useHoneypot->notes = $this->_('It is recommended to use a honeypot field. Disable this feature only if you have a good reason to do so.');
+        $fieldsetsecurity3->add($useHoneypot);
 
         $fieldset5->add($fieldsetsecurity3);
 
@@ -1058,26 +1074,26 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $fieldsetsecurity4->label = $this->_('Security measure 4: Using IP blacklist ');
         $fieldsetsecurity4->collapsed = 1;
 
-            // Add wrapper div after form tag to wrap all elements of the form
-            $useIPBan = $modules->get('InputfieldCheckbox');
-            $useIPBan->attr('name', 'input_useIPBan');
-            $useIPBan->attr('checked', $this->input_useIPBan === 1 ? 'checked' : '');
-            $useIPBan->label = $this->_('Check IP of visitors');
-            $useIPBan->label2 = $this->_('Enable checking of visitors IP against blacklist');
-            $useIPBan->description = $this->_('You can prevent IP addresses from viewing your forms, if they might be harmful to your site. By checking/unchecking the box, you can enable/disable the checking against the blacklist.');
-            $useIPBan->notes = $this->_('This only works, if there is at least 1 entry in the next input field');
-            $useIPBan->columnWidth = 50;
-            $fieldsetsecurity4->add($useIPBan);
+        // Add wrapper div after form tag to wrap all elements of the form
+        $useIPBan = $modules->get('InputfieldCheckbox');
+        $useIPBan->attr('name', 'input_useIPBan');
+        $useIPBan->attr('checked', $this->input_useIPBan === 1 ? 'checked' : '');
+        $useIPBan->label = $this->_('Check IP of visitors');
+        $useIPBan->label2 = $this->_('Enable checking of visitors IP against blacklist');
+        $useIPBan->description = $this->_('You can prevent IP addresses from viewing your forms, if they might be harmful to your site. By checking/unchecking the box, you can enable/disable the checking against the blacklist.');
+        $useIPBan->notes = $this->_('This only works, if there is at least 1 entry in the next input field');
+        $useIPBan->columnWidth = 50;
+        $fieldsetsecurity4->add($useIPBan);
 
-            // prevent the following IP addresses from visiting sites of this module on the frontend
-            $preventIPs = $modules->get('InputfieldTextarea');
-            $preventIPs->attr('name', 'input_preventIPs');
-            $preventIPs->label = $this->_('Blacklist of forbidden IPs');
-            $preventIPs->description = $this->_('Please enter every IP address on a new line. Every visit of an IP address listed below prevents the form to be rendered on the frontend. Visitors see an alert box instead, that informs about the banned IP address.');
-            $preventIPs->notes = $this->_('Tip: You can take a look at the logfile for failed login attempts and enter fe. IP addresses that appear very often. Works only if logging failed attempts is enabled.');
-            $preventIPs->attr('value', $this->input_preventIPs);
-            $preventIPs->columnWidth = 50;
-            $fieldsetsecurity4->add($preventIPs);
+        // prevent the following IP addresses from visiting sites of this module on the frontend
+        $preventIPs = $modules->get('InputfieldTextarea');
+        $preventIPs->attr('name', 'input_preventIPs');
+        $preventIPs->label = $this->_('Blacklist of forbidden IPs');
+        $preventIPs->description = $this->_('Please enter every IP address on a new line. Every visit of an IP address listed below prevents the form to be rendered on the frontend. Visitors see an alert box instead, that informs about the banned IP address.');
+        $preventIPs->notes = $this->_('Tip: You can take a look at the logfile for failed login attempts and enter fe. IP addresses that appear very often. Works only if logging failed attempts is enabled.');
+        $preventIPs->attr('value', $this->input_preventIPs);
+        $preventIPs->columnWidth = 50;
+        $fieldsetsecurity4->add($preventIPs);
 
         $fieldset5->add($fieldsetsecurity4);
 
