@@ -128,24 +128,56 @@ class Form extends Tag
 
     /**
      * Set a custom upload path for uploaded files
-     * @param string $path
+     * @param string $folderName
      * @param bool $createfolder
      * @return void
      * @throws WireException
      * @throws Exception
      */
-    public function setUploadPath(string $path, bool $createfolder = false): void
+    public function setUploadPath(string $folderName, bool $createfolder = false): void
     {
-        // check if directory from the given path exists
-        if (!$this->wire('files')->exists($path)) {
+        //sanitize folder name first to remove trailing slashes
+        $folderName = ltrim($folderName, '/');
+        $folderName = rtrim($folderName, '/');
+        $to = $this->wire('config')->paths->assets . 'files/' . $folderName . '/';
+        if ($this->isSubmitted()) {
+            $from = $this->input_uploadPath;
+            $createfolder = true;
+        }
+        if (!$this->wire('files')->exists($to)) {
             if ($createfolder) {
-                $this->wire('files')->mkdir($path);
+                $this->wire('files')->mkdir($to);
             } else {
                 throw new Exception('This directory does not exist, so the upload path could not be changed.');
             }
         }
+        if ($this->isSubmitted()) {
+            $this->saveUploadedFile($from, $to, $folderName);
+        }
         // set the property
-        $this->input_uploadPath = $path;
+        $this->input_uploadPath = $to;
+    }
+
+    /**
+     * Copy uploaded files from the temp_uploads folder to the newly created folder
+     * @param string $from
+     * @param string $to
+     * @param string $folderName
+     * @return void
+     * @throws WireException
+     */
+    private function saveUploadedFile(string $from, string $to, string $folderName): void
+    {
+        $files = $this->wire('files')->find($from);
+        // move files from temp_uploads to the newly created directory
+        if ($files) {
+            if ($this->wire('files')->copy($from, $to)) {
+                foreach ($files as $file) {
+                    // unlink all files
+                    $this->wire('files')->unlink($file);
+                }
+            }
+        }
     }
 
     /**
@@ -465,7 +497,13 @@ class Form extends Tag
         $result = array_intersect($this->getNamesOfInputFields(), $this->getNamesOfInputFields());
         $values = [];
         foreach ($result as $key) {
-            $values[$key] = $this->values[$key];
+            // check if inputfield is a file upload field
+            $formElement = $this->getFormelementByName($key);
+            if ($formElement instanceof InputFile) {
+                $values[$key] = $_FILES[$key]['name'];
+            } else {
+                $values[$key] = $this->values[$key];
+            }
         }
         return $values; // array
     }
@@ -636,6 +674,7 @@ class Form extends Tag
                                 $this->setValues();
                             }
                             if ($v->validate()) {
+
                                 $this->alert->setCSSClass('alert_successClass');
                                 $this->alert->setText($this->getSuccessMsg());
                                 $this->wire('session')->remove('attempts');
