@@ -426,7 +426,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         // takes mail values and put them inside the email template
         $this->addHookBefore('WireMail::send', $this, 'renderEmailTemplate');
         // remove uploaded attachments after successful sending
-        $removeHookID = $this->addHookAfter('WireMail::send', $this, 'removeUploadedFilesAfterSending');
+        $this->addHookAfter('WireMail::send', $this, 'removeUploadedFilesAfterSending');
 
 
         // Show details about the blocked IP address inside a panel
@@ -464,11 +464,6 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                 throw new Exception(sprintf('The HTML template file %s does not exist', $this->input_emailTemplate));
             }
         }
-    }
-
-    public function doNotDeleteFilesAfterSending()
-    {
-
     }
 
     /**
