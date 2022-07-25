@@ -36,7 +36,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     protected string|int $input_addHTML5req = 0; // add HTML5 required attribute or not
     protected array $input_appendLabel = []; // array which contains checkboxes and/or radios
     protected string|int $input_wrapperFormElements = 0; // add extra div over all form elements
-    protected string $input_wrapperFormElementsCSSClass = ''; // the CSS class for the wrapperFormeElements div
+    protected string $input_wrapperFormElementsCSSClass = ''; // the CSS class for the wrapperFormElements div
     protected string|int $input_maxAttempts = 5; // the max number of failed attempts to submit a form
     protected string|int $input_minTime = 3; // min time before a form should be submitted
     protected string|int $input_maxTime = 3600; // max time until a form should be submitted
@@ -70,7 +70,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     /**
      * Set default values for configuration fields
      * These values will be stored in the DB during the installation process
-     * This is necessaray to get them via getModuleConfig() without saving the configuration page
+     * This is necessary to get them via getModuleConfig() without saving the configuration page
      * @return string[]
      */
     public static function getDefaultData(): array
@@ -165,13 +165,13 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         });
 
         /**
-         * Method sendAttachements()
-         * This method is an extension of the WireMail attachement() method
+         * Method sendAttachments()
+         * This method is an extension of the WireMail attachment() method
          * It takes the files from the temp_uploads folder and send it with the email
          * Afterwards the files will be removed from the temp folder
-         * $mail->sendAttachements();
+         * $mail->sendAttachments();
          */
-        $this->wire()->addHookMethod('WireMail::sendAttachements', function ($event) {
+        $this->wire()->addHookMethod('WireMail::sendAttachments', function ($event) {
             $mail = $event->object;
             // get files from the upload folder
             $fileNames = array_slice(scandir($this->input_uploadPath), 2);
@@ -230,7 +230,6 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     /**
      * Get the names of all email templates inside the email_templates folder without the file extension (only names)
      * @return array - a numeric array of email template names
-     * @throws WireException
      */
     protected function getEmailTemplates(): array
     {
@@ -374,7 +373,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     /**
      * Get the name of the site profile installed by extracting the readme file inside the templates' folder
      * Created for future usage in modules based on this module
-     * If pages were created by a modul - the markup could be adapted to the site profile installed
+     * If pages were created by a module - the markup could be adapted to the site profile installed
      * @return string
      * @throws WireException
      */
@@ -398,8 +397,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     public function init()
     {
         // check if LanguageSupport module is installed
-        $languageInstalled = $this->wire('modules')->isInstalled('LanguageSupport');
-        if ($languageInstalled) {
+        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
             //set language id inside a session variable for later usage in url hook
             $this->wire('session')->set('userlang', $this->wire('user')->language->id);
         }
@@ -420,16 +418,16 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $this->addHookAfter('Inputfield::render', $this, 'overwriteExamplesNotes');
         // takes mail values and put them inside the email template
         $this->addHookBefore('WireMail::send', $this, 'renderEmailTemplate');
-        // remove uploaded attachements after successful sending
+        // remove uploaded attachments after successful sending
         $this->addHookAfter('WireMail::send', $this, 'removeUploadedFilesAfterSending');
         // Show details about the blocked IP address inside a panel
         $this->wire->addHook('/detail-view/{ip}', function ($event) {
-            if ($languageInstalled) {
-                // grab current user lang from session
-                $this->wire('user')->language = $this->wire('session')->get('userlang');
-            }
+        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+            // grab current user lang from session
+            $this->wire('user')->language = $this->wire('session')->get('userlang');
+        }
             $out = '';
-            // load the detail viel template file
+            // load the detail-view template file
             include_once($this->wire('config')->paths->siteModules . $this->className . '/detail-view.php');
             return $out;
         });
@@ -803,7 +801,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         /* Markup and styling settings */
         $fieldsetMarkup = $modules->get('InputfieldFieldset');
-        $fieldsetMarkup->label = $this->_('Settings for the markup and styling of the form and the inputfields');
+        $fieldsetMarkup->label = $this->_('Settings for the markup and styling of the form and the input fields');
         $fieldsetMarkup->collapsed = 1;
 
             // Remove wrappers from input fields
@@ -815,7 +813,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $wrappers->value = $this->input_wrappers;
             $fieldsetMarkup->add($wrappers);
 
-            // Add wrapper div after form tag to wrapp all elements of the form
+            // Add wrapper div after form tag to wrap all elements of the form
             $wrapperFormElements = $modules->get('InputfieldCheckbox');
             $wrapperFormElements->attr('name', 'input_wrapperFormElements');
             $wrapperFormElements->attr('checked', $this->input_wrapperFormElements === 1 ? 'checked' : '');
@@ -875,7 +873,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $fieldsetStyle = $modules->get('InputfieldFieldset');
             $fieldsetStyle->label = $this->_('Custom CSS classes');
             $fieldsetStyle->collapsed = 1;// by default, this fieldset should be collapsed
-            $fieldsetStyle->description = $this->_('You can overwrite each CSS class with your own class name(s). If you want to add multiple classes at the same time please separate them with a whitspace (fe class1 class2).');
+            $fieldsetStyle->description = $this->_('You can overwrite each CSS class with your own class name(s). If you want to add multiple classes at the same time please separate them with a whitespace (fe class1 class2).');
 
                 // Add your own CSS classes
                 //  get all class field names as an array
@@ -1036,7 +1034,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $maxTime->value = $this->input_maxTime;
             $maxTime->min = 0;
             $maxTime->description = $this->_('Please set the max time in seconds until a form should be submitted.');
-            $maxTime->notes = $this->_('If set to 0 then this feature is disabled. This feature measures the time between loading and submitting a form. If it is to slow (fe a spam bot analyizing the form) it will lead to a form error. ');
+            $maxTime->notes = $this->_('If set to 0 then this feature is disabled. This feature measures the time between loading and submitting a form. If it is to slow (fe a spam bot analyzing the form) it will lead to a form error. ');
             $maxTime->columnWidth = 50;
             $fieldsetsecurity2->add($maxTime);
 
@@ -1051,7 +1049,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $useHoneypot->attr('checked', $this->input_useHoneypot == '1' ? 'checked' : '');
             $useHoneypot->label = $this->_('Add honeypot field to form');
             $useHoneypot->description = $this->_('If the box is checked, an invisible honeypot field for spam protection will be added to the form.');
-            $useHoneypot->notes = $this->_('It is recommended to use a honepot field. Disable this feature only if you have a good reason to do so.');
+            $useHoneypot->notes = $this->_('It is recommended to use a honeypot field. Disable this feature only if you have a good reason to do so.');
             $fieldsetsecurity3->add($useHoneypot);
 
         $fieldset5->add($fieldsetsecurity3);
@@ -1060,7 +1058,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $fieldsetsecurity4->label = $this->_('Security measure 4: Using IP blacklist ');
         $fieldsetsecurity4->collapsed = 1;
 
-            // Add wrapper div after form tag to wrapp all elements of the form
+            // Add wrapper div after form tag to wrap all elements of the form
             $useIPBan = $modules->get('InputfieldCheckbox');
             $useIPBan->attr('name', 'input_useIPBan');
             $useIPBan->attr('checked', $this->input_useIPBan === 1 ? 'checked' : '');
@@ -1071,7 +1069,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $useIPBan->columnWidth = 50;
             $fieldsetsecurity4->add($useIPBan);
 
-            // prevent the following IP adresses from visiting sites of this module on the frontend
+            // prevent the following IP addresses from visiting sites of this module on the frontend
             $preventIPs = $modules->get('InputfieldTextarea');
             $preventIPs->attr('name', 'input_preventIPs');
             $preventIPs->label = $this->_('Blacklist of forbidden IPs');
@@ -1145,7 +1143,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                     // scan directory if it contains files
                     $files = $this->wire('files')->find($from);
                     if ($files) {
-                        // copy all files to the newly created FrontendForms directory under site/assests/files
+                        // copy all files to the newly created FrontendForms directory under site/assets/files
                         $this->wire('files')->copy($from, $to);
                         // now remove the assets folder and its content form FrontendForms/assets
                         $this->wire('files')->rmdir($from, true);
