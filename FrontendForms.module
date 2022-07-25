@@ -397,8 +397,13 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      */
     public function init()
     {
-        //set language id inside a session variable for later usage in url hook
-        $this->wire('session')->set('userlang', $this->wire('user')->language->id);
+        // check if LanguageSupport module is installed
+        $languageInstalled = $this->wire('modules')->isInstalled('LanguageSupport');
+        if ($languageInstalled) {
+            //set language id inside a session variable for later usage in url hook
+            $this->wire('session')->set('userlang', $this->wire('user')->language->id);
+        }
+
 
         // add CSS and JS to the backend
         $version = $this->getModuleInfo()['version'];
@@ -419,8 +424,10 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $this->addHookAfter('WireMail::send', $this, 'removeUploadedFilesAfterSending');
         // Show details about the blocked IP address inside a panel
         $this->wire->addHook('/detail-view/{ip}', function ($event) {
-            // grab current user lang from session
-            $this->wire('user')->language = $this->wire('session')->get('userlang');
+            if ($languageInstalled) {
+                // grab current user lang from session
+                $this->wire('user')->language = $this->wire('session')->get('userlang');
+            }
             $out = '';
             // load the detail viel template file
             include_once($this->wire('config')->paths->siteModules . $this->className . '/detail-view.php');
@@ -1161,6 +1168,8 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $to = $this->wire('config')->paths->assets . 'files/FrontendForms/';
         $from = $this->wire('config')->paths->siteModules . 'FrontendForms/assets/';
         $this->createFilesDir($from, $to);
+        // create temp_uploads folder
+        $this->wire('files')->mkdir($this->wire('config')->paths->$this . 'temp_uploads');
     }
 
     /**
