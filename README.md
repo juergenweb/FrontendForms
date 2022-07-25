@@ -543,13 +543,18 @@ folder of this module. This is the default folder, for storing the files and if 
 the module grabs the files for attachements from this "temp_uploads" folder and remove all files inside this folder after
 successfull submission.
 So this folder will not be the right place if you want to store files permanently. For this case you have the possibility
-to change the path to another upload folder. 
+to change the upload folder. 
 If you are adding true as second parameter inside the parenthesis, the folder will be created if it does not exist, otherwise you will get 
 an error message, that this folder does not exist.
+All files will be saved at site/assets/files, which is the Processwire files directory
 
 ```php
-$form->setUploadPath($config->paths->assets.'files/mycustomfolder/', true); // the input tag will be wrapped by the label tag
+$form->setUploadPath('mycustomfolder/', true); // the files will be stored at site/assets/files/mycustomfolder/
 ```
+This works before and after POST. If you use this method before POST, then all files will be stored directly inside the 
+given folder.
+If the method is used after POST, then the files will be stored inside the temp_uploads folder first and will be moved to the
+new directory afterwards.
 
 #### IP banning as for security reasons
 You have the possibility to add IP addresses to a black list in the module configuration.
