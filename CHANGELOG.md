@@ -158,3 +158,9 @@ A new statistic section will be added, that shows all IP addresses and the numbe
 or remove them to the blacklist bei clicking a button. 
 A detail button provides more detailed information about the IP address and the blocking events.
 Logging must be enabled in this case.
+
+## [2.1.4] - 2022-07-25
+### Re-writing getValues() and setUploadPath() methods
+The getValues() methods outputs now the names of upload files. If the file was uploaded via a single upload field,
+the value is a string, if it was uploaded via a multiple upload field the value is an array.
+The setUploadPath() method supports now the changing of the upload path after POST too.
