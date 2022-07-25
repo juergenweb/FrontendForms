@@ -93,7 +93,7 @@ if ($form->isValid()) {
     $body .= 'Email: '.$form->getValue('email').'<br>';
     $body .= 'Message: '.$form->getValue('message');
     $m->bodyHTML($body);
-    $m->sendAttachements();
+    $m->sendAttachments();
 
     //$m->mailTemplate($this->input_emailTemplate);
 
