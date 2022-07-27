@@ -130,11 +130,11 @@ class Form extends Tag
      * Set a custom upload path for uploaded files
      * @param string $folderName
      * @param bool $createfolder
+     * @param bool $keepFiles -> delete files afterwards (false) or keep files (true)
      * @return void
      * @throws WireException
-     * @throws Exception
      */
-    public function setUploadPath(string $folderName, bool $createfolder = false): void
+    public function setUploadPath(string $folderName, bool $createfolder = false, bool $keepFiles = false): void
     {
         //sanitize folder name first to remove trailing slashes
         $folderName = ltrim($folderName, '/');
@@ -152,7 +152,7 @@ class Form extends Tag
             }
         }
         if ($this->isSubmitted()) {
-            $this->saveUploadedFile($from, $to, $folderName);
+            $this->saveUploadedFile($from, $to, $folderName, $keepFiles);
         }
         // set the property
         $this->input_uploadPath = $to;
@@ -160,21 +160,24 @@ class Form extends Tag
 
     /**
      * Copy uploaded files from the temp_uploads folder to the newly created folder
-     * @param string $from
-     * @param string $to
-     * @param string $folderName
+     * @param string $from -> the folder where the files are stored
+     * @param string $to -> the folder where the files should be stored
+     * @param string $folderName -> the name of the new folder
+     * @param bool $keepFiles -> should the files in the temp folder be kept (true) or deleted afterwards (false)
      * @return void
      * @throws WireException
      */
-    private function saveUploadedFile(string $from, string $to, string $folderName): void
+    private function saveUploadedFile(string $from, string $to, string $folderName, bool $keepFiles): void
     {
         $files = $this->wire('files')->find($from);
         // move files from temp_uploads to the newly created directory
         if ($files) {
             if ($this->wire('files')->copy($from, $to)) {
-                foreach ($files as $file) {
-                    // unlink all files
-                    $this->wire('files')->unlink($file);
+                if(!$keepFiles){
+                    foreach ($files as $file) {
+                        // unlink all files
+                        $this->wire('files')->unlink($file);
+                    }
                 }
             }
         }
