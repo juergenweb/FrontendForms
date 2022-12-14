@@ -1,0 +1,2232 @@
+<?php
+declare(strict_types=1);
+
+namespace ProcessWire;
+
+/*
+ * FrontendForms module for ProcessWire to create and validate forms on the frontend
+ *
+ * Created by Jürgen K.
+ * https://github.com/juergenweb
+ * File name: FrontendForms.module
+ * Created: 03.07.2022
+ */
+
+// Require the classloaders
+wire('classLoader')->addNamespace('Valitron', __DIR__ . '/valitron/src');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Textelements');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Textelements/Defaults');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Miscellaneous');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Wrapper');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Captcha');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Captcha/variants');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Images');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Datalist');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Inputs');
+wire('classLoader')->addNamespace('FrontendForms',
+    __DIR__ . '/Formelements/Inputelements/Inputs/defaults');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Select');
+wire('classLoader')->addNamespace('FrontendForms',
+    __DIR__ . '/Formelements/Inputelements/Select/defaults');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Textarea');
+wire('classLoader')->addNamespace('FrontendForms',
+    __DIR__ . '/Formelements/Inputelements/Textarea/defaults');
+
+use Exception;
+use Valitron\Validator;
+
+class FrontendForms extends WireData implements Module, ConfigurableModule
+{
+
+    // use API path to the GitHub repository for the 100 most common passwords
+    const TOP_PASSWORDS = 'https://api.github.com/repos/danielmiessler/SecLists/contents/Passwords/Common-Credentials/10-million-password-list-top-100.txt';
+    // This url contains the commits for the passwords including the dates of the commits (used for last modification date)
+    const LAST_PASSWORDS_MODIFICATION_URL = 'https://api.github.com/repos/danielmiessler/SecLists/commits?path=/Passwords/Common-Credentials/10-million-password-list-top-100.txt';
+
+    // the validator object
+    protected Validator $Validator;
+
+    /* Password field */
+    protected Field $password_field; // the system password field with the name "pass"
+    protected InputfieldPassword $password_object; // an object of the InputfieldPassword
+
+    protected string $passwordPath = ''; // path to the top 100 passwords.txt file
+    protected array $requirements = []; // the requirements as set in the pass field or in the module
+    protected string $default_dateformat = ''; // the default date format as set in the processwire configuration file
+    protected array $passwordList = []; // array that hold all passwords from passwords.txt
+    protected string $last_check = ''; // date of the last monthly check of passwords
+    protected array $blacklist = []; // array of all passwords inside the blacklist as stored inside the db
+
+    protected string $modulePath = ''; // path to this module folder
+    protected array $moduleConfig = []; // array that hold all module config values
+    protected string $lang = 'en'; // default language
+
+    /* File uploads */
+    protected string $input_uploadPath = ''; // the path to the folder for uploaded files
+    protected bool $keepFiles = false; // keep files after attachments were sent (true) or delete them (false)
+
+    /* Assets */
+    protected string|int $input_removeJS = 0; // remove module JS or not (frontend)
+    protected string|int $input_removeCSS = 0; // remove module CSS or not (frontend)
+
+    /* Markup */
+    protected object $defaultClasses; // all class names for the form
+    protected string $input_requiredHintPosition = 'top'; // default position for the required text hint
+    protected array $input_wrappers = []; // hold the name of the wrappers which should be removed
+    protected array $input_appendLabel = []; // array which contains checkboxes and/or radios
+    protected string|int $input_wrapperFormElements = 0; // add extra div over all form elements
+    protected string $input_wrapperFormElementsCSSClass = ''; // the CSS class for the wrapperFormElements div
+    protected string $input_framework = 'none.json'; // default framework selection
+    protected string|int $input_showasterisk = 1; // show asterisk on required fields
+
+    /* Email configuration */
+    protected string $input_emailTemplate = 'template_1.html'; // default email template
+    protected array $mailProperties = []; // array of placeholder variables for HTML templates
+    protected array $emailTemplates = []; // email template names as numeric array
+    protected string $emailTemplatesPath = ''; // path to the email templates folder
+    protected array $mailPlaceholders = []; //  array the holds all custom mail properties for placeholder attributes as placeholder => value
+    protected string $bodyHTML = ''; // declare property from WireMail class
+    protected string $body = ''; // declare property from WireMail class
+
+    /* Messages */
+    protected string $input_requiredText = ''; // Text that should be displayed on each form for required fields
+    protected string $input_alertSuccessText = ''; // Text that should be displayed after successful submission
+    protected string $input_alertErrorText = ''; // Text that should be displayed after failed submission
+
+    /* Max attempts */
+    protected string|int $input_maxAttempts = 5; // the max number of failed attempts to submit a form
+    protected string|int $input_logFailedAttempts = 0; // by default, failed login attempts will not be logged
+
+    // Time measurement
+    protected string|int $input_minTime = 3; // min time before a form should be submitted
+    protected string|int $input_maxTime = 3600; // max time until a form should be submitted
+
+    /* IP blacklist */
+    protected string|int $input_useIPBan = 1; // by default, IP addresses on the blacklist cannot view the forms
+    protected string $input_preventIPs = ''; // These IP addresses are excluded from visiting a form in on the site
+
+    /* CAPTCHA text settings */
+    protected string $input_captchaCharset = ''; // the characters that should be used to create the random text string
+    protected string|int $input_captchaHeight = 60; // the height of the captcha image
+    protected string|int $input_captchaWidth = 180; // the width of the captcha image
+    protected string $input_captchaTextColor = ''; // the text color of the captcha image
+    protected string|int $input_captchaFontsize = 20; // the font size of the captcha text
+    protected string $input_captchaFontFamily = ''; // set the path to the folder where the font is located, that should be used
+    protected array $input_captchaFonts = []; // array of all fonts found under the site tree
+    protected string|int|null $input_charactersOffLine = 0; // set the characters off the line or in one line
+
+    /* CAPTCHA background */
+    protected string $input_bgcolorchooser = 'random'; // use random or custom background colors
+    protected string|int $input_bgnumberOfColors = 1; // the number of colors used for background
+    protected string $input_bgCustomColors = '#ddd'; // the pre-defined custom color used for the background
+
+    /* CAPTCHA distortion lines */
+    protected string|int $input_captchaNumberOfLines = 5; // the number of distortion lines over the captcha image
+    protected string $input_colorchooser = 'random'; // use random or custom line colors
+    protected string $input_captchaLinesColor = '#fff'; // the color of the distortion lines
+    protected string|int $input_numberOfColorsOfLines = 1; // the number of colors used for the distortion lines
+
+    /* CAPTCHA image filters */
+    protected int|string $input_blurlevel = 0; // the level of the blur effect for images
+    protected int|string $input_pixelatelevel = 0; // the level of the pixelate effect for images
+    protected int|string|null $input_grayscale = 0; // add or remove grayscale effect
+
+    /* CAPTCHA general */
+    protected string $imagePath = ''; // the path to the directory where all captcha images are stored
+    protected string $input_captchaType = 'none'; // enable or disable captcha on forms by entering the class name or none
+
+    /**
+     * Get all meta data for the module
+     * @return array
+     */
+    public static function getModuleInfo(): array
+    {
+        return [
+            'title' => 'FrontendForms',
+            'summary' => 'Create forms and validate them using the Valitron library.',
+            'author' => "Jürgen Kern",
+            'href' => 'https://github.com/juergenweb/FrontendForms',
+            'version' => '2.1.9',
+            'singular' => true,
+            'autoload' => true,
+            'requires' => ['PHP>=8.1.0', 'ProcessWire>=3.0.181']
+        ];
+    }
+
+    /**
+     * Set default values for configuration fields
+     * These values will be stored in the DB during the installation process
+     * This is necessary to get them via getModuleConfig() without saving the configuration page after the installation
+     * If the values are not stored inside the DB, they are not reachable via getModuleConfig();
+     * @return string[]
+     */
+    public static function getDefaultData(): array
+    {
+        return [
+            'input_showasterisk' => 1,
+            'input_requiredHintPosition' => 'top',
+            'input_wrappers' => ['inputwrapper', 'fieldwrapper'],
+            'input_wrapperFormElements' => 0,
+            'input_wrapperFormElementsCSSClass' => '',
+            'input_removeJS' => 0,
+            'input_removeCSS' => 0,
+            'input_framework' => 'none.json',
+            'input_appendLabel' => [],
+            'input_emailTemplate' => 'template_1.html',
+            'input_dateformat' => 'Y-m-d',
+            'input_timeformat' => 'H:i a',
+            'input_privacy' => '',
+            'input_maxAttempts' => 5,
+            'input_minTime' => 5,
+            'input_maxTime' => 3600,
+            'input_useHoneypot' => 1,
+            'input_logFailedAttempts' => 0,
+            'input_useIPBan' => 1,
+            'input_preventIPs' => '',
+            'input_requiredText' => '',
+            'input_input_alertSuccessText' => '',
+            'input_input_alertErrorText' => '',
+            'input_captchaType' => 'none',
+            'input_captchaCharset' => 'abcdefghijklmnpqrstuvwxyz123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+            'input_captchaHeight' => 50,
+            'input_captchaWidth' => 150,
+            'input_bgcolorchooser' => 'custom',
+            'input_bgnumberOfColors' => 5,
+            'input_bgCustomColors' => '#ddd',
+            'input_captchaTextColor' => '#666',
+            'input_captchaFontsize' => 20,
+            'input_captchaFontFamily' => '',
+            'input_captchaNumberOfLines' => '10',
+            'input_colorchooser' => 'random',
+            'input_captchaLinesColor' => '#fff',
+            'input_numberOfColorsOfLines' => 1,
+            'input_captchaNumberOfCharacters' => 4,
+            'input_charactersOffLine' => 0,
+            'input_blurlevel' => 0,
+            'input_pixelatelevel' => 0,
+            'input_grayscale' => 0,
+            'input_blacklist' => '',
+            'toppasswords_download' => '',
+            'last_check' => '',
+            'github_modified' => ''
+        ];
+    }
+
+    /**
+     * @throws WireException
+     */
+    public function __construct()
+    {
+
+        parent::__construct();
+
+        // add the appropriate values to properties, so you can get them everywhere inside the class
+        $this->modulePath = $this->wire('config')->paths->$this; // set relative path to this module
+        $this->moduleConfig = $this->wire('modules')->getConfig($this);
+        $this->imagePath = $this->modulePath . 'captchaimages/'; // path to the images for the CAPTCHA
+        $this->passwordPath = $this->modulePath . 'passwords.txt'; // path to password.txt file
+        $this->emailTemplatesPath = $this->modulePath . 'email_templates';//  set the path to the email templates folder
+        $this->input_uploadPath = $this->modulePath . 'temp_uploads';// set the path to the upload folder for files
+
+        //  create and set a property of each configuration setting from DB
+        foreach ($this->moduleConfig as $key => $value) {
+            $this->$key = $value;
+        }
+
+        if ($this->input_blacklist) {
+            $this->blacklist = explode("\n", $this->input_blacklist);
+        } // array if all passwords in the blacklist
+
+        // create numeric array of all available email templates inside the email folder
+        $this->setEmailTemplates();
+
+        // Create Valitron Validator instance
+        $this->Validator = new Validator();
+        //  set lang directory for validator
+        $this->Validator::langDir(__DIR__ . '/lang');
+        //  set lang for validator
+        $this->Validator::lang($this->getLang());
+        include_once(__DIR__ . '/valitron/customValidators.php');
+
+        //get all classes from the currently loaded framework from the folder CSSClasses
+        $this->defaultClasses = json_decode(file_get_contents($this->modulePath . 'CSSClasses/' . $this->input_framework));
+    }
+
+    /**
+     * Get the response of a GitHub repository page by a given url
+     * @param string $url
+     * @return mixed - returns the json object
+     * @throws WireException
+     * @throws WireException
+     */
+    protected function getDataFromGitHub(string $url): mixed
+    {
+        // add header for GitHub request to do not get a 403 response
+        // Please note: GitHub only supports a certain number of requests from the same IP
+        // If the maximum of requests is reached a 403 header will be displayed
+        $opts = [
+            'http' => [
+                'method' => 'GET',
+                'header' => [
+                    'User-Agent: PHP'
+                ]
+            ]
+        ];
+        $response = false; // set response to false by default
+        // fetch the response from the given url
+        $context = stream_context_create($opts);
+        $file = file_get_contents($url, false, $context);
+        if ($file) {
+            $response = json_decode($file); // contains all the response data as a json object
+        } else {
+            // there was an error getting the file - write an error log
+            $this->wire('log')->error(E_WARNING);
+            // inform the user with a warning message
+            $this->wire('session')->warning($this->_('Sorry, but the file including the password list could not be downloaded from GitHub.'));
+        }
+        return $response;
+    }
+
+    /**
+     * Method to set multi-language value to a multi-language configuration field
+     * @param string $inputfield_name
+     * @param object $fieldObject
+     * @return void
+     * @throws WireException
+     */
+    protected function setLanguageValue(string $inputfield_name, object $fieldObject): void
+    {
+        $languages = $this->wire('languages');
+        if ($languages) { // check if multi-lang site
+            $fieldObject->useLanguages = true;
+            foreach ($languages as $language) {
+                if ($language->isDefault()) {
+                    $fieldObject->set('value', (string)$this->get($inputfield_name));
+                } else {
+                    $fieldObject->set("value$language", (string)$this->get($inputfield_name . '__' . $language->id));
+                }
+            }
+        }
+    }
+
+    /**
+     * Method to add an email template to the WireMail class
+     * Will be used with the mailTemplate method from the WireMail class
+     * @param WireMail $mail - the mail object of the WireMail class
+     * @param string $templateName - the name of the template that should be used to render the email
+     * @return WireMail
+     * @throws Exception
+     */
+    protected function setEmailTemplate(WireMail $mail, string $templateName): WireMail
+    {
+        if ($templateName !== 'none') {
+            //  run only if a template was chosen
+            if ($templateName === 'inherit') {
+                $templateName = $this->input_emailTemplate; //  use the template from the FrontendForms config
+            } else {
+                if (!in_array($templateName, $this->emailTemplates)) {
+                    //  check if an email template with this name exists
+                    throw new Exception(sprintf('Email template with the name %s does not exist. Possible templates are: %s',
+                        $templateName, implode(', ', $this->emailTemplates)));
+                }
+            }
+            // add a new property to the mail class
+            $mail->email_template = $templateName;
+        }
+        return $mail;
+    }
+
+
+    /**
+     * Add or remove a specific IP value from the input_preventIPs db field and return the string afterwards
+     * @param bool $add
+     * @throws WireException
+     */
+    protected function addRemoveIpFromBanList(bool $add): void
+    {
+        //create array of string
+        $ipAddresses = explode("\n", $this->moduleConfig['input_preventIPs']);
+        if ($add) {
+            // add the value to $ipAddresses
+            $ipAddresses[] = $_POST['submit_save_ip'];
+        } else {
+            // remove the value from $ipAddresses
+            $key = array_search($_POST['submit_remove_ip'], $ipAddresses, true);
+            if ($key !== false) {
+                unset($ipAddresses[$key]);
+            }
+        }
+        // convert it back to a string and save it to the module configuration
+        $data = $this->moduleConfig;
+        $data['input_preventIPs'] = implode("\n", array_unique($ipAddresses));
+        $this->input_preventIPs = $data['input_preventIPs']; // show the values inside the inputfield
+        $this->wire('modules')->saveConfig($this, $data);
+    }
+
+    /**
+     * Grab a txt file by its path and return an array of all values in it
+     * @param string $path
+     * @return array
+     */
+    protected function createArrayOfTxtFile(string $path): array
+    {
+        $listArray = [];
+        // convert txt values to array
+        $fp = @fopen($path, 'r');
+        // Add each line to an array
+        if ($fp) {
+            $listArray = explode("\n", fread($fp, filesize($this->passwordPath)));
+        }
+        return $listArray;
+    }
+
+    /**
+     * Grab all email template files inside the email template folder
+     * Create an array of all email template names without extension
+     * @return void
+     * @throws WireException
+     */
+    protected function setEmailTemplates(): void
+    {
+        $templateFiles = $this->wire('files')->find($this->emailTemplatesPath, ['extensions' => 'html']);
+        $fileNames = [];
+        foreach ($templateFiles as $file) {
+            $fileNames[] = pathinfo($file, PATHINFO_BASENAME);
+        }
+        $this->emailTemplates = $fileNames; // set it to property emailTemplates
+    }
+
+    /**
+     * Get the names of all email templates inside the email_templates folder without the file extension (only names)
+     * @return array - a numeric array of email template names
+     */
+    protected function getEmailTemplates(): array
+    {
+        return $this->emailTemplates;
+    }
+
+    /**
+     * Get the language code (fe de, en,...)
+     * @return string
+     */
+    protected function getLang(): string
+    {
+        return $this->lang;
+    }
+
+    /**
+     * Set the language as language code (fe en, de,..)
+     * Please take a look inside the lang folder which languages are available (the name of the folder is the language code)
+     * @param string $lang
+     * @return void
+     */
+    public function setLang(string $lang): void
+    {
+        $this->lang = trim($lang);
+        $this->Validator::lang($this->lang);
+    }
+
+    /**
+     * Get the name of the site profile installed by extracting the readme file inside the templates' folder
+     * Created for future usage in modules based on this module
+     * If pages were created by a module - the markup could be adapted to the site profile installed
+     * @return string
+     * @throws WireException
+     */
+    public static function getSiteProfileName(): string
+    {
+        // grab readme file if present
+        $self = new self();
+        $readme = $self->wire('files')->fileGetContents($self->wire('config')->paths->templates . '/readme.txt');
+        if ($readme) {
+            //find and extract the link
+            preg_match_all('!https?://\S+!', $readme, $matches);
+            return basename($matches[0][0]) . '.txt';
+        } else {
+            return 'default.txt';
+        }
+    }
+
+    /**
+     * Ready method contains all Hooks to extend the WireMail class
+     * These Hooks need to be inside ready(), do not work inside init()
+     * @return void
+     */
+    public function ready(): void
+    {
+
+        /**
+         * Add a new method "sendAttachments()" to the WireMail class
+         * This method is an extension of the WireMail attachment() method
+         * It takes the files from the temp_uploads folder and send it with the email
+         * Afterwards the files will be removed from the temp folder
+         * Usage: $mail->sendAttachments();
+         * $mail is the WireMail object
+         */
+
+        wire()->addHookMethod('WireMail::sendAttachments', function ($event) {
+            $mail = $event->object;
+            if (!is_null($event->arguments(0))) {
+                // should be the files kept inside the temp_uploads folder (false) or not(true)
+                $this->keepFiles = $event->arguments(0);
+            }
+            // get files from the upload folder
+            $fileNames = array_slice(scandir($this->input_uploadPath), 2);
+            if ($fileNames) {
+                foreach ($fileNames as $file) {
+                    $mail->attachment($this->input_uploadPath . '/' . $file);
+                }
+            }
+            return $mail;
+        });
+
+        /**
+         * Additional Hook method use/change the email template that should be used for sending emails
+         * Add the name of the file including the extension as parameter inside the parenthesis
+         * Usage: $mail->mailTemplate('template_1.html');
+         */
+        wire()->addHookMethod('WireMail::mailTemplate', function ($event) {
+            $mail = $event->object;
+            $template = $event->arguments(0);
+            //  run only if a template was selected
+            if ($template != 'none') {
+                // check if template exists and set it to $mail->email_template property
+                $this->setEmailTemplate($mail, $template);
+            }
+            return $mail;
+        });
+
+        /**
+         * Additional Hook method to use a template for the mail body instead of writing $mail->body manually
+         * Designed only for usage with modules that use the FrontendForms component
+         * Needs 2 argument as parameter: the path to the template, and the module name where the body folder is part of
+         * Usage: $mail->bodyTemplate('template-name.html', 'module-name');
+         */
+        wire()->addHookMethod('WireMail::bodyTemplate', function ($event): WireMail {
+            $mail = $event->object;
+            $template = $event->arguments(0);
+            $moduleName = $mail->moduleName;
+
+            // set all properties to the mail object
+            if ($template) {
+                // path to the template directory for the body templates
+                $mail->body_template_dir_path = $this->wire('config')->paths->siteModules . $moduleName . '/body/';
+                // template name with extension
+                $mail->body_template = $template;
+                // complete path to the body template file
+                $mail->body_template_path = $mail->body_template_dir_path . $mail->body_template;
+            }
+            return $mail;
+        });
+
+        /**
+         * add the new property "title" to WireMailClass
+         * This can be used as additional information under the subject
+         * $mail->title = 'My title'
+         */
+        wire()->addHookMethod('WireMail::title', function ($event) {
+            $mail = $event->object;
+            $title = $event->arguments(0);
+            $mail['title'] = trim((string)$title);
+            return $mail;
+        });
+
+    }
+
+
+    /**
+     * @throws WireException
+     * Init method contains a lot of HOOK methods
+     */
+    public function init()
+    {
+        //create instance of InputfieldPassword and set the requirement settings from field "pass" to it
+        $this->password_field = $this->wire('fields')->get('pass');
+        $this->password_object = new InputfieldPassword();
+        if(!$this->password_field->requirements) // password field was not saved til now, so requirements are not stored
+            $this->password_field->requirements = ['letter', 'digit'];
+        $this->password_object->requirements = $this->password_field->requirements;
+        $this->default_dateformat = $this->wire('config')->dateFormat;
+        $this->passwordList = $this->createArrayOfTxtFile($this->passwordPath);
+
+        // check if LanguageSupport module is installed
+        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+            //set language id inside a session variable for later usage in url hook
+            $this->wire('session')->set('userlang', $this->wire('user')->language->id);
+        }
+
+        /**
+         * Hooks for validation and sanitization of configuration values in the backend
+         */
+        $this->addHookBefore('InputfieldTextarea::processInput', $this, 'validateIP');
+        $this->addHookBefore('InputfieldTextarea::processInput', $this, 'validateColorCodeTextarea');
+        $this->addHookBefore('InputfieldText::processInput', $this, 'sanitizeColorValues');
+        $this->addHookBefore('Inputfield::render', $this, 'addLinkToNotes');
+        $this->addHookBefore('Page::render', $this, 'downloadPasswords');
+
+
+        // add CSS and JS to the backend
+        $version = $this->getModuleInfo()['version'];
+        $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version);
+        //$this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version);
+
+        // add CSS and JS links to the frontend template
+        $this->addHookAfter('Page::render', $this, 'addAssets');
+        // hooks after inputfield integer render
+        $this->addHookAfter('InputfieldInteger::render', $this, 'inputfieldIntegerRenderAfter');
+        // outputs examples how to overwrite global settings
+        $this->addHookAfter('Inputfield::render', $this, 'overwriteExamplesNotes');
+        // remove uploaded attachments after successful sending
+        $this->addHookAfter('WireMail::send', $this, 'removeUploadedFilesAfterSending');
+        // if an image captcha is selected than set the height of the image to 2/3 of the width
+        $this->addHookBefore('Modules::saveConfig', $this, 'setImageHeight');
+        // if an image captcha is selected than set the height of the image to 2/3 of the width
+        $this->addHookBefore('Modules::saveConfig', $this, 'cleanUpBlacklist');
+        // if the pass config field will be saved update the blacklist
+        $this->addHookAfter('Fields::saved', $this, 'updateBlacklist');
+
+        // Hook for checking if update button was pressed by analyzing Post values
+        $this->addHookBefore('Page::render', $this, 'blacklistButtonSubmit');
+        // Hook to check if a button to add an IP to the IP blacklist was submitted
+        $this->addHookBefore('Page::render', $this, 'saveIPButtonSubmit');
+        // Hook to check if a button to remove an IP from the IP blacklist was submitted
+        $this->addHookBefore('Page::render', $this, 'removeIPButtonSubmit');
+        // Hook to find all Font files
+        $this->addHookBefore('Page::render', $this, 'findFontFiles');
+
+        // Show details about the blocked IP address inside a panel
+        $this->wire->addHook('/detail-view/{ip}', function ($event) { // event variable is needed
+            if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+                // grab current user lang from session
+                $this->wire('user')->language = $this->wire('session')->get('userlang');
+            }
+            $out = '';
+            // load the detail-view template file
+            include_once('detail-view.php');
+            return $out;
+        });
+    }
+
+    /**
+     * Set the height of the image to 2/3 of the width if an image CAPTCHA was selected
+     * This is needed because the images are in 3/2 format
+     * @param HookEvent $event
+     * @return void
+     */
+    protected function setImageHeight(HookEvent $event): void
+    {
+        $data = $event->arguments(1);
+        if (isset($data['input_captchaType']) && $data['input_captchaType'] === 'DefaultImageCaptcha') {
+            $data['input_captchaHeight'] = (int)($data['input_captchaWidth'] * 2 / 3);
+        }
+        $event->arguments(1, $data);
+    }
+
+    /**
+     * Add values from the top 100 passwords which fulfill the password requirements to the blacklist
+     * Parameter "overwrite" is only there for future purposes, at the moment it is not used
+     * @param bool $overwrite
+     * @return string - the list of the passwords as a string separated by \n
+     * @throws WireException
+     */
+    protected function addPopularPasswords(bool $overwrite = false): string
+    {
+        //grab current blacklist data
+        if ($overwrite) {
+            // old data will be deleted and only the values from the top 100 list will be used
+            $blacklist = implode("\n", $this->passwordList);
+        } else {
+            // merge blacklist from the db and the password list from passwords.txt
+            $blacklist = array_unique(array_merge($this->blacklist, $this->passwordList), SORT_REGULAR);
+        }
+        // save the list
+        $data = $this->moduleConfig;
+        $data['input_blacklist'] = $this->cleanUpPasswordList($blacklist);
+        // save the current date and time of the list update
+        $data['last_check'] = $this->wire('datetime')->date($this->default_dateformat);
+        $this->wire('modules')->saveConfig($this, $data);
+        //$this->blacklist = $data['input_blacklist'];
+        return $data['input_blacklist'];
+    }
+
+    /**
+     * Takes a list of passwords from a textarea separated by \n and removes all passwords that
+     * do not fulfill the requirements
+     * @param string|array $data
+     * @return string
+     */
+    protected function cleanUpPasswordList(string|array $data): string
+    {
+        if (is_string($data)) {
+            $data = explode("\n", $data);
+        }
+        //filter out empty array values if present
+        $passwords = array_filter(($data));
+        foreach ($passwords as $key => $password) {
+            $password = str_replace(['.', ' ', "\n", "\t", "\r"], '', $password);
+            if (!$this->password_object->isValidPassword($password)) {
+                unset($passwords[$key]);
+            }
+        }
+        // let us remove double entries if present
+        $passwords = array_unique($passwords);
+        $this->password_object->getErrors(true); // suppress error messages in backend
+        // convert it back to a string
+        return implode("\n", $passwords);
+    }
+
+    /**
+     * Remove all forbidden passwords, which do not fulfill the requirements of passwords as set in the config
+     * The goal is to keep the password list as short as possible
+     * Passwords which do not fulfill the requirements do not need to check against the blacklist
+     * BTW all duplicates (if present) will also be removed
+     * @param HookEvent $event
+     * @return void
+     */
+    protected function cleanUpBlacklist(HookEvent $event): void
+    {
+        $class = $event->arguments(0);
+        $data = $event->arguments(1);
+        // run only on FrontendForms module
+        if ($class == 'FrontendForms') {
+            $data['input_blacklist'] = $this->cleanUpPasswordList($data['input_blacklist']);
+
+        }
+        $event->arguments(1, $data);
+    }
+
+
+    /**
+     * Hook method to add passwords from the passwords.txt file to the blacklist if
+     * the update blacklist button was submitted manually
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     */
+    protected function blacklistButtonSubmit(HookEvent $event): void
+    {
+        // check if blacklist update button was submitted
+        if ($this->wire('input')->post->submit_save_passwordblacklist) {
+            $this->input_blacklist = $this->addPopularPasswords();
+            $this->wire->message($this->_('The password blacklist has been updated manually.'));
+        }
+    }
+
+    /**
+     * Check if a save button for adding IP address to the black list was submitted
+     * If yes, then save this IP address to the blacklist of banned IP addresses
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     */
+    protected function saveIPButtonSubmit(HookEvent $event): void
+    {
+        // check if a save ip to blacklist button was submitted
+        if ($this->wire('input')->post->submit_save_ip) {
+            $this->addRemoveIpFromBanList(true);
+            $this->wire->message(sprintf($this->_('The IP address %s was added to the IP blacklist.'),
+                $this->wire('input')->post->submit_save_ip));
+        }
+    }
+
+    /**
+     * Check if a save button for removing an IP address from the black list was submitted
+     * If yes, this IP address will be removed from the blacklist of banned IP addresses
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     */
+    protected function removeIPButtonSubmit(HookEvent $event): void
+    {
+        // check if a save ip to blacklist button was submitted
+        if ($this->wire('input')->post->submit_remove_ip) {
+            $this->addRemoveIpFromBanList(false);
+            $this->wire->message(sprintf($this->_('The IP address %s was removed from the IP blacklist.'),
+                $this->wire('input')->post->submit_remove_ip));
+        }
+    }
+
+    /**
+     * Find all ttf fonts across the whole site and save the names and paths to the input_captcha_fonts property
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     */
+    protected function findFontFiles(HookEvent $event): void
+    {
+        if ($this->wire('input')->post->input_submit_refreshFonts) {
+            $data = $this->moduleConfig;
+            $data['input_captchaFonts'] = $this->findAllFontfiles();
+            $this->input_captchaFonts = $data['input_captchaFonts'];
+            $this->wire('modules')->saveConfig($this, $data);
+        }
+    }
+
+
+    /**
+     * Update blacklist if field pass was saved
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     */
+    protected function updateBlacklist(HookEvent $event): void
+    {
+        $field = $event->arguments(0);
+        if ($field->name == 'pass') {
+            //set the requirements
+            $this->password_object = new InputfieldPassword();
+            $this->password_object->requirements = $field->requirements;
+            $this->addPopularPasswords();
+            $this->wire('session')->message($this->_('Blacklist of passwords from the module FrontendForms was updated'));
+        }
+    }
+
+
+    /**
+     * Sanitize textarea that there is only on item in one line and return the cleaned array
+     * @param string|null $value
+     * @return array
+     */
+    protected function sanitizeMultilineTextarea(string|null $value): array
+    {
+        if ($value != null) {
+            // create array of string with separator \n
+            $items = explode("\n", $value);
+            $value = [];
+            foreach ($items as $item) {
+                $value[] = trim(explode(" ", $item)[0]);
+            }
+            return $value;
+        }
+        return [];
+    }
+
+    /**
+     * Sanitize and validate all IP addresses to be unique inside the textarea input_preventIPs
+     * @param HookEvent $event
+     * @return void
+     */
+    protected function validateIP(HookEvent $event): void
+    {
+        if ($event->object->name == 'input_preventIPs') {
+            $value = $event->arguments(0);
+            // sanitize all values first
+            $dataArray = $this->sanitizeMultilineTextarea($value[$event->object->name]);
+            //validate if all array items contain a valid IP address
+            foreach ($dataArray as $key => $ip) {
+                if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+                    $this->wire->error(sprintf($this->_('%s is not a valid IP address and has therefore been deleted.'),
+                        $ip));
+                    unset($dataArray[$key]);
+                }
+            }
+            // convert it back to string separated by \n
+            $dataArray = implode("\n", array_unique($dataArray));
+            $value->input_preventIPs = $dataArray;
+            $event->arguments(0, $value);
+        }
+    }
+
+    /**
+     * Validate, if value is a valid HEX color code
+     * @param HookEvent $event
+     * @return void
+     */
+    protected function validateColorCodeTextarea(HookEvent $event): void
+    {
+        $inputfields = ['input_captchaLinesColor', 'input_bgCustomColors'];
+        $fieldname = $event->object->name;
+        if (in_array($fieldname, $inputfields)) {
+            $value = $event->arguments(0);
+            if ($value != null) {
+                // sanitize all values first
+                $dataArray = $this->sanitizeMultilineTextarea($value[$event->object->name]);
+                //validate if all array items contain a valid IP address
+                foreach ($dataArray as $key => $item) {
+                    if (!self::checkHex($item)) {
+                        $this->wire->error(sprintf($this->_('%s is not a valid color code and has therefore been deleted.'),
+                            $item));
+                        unset($dataArray[$key]);
+                    }
+                }
+                // create string from array again
+                $dataArray = implode("\n", $dataArray);
+                $value->{$fieldname} = $dataArray;
+                $event->arguments(0, $value);
+            }
+        }
+    }
+
+    /**
+     * Check if value is a valid HEX code
+     * @param string $hex
+     * @return bool
+     */
+    public static function checkHex(string $hex): bool
+    {
+        // Hash prefix is optional.
+        $hex = ltrim($hex, '#');
+        $length = strlen($hex);
+        $valid = ($length === 3 || $length === 6);
+        // Must be a valid hex value.
+        return $valid && ctype_xdigit($hex);
+    }
+
+    /**
+     * Sanitize all color values if they are correct HEX code
+     * @param HookEvent $event
+     * @return void
+     */
+    protected function sanitizeColorValues(HookEvent $event): void
+    {
+        $fieldNames = ['input_captchaTextColor'];
+        $fields = $event->arguments(0);
+        foreach ($fieldNames as $name) {
+            $value = $fields->$name;
+            if (($value) && !(self::checkHex($value))) {
+                $defaultColor = $this->getDefaultData()[$name];
+                $this->wire->error(sprintf($this->_('The color code %s does not correspond to a valid color code in HEX format and has therefore been reset to the default value %s.'),
+                    $value, $defaultColor));
+                // set the color code back to the default value
+                $fields->$name = $defaultColor;
+                $event->arguments(0, $fields);
+            }
+        }
+    }
+
+    /**
+     * Method to add HTML links to field notes
+     * @param HookEvent $event
+     * @return void
+     */
+    protected function addLinkToNotes(HookEvent $event): void
+    {
+        $field = $event->object;
+        if (!in_array($field->name, ['input_dateformat', 'input_timeformat'])) {
+            return;
+        }
+        $field->entityEncodeText = false;
+
+        switch ($field->name) {
+            case('input_dateformat'):
+                $notes = sprintf($this->_('Enter a date format in PHP dateformat syntax (fe Y-m-d). %s'),
+                    '<a href="https://www.php.net/manual/en/datetime.format.php" target="_blank" title="Link opens in a new tab">Read more...</a><br>');
+                $field->notes = $notes . sprintf($this->_(' The default format is %s'), 'Y-m-d');
+                break;
+            case('input_timeformat'):
+                $notes = sprintf($this->_('Enter a time format in PHP dateformat syntax (fe H:i:s). %s'),
+                    '<a href="https://www.php.net/manual/en/datetime.format.php" target="_blank" title="Link opens in a new tab">Read more...</a><br>');
+                $field->notes = $notes . sprintf($this->_(' The default format is %s'), 'H:i a');
+                break;
+        }
+    }
+
+    /**
+     * Request GitHub, download the passwords.txt file and save it to the module root
+     * @return bool - true if download was successful, otherwise false
+     * @throws WireException
+     */
+    protected function downloadPasswordsFromGitHub(): bool
+    {
+        $filedata = $this->getDataFromGitHub(self::TOP_PASSWORDS); //load json data from the txt.file
+        if($filedata) {
+            //get content of file from GitHub
+            $download_content = $this->wire('files')->fileGetContents($filedata->download_url);
+            // create or overwrite existing file passwords.txt
+            return (bool)($this->wire('files')->filePutContents($this->passwordPath, $download_content));
+        }
+        return false;
+    }
+
+
+    /**
+     * Request GitHub once a month and download the top 100 passwords if file has been changed since the last download
+     * To prevent downloading the whole list on every page request, the download will be taken only once per month
+     * The download will be started only if the file passwords.txt does not exist inside or the file was modified on GitHub
+     * @param HookEvent $event
+     * @param bool $do_not_check
+     * @return void
+     * @throws WireException
+     */
+    protected function downloadPasswords(HookEvent $event, bool $do_not_check = false): void
+    {
+        $download = true; // set download true by default
+        // let us check some conditions if it is necessary to update the passwords
+        if ($this->wire('files')->exists($this->passwordPath)) {
+            //check if last update was in the current month
+            if ($this->wire('datetime')->date('Y-m',
+                    filemtime($this->passwordPath)) == $this->wire('datetime')->date('Y-m')) {
+                $download = ($do_not_check) ?? false;
+            }
+        }
+        if ($download) {
+            // save check date to database
+            $this->last_check = $this->wire('datetime')->date($this->default_dateformat);
+            // get last commit data from GitHub
+            $data = $this->getDataFromGitHub(self::LAST_PASSWORDS_MODIFICATION_URL); //load json data from the file
+            $last_update = $data[0]->commit->author->date; // last modification date on GitHub
+            // check if last download was before last update - so we need to download the file again
+            if ((!$this->toppasswords_download) || (strtotime($last_update) > strtotime($this->toppasswords_download))) {
+                if ($this->downloadPasswordsFromGitHub()) {
+                    $data = self::getDefaultData();
+                    $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
+                    $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat, $last_update);
+                    wire('modules')->saveConfig($this, $data);
+                    // inform the user
+                    $this->wire('session')->message('A new version of the 100 most common passwords was downloaded from GitHub');
+                }
+            }
+        }
+    }
+
+    /**
+     * Method to delete all uploaded files after email was sent
+     * @return void
+     * @throws WireException
+     */
+    protected function removeUploadedFilesAfterSending(): void
+    {
+        if (!$this->keepFiles) {
+            $fileNames = $this->wire('files')->find($this->input_uploadPath);
+            if ($fileNames) {
+                foreach ($fileNames as $file) {
+                    $this->wire('files')->unlink($file);
+                }
+            }
+        }
+    }
+
+    /**
+     * Internal method to create additional texts under the notes
+     * Consist of a default text, followed by the code example
+     * @param array $methods
+     * @return string
+     */
+    protected function createAdditionalNotesText(array $methods): string
+    {
+        // create singular/plural default text
+        $text = $this->_n($this->_('This can be overwritten on the form by using this method'),
+            $this->_('This can be overwritten on the form by using these methods'), count($methods));
+        $methodsMarkup = [];
+        foreach ($methods as $method) {
+            $methodsMarkup[] = '<b>' . $method . '</b>';
+        }
+        $methodText = implode('<br>', $methodsMarkup);
+        return '<pre>' . $text . ':<br>' . $methodText . '</pre>';
+    }
+
+    /**
+     * Array that holds all examples on how to overwrite global setting on per form base
+     * These examples will be displayed under the input fields in the module configuration
+     * @param HookEvent $event
+     * @return void
+     */
+    protected function overwriteExamplesNotes(HookEvent $event): void
+    {
+        $field = $event->object;
+        $fields = [
+            'input_minTime' => ['$form->setMinTime(3);'],
+            'input_maxTime' => ['$form->setMaxTime(600);'],
+            'input_maxAttempts' => ['$form->setMaxAttempts(4);'],
+            'input_logFailedAttempts' => ['$form->logFailedAttempts(false); // true, false'],
+            'input_requiredHintPosition' => ['$form->setRequiredTextPosition("bottom"); // top, bottom, none'],
+            'input_requiredText' => ['$form->setRequiredText("This is my custom text");'],
+            'input_alertSuccessText' => ['$form->setSuccessMsg("All is good");'],
+            'input_alertErrorText' => ['$form->setErrorMsg("Something went wrong");'],
+            'input_wrappers' => [
+                '$form->useInputWrapper(true); // true, false',
+                '$form->useFieldWrapper(false); // true, false'
+            ],
+            'input_wrapperFormElements' => ['$form->useFormElementsWrapper(true); // true, false'],
+            'input_wrapperFormElementsCSSClass' => ['$form->getFormElementsWrapper()->removeAttribute("class")->setAttribute("class", "myClass");'],
+            'input_appendLabel' => [
+                '$form->appendLabelOnCheckboxes(true); // true, false',
+                '$form->appendLabelOnRadios(true); // true, false'
+            ],
+            'input_emailTemplate' => ['$mail->mailTemplate("template_2.html"); // has to be added to the WireMail object not to the form'],
+            'input_useIPBan' => ['$form->useIPBan(false); // true, false',],
+            'input_preventIPs' => [
+                '$form->useIPBan(false); // true, false',
+                '$form->testIPBan("146.70.36.200"); // ' . $this->_('Use this method to test, if IP ban works. Enter the IP address that should be tested.') . '<br>' . $this->_('This method is only for testing purposes, so do not forget to remove it afterwards.')
+            ],
+            'input_useHoneypot' => ['$form->useHoneypot(true); // true,false'],
+            'input_captchaType' => ['$form->disableCaptcha();'],
+        ];
+        if (!array_key_exists($field->name, $fields)) {
+            return;
+        }
+        $field->entityEncodeText = false;
+        $field->notes .= $this->createAdditionalNotesText($fields[$field->name]);
+    }
+
+    /**
+     * Add the module javascript and CSS file to the frontend
+     * JS files will be added before the closing body tag
+     * CSS files will be added before the closing head tag
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     * @noinspection PhpUnused
+     */
+    protected function addAssets(HookEvent $event): void
+    {
+        $page = $event->object;
+        // don't add this to the admin pages
+        if ($page->template->name === 'admin') {
+            return;
+        }
+        $version = $this->getModuleInfo()['version'];
+        if (!$this->input_removeJS) {
+            $js = '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '"></script>' . PHP_EOL;
+            $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
+        }
+        if (!$this->input_removeCSS) {
+            $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css' . '"/>' . PHP_EOL;
+            $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
+        }
+    }
+
+    /**
+     * Method for a hook to add a unit after a label
+     * @param HookEvent $event
+     * @param string $fieldname
+     * @param string $unit
+     * @return void
+     */
+    protected function addUnitToLabel(HookEvent $event, string $fieldname, string $unit): void
+    {
+        $inputfield = $event->object;
+        if ($inputfield->name === $fieldname) {
+            $input = $event->return;
+            $event->return = '<div id="label-' . $inputfield->name . '" class="fieldlabel">' . $input . ' ' . $unit . '</div>';
+        }
+    }
+
+    /**
+     * Add the appropriate label text next to the input fields of type integer
+     * @param HookEvent $event
+     * @return void
+     */
+    protected function inputfieldIntegerRenderAfter(HookEvent $event): void
+    {
+        $this->addUnitToLabel($event, 'input_minTime', $this->_('Seconds'));
+        $this->addUnitToLabel($event, 'input_maxTime', $this->_('Seconds'));
+        $this->addUnitToLabel($event, 'input_captchaWidth', 'px');
+        $this->addUnitToLabel($event, 'input_captchaHeight', 'px');
+        $this->addUnitToLabel($event, 'input_captchaFontsize', 'px');
+        $this->addUnitToLabel($event, 'input_maxAttempts', $this->_('Attempts'));
+        $this->addUnitToLabel($event, 'input_bgnumberOfColors', $this->_('Colors'));
+        $this->addUnitToLabel($event, 'input_numberOfColorsOfLines', $this->_('Colors'));
+        $this->addUnitToLabel($event, 'input_captchaNumberOfLines', $this->_('Lines'));
+    }
+
+    /**
+     * Render a link to domaintools.com for further information about the IP address
+     * @param string $ip
+     * @return string
+     */
+    protected function executeWhoisLookUp(string $ip): string
+    {
+        $whoislookup = '<div id="linkwrapper"><a href="https://whois.domaintools.com/' . $ip . '" title="' . $this->_('Opens in a new window') . '" target="_blank">';
+        $whoislookup .= sprintf($this->_('More detailed information about the IP %s at www.domaintools.com'),
+                $ip) . '</a></div>';
+        return $whoislookup;
+    }
+
+    /**
+     * Render a detail view table for a given IP address inside the panel
+     * @param string $ip
+     * @return string
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function executeViewDetailsTable(string $ip): string
+    {
+        $logs = $this->wire('log')->getEntries('failed-attempts-frontendforms');
+
+        $table = $this->wire('modules')->get('MarkupAdminDataTable');
+        $table->caption = sprintf($this->_('Failed attempts for IP %s'), $ip);
+        $table->headerRow([
+            $this->_('Date'),
+            $this->_('URL'),
+            $this->_('Form-ID')
+        ]);
+
+        foreach ($logs as $log) {
+            $text = json_decode($log['text']);
+            // grab only log with the given IP
+            if ($text->IP == $ip) {
+                $table->row([$log['date'], $log['url'], $text->FormID]);
+            }
+        }
+        return $table->render();
+    }
+
+    /**
+     * @param array $data
+     * @return string
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    public function ___executeTable(array $data = []): string
+    {
+        if ($data) {
+            $table = $this->wire('modules')->get('MarkupAdminDataTable');
+            $table->setEncodeEntities(false);
+            $table->setSortable(false);
+            $table->headerRow([
+                $this->_('IP address'),
+                $this->_('User'),
+                $this->_('Blacklist entry'),
+                $this->_('Number of blocks'),
+                $this->_('Details'),
+                $this->_('Add/remove IP from blacklist'),
+            ]);
+            $blackListIPs = preg_split('/\r\n|\r|\n/', $this->input_preventIPs);
+
+            // create all table rows
+            foreach ($data as $ip => $entry) {
+                // create link to open panel
+                $details = '';
+                if (!$this->input->get('modal')) {
+                    $button = $this->modules->get('InputfieldButton');
+                    $button->value = $this->_('View details');
+                    $button->attr('data-href', '/detail-view/' . $ip);
+                    $button->addClass('pw-panel');
+                    $button->setSmall();
+                    $details .= $button->render();
+                }
+
+                // instantiate button object for adding the IP to the blacklist
+                $button = $this->wire('modules')->get('InputfieldSubmit');
+                $button->setSmall();
+                $button->name = 'submit_save_ip';
+                $button->setAttribute('data-from_id', 'Inputfield_submit_save_module');
+                $button->value = $ip;
+                if (in_array($ip, $blackListIPs)) {
+                    $fa = 'fa-check';
+                    // remove button
+                    $button->name = 'submit_remove_ip';
+                    $button->text = $this->_('Remove from blacklist');
+                    $button->setSecondary();
+                    $out = $button->render();
+                } else {
+                    // create add button
+                    $button->text = $this->_('Add to blacklist');
+                    $out = $button->render();
+                    $fa = 'fa-times';
+                }
+                $table->row([
+                    $ip,
+                    $entry['user'],
+                    '<i class="fa fa-fw ' . $fa . '"></i>',
+                    $entry['count'],
+                    $details,
+                    $out
+                ]);
+            }
+            return $table->render();
+        } else {
+            return $this->_('Sorry, but there is not data available. Please check if logging is enabled.');
+        }
+    }
+
+    /**
+     * Find all ttf fonts inside the project that can be used for the CAPTCHA text
+     * @return array
+     * @throws WireException
+     */
+    protected function findAllFontfiles(): array
+    {
+        $files = [];
+        $rootPath = $this->wire('config')->paths->root;
+        $results = $this->wire('files')->find($rootPath, ['recursive' => true, 'extensions' => ['ttf']]);
+        foreach ($results as $font) {
+            // do not add Fontawesome to the fonts
+            if (!str_contains($font, 'fontawesome')) {
+                $files[$font] = ucfirst(pathinfo($font, PATHINFO_BASENAME));
+            }
+        }
+        return $files;
+    }
+
+    /**
+     * Module config
+     * @param InputfieldWrapper $inputfields
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    public function getModuleConfigInputfields(InputfieldWrapper $inputfields)
+    {
+
+        $modules = $this->wire()->modules;
+
+        $fieldset1 = $modules->get('InputfieldFieldset');
+        $fieldset1->label = $this->_('Markup and styling settings for the forms');
+        $fieldset1->description = $this->_('Make your global settings for the output. Most of the settings can be overwritten on per form base if needed.');
+        $fieldset1->collapsed = 1;
+        $fieldset1->icon = 'fa-cog';
+
+        // Required fields settings
+        $fieldsetRequired = $modules->get('InputfieldFieldset');
+        $fieldsetRequired->label = $this->_('Settings for required fields');
+        $fieldsetRequired->collapsed = 1;
+
+        // Show asterisk on required fields
+        $showasterisk = $modules->get('InputfieldCheckbox');
+        $showasterisk->attr('name', 'input_showasterisk');
+        $showasterisk->attr('checked', $this->input_showasterisk ? 'checked' : '');
+        $showasterisk->label = $this->_('Asterisk for required field');
+        $showasterisk->label2 = $this->_('Add an asterisk on required fields after the label tag.');
+        $showasterisk->description = $this->_('Adds a span element with an asterisk after the field label on required fields (<span class="asterisk">*</span>).');
+        $showasterisk->notes = $this->_('You can also use CSS pseudo class :after to add an asterisk to the label tag. For this reason you can disable the asterisk markup.');
+        $fieldsetRequired->add($showasterisk);
+
+        // Required hint position
+        $requiredHintPosition = $modules->get('InputfieldRadios');
+        $requiredHintPosition->attr('name', 'input_requiredHintPosition');
+        $requiredHintPosition->addOptions([
+            'none' => $this->_('Do not show hint for required fields'),
+            'top' => $this->_('Show hint for required fields on top'),
+            'bottom' => $this->_('Show hint for required fields on bottom')
+        ]);
+        $requiredHintPosition->defaultValue = 'top';
+        $requiredHintPosition->required = 1;
+        $requiredHintPosition->attr('value', $this->input_requiredHintPosition);
+        $requiredHintPosition->description = $this->_('Disable displaying of the text (none), place the text before (top) or after (bottom) the form.');
+        $requiredHintPosition->label = $this->_('Enable/disable the display of the required text and set the position');
+        $requiredHintPosition->notes = $this->_('Can be overwritten on each form.');
+        $requiredHintPosition->columnWidth = 50;
+        $fieldsetRequired->add($requiredHintPosition);
+
+        // Required hint custom text
+        $requiredText = wire('modules')->get('InputfieldText');
+        $requiredText->name = 'input_requiredText';
+        $requiredText->label = $this->_('Hint for visitors that all required fields have to be filled out');
+        $requiredText->value = $this->input_requiredText;
+        $reqText = $this->_('This text will be displayed on the form depending on your settings.') . ' ';
+        $reqText .= $this->_('If nothing is entered, a default text will be displayed instead.');
+        $requiredText->description = $reqText;
+        $requiredText->notes = $this->_('Can be overwritten on each form.');
+        $requiredText->useLanguages = true;
+        $requiredText->showIf = "input_requiredHintPosition!=none";
+        $requiredText->columnWidth = 50;
+        $fieldsetRequired->add($requiredText);
+
+        $fieldset1->add($fieldsetRequired);
+
+        // Alert messages settings
+        $fieldsetAlerts = $modules->get('InputfieldFieldset');
+        $fieldsetAlerts->label = $this->_('Settings for messages after form submission');
+        $fieldsetAlerts->collapsed = 1;
+
+        // Success message after submission
+        $alertSuccessText = wire('modules')->get('InputfieldText');
+        $alertSuccessText->name = 'input_alertSuccessText';
+        $alertSuccessText->label = $this->_('The message after successful submission');
+        $alertSuccessText->value = $this->input_alertSuccessText;
+        $alertText = $this->_('This text will be displayed after a form was submitted successfully.') . ' ';
+        $alertText .= $this->_('If nothing is entered, a default text will be displayed instead.');
+        $alertSuccessText->description = $alertText;
+        $alertSuccessText->notes = $this->_('Can be overwritten on each form.');
+        $alertSuccessText->useLanguages = true;
+        $fieldsetAlerts->add($alertSuccessText);
+
+        // Error message after failed submission
+        $alertErrorText = wire('modules')->get('InputfieldText');
+        $alertErrorText->name = 'input_alertErrorText';
+        $alertErrorText->label = $this->_('The message after submission failed');
+        $alertErrorText->value = $this->input_alertErrorText;
+        $alertText = $this->_('This text will be displayed after errors on form submission.') . ' ';
+        $alertText .= $this->_('If nothing is entered, a default text will be displayed instead.');
+        $alertErrorText->description = $alertText;
+        $alertErrorText->notes = $this->_('Can be overwritten on each form.');
+        $alertErrorText->useLanguages = true;
+        $fieldsetAlerts->add($alertErrorText);
+
+        $fieldset1->add($fieldsetAlerts);
+
+        // Markup and styling settings
+        $fieldsetMarkup = $modules->get('InputfieldFieldset');
+        $fieldsetMarkup->label = $this->_('Settings for the markup and styling of the form and the input fields');
+        $fieldsetMarkup->collapsed = 1;
+
+        // Remove wrappers from input fields
+        $wrappers = $this->modules->get('InputfieldCheckboxes');
+        $wrappers->label = $this->_('Add wrappers to the form fields');
+        $wrappers->name = 'input_wrappers';
+        $wrappers->addOption('inputwrapper', $this->_('Add wrapper div for the inputfield (input wrapper)'));
+        $wrappers->addOption('fieldwrapper', $this->_('Add outer wrapper div for each formfield (field wrapper)'));
+        $wrappers->value = $this->input_wrappers;
+        $fieldsetMarkup->add($wrappers);
+
+        // Add wrapper div after form tag to wrap all elements of the form
+        $wrapperFormElements = $modules->get('InputfieldCheckbox');
+        $wrapperFormElements->attr('name', 'input_wrapperFormElements');
+        $wrapperFormElements->attr('checked', $this->input_wrapperFormElements === 1 ? 'checked' : '');
+        $wrapperFormElements->label = $this->_('Add an additional wrapper div after opening and before closing form tag');
+        $wrapperFormElements->label2 = $this->_('Add a wrapper div over all form elements');
+        $wrapperFormElements->notes = $this->_('In some rare cases you need to wrap all form elements inside an extra wrapper div, which is between the opening and closing form tag. For this case you can add the div by checking the box.');
+        $wrapperFormElements->columnWidth = 50;
+        $fieldsetMarkup->add($wrapperFormElements);
+
+        $wrapperFormElementsCSSClass = $modules->get('InputfieldText');
+        $wrapperFormElementsCSSClass->attr('name', 'input_wrapperFormElementsCSSClass');
+        $wrapperFormElementsCSSClass->attr('value', $this->input_wrapperFormElementsCSSClass);
+        $wrapperFormElementsCSSClass->label = $this->_('Add a CSS class to to the extra wrapper div');
+        $wrapperFormElementsCSSClass->notes = $this->_('By default, an unique id will be added, but if you need a special styling class, you can enter the name of the class in this field.');
+        $wrapperFormElementsCSSClass->showIf = "input_wrapperFormElements=1";
+        $wrapperFormElementsCSSClass->columnWidth = 50;
+        $fieldsetMarkup->add($wrapperFormElementsCSSClass);
+
+        // Select CSS framework
+        $frameworkSelect = $modules->get('InputfieldSelect');
+        $frameworkSelect->attr('name', 'input_framework');
+        $frameworkSelect->label = $this->_('Output rendering');
+        $frameworkSelect->description = $this->_('Select if you want to use a framework for rendering the form or not');
+        $frameWorkFiles = $this->wire('files')->find($this->modulePath . 'CSSClasses/', ['extensions' => 'json']);
+        $key = array_search($this->modulePath . 'CSSClasses/none.json', $frameWorkFiles);
+        array_unshift($frameWorkFiles, $frameWorkFiles[$key]); // move none.json to the first position in the array
+
+        $frameWorkOptions = [];
+        foreach ($frameWorkFiles as $path) {
+            $label = ucwords(pathinfo($path, PATHINFO_FILENAME), ' ');
+            if ($label == 'None') {
+                $label = $this->_('No framework');
+            }
+            $frameWorkOptions[pathinfo($path, PATHINFO_BASENAME)] = $label;
+        }
+        $frameworkSelect->addOptions(array_unique($frameWorkOptions));
+        $frameworkSelect->attr('value', $this->input_framework);
+        $frameworkSelect->required = 1;
+        $fieldsetMarkup->add($frameworkSelect);
+
+        // Append labels on checkboxes and radio buttons after input tag
+        $appendLabels = $this->modules->get('InputfieldCheckboxes');
+        $appendLabels->label = $this->_('Append the label after the input tag on checkboxes and radios');
+        $appendLabels->name = 'input_appendLabel';
+        $appendLabels->addOption('appendcheckbox', $this->_('Append label on checkboxes'));
+        $appendLabels->addOption('appendradio', $this->_('Append label on radio buttons'));
+        $appendLabels->value = $this->input_appendLabel;
+        $appendLabels->description = $this->_('By default, radio and checkbox tags are wrapped by their label tag. If you want to append the label tag after the input tag, please check the appropriate box.');
+        $appendLabels->notes = $this->_('Can be overwritten on each form.');
+        $fieldsetMarkup->add($appendLabels);
+
+        $fieldsetStyle = $modules->get('InputfieldFieldset');
+        $fieldsetStyle->label = $this->_('Custom CSS classes');
+        $fieldsetStyle->collapsed = 1;// by default, this fieldset should be collapsed
+        $fieldsetStyle->description = $this->_('You can overwrite each CSS class with your own class name(s). If you want to add multiple classes at the same time please separate them with a whitespace (fe class1 class2).');
+
+        // Add your own CSS classes
+        //  get all class field names as an array
+        $cssClassFields = array_keys((array)$this->defaultClasses);
+        $fields = [];
+        foreach ($cssClassFields as $field) {
+            $label = substr(str_replace('_', ' ', $field), 0, -5);
+            $fields['input_' . $field] = sprintf($this->_('CSS class for the %s'), $this->_($label));
+        }
+        $i = 0;
+        foreach ($fields as $fieldName => $label) {
+            $i++;
+            $fieldClass = substr($fieldName, 6);
+            ${'css-' . $i} = $modules->get('InputfieldText');
+            ${'css-' . $i}->label = $label;
+            ${'css-' . $i}->attr('name', $fieldName);
+            ${'css-' . $i}->attr('value', $this->$fieldName ?: '');
+            if (isset($this->defaultClasses->$fieldClass)) {
+                ${'css-' . $i}->notes($this->_('Current class') . ': ' . $this->defaultClasses->$fieldClass);
+            }
+            $fieldsetStyle->add(${'css-' . $i});
+        }
+        $fieldsetMarkup->add($fieldsetStyle);
+        $fieldset1->add($fieldsetMarkup);
+
+        $fieldsetAssets = $modules->get('InputfieldFieldset');
+        $fieldsetAssets->label = $this->_('Remove stylesheets and scripts');
+        $fieldsetAssets->collapsed = 1;
+
+        // Remove JS on Frontend
+        $removeJS = $modules->get('InputfieldCheckbox');
+        $removeJS->attr('name', 'input_removeJS');
+        $removeJS->attr('checked', $this->input_removeJS === 1 ? 'checked' : '');
+        $removeJS->label = $this->_('Javascript setting');
+        $removeJS->label2 = $this->_('Remove frontendforms.js from template');
+        $removeJS->notes = $this->_('A small JavaScript, which will be needed for some features of the form, will added before the closing body tag on the frontend by default . You can remove the embedding of the script file by checking the box.');
+        $removeJS->columnWidth = 50;
+        $fieldsetAssets->add($removeJS);
+
+        // Remove CSS on Frontend
+        $removeCSS = $modules->get('InputfieldCheckbox');
+        $removeCSS->attr('name', 'input_removeCSS');
+        $removeCSS->attr('checked', $this->input_removeCSS === 1 ? 'checked' : '');
+        $removeCSS->label = $this->_('CSS setting');
+        $removeCSS->label2 = $this->_('Remove frontendforms.css from template');
+        $removeCSS->notes = $this->_('A small CSS file for the forms will be added to the template by default. You can remove the embedding of the CSS file by checking the box.');
+        $removeCSS->columnWidth = 50;
+        $fieldsetAssets->add($removeCSS);
+
+        $fieldset1->add($fieldsetAssets);
+        $inputfields->add($fieldset1);
+
+        $fieldset3 = $modules->get('InputfieldFieldset');
+        $fieldset3->label = $this->_('Email settings');
+        $fieldset3->collapsed = 1;
+        $fieldset3->icon = 'fa-envelope';
+
+        //  Select an email template or not
+        if ($this->emailTemplates) {
+            $emailTemplate = $modules->get('InputfieldSelect');
+            $emailTemplate->label = $this->_('HTML email template setting');
+            $emailTemplate->attr('name', 'input_emailTemplate');
+            //  create options
+            $templates = [];
+            $templates['none'] = $this->_('no HTML template');
+            foreach ($this->emailTemplates as $template) {
+                $templates[$template] = $template;
+            }
+            $emailTemplate->addOptions($templates);
+            $emailTemplate->attr('value', $this->input_emailTemplate);
+            $emailTemplate->required = 1;
+            $emailTemplate->description = $this->_('Choose whether you want to use the HTML template for your emails and if so, which one.');
+            $emailTemplate->notes = $this->_('If you are using FrontendForms with the PW WireMail class to send emails, you can use a HTML email template by adding the mailTemplate() method to the WireMail object.');
+            $fieldset3->add($emailTemplate);
+        }
+
+        // enter a global date format for usage of date strings in emails
+        $dateFormat = $modules->get('InputfieldText');
+        $dateFormat->label = $this->_('Date format');
+        $dateFormat->attr('name', 'input_dateformat');
+        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+            $this->setLanguageValue('input_dateformat', $dateFormat);
+        } else {
+            $dateFormat->value = $this->input_dateformat;
+        }
+        $dateFormat->columnWidth = 50;
+        $dateFormat->placeholder = $this->_('fe. Y-m-d');
+        $dateFormat->description = $this->_('Enter a global date format which can be used for date strings in email templates.');
+        $dateFormat->required = 1;
+        $fieldset3->add($dateFormat);
+
+        // enter a global time format for usage of time strings in emails
+        $timeFormat = $modules->get('InputfieldText');
+        $timeFormat->label = $this->_('Time format');
+        $timeFormat->attr('name', 'input_timeformat');
+        if ($this->wire('modules')->isInstalled('LanguageSupport')) {
+            $this->setLanguageValue('input_timeformat', $timeFormat);
+        } else {
+            $timeFormat->value = $this->input_timeformat;
+        }
+        $timeFormat->columnWidth = 50;
+        $timeFormat->required = 1;
+        $timeFormat->placeholder = $this->_('fe. H:i');
+        $timeFormat->description = $this->_('Enter a global time format which can be used for time strings in email templates.');
+        $fieldset3->add($timeFormat);
+
+        $inputfields->add($fieldset3);
+
+        $fieldset4 = $modules->get('InputfieldFieldset');
+        $fieldset4->label = $this->_('Data privacy settings');
+        $fieldset4->collapsed = 1;
+        $fieldset4->icon = 'fa-list';
+
+        // Select the data privacy page
+        $dataPrivacySelect = $modules->get('InputfieldSelect');
+        $dataPrivacySelect->attr('name', 'input_privacy');
+        $dataPrivacySelect->label = $this->_('Privacy policy page');
+        $dataPrivacySelect->description = $this->_('Select the page which contains your privacy policy.');
+        $dataPrivacySelect->notes = $this->_('The link to this page will be used inside the Privacy class for generating the "Accept the privacy policy" checkbox.');
+        foreach ($this->wire('pages')->find("has_parent!=2,id!=2|7,status<" . Page::statusTrash . ",include=all") as $page) {
+            $dataPrivacySelect->addOption($page->id, $page->title);
+        }
+        $dataPrivacySelect->attr('value', $this->input_privacy);
+        $fieldset4->add($dataPrivacySelect);
+
+        $inputfields->add($fieldset4);
+
+        $fieldset5 = $modules->get('InputfieldFieldset');
+        $fieldset5->label = $this->_('Spam protection and security settings for the forms');
+        $fieldset5->description = $this->_('Make your global settings for spam protection and security. Most of the settings can be overwritten on per form base if needed.');
+        $fieldset5->collapsed = 1;
+        $fieldset5->icon = 'fa-shield';
+
+        $fieldsetsecurity1 = $modules->get('InputfieldFieldset');
+        $fieldsetsecurity1->label = $this->_('Measure 1: Restrict number of failed attempts');
+        $fieldsetsecurity1->collapsed = 1;
+
+        // set max number of failed attempts
+        $maxAttempts = $this->modules->get('InputfieldInteger');
+        $maxAttempts->label = $this->_('Max number of failed attempts');
+        $maxAttempts->name = 'input_maxAttempts';
+        $maxAttempts->inputType = 'number';
+        $maxAttempts->value = $this->input_maxAttempts;
+        $maxAttempts->min = 0;
+        $maxAttempts->description = $this->_('Please set the max number of failed attempts for submitting a form.');
+        $maxAttempts->notes = $this->_('If set to 0 then this feature is disabled. After reaching the limit the user will be blocked by using a session and all browser windows have to be closed to remove the blocking.');
+        $maxAttempts->columnWidth = 50;
+        $fieldsetsecurity1->add($maxAttempts);
+
+        $logFailedAttempts = $modules->get('InputfieldCheckbox');
+        $logFailedAttempts->attr('name', 'input_logFailedAttempts');
+        $logFailedAttempts->attr('checked', $this->input_logFailedAttempts == '1' ? 'checked' : '');
+        $logFailedAttempts->label = $this->_('Log IPs of blocked visitors');
+        $logFailedAttempts->description = $this->_('If the box is checked, an entry with the IP address of the visitor, the form id and the date will be stored in the logfiles after the visitor was blocked.');
+        $logFailedAttempts->notes = $this->_('Please note, that you have to inform your users in your privacy policy, that the IP address will be stored in this case.');
+        $logFailedAttempts->columnWidth = 50;
+        $fieldsetsecurity1->add($logFailedAttempts);
+
+        $fieldset5->add($fieldsetsecurity1);
+
+        $fieldsetsecurity2 = $modules->get('InputfieldFieldset');
+        $fieldsetsecurity2->label = $this->_('Measure 2: Time-trap - Measuring time until form submission');
+        $fieldsetsecurity2->collapsed = 1;
+
+        // add min time in seconds
+        $minTime = $this->modules->get('InputfieldInteger');
+        $minTime->label = $this->_('Min time before form submission');
+        $minTime->name = 'input_minTime';
+        $minTime->inputType = 'number';
+        $minTime->value = $this->input_minTime;
+        $minTime->min = 0;
+        $minTime->description = $this->_('Please set the min time in seconds before a form should be submitted.');
+        $minTime->notes = $this->_('If set to 0 then this feature is disabled. This feature measures the time between loading and submitting a form. If it is to fast (fe a spam bot) it will lead to a form error. ');
+        $minTime->columnWidth = 50;
+        $fieldsetsecurity2->add($minTime);
+
+        // add max time in seconds
+        $maxTime = $this->modules->get('InputfieldInteger');
+        $maxTime->label = $this->_('Max time until form submission');
+        $maxTime->name = 'input_maxTime';
+        $maxTime->inputType = 'number';
+        $maxTime->value = $this->input_maxTime;
+        $maxTime->min = 0;
+        $maxTime->description = $this->_('Please set the max time in seconds until a form should be submitted.');
+        $maxTime->notes = $this->_('If set to 0 then this feature is disabled. This feature measures the time between loading and submitting a form. If it is to slow (fe a spam bot analyzing the form) it will lead to a form error. ');
+        $maxTime->columnWidth = 50;
+        $fieldsetsecurity2->add($maxTime);
+
+        $fieldset5->add($fieldsetsecurity2);
+
+        $fieldsetsecurity3 = $modules->get('InputfieldFieldset');
+        $fieldsetsecurity3->label = $this->_('Measure 3: Honeypot field');
+        $fieldsetsecurity3->collapsed = 1;
+
+        $useHoneypot = $modules->get('InputfieldCheckbox');
+        $useHoneypot->attr('name', 'input_useHoneypot');
+        $useHoneypot->attr('checked', $this->input_useHoneypot == '1' ? 'checked' : '');
+        $useHoneypot->label = $this->_('Add honeypot field to form');
+        $useHoneypot->description = $this->_('If the box is checked, an invisible honeypot field for spam protection will be added to the form.');
+        $useHoneypot->notes = $this->_('It is recommended to use a honeypot field. Disable this feature only if you have a good reason to do so.');
+        $fieldsetsecurity3->add($useHoneypot);
+
+        $fieldset5->add($fieldsetsecurity3);
+
+        $fieldsetsecurity4 = $modules->get('InputfieldFieldset');
+        $fieldsetsecurity4->label = $this->_('Measure 4: Using IP blacklist');
+        $fieldsetsecurity4->collapsed = 1;
+
+        // Add wrapper div after form tag to wrap all elements of the form
+        $useIPBan = $modules->get('InputfieldCheckbox');
+        $useIPBan->attr('name', 'input_useIPBan');
+        $useIPBan->attr('checked', $this->input_useIPBan === 1 ? 'checked' : '');
+        $useIPBan->label = $this->_('Check IP of visitors');
+        $useIPBan->label2 = $this->_('Enable checking of visitors IP against blacklist');
+        $useIPBan->description = $this->_('You can prevent IP addresses from viewing your forms, if they might be harmful to your site. By checking/unchecking the box, you can enable/disable the checking against the blacklist.');
+        $useIPBan->notes = $this->_('This only works, if there is at least 1 entry in the next input field');
+        $useIPBan->columnWidth = 50;
+        $fieldsetsecurity4->add($useIPBan);
+
+        // prevent the following IP addresses from visiting sites of this module on the frontend
+        $preventIPs = $modules->get('InputfieldTextarea');
+        $preventIPs->attr('name', 'input_preventIPs');
+        $preventIPs->label = $this->_('Blacklist of forbidden IPs');
+        $preventIPs->description = $this->_('Please enter every IP address on a new line. Every visit of an IP address listed below prevents the form to be rendered on the frontend. Visitors see an alert box instead, that informs about the banned IP address.');
+        $preventIPs->notes = $this->_('Tip: You can take a look at the logfile for failed login attempts and enter fe. IP addresses that appear very often. Works only if logging failed attempts is enabled.');
+        $preventIPs->attr('value', $this->input_preventIPs);
+        $preventIPs->showIf = "input_useIPBan=1";
+        $preventIPs->columnWidth = 50;
+
+        $fieldsetsecurity4->add($preventIPs);
+
+        $fieldset5->add($fieldsetsecurity4);
+
+        //CAPTCHA
+
+        $fieldsetsecurity5 = $modules->get('InputfieldFieldset');
+        $fieldsetsecurity5->label = $this->_('Measure 5: CAPTCHA');
+        $fieldsetsecurity5->collapsed = 1;
+
+        // BASIC-SETTINGS
+        $fieldsetbasic = $modules->get('InputfieldFieldset');
+        $fieldsetbasic->label = $this->_('Basic settings');
+        $fieldsetbasic->collapsed = 1;
+
+        // Enable/disable CAPTCHA on forms
+        $captchaType = $modules->get('InputfieldRadios');
+        $captchaType->attr('name', 'input_captchaType');
+        $captchaType->label = $this->_('Use a CAPTCHA');
+        $captchaType->description = $this->_('Choose whether you want to use a CAPTCHA and if so what kind.');
+        $captchaTypes = $this->wire('files')->find($this->modulePath . 'Formelements/Captcha/variants/',
+            ['recursive' => 0]);
+        $captchaType->addOption('none', $this->_('No CAPTCHA'));
+
+        foreach ($captchaTypes as $file) {
+            $className = pathinfo($file, PATHINFO_FILENAME);
+            $cname = 'FrontendForms\\' . $className;
+            $option = new $cname();
+            $captchaType->addOption($className, $option->title, ['flow' => 'up', 'tooltip' => $option->desc]);
+        }
+
+        $captchaType->attr('value', $this->input_captchaType);
+        $captchaType->required = 1;
+        $captchaType->notes = $this->_('Most visitors do not like CAPTCHAS, so it is recommended to use it only if you have problems with spam. If a CAPTCHA is enabled and you want to disable it on a certain form, please use the following method:');
+        $width = ($this->input_captchaType == 'image') ? 50 : 33;
+        $captchaType->columnWidth = $width;
+        $fieldsetbasic->add($captchaType);
+
+        // set width of the captcha image (only on text CAPTCHAS)
+        $captchaWidth = $this->modules->get('InputfieldInteger');
+        $captchaWidth->label = $this->_('Image width');
+        $captchaWidth->name = 'input_captchaWidth';
+        $captchaWidth->inputType = 'number';
+        $captchaWidth->value = $this->input_captchaWidth;
+        $captchaWidth->min = 10;
+        $captchaWidth->description = $this->_('Please enter the width of the CAPTCHA image.');
+        $width = ($this->input_captchaType == 'image') ? 50 : 33;
+        $captchaWidth->columnWidth = $width;
+        $captchaWidth->required = 1;
+        $captchaWidth->showIf = "input_captchaType!=none";
+        $fieldsetbasic->add($captchaWidth);
+
+        // set height of the captcha image
+        $captchaHeight = $this->modules->get('InputfieldInteger');
+        $captchaHeight->label = $this->_('Image height');
+        $captchaHeight->name = 'input_captchaHeight';
+        $captchaHeight->inputType = 'number';
+        $captchaHeight->value = $this->input_captchaHeight;
+        $captchaHeight->min = 10;
+        $captchaHeight->description = $this->_('Please enter the height of the CAPTCHA image.');
+        $captchaHeight->columnWidth = 33;
+        $captchaHeight->required = 1;
+        $captchaHeight->showIf = "input_captchaType!=none|DefaultImageCaptcha";
+        $fieldsetbasic->add($captchaHeight);
+
+        $fieldsetsecurity5->add($fieldsetbasic);
+
+        // BACKGROUND-SETTINGS
+        $fieldsetBackgroundSettings = $modules->get('InputfieldFieldset');
+        $fieldsetBackgroundSettings->label = $this->_('Image background settings');
+        $fieldsetBackgroundSettings->collapsed = 1;// by default, this fieldset should be collapsed
+        $fieldsetBackgroundSettings->description = $this->_('Set the styling of the background for the CAPTCHA image.');
+        $fieldsetBackgroundSettings->showIf = "input_captchaType!=none|DefaultImageCaptcha";
+
+        // Random or custom colors
+        $bgcolorchooser = $this->modules->get('InputfieldRadios');
+        $bgcolorchooser->label = $this->_('Random or custom colors');
+        $bgcolorchooser->name = 'input_bgcolorchooser';
+        $bgcolorchooser->value = $this->input_bgcolorchooser;
+        $bgcolorchooser->description = $this->_('Select if you want to use (a) certain color(s) or (a) random color(s) for the background.');
+        $bgcolorchooser->notes = $this->_('If you want to adapt the color(s) to your project design, it is recommended to use custom color(s) instead of random.');
+        $bgcolorchooser->addOption('custom', $this->_('Custom color(s)'));
+        $bgcolorchooser->addOption('random', $this->_('Random color(s)'));
+        $bgcolorchooser->required = 1;
+        $bgcolorchooser->columnWidth = 50;
+        $fieldsetBackgroundSettings->add($bgcolorchooser);
+
+        // set the number of colors for the distortion lines
+        $bgnumberOfColors = $this->modules->get('InputfieldInteger');
+        $bgnumberOfColors->label = $this->_('Number of colors');
+        $bgnumberOfColors->name = 'input_bgnumberOfColors';
+        $bgnumberOfColors->inputType = 'number';
+        $bgnumberOfColors->value = $this->input_bgnumberOfColors;
+        $bgnumberOfColors->min = 0;
+        $bgnumberOfColors->required = 1;
+        $bgnumberOfColors->description = $this->_('Select how much random colors should be used for the background');
+        $bgnumberOfColors->notes = $this->_('If set to 0, then there is no limit for the colors, but it is recommended not to set the value too high. A good starting point will be 5.');
+        $bgnumberOfColors->columnWidth = 25;
+        $bgnumberOfColors->showIf = "input_bgcolorchooser=random";
+        $fieldsetBackgroundSettings->add($bgnumberOfColors);
+
+        // Custom colors for the background
+        $bgCustomColors = wire('modules')->get('InputfieldTextArea');
+        $bgCustomColors->name = 'input_bgCustomColors';
+        $bgCustomColors->label = $this->_('The color(s) for the background');
+        $bgCustomColors->value = $this->input_bgCustomColors;
+        $bgCustomColors->description = $this->_('Set the colors for the background in HEX color format (fe #ddd). Each color must be written on a new line.');
+        $bgCustomColors->notes = $this->_('At least one color is required, but it is recommended to use more than 1 color to make the background more inhomogeneous and therefore more difficult for spam bots to read the content');
+        $bgCustomColors->columnWidth = 25;
+        $bgCustomColors->required = 1;
+        $bgCustomColors->showIf = "input_bgcolorchooser=custom";
+        $fieldsetBackgroundSettings->add($bgCustomColors);
+
+        $fieldsetsecurity5->add($fieldsetBackgroundSettings);
+
+        $fieldsetTextCaptcha = $modules->get('InputfieldFieldset');
+        $fieldsetTextCaptcha->label = $this->_('Character settings');
+        $fieldsetTextCaptcha->collapsed = 1;// by default, this fieldset should be collapsed
+        $fieldsetTextCaptcha->description = $this->_('Set the styling of the text (character string or calculation) based on your own preferences.');
+        $fieldsetTextCaptcha->showIf = "input_captchaType!=none|DefaultImageCaptcha";
+
+        // Select the font family
+        $refreshLink = $modules->get('InputFieldSubmit');
+        $refreshLink->attr('name', 'input_submit_refreshFonts');
+        $refreshLink->attr('value', 'refresh');
+        $refreshLink->setSmall();
+        $refreshLink->setSecondary();
+        $refreshLink->text = $this->_('Refresh all font files');
+
+        $captchaFontFamily = $modules->get('InputfieldSelect');
+        $captchaFontFamily->attr('name', 'input_captchaFontFamily');
+        $captchaFontFamily->label = $this->_('Font family');
+        $captchaFontFamily->description = $this->_('Select the font family for the text.');
+        $captchaFontFamily->addOptions($this->input_captchaFonts);
+        $captchaFontFamily->attr('value', $this->input_captchaFontFamily);
+        $captchaFontFamily->required = 1;
+        $captchaFontFamily->columnWidth = 34;
+        $captchaFontFamily->notes = $this->_('If there are no files available in the input field or you have transferred the site, please click the button below to refresh all font files.');
+
+        $captchaFontFamily->appendMarkup('<div>' . $refreshLink->render() . '</div>');
+        $fieldsetTextCaptcha->add($captchaFontFamily);
+
+        // set number of the fontsize
+        $captchaFontsize = $this->modules->get('InputfieldInteger');
+        $captchaFontsize->label = $this->_('Font size');
+        $captchaFontsize->name = 'input_captchaFontsize';
+        $captchaFontsize->description = $this->_('Set the font size for the text.');
+        $captchaFontsize->inputType = 'number';
+        $captchaFontsize->value = $this->input_captchaFontsize;
+        $captchaFontsize->min = 1;
+        $captchaFontsize->required = 1;
+        $captchaFontsize->columnWidth = 33;
+        $fieldsetTextCaptcha->add($captchaFontsize);
+
+        // CAPTCHA text color
+        $captchaTextColor = wire('modules')->get('InputfieldText');
+        $captchaTextColor->name = 'input_captchaTextColor';
+        $captchaTextColor->label = $this->_('Font color');
+        $captchaTextColor->value = $this->input_captchaTextColor;
+        $captchaTextColor->description = $this->_('Set the color for the text.');
+        $captchaTextColor->notes = $this->_('Please enter a valid HEX color code.');
+        $captchaTextColor->required = 1;
+        $captchaTextColor->columnWidth = 33;
+        $fieldsetTextCaptcha->add($captchaTextColor);
+
+        // Set the characters that should be used to create the CAPTCHA text
+        $input_captchaCharset = $modules->get('InputfieldTextarea');
+        $input_captchaCharset->attr('name', 'input_captchaCharset');
+        $input_captchaCharset->label = $this->_('Characterset');
+        $input_captchaCharset->description = $this->_('Enter the characters, that should be used to create a random text for CAPTCHAS.');
+        $input_captchaCharset->attr('value', $this->input_captchaCharset);
+        $input_captchaCharset->columnWidth = 34;
+        $input_captchaCharset->required = 1;
+        $input_captchaCharset->showIf = "input_captchaType!=SimpleMathTextCaptcha";
+        $fieldsetTextCaptcha->add($input_captchaCharset);
+
+        // set number of characters for text CAPTCHA
+        $captchaNumberOfCharacters = $this->modules->get('InputfieldInteger');
+        $captchaNumberOfCharacters->label = $this->_('Number of characters');
+        $captchaNumberOfCharacters->description = $this->_('Enter the number of character you want the text to consist of (A recommended value is 4 or 5).');
+        $captchaNumberOfCharacters->name = 'input_captchaNumberOfCharacters';
+        $captchaNumberOfCharacters->inputType = 'number';
+        $captchaNumberOfCharacters->value = $this->input_captchaNumberOfCharacters;
+        $captchaNumberOfCharacters->min = 4;
+        $captchaNumberOfCharacters->columnWidth = 33;
+        $captchaNumberOfCharacters->required = 1;
+        $captchaNumberOfCharacters->showIf = "input_captchaType!=SimpleMathTextCaptcha";
+        $fieldsetTextCaptcha->add($captchaNumberOfCharacters);
+
+        //Show characters off the line
+        $charactersOffLine = $modules->get('InputfieldCheckbox');
+        $charactersOffLine->attr('name', 'input_charactersOffLine');
+        $charactersOffLine->attr('checked', $this->input_charactersOffLine ? 'checked' : '');
+        $charactersOffLine->label = $this->_('Characters not in one line');
+        $charactersOffLine->label2 = $this->_('Position characters randomly');
+        $charactersOffLine->description = $this->_('If checked, the characters the text consists of will not be displayed in one line. They will be displayed randomly in various positions and angles (recommended).');
+        $charactersOffLine->columnWidth = 33;
+        $fieldsetTextCaptcha->add($charactersOffLine);
+
+        $fieldsetsecurity5->add($fieldsetTextCaptcha);
+
+        // DISTORTION LINES
+        $fieldsetDistortionlines = $modules->get('InputfieldFieldset');
+        $fieldsetDistortionlines->label = $this->_('Distortion lines');
+        $fieldsetDistortionlines->collapsed = 1; // by default, this fieldset should be collapsed
+        $fieldsetDistortionlines->description = $this->_('Add distortion lines over the image to make it more difficult for spam bots to read the content.');
+        $fieldsetDistortionlines->showIf = "input_captchaType!=none";
+
+        // Set the number of distortion lines
+        $captchaNumberOfLines = $this->modules->get('InputfieldInteger');
+        $captchaNumberOfLines->label = $this->_('Number of distortion lines');
+        $captchaNumberOfLines->name = 'input_captchaNumberOfLines';
+        $captchaNumberOfLines->inputType = 'number';
+        $captchaNumberOfLines->value = $this->input_captchaNumberOfLines;
+        $captchaNumberOfLines->min = 0;
+        $captchaNumberOfLines->max = 100;
+        $captchaNumberOfLines->step = 5;
+        $captchaNumberOfLines->required = 1;
+        $captchaNumberOfLines->description = $this->_('Set how many lines should be drawn over the image.');
+        $captchaNumberOfLines->notes = $this->_('If set to 0 then this feature is disabled. Max number is 100. You can enter the number in steps of 5. Afterwards check it on the frontend by refreshing the CAPTCHA multiple times, if the amount of lines is too low or to high.');
+        $captchaNumberOfLines->columnWidth = 33;
+        $fieldsetDistortionlines->add($captchaNumberOfLines);
+
+        // Random or custom colors
+        $colorchooser = $this->modules->get('InputfieldRadios');
+        $colorchooser->label = $this->_('Random or custom colors');
+        $colorchooser->name = 'input_colorchooser';
+        $colorchooser->value = $this->input_colorchooser;
+        $colorchooser->description = $this->_('Select if you want to use (a) certain color(s) or (a) random color(s) for the lines.');
+        $colorchooser->notes = $this->_('If you want to adapt the color(s) to your project design, it is recommended to use custom color(s) instead of random.');
+        $colorchooser->addOption('custom', $this->_('Custom colors'));
+        $colorchooser->addOption('random', $this->_('Random colors'));
+        $colorchooser->required = 1;
+        $colorchooser->showIf = "input_captchaNumberOfLines>0";
+        $colorchooser->columnWidth = 33;
+        $fieldsetDistortionlines->add($colorchooser);
+
+        // set the number of colors for the distortion lines
+        $numberOfColorsOfLines = $this->modules->get('InputfieldInteger');
+        $numberOfColorsOfLines->label = $this->_('Number of colors');
+        $numberOfColorsOfLines->name = 'input_numberOfColorsOfLines';
+        $numberOfColorsOfLines->inputType = 'number';
+        $numberOfColorsOfLines->value = $this->input_numberOfColorsOfLines;
+        $numberOfColorsOfLines->min = 0;
+        $numberOfColorsOfLines->required = 1;
+        $numberOfColorsOfLines->description = $this->_('Select how much random colors should be used for the lines.');
+        $numberOfColorsOfLines->notes = $this->_('If you enter the value 0, then the number of colors used is equal to the number of distortion lines. On the other hand, the entered value corresponds to the number of colors that are used.');
+        $numberOfColorsOfLines->columnWidth = 17;
+        $numberOfColorsOfLines->showIf = "input_captchaNumberOfLines>0,input_colorchooser=random";
+        $fieldsetDistortionlines->add($numberOfColorsOfLines);
+
+        // Custom colors
+        $captchaLinesColor = wire('modules')->get('InputfieldTextArea');
+        $captchaLinesColor->name = 'input_captchaLinesColor';
+        $captchaLinesColor->label = $this->_('The color(s) for the lines above the image');
+        $captchaLinesColor->value = $this->input_captchaLinesColor;
+        $captchaLinesColor->description = $this->_('Set the colors for the lines in HEX color format (fe #000). Each color must be written on a new line.');
+        $captchaLinesColor->notes = $this->_('At least one color is required, but it is recommended to use more than 1 color to make the lines more inhomogeneous and therefore more difficult for spam bots to read the content.');
+        $captchaLinesColor->columnWidth = 17;
+        $captchaLinesColor->required = 1;
+        $captchaLinesColor->showIf = "input_captchaNumberOfLines>0,input_colorchooser=custom";
+        $fieldsetDistortionlines->add($captchaLinesColor);
+
+        $fieldsetsecurity5->add($fieldsetDistortionlines);
+
+        // IMAGE FILTERS
+        $fieldsetImagefilters = $modules->get('InputfieldFieldset');
+        $fieldsetImagefilters->label = $this->_('Image filters');
+        $fieldsetImagefilters->collapsed = 1; // by default, this fieldset should be collapsed
+        $fieldsetImagefilters->description = $this->_('Add filters to images to make it more difficult to identify the content.');
+        $fieldsetImagefilters->showIf = "input_captchaType=DefaultImageCaptcha";
+
+        // Blur filter
+        $blurlevel = $this->modules->get('InputfieldInteger');
+        $blurlevel->label = $this->_('Blur');
+        $blurlevel->name = 'input_blurlevel';
+        $blurlevel->inputType = 'number';
+        $blurlevel->value = $this->input_blurlevel;
+        $blurlevel->min = 0;
+        $blurlevel->max = 10;
+        $blurlevel->required = 1;
+        $blurlevel->description = $this->_('Blur the image by selecting the blur value: The higher the value, the stronger the blur effect.');
+        $blurlevel->notes = $this->_('If you enter the value 0, then the blur effect is disabled. The maximum value is 10.');
+        $fieldsetImagefilters->add($blurlevel);
+
+        // Pixelate filter
+        $pixelatelevel = $this->modules->get('InputfieldInteger');
+        $pixelatelevel->label = $this->_('Pixelate');
+        $pixelatelevel->name = 'input_pixelatelevel';
+        $pixelatelevel->inputType = 'number';
+        $pixelatelevel->value = $this->input_pixelatelevel;
+        $pixelatelevel->min = 0;
+        $pixelatelevel->max = 10;
+        $pixelatelevel->required = 1;
+        $pixelatelevel->description = $this->_('Pixelate the image by selecting the pixelate value: The higher the value, the stronger the pixelate effect.');
+        $pixelatelevel->notes = $this->_('If you enter the value 0, then the pixelate effect is disabled. The maximum value is 5.');
+        $fieldsetImagefilters->add($pixelatelevel);
+
+        // 3 Grayscale filter
+        $grayscale = $modules->get('InputfieldCheckbox');
+        $grayscale->attr('name', 'input_grayscale');
+        $grayscale->attr('checked', $this->input_grayscale ? 'checked' : '');
+        $grayscale->label = $this->_('Grayscale');
+        $grayscale->label2 = $this->_('Remove colors from the image');
+        $grayscale->description = $this->_('By clicking the box, all colors of the image will be removed.');
+        $fieldsetImagefilters->add($grayscale);
+
+        $fieldsetsecurity5->add($fieldsetImagefilters);
+
+        $fieldset5->add($fieldsetsecurity5);
+
+        $fieldset7 = $modules->get('InputfieldFieldset');
+        $fieldset7->label = $this->_('Measure 6: Password field settings');
+        $fieldset7->collapsed = 1;// by default, this fieldset should be collapsed
+        $fieldset7->description = $this->_('Increase site security by checking passwords against a blacklist of popular passwords. This is useful if you offer user registration on your site to prevent users entering unsafe passwords.');
+
+        $blacklist = wire('modules')->get('InputfieldTextArea');
+        $blacklist->name = 'input_blacklist';
+        $blacklist->label = $this->_('Password blacklist');
+        $blacklist->value = $this->input_blacklist;
+        $desc = $this->_('Enter passwords, that are forbidden (each on a new line).') . ' ';
+        $desc .= $this->_('This list will be used by the "safePassword" validator to validate a password field against unsafe passwords.') . ' ';
+        $desc .= $this->_('The validator returns false, if the password was found on the blacklist, otherwise true.') . ' ';
+        $desc .= $this->_('The list will be populated automatically with appropriate passwords from the top 100 passwords list below, but you can add your own passwords too - They will not get overwritten during the blacklistlist update.');
+        $blacklist->description = $desc;
+        $notes = sprintf($this->_('Current number of entries in the blacklist: %s.'),
+            count($this->blacklist));
+        if ($this->last_check) {
+            $notes .= ' ' . sprintf($this->_('Last update of the blacklist: %s.'),
+                    $this->wire('datetime')->date($this->default_dateformat, $this->last_check));
+        }
+        $blacklist->notes = $notes;
+        $fieldset7->add($blacklist);
+
+        // load passwords from ....
+        $pwlist = wire('modules')->get('InputfieldMarkup');
+        // grab content from the page
+        $wikipage = $this->wire('files')->fileGetContents('https://en.wikipedia.org/wiki/Wikipedia:10,000_most_common_passwords');
+        $content = '<h2>' . $this->_('List of top 100 most common passwords') . '</h2>';
+        $content .= '<p>' . $this->_('The passwords in the list below are unsafe and a serious security issue for each account on your site.') . '<br>';
+        $osaplink = '<a href="https://owasp.org/" target="_blank">OSAP</a>';
+        $content .= sprintf($this->_('All passwords were taken from %s (Open Web Application Security Project).'),
+                $osaplink) . '<br>';
+        $gitlink = '<a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-100.txt" target="_blank">https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-100.txt</a>';
+        $content .= sprintf($this->_('Source of the passwords: %s'), $gitlink) . '</p><hr>';
+        $hintText = '<h3>' . $this->_('Please note:') . '</h3>';
+        $hintText .= '<p>' . $this->_('Only passwords that matches your password requirements will be added to the blacklist after pressing the update button or during the automatic update.') . '<br>';
+        $hintText .= $this->_('Passwords which do not fulfill your password requirements, do not need to be on the list and will be filtered out before. The blacklist should be as short as possible to prevent performance issues.') . '<br>';
+        $hintText .= $this->_('If your blacklist is very long, it would be better to increase the password requirements.') . '<br>';
+        $hintText .= $this->_('If no passwords from this list will be added does not mean that it would not work - it means that your password requirements are high enough to filter out all of these passwords before.') . '</p>';
+        // get password requirements
+        $hintText .= '<h3>' . $this->_('Current password requirements settings:') . '</h3>';
+        $hintText .= '<p>' . $this->_('A password must contain at least one of the following characters:') . '</p><ul>';
+        foreach ($this->password_object->getSetting('requirementsLabels') as $value => $label) {
+            if (in_array($value, $this->password_field->requirements)) {
+                $hintText .= '<li>' . $label . '</li>';
+            }
+        }
+        $hintText .= '</ul>';
+        $link = '<a title="' . $this->_('To the password field edit page') . '" href="' . $this->password_field->editUrl() . '">';
+        $link .= $this->_('here') . '</a>';
+        $hintText .= '<p>' . sprintf($this->_('If you have the permission to change the password requirements, you can do it %s.'),
+                $link) . '</p>';
+
+
+        // information about last update of the list
+        $update = $this->_('The password list will be checked once a month automatically if something has been changed on GitHub.');
+        $updatedata = '';
+
+        if ($this->toppasswords_download) {
+            $updatedata .= '<li>' . sprintf($this->_('Last download date: %s (%s).'),
+                    $this->wire('datetime')->date($this->default_dateformat, filemtime($this->passwordPath)),
+                    $this->wire('datetime')->date('relative', filemtime($this->passwordPath))) . '</li>';
+        }
+        if ($this->github_modified) {
+            $updatedata .= '<li>' . sprintf($this->_('Last modification date on GitHub: %s (%s).'),
+                    $this->wire('datetime')->date($this->default_dateformat, $this->github_modified),
+                    $this->wire('datetime')->date('relative', $this->github_modified)) . '</li>';
+        }
+        if ($this->last_check) {
+            $updatedata .= '<li>' . sprintf($this->_('Last check for passwords date: %s (%s).'),
+                    $this->wire('datetime')->date($this->default_dateformat, $this->last_check),
+                    $this->wire('datetime')->date('relative', $this->last_check)) . '</li>';
+        }
+
+        $update .= '<ul>' . $updatedata . '</ul>';
+        $content .= '<p>' . $update . '</p>';
+        $content .= '<p>' . $this->_('After the check, all passwords that fulfill your password requirements and are not on your blacklist, will be added automatically.') . '<br>';
+        $content .= $this->_('You do not need to add them manually.') . '</p><hr>';
+        $content .= $this->_('If you do not want to wait until the next automatic update, you can update your blacklist manually by pressing the button below.') . '</p>';
+
+        // Create a button to add the passwords to the blacklist
+        $button = $this->wire('modules')->get('InputfieldSubmit');
+        $button->name = 'submit_save_passwordblacklist';
+        $button->value = 'add';
+        $button->text = $this->_('Update blacklist manually');
+        $content .= $button->render();
+
+        $content .= '<div class="uk-alert-warning" data-uk-alert>' . $hintText . '</div>';
+
+        // create HTML ol list of passwords
+        if ($this->passwordList) {
+            // if the list is longer than 100, cut all passwords after number 100
+            $arr = array_filter($this->passwordList);
+            $pos = array_search('100', array_keys($arr));
+            $list = array_slice($arr, 0, $pos, true);
+            $content .= '<h3>' . sprintf($this->_('Top 100 most common passwords in %s (Last list update on GitHub: %s)'),
+                    date('Y'),
+                    $this->wire('datetime')->date($this->default_dateformat, $this->github_modified)) . '</h3>';
+            $items = '';
+            foreach ($list as $password) {
+                $class = (in_array($password, $this->blacklist)) ? 'active notes' : 'inactive';
+                $items .= '<li class="' . $class . '">' . $password . '</li>';
+            }
+            $content .= '<div id="pw-container"><ol id="password-list">' . $items . '</ol><hr>';
+            $content .= '<p>' . $this->_('Passwords with a colored background are on your blacklist.') . '</p>';
+            $content .= '</div>';
+        } else {
+            $content .= $this->_('Sorry, but the file passwords.txt does not exist. Please press the update button above.');
+        }
+
+        $pwlist->value = $content;
+        $fieldset7->add($pwlist);
+
+        $fieldset5->add($fieldset7);
+
+        $inputfields->add($fieldset5);
+
+        $fieldset6 = $modules->get('InputfieldFieldset');
+        $fieldset6->label = $this->_('Statistics of blocked visitors');
+        $fieldset6->description = $this->_('Get information about blocked visitors (IP, form) from the log files');
+        $fieldset6->collapsed = 1;
+        $fieldset6->icon = 'fa-bar-chart';
+
+        // grab data from the log file if present
+
+        $stat = $this->wire('modules')->get("InputfieldMarkup");
+        $stat->attr('name', 'statistics');
+        $stat->label = "";
+        if ($this->wire('log')->exists('Failed-attempts-frontendforms')) {
+
+            $logs = $this->wire('log')->getEntries('failed-attempts-frontendforms');
+
+            $result = array();
+            foreach ($logs as $element) {
+                $date = $element['date'];
+                $url = $element['url'];
+                $user = $element['user'];
+                $text = json_decode($element['text']);
+                $ip = $text->IP;
+                (isset($result[$ip])) ?
+                    $result[$ip]['count'] += 1 :
+                    $result[$ip] = array('data' => $date, 'user' => $user, 'url' => $url, 'count' => 1);
+            }
+            // sort array by count descending
+            array_multisort(array_column($result, 'count'), SORT_DESC, SORT_NUMERIC, $result);
+            // output table
+            $value = $this->___executeTable($result);
+        } else {
+            $value = $this->_('Nothing to show - logfile does not exist');
+        }
+        $stat->value = '<p>' . $value . '</p>';
+        $fieldset6->append($stat);
+
+        $inputfields->add($fieldset6);
+
+        $inputfields->add($fieldset6);
+
+    }
+
+    /**
+     * Create new directory and copy files from other directory to this directory
+     * Afterwards delete the old directory
+     * These files are images for email templates
+     * @param string $from
+     * @param string $to
+     * @return void
+     * @throws WireException
+     */
+    protected function createFilesDir(string $from, string $to): void
+    {
+        // check if directory exists
+        if (!$this->wire('files')->exists($to)) {
+            // create directory if not present
+            if ($this->wire('files')->mkdir($to)) {
+                // check if files exists in the modules assets folder
+                if ($this->wire('files')->exists($from)) {
+                    // scan directory if it contains files
+                    $files = $this->wire('files')->find($from);
+                    if ($files) {
+                        // copy all files to the newly created FrontendForms directory under site/assets/files
+                        $this->wire('files')->copy($from, $to);
+                        // now remove the assets folder and its content form FrontendForms/assets
+                        $this->wire('files')->rmdir($from, true);
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Copy/Remove the captchaimage.php from the root and copy it back to site/modules/FrontendForms/Formelements/Captcha/captchaimage.php
+     * @param bool $install
+     * @return void
+     * @throws WireException
+     */
+    protected function createRemoveCaptchaImageFile(bool $install): void
+    {
+        $moduleFile = $this->modulePath . 'Formelements/Captcha/captchaimage.php';
+        $rootFile = $this->wire('config')->paths->root . 'captchaimage.php';
+        $from = $install ? $moduleFile : $rootFile;
+        $to = $install ? $rootFile : $moduleFile;
+        $this->wire('files')->copy($from, $to);
+        $this->wire('files')->unlink($from);
+    }
+
+    /**
+     * Run during install
+     * @return void
+     * @throws WireException
+     */
+    public function ___install(): void
+    {
+        //save default module configurations on install
+        $pass = $this->wire('fields')->get('pass');
+        $data = self::getDefaultData();
+        //save the path to the default font file manually to the config data
+        $data['input_captchaFontFamily'] = $this->modulePath . 'Formelements/Captcha/fonts/OpenSans-SemiBold.ttf';
+        // save all other ttf fonts to the db
+        $data['input_captchaFonts'] = $this->findAllFontfiles();
+
+        if ($this->downloadPasswordsFromGitHub()) { // first download the file from GitHub
+            //get default module configurations
+            $data = self::getDefaultData();
+            $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
+            $data['last_check'] = $this->wire('datetime')->date($this->default_dateformat);
+            // load password list data from GitHub (https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-100.txt)
+            $githubdata = $this->getDataFromGitHub(self::LAST_PASSWORDS_MODIFICATION_URL); //load json data from the file
+            $last_update = $githubdata[0]->commit->author->date; // last modification date on GitHub
+            $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat, $last_update);
+            $this->password_field = wire('fields')->get('pass');
+            $this->password_object = new InputfieldPassword();
+            // for the case that property requirements is not stored inside the db at this moment
+            $requirements = $this->password_field->requirements ?? ["letter", "digit"];
+            $this->password_object->requirements = $requirements;
+            $passwordsArray = $this->createArrayOfTxtFile($this->passwordPath);
+            $data['input_blacklist'] = $this->cleanUpPasswordList($passwordsArray);
+            $this->input_blacklist = $data['input_blacklist'];
+            // save the config data to the db
+            wire('modules')->saveConfig($this, $data);
+        }
+        // save the config data to the db
+        wire('modules')->saveConfig($this, $data);
+
+        // copy files from FrontendForms/assets to site/assets/files/Frontendforms
+        $to = $this->wire('config')->paths->assets . 'files/FrontendForms/';
+        $from = $this->modulePath . 'assets/';
+        $this->createFilesDir($from, $to);
+        // copy captchaimage.php from site/modules/FrontendForms/Formfields/captcha/ to the root dir
+        $this->createRemoveCaptchaImageFile(true);
+        // create temp_uploads folder
+        $this->wire('files')->mkdir($this->modulePath . 'temp_uploads');
+    }
+
+    /**
+     * Run during uninstall
+     * @return void
+     * @throws WireException
+     */
+    public function ___uninstall(): void
+    {
+        // copy files from site/assets/files/Frontendforms to FrontendForms/assets
+        $from = $this->wire('config')->paths->assets . 'files/FrontendForms/';
+        $to = $this->modulePath . 'assets/';
+        $this->createFilesDir($from, $to);
+        $this->createRemoveCaptchaImageFile(false); // delete captchaimage.php from root
+        // remove passwords.txt - should be downloaded on next install
+        $this->wire('files')->unlink($this->passwordPath);
+    }
+
+}
+
