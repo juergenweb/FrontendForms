@@ -7,7 +7,7 @@ return array(
     'accepted'      => "必须接受",
     'numeric'       => "只能是数字",
     'integer'       => "只能是整数",
-    'length'        => "长度必须大于 %d",
+    'length'        => "长度必须等于 %d",
     'min'           => "必须大于 %s",
     'max'           => "必须小于 %s",
     'listContains'  => "无效的值",
@@ -30,5 +30,11 @@ return array(
     'lengthBetween' => "长度只能介于 %d 和 %d 之间",
     'creditCard'    => "信用卡号码不正确",
     'lengthMin'     => "长度必须大于 %d",
-    'lengthMax'     => "长度必须小于 %d"
+    'lengthMax'     => "长度必须小于 %d",
+    'instanceOf'     => "必须是 '%s' 的实例",
+    'containsUnique' => "必须仅包含唯一的元素",
+    'requiredWith'   => "是必须的",
+    'requiredWithout' => "是必须的",
+    'subset'         => "包含不在列表中的项目",
+    'arrayHasKeys'   => "不包含所有必需的键",
 );
