@@ -321,8 +321,10 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      */
     protected function setEmailTemplate(WireMail $mail, string $templateName): WireMail
     {
-        if ($templateName !== 'none') {
-            //  run only if a template was chosen
+            /*
+             * This is only for modules, which are based on the FrontendForms module
+             * because they can inherit from this module
+             */
             if ($templateName === 'inherit') {
                 $templateName = $this->input_emailTemplate; //  use the template from the FrontendForms config
             } else {
@@ -332,9 +334,9 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                         $templateName, implode(', ', $this->emailTemplates)));
                 }
             }
+
             // add a new property to the mail class
             $mail->email_template = $templateName;
-        }
         return $mail;
     }
 
@@ -489,6 +491,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
          */
         wire()->addHookMethod('WireMail::mailTemplate', function ($event) {
             $mail = $event->object;
+            $mail->email_template = 'none';
             $template = $event->arguments(0);
             //  run only if a template was selected
             if ($template != 'none') {
