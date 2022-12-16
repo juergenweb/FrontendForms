@@ -280,23 +280,27 @@ class Form extends Tag
 
     /**
      * Include the body template in the mail if it was set in the configuration or directly on the WireMail object
-     * Takes the input_email property to check whether a template should be used or not
+     * Takes the input_emailTemplate property to check whether a template should be used or not
      * @param WireMail $mail
      * @return void
      * @throws WireException
      */
     protected function includeMailTemplate(WireMail $mail): void
     {
+        // set email_template property if it was not set before
+        if(!$mail->email_template)
+            $mail->email_template = $this->input_emailTemplate;
+
         // check if email template is set
-        if ($this->input_emailTemplate != 'none') {
+        if ($mail->email_template != 'none') {
             // set body as placeholder
-            if ($this->input_emailTemplate == 'inherit') {
+            if ($mail->email_template == 'inherit') {
                 // use the value from the FrontendForms module configuration
-                $this->emailTemplate = $this->wire('modules')->getConfig('FrontendForms')['input_emailTemplate'];
+                $mail->email_template = $this->wire('modules')->getConfig('FrontendForms')['input_emailTemplate'];
             }
-            if ($this->emailTemplate != 'none') {
+            if ($mail->email_template != 'none') {
                 // load the whole template content inside the variable $body
-                $body = $this->loadTemplate($this->emailTemplatesDirPath . $this->emailTemplate);
+                $body = $this->loadTemplate($this->emailTemplatesDirPath . $mail->email_template);
                 // replace the placeholder variables with the appropriate values
                 $body = wirePopulateStringTags($body, $this->getMailPlaceholders(),
                     ['tagOpen' => '[[', 'tagClose' => ']]']);
