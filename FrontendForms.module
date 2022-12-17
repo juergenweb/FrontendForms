@@ -160,7 +160,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * These values will be stored in the DB during the installation process
      * This is necessary to get them via getModuleConfig() without saving the configuration page after the installation
      * If the values are not stored inside the DB, they are not reachable via getModuleConfig();
-     * @return string[]
+     * return array
      */
     public static function getDefaultData(): array
     {
@@ -1252,7 +1252,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                 $files[$font] = ucfirst(pathinfo($font, PATHINFO_BASENAME));
             }
         }
-        return $files;
+        return array_unique($files);
     }
 
     /**
