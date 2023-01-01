@@ -278,11 +278,12 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         // fetch the response from the given url
         $context = stream_context_create($opts);
         $file = file_get_contents($url, false, $context);
+
         if ($file) {
             $response = json_decode($file); // contains all the response data as a json object
         } else {
             // there was an error getting the file - write an error log
-            $this->wire('log')->error(E_WARNING);
+            //$this->wire('log')->error(E_WARNING);
             // inform the user with a warning message
             $this->wire('session')->warning($this->_('Sorry, but the file including the password list could not be downloaded from GitHub.'));
         }
@@ -969,18 +970,21 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $this->last_check = $this->wire('datetime')->date($this->default_dateformat);
             // get last commit data from GitHub
             $data = $this->getDataFromGitHub(self::LAST_PASSWORDS_MODIFICATION_URL); //load json data from the file
-            $last_update = $data[0]->commit->author->date; // last modification date on GitHub
-            // check if last download was before last update - so we need to download the file again
-            if ((!$this->toppasswords_download) || (strtotime($last_update) > strtotime($this->toppasswords_download))) {
-                if ($this->downloadPasswordsFromGitHub()) {
-                    $data = self::getDefaultData();
-                    $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
-                    $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat, $last_update);
-                    wire('modules')->saveConfig($this, $data);
-                    // inform the user
-                    $this->wire('session')->message('A new version of the 100 most common passwords was downloaded from GitHub');
+            if($data){
+                $last_update = $data[0]->commit->author->date; // last modification date on GitHub
+                // check if last download was before last update - so we need to download the file again
+                if ((!$this->toppasswords_download) || (strtotime($last_update) > strtotime($this->toppasswords_download))) {
+                    if ($this->downloadPasswordsFromGitHub()) {
+                        $data = self::getDefaultData();
+                        $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
+                        $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat, $last_update);
+                        wire('modules')->saveConfig($this, $data);
+                        // inform the user
+                        $this->wire('session')->message('A new version of the 100 most common passwords was downloaded from GitHub');
+                    }
                 }
             }
+
         }
     }
 
