@@ -568,7 +568,8 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $this->addHookBefore('InputfieldTextarea::processInput', $this, 'validateColorCodeTextarea');
         $this->addHookBefore('InputfieldText::processInput', $this, 'sanitizeColorValues');
         $this->addHookBefore('Inputfield::render', $this, 'addLinkToNotes');
-        $this->addHookBefore('Page::render', $this, 'downloadPasswords');
+        // TODO: This hook will be disabled temporarly, because something causes a redirect and tries to download passwords every 6 seconds
+        //$this->addHookBefore('Page::render', $this, 'downloadPasswords'); 
 
 
         // add CSS and JS to the backend
