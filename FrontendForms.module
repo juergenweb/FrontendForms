@@ -283,7 +283,8 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $response = json_decode($file); // contains all the response data as a json object
         } else {
             // there was an error getting the file - write an error log
-            //$this->wire('log')->error(E_WARNING);
+
+            $this->wire('log')->error(E_WARNING);
             // inform the user with a warning message
             $this->wire('session')->warning($this->_('Sorry, but the file including the password list could not be downloaded from GitHub.'));
         }
@@ -322,22 +323,22 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      */
     protected function setEmailTemplate(WireMail $mail, string $templateName): WireMail
     {
-            /*
-             * This is only for modules, which are based on the FrontendForms module
-             * because they can inherit from this module
-             */
-            if ($templateName === 'inherit') {
-                $templateName = $this->input_emailTemplate; //  use the template from the FrontendForms config
-            } else {
-                if (!in_array($templateName, $this->emailTemplates)) {
-                    //  check if an email template with this name exists
-                    throw new Exception(sprintf('Email template with the name %s does not exist. Possible templates are: %s',
-                        $templateName, implode(', ', $this->emailTemplates)));
-                }
+        /*
+         * This is only for modules, which are based on the FrontendForms module
+         * because they can inherit from this module
+         */
+        if ($templateName === 'inherit') {
+            $templateName = $this->input_emailTemplate; //  use the template from the FrontendForms config
+        } else {
+            if (!in_array($templateName, $this->emailTemplates)) {
+                //  check if an email template with this name exists
+                throw new Exception(sprintf('Email template with the name %s does not exist. Possible templates are: %s',
+                    $templateName, implode(', ', $this->emailTemplates)));
             }
+        }
 
-            // add a new property to the mail class
-            $mail->email_template = $templateName;
+        // add a new property to the mail class
+        $mail->email_template = $templateName;
         return $mail;
     }
 
@@ -568,8 +569,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $this->addHookBefore('InputfieldTextarea::processInput', $this, 'validateColorCodeTextarea');
         $this->addHookBefore('InputfieldText::processInput', $this, 'sanitizeColorValues');
         $this->addHookBefore('Inputfield::render', $this, 'addLinkToNotes');
-        // TODO: This hook will be disabled temporarly, because something causes a redirect and tries to download passwords every 6 seconds
-        //$this->addHookBefore('Page::render', $this, 'downloadPasswords'); 
+        $this->addHookBefore('Page::render', $this, 'downloadPasswords');
 
 
         // add CSS and JS to the backend
@@ -958,36 +958,43 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     protected function downloadPasswords(HookEvent $event, bool $do_not_check = false): void
     {
         $download = true; // set download true by default
+        $data = $this->wire('modules')->getConfig($this);
         // let us check some conditions if it is necessary to update the passwords
         if ($this->wire('files')->exists($this->passwordPath)) {
-            //check if last update was in the current month
-            if ($this->wire('datetime')->date('Y-m',
-                    filemtime($this->passwordPath)) == $this->wire('datetime')->date('Y-m')) {
-                $download = ($do_not_check) ?? false;
-            }
-        }
-        if ($download) {
-            // save check date to database
-            $this->last_check = $this->wire('datetime')->date($this->default_dateformat);
-            // get last commit data from GitHub
-            $data = $this->getDataFromGitHub(self::LAST_PASSWORDS_MODIFICATION_URL); //load json data from the file
-            if($data){
-                $last_update = $data[0]->commit->author->date; // last modification date on GitHub
-                // check if last download was before last update - so we need to download the file again
-                if ((!$this->toppasswords_download) || (strtotime($last_update) > strtotime($this->toppasswords_download))) {
-                    if ($this->downloadPasswordsFromGitHub()) {
-                        $data = self::getDefaultData();
-                        $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
-                        $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat, $last_update);
-                        wire('modules')->saveConfig($this, $data);
-                        // inform the user
-                        $this->wire('session')->message('A new version of the 100 most common passwords was downloaded from GitHub');
+
+            // check if last check was in the same month or not
+            $check = $this->wire('datetime')->date('Y-m', $this->last_check) != $this->wire('datetime')->date('Y-m');
+            if ($check) {
+
+                // save the check date to the database
+                $this->last_check = $data['last_check'] = $this->wire('datetime')->date($this->default_dateformat);
+                // grab data from GitHub
+                $github_data = $this->getDataFromGitHub(self::LAST_PASSWORDS_MODIFICATION_URL); //load json data from the file
+
+                if($github_data){
+                    $last_update = $github_data[0]->commit->author->date; // last modification date on GitHub
+                    // check if last download was before last update - so we need to download the file again
+                    if ((!$this->toppasswords_download) || (strtotime($last_update) > strtotime($this->toppasswords_download))) {
+                        // download the passwords from GitHub
+                        if ($this->downloadPasswordsFromGitHub()) {
+                            $this->toppasswords_download = $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
+                            $this->github_modified = $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat);
+                        }
                     }
                 }
+                wire('modules')->saveConfig($this, $data);
             }
-
+        } else {
+            // in the rare case that the file does not exist (fe accidentally deleted) - download it once more
+            if ($this->downloadPasswordsFromGitHub()) {
+                $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
+                $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat);
+                wire('modules')->saveConfig($this, $data);
+            }
         }
+
     }
+
 
     /**
      * Method to delete all uploaded files after email was sent
@@ -2180,7 +2187,6 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     public function ___install(): void
     {
         //save default module configurations on install
-        $pass = $this->wire('fields')->get('pass');
         $data = self::getDefaultData();
         //save the path to the default font file manually to the config data
         $data['input_captchaFontFamily'] = $this->modulePath . 'Formelements/Captcha/fonts/OpenSans-SemiBold.ttf';
