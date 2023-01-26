@@ -59,6 +59,7 @@ class Form extends Tag
     protected string $bodyTemplateDirPath = ''; // the path to the folder, which includes the body templates
     protected string $bodyTemplate = ''; // the name of the body template (fe template_1)
     protected string $bodyTemplatePath = ''; // the complete path to the body template file
+    protected array $bodyTemplates = []; // array that holds all body templates for sending emails
 
     /* objects */
     protected Alert $alert; // alert box
@@ -260,6 +261,37 @@ class Form extends Tag
     /**
      * Special general methods for sending emails
      */
+
+    /**
+     * Find all body templates inside the given path and add them to the property $bodyTemplates as
+     * an numeric array containing the filenames (fe [0] => template1.html, [1] => template2.html,....)
+     * @param string|null $path
+     * @return void
+     * @throws WireException
+     */
+    protected function setBodyTemplates(?string $path = NULL): void
+    {
+        $array = [];
+        if(!is_null($path)){
+            $files = $this->wire('files')->find($this->bodyTemplatesDirPath);
+            if($files){
+                foreach($files as $path){
+                    $key = pathinfo($path, PATHINFO_BASENAME);
+                    $array[] = $key;
+                }
+                $this->bodyTemplates = $array;
+            }
+        }
+    }
+
+    /**
+     * Get all bodyTemplates as an numeric array
+     * @return array
+     */
+    protected function getBodyTemplates(): array
+    {
+        return $this->bodyTemplates;
+    }
 
     /**
      * FrontendForms has no body templates for emails - only modules descending from this module has body templates
