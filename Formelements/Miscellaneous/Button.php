@@ -14,6 +14,9 @@ namespace FrontendForms;
 
 class Button extends Element
 {
+    protected bool $showNoContent = false;
+    protected bool $showAttributeValue = false;
+    protected string|null $alternativeValue = null;
 
     public function __construct($name = 'submit')
     {
@@ -23,6 +26,8 @@ class Button extends Element
         $this->setAttribute('type', 'submit'); // default is submit
         $this->setCSSClass('buttonClass');
         $this->setAttribute('value', $this->_('Send'));
+        $this->showNoContent(false);
+        $this->showAttributeValue(true);
     }
 
     /**
@@ -41,6 +46,29 @@ class Button extends Element
     }
 
     /**
+     * Show the button if no value is present - true or false (default ist false)
+     * @param bool $showNoContent
+     * @return $this
+     */
+    public function showNoContent(bool $showNoContent): self
+    {
+        $this->showNoContent = $showNoContent;
+        return $this;
+    }
+
+    /**
+     * Add the button text as value attribute - true or false (default is true)
+     * @param bool $showAttributeValue
+     * @return $this
+     */
+    public function showAttributeValue(bool $showAttributeValue): self
+    {
+        $this->showAttributeValue = $showAttributeValue;
+        return $this;
+    }
+
+  
+    /**
      * Creates a new wrapper object
      * @return Wrapper
      */
@@ -57,18 +85,17 @@ class Button extends Element
         $this->removeWrap();
     }
 
+
     /**
      * Render the button
      * Use the value attribute as button text
-     * @param bool $showNoContent
-     * @param bool $showAttributeValue
      * @return string
      */
-    public function ___render(bool $showNoContent = false, bool $showAttributeValue = true): string
+    public function ___render(): string
     {
         $this->setContent($this->getAttribute('value'));
         $this->setAttribute('value',$this->getAttribute('value'));
-        $button = $this->renderNonSelfclosingTag($this->getTag(), $showNoContent, $showAttributeValue);
+        $button = $this->renderNonSelfclosingTag($this->getTag(), $this->showNoContent, $this->showAttributeValue);
 
         if ($this->getWrapper()) {
             $this->getWrapper()->setContent($button);
