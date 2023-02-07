@@ -135,7 +135,7 @@ abstract class Tag extends Wire
     }
 
     /**
-     * An method only to output print_r in formatted way for better readability
+     * A method only to output print_r in formatted way for better readability
      * Only for dev purposes
      * @param string|array|object $str
      */
@@ -543,9 +543,11 @@ abstract class Tag extends Wire
      * Base render method for none-self-closing HTML tags
      * @param string $tag - the non-self-closing tag itself (fe div, form,...)
      * @param boolean $showNoContent - tag should be displayed if there is no content (true) or not (false)
+     * @param bool $showAttributeValue - by default the value attribute will be displayed as the content -
+     * here you can add it as attribute value too
      * @return string
      */
-    protected function renderNonSelfclosingTag(string $tag, bool $showNoContent = false): string
+    protected function renderNonSelfclosingTag(string $tag, bool $showNoContent = false, bool $showAttributeValue = false): string
     {
         $out = '';
         $show = match ($this->getContent()) {
@@ -553,7 +555,7 @@ abstract class Tag extends Wire
             default => true,
         };
         if ($show) {
-            $out .= $this->prepend . '<' . $tag . $this->attributesToString(false) . '>' . $this->getContent() . '</' . $tag . '>' . $this->append;
+            $out .= $this->prepend . '<' . $tag . $this->attributesToString($showAttributeValue) . '>' . $this->getContent() . '</' . $tag . '>' . $this->append;
         }
         return $out;
     }
