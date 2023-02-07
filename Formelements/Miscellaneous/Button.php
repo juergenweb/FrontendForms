@@ -22,7 +22,7 @@ class Button extends Element
         $this->setAttribute('name', $name);
         $this->setAttribute('type', 'submit'); // default is submit
         $this->setCSSClass('buttonClass');
-        $this->setAttribute('value', $this->_('Send')); // default is "Send"
+        $this->setAttribute('value', $this->_('Send'));
     }
 
     /**
@@ -60,12 +60,16 @@ class Button extends Element
     /**
      * Render the button
      * Use the value attribute as button text
+     * @param bool $showNoContent
+     * @param bool $showAttributeValue
      * @return string
      */
-    public function ___render(): string
+    public function ___render(bool $showNoContent = false, bool $showAttributeValue = true): string
     {
         $this->setContent($this->getAttribute('value'));
-        $button = $this->renderNonSelfclosingTag($this->getTag());
+        $this->setAttribute('value',$this->getAttribute('value'));
+        $button = $this->renderNonSelfclosingTag($this->getTag(), $showNoContent, $showAttributeValue);
+
         if ($this->getWrapper()) {
             $this->getWrapper()->setContent($button);
             return $this->getWrapper()->___render();
