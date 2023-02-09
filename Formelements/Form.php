@@ -12,6 +12,7 @@ namespace FrontendForms;
  * Created: 03.07.2022
  */
 
+use DateTime;
 use Exception;
 use ProcessWire\Field as Field;
 use ProcessWire\FrontendForms;
@@ -24,6 +25,7 @@ use ProcessWire\WirePermissionException;
 use Valitron\Validator;
 use function ProcessWire\wire as wire;
 use function ProcessWire\wirePopulateStringTags;
+use function ProcessWire\_n;
 
 class Form extends Tag
 {
@@ -58,7 +60,7 @@ class Form extends Tag
     // these properties are only for usage with modules
     protected string $bodyTemplateDirPath = ''; // the path to the folder, which includes the body templates
     protected string $bodyTemplate = ''; // the name of the body template (fe template_1)
-    protected string $bodyTemplatePath = ''; // the complete path to the body template file
+    protected string|NULL $bodyTemplatePath = NULL; // the complete path to the body template file
     protected array $bodyTemplates = []; // array that holds all body templates for sending emails
 
     /* objects */
@@ -228,7 +230,8 @@ class Form extends Tag
             'usernamelabel' => $this->_('Username'),
             'usernamevalue' => $this->user->name,
             'browserlabel' => $this->_('Browser'),
-            'browservalue' => $_SERVER['HTTP_USER_AGENT']
+            'browservalue' => $_SERVER['HTTP_USER_AGENT'],
+            'donotreplayvalue' => $this->_('This is an auto generated message, please do not reply.')
         ];
     }
 
@@ -294,20 +297,28 @@ class Form extends Tag
     }
 
     /**
-     * FrontendForms has no body templates for emails - only modules descending from this module has body templates
+     * FrontendForms has no body templates for emails - only modules descending from this module (should) have body templates
      * In this case, no template will be loaded - instead all placeholders will be replaced and the content
      * will be set to the placeholder variable body
      * @param WireMail $mail
      * @return void
+     * @throws WireException
      */
     protected function includeBodyTemplate(WireMail $mail): void
     {
-        $body = $mail->bodyHTML;
+
+        $mail->body_template = (in_array($this->bodyTemplate, $this->getBodyTemplates())) ? $this->bodyTemplate : 'default.html';
+        $template_path = $this->bodyTemplatesDirPath.$mail->body_template;
+        $body = '';
+        if($this->wire('files')->exists($template_path))
+            $body = $this->loadTemplate($template_path);
+
         $body = wirePopulateStringTags($body, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
-        // set replaced body content back to bodyHTML property
-        $mail->bodyHTML($body);
+
         // set the body content as placeholder body if a mail template will be used
         $this->setMailPlaceholder('body', $body);
+        // set replaced body content back to bodyHTML property
+        $mail->bodyHTML($body);
     }
 
     /**
@@ -331,7 +342,6 @@ class Form extends Tag
                 $mail->email_template = $this->wire('modules')->getConfig('FrontendForms')['input_emailTemplate'];
             }
             if ($mail->email_template != 'none') {
-                // load the whole template content inside the variable $body
                 $body = $this->loadTemplate($this->emailTemplatesDirPath . $mail->email_template);
                 // replace the placeholder variables with the appropriate values
                 $body = wirePopulateStringTags($body, $this->getMailPlaceholders(),
@@ -351,10 +361,8 @@ class Form extends Tag
         $mail = $event->object;
         // set the placeholder for the title if present
         $this->setMailPlaceholder('title', $mail->title);
-
         $this->includeBodyTemplate($mail); // include/use body template if set
         $this->includeMailTemplate($mail); // include/use mail template if set
-
         return $mail;
     }
 
@@ -381,7 +389,6 @@ class Form extends Tag
         }
     }
 
-
     /**
      * Load a template file from the given path including php code and output it as a string
      * @param string $templatePath - the path to the template that should be rendered
@@ -395,7 +402,6 @@ class Form extends Tag
         ob_end_clean();
         return $var;
     }
-
 
     /**
      * Set the recipient email address on per form base
@@ -497,6 +503,7 @@ class Form extends Tag
         return $this->mailPlaceholder;
     }
 
+
     /**
      * Get the value of a certain placeholder by its name
      * @param string $placeholderName
@@ -505,7 +512,7 @@ class Form extends Tag
     public function getMailPlaceholder(string $placeholderName): string
     {
         $content = '';
-        if (array_key_exists($placeholderName, $this->mailPlaceholder)) {
+        if (array_key_exists(strtoupper($placeholderName), $this->mailPlaceholder)) {
             $content = $this->mailPlaceholder[$placeholderName];
         }
         return $content;
@@ -995,9 +1002,9 @@ class Form extends Tag
      * With this method you can grab and manipulate a specific element
      * @param string $name - the name attribute of the element (fe email)
      * @param boolean $checkPrefix - true to check if form id is added for inputfield name or false to ignore this
-     * @return object - the form element object
+     * @return object|bool - the form element object or false if not found
      */
-    public function getFormelementByName(string $name, bool $checkPrefix = true): object
+    public function getFormelementByName(string $name, bool $checkPrefix = true): object|bool
     {
         //check if id of the form was added as prefix of the element name
         if ($checkPrefix) {
@@ -1293,10 +1300,12 @@ class Form extends Tag
     {
         $values = [];
         foreach ($this->formElements as $element) {
-            $values[$element->getAttribute('name')] = $element->getAttribute('value');
-            // set all form values to a placeholder
-            $fieldName = str_replace($this->getID() . '-', '', $element->getAttribute('name')) . 'value';
-            $this->setMailPlaceholder($fieldName, $element->getAttribute('value'));
+            if($element->getAttribute('value')){
+                $values[$element->getAttribute('name')] = $element->getAttribute('value');
+                // set all form values to a placeholder
+                $fieldName = str_replace($this->getID() . '-', '', $element->getAttribute('name')) . 'value';
+                $this->setMailPlaceholder($fieldName, $element->getAttribute('value'));
+            }
         }
         $this->values = $values;
     }
@@ -1545,8 +1554,11 @@ class Form extends Tag
             $this->setMailPlaceholder($fieldname . 'label', $field->getLabel()->getText());
             $this->setMailPlaceholder($fieldname . 'value', $field->getAttribute('value'));
         }
-        // Add id of the form as prefix for the name attribute of the field
-        $field->setAttribute('name', $this->getID() . '-' . $field->getId());
+        // if field is not a text element, set the name attribute
+        if (!is_subclass_of($field, 'FrontendForms\TextElements')) {
+            // Add id of the form as prefix for the name attribute of the field
+            $field->setAttribute('name', $this->getID() . '-' . $field->getId());
+        }
         $this->formElements = array_merge($this->formElements, [$field]); // array must be numeric for honeypot field
     }
 
@@ -1668,6 +1680,46 @@ class Form extends Tag
     protected function generateSlug(string $string): string
     {
         return preg_replace('/[^A-Za-z\d-]+/', '-', $string);
+    }
+
+    /**
+     * Make a readable string from a number of seconds
+     * @param int $seconds - a number of seconds which should be converted to a readable string
+     * @return string|null - a readable string of the time (fe 1 day instead of 86400 seconds)
+     * @throws Exception
+     */
+    protected function readableTimestringFromSeconds(int $seconds = 0): ?string
+    {
+        $then = new DateTime(date('Y-m-d H:i:s', 0));
+        $now = new DateTime(date('Y-m-d H:i:s', $seconds));
+        $interval = $then->diff($now);
+
+        if ($interval->y >= 1) {
+            $thetime[] = $interval->y . ' ' . _n($this->_('year'),
+                    $this->_('years'), $interval->y);
+        }
+        if ($interval->m >= 1) {
+            $thetime[] = $interval->m . ' ' . _n($this->_('month'),
+                    $this->_('months'), $interval->m);
+        }
+        if ($interval->d >= 1) {
+            $thetime[] = $interval->d . ' ' . _n($this->_('day'),
+                    $this->_('days'), $interval->d);
+        }
+        if ($interval->h >= 1) {
+            $thetime[] = $interval->h . ' ' . _n($this->_('hour'),
+                    $this->_('hours'), $interval->h);
+        }
+        if ($interval->i >= 1) {
+            $thetime[] = $interval->i . ' ' . _n($this->_('minute'),
+                    $this->_('minutes'), $interval->i);
+        }
+        if ($interval->s >= 1) {
+            $thetime[] = $interval->s . ' ' . _n($this->_('second'),
+                    $this->_('seconds'), $interval->s);
+        }
+
+        return isset($thetime) ? implode(' ', $thetime) : null;
     }
 
     /**
