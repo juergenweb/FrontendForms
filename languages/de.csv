@@ -8,7 +8,13 @@ en,de,description,file,hash
 "This file is not a TrueType font file.","Diese Datei ist keine TrueType Schriftart Datei.",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,ad1ca00ca558c196b2ffa224309706e4
 "This file does not exist under the specified path","Diese Datei existiert nicht unter dem angegebenen Pfad",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,d472945618bae0b84ca5082c7d916966
 en,de,description,file,hash
-Send,Senden,"default is ""Send""",site/modules/FrontendForms/Formelements/Miscellaneous/Button.php,94966d90747b97d1f0f206c98a8b1ac3
+Send,Senden,,site/modules/FrontendForms/Formelements/Miscellaneous/Button.php,94966d90747b97d1f0f206c98a8b1ac3
+en,de,description,file,hash
+"A new message via contact form","Eine neue Nachricht über das Kontaktformular","this is a new property from this module",site/modules/FrontendForms/Examples/contactform.php,4758f7b6eca42e3f45ef7fde662fc3a0
+Sender,Absender,,site/modules/FrontendForms/Examples/contactform.php,8aace3ec18d83874d22850b7eee93c7d
+Mail,E-Mail,,site/modules/FrontendForms/Examples/contactform.php,4dfbb099eafd3c82e033bf92946d3ce6
+Subject,Betreff,,site/modules/FrontendForms/Examples/contactform.php,c7892ebbb139886662c6f2fc8c450710
+Message,Nachricht,,site/modules/FrontendForms/Examples/contactform.php,4c2a8fe7eaf24721cc7a9f0175115bd4
 en,de,description,file,hash
 "must be unique. This username is already in use. Please choose another username","wird bereits verwendet, daher wählen Sie bitte einen anderen Benutzernamen aus",,site/modules/FrontendForms/valitron/customValidators.php,5dd80c9d209051243e4959d64001d57a
 "and username do not match","und Benutzername passen nicht zusammen",,site/modules/FrontendForms/valitron/customValidators.php,3229770810a6a1a1718b75115246b5ff
@@ -46,6 +52,7 @@ Time,Zeit,,site/modules/FrontendForms/Formelements/Form.php,a76d4ef5f3f6a672bbfa
 Date,Datum,,site/modules/FrontendForms/Formelements/Form.php,44749712dbec183e983dcd78a7736c41
 Username,Benutzername,,site/modules/FrontendForms/Formelements/Form.php,f6039d44b29456b20f8f373155ae4973
 Browser,=,,site/modules/FrontendForms/Formelements/Form.php,ef15fd2f45e6bb5ce57587895ba64f93
+"This is an auto generated message, please do not reply.","Dies ist eine automatisch generierte Nachricht. Bitte antworten sie nicht darauf.",,site/modules/FrontendForms/Formelements/Form.php,665de5f0541888cc1c06e12ad167e513
 "%s is not a valid IP address.","%s ist keine gültige IP-Adresse",,site/modules/FrontendForms/Formelements/Form.php,cae724dd18de0c8ca83d1e05bc546dbd
 "All fields marked with (*) are mandatory and must be completed.","Alle Felder, welche mit (*) markiert sind, stellen Pflichtfelder dar und müssen in jeden Fall ausgefüllt werden.",,site/modules/FrontendForms/Formelements/Form.php,feaed8b52507d421a9953e0a9ec9a687
 "Thank you for your message.","Vielen Dank für Ihre Nachricht.",,site/modules/FrontendForms/Formelements/Form.php,a0e0f33630289d49200c61cac7900200
@@ -59,6 +66,18 @@ attempt,Versuch,,site/modules/FrontendForms/Formelements/Form.php,1db222fece0e74
 "This is failed attempt number %s. This is your last attempt to send the form. After that you will be blocked due to security reasons.","Dies ist Fehlversuch %s. Sie haben noch einen Versuch das Formular erfolgreich abzusenden. Danach werden Sie aus Sicherheitsgründen gesperrt.",,site/modules/FrontendForms/Formelements/Form.php,47ad76bd199affac60644bad8dcb8061
 "We are sorry, but your IP address %s is on the list of forbidden IP addresses. Therefore the form will not be displayed. If you think your IP address is mistakenly on the list, please contact the administrator of the site.","Es tut uns leid, aber Ihre IP-Adresse %s steht auf der Liste der verbotenen IP-Adressen. Daher wird das Formular nicht angezeigt. Wenn Sie glauben, dass Ihre IP-Adresse fälschlicherweise auf der Liste steht, wenden Sie sich bitte an den Administrator der Website.",,site/modules/FrontendForms/Formelements/Form.php,092284a62a0f8c62fa528c0cfd3d157c
 "You have reached the max. number of allowed attempts and therefore you cannot submit the form once more. To reset the blocking and to submit the form anyway you have to close this browser, open it again and visit this page once more.","Sie haben die max. Anzahl von Versuchen erreicht und aus diesem Grund können Sie das Formular nun nicht mehr absenden. Um die Sperrung aufzuheben und das Formular dennoch abzusenden schließen Sie bitte den Browser, öffnen ihn erneut und besuchen Sie diese Seite noch einmal.",,site/modules/FrontendForms/Formelements/Form.php,9604672fb8882c926b1fcf42c89576d7
+year,Jahr,,site/modules/FrontendForms/Formelements/Form.php,84cdc76cabf41bd7c961f6ab12f117d8
+years,Jahre,,site/modules/FrontendForms/Formelements/Form.php,75aeb98e5241592ad6a6c2c4c78a16ef
+month,Monat,,site/modules/FrontendForms/Formelements/Form.php,7436f942d5ea836cb84f1bb2527d8286
+months,Monate,,site/modules/FrontendForms/Formelements/Form.php,da36cfaf48b9e19896e23e1207040d1e
+day,Tag,,site/modules/FrontendForms/Formelements/Form.php,628b7db04235f228d40adc671413a8c8
+days,Tage,,site/modules/FrontendForms/Formelements/Form.php,44fdec47036f482b68b748f9d786801b
+hour,Stunde,,site/modules/FrontendForms/Formelements/Form.php,896c55cc5e46fab38ce9f51ebf7bfcd3
+hours,Stunden,,site/modules/FrontendForms/Formelements/Form.php,73cdddd7730abfc13a55efb9f5685a3b
+minute,Minute,,site/modules/FrontendForms/Formelements/Form.php,0a7d55be9d12a369a6a8da0fb517fba4
+minutes,Minuten,,site/modules/FrontendForms/Formelements/Form.php,640fd0cc0ffa0316ae087652871f4486
+second,Sekunde,,site/modules/FrontendForms/Formelements/Form.php,a9f0e61a137d86aa9db53465e0801612
+seconds,Sekunden,,site/modules/FrontendForms/Formelements/Form.php,783e8e29e6a8c3e22baa58a19420eb4f
 "Email could not be sent due to possible wrong email configuration settings.","E-Mail konnte aufgrund einer fehlerhaften Konfiguration in den Einstellungen nicht gesendet werden.",,site/modules/FrontendForms/Formelements/Form.php,72cf6df09879e3c5e34778bf6f1bc965
 en,de,description,file,hash
 "seconds left","Sekunden übrig",plural,site/modules/FrontendForms/Formelements/FormValidation.php,c2d918e53348ee8896137bec79036f84
@@ -347,4 +366,3 @@ en,de,description,file,hash
 Surname,Nachname,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Surname.php,8e55577a8ed3b20bff65d23c000280d4
 en,de,description,file,hash
 Username,Benutzername,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Username.php,f6039d44b29456b20f8f373155ae4973
-
