@@ -83,16 +83,20 @@ $this->Validator::addRule('usernameSyntax', function ($field, $value) {
 
 // 5) Check if email is unique
 $this->Validator::addRule('uniqueEmail', function ($value) {
-// check if user is logged in
+    // check if user is logged in
     if ($this->wire('user')->isLoggedin()) {
+        // user is logged in
         if ($this->wire('user')->email == $value) {
             return true;
         }
     }
-    if ($this->wire('users')->get('email=' . $value)->id == '0') {
-        return true;
+    $user = $this->wire('users')->get('email=' . $value);
+    if ($user) {
+        if($user->id != 0){
+            return false;
+        }
     }
-    return false;
+    return true;
 }, $this->_('must be unique. This email is already in use. Please use another email address.'));
 
 
@@ -214,3 +218,4 @@ $this->Validator::addRule('safePassword', function ($field, $value) {
         return true; // no passwords in the blacklist -> return tre
     return (!in_array($value, $passwords)); // check if password is in the blacklist -> false, otherwise true
 }, $this->_('value is in the list of the most popular passwords and therefore not save. Please select another one.'));
+
