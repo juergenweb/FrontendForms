@@ -151,7 +151,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             'version' => '2.1.10',
             'singular' => true,
             'autoload' => true,
-            'requires' => ['PHP>=8.1.0', 'ProcessWire>=3.0.181']
+            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
         ];
     }
 
