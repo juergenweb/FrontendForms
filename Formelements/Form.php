@@ -986,12 +986,14 @@ class Form extends Tag
         $values = [];
 
         foreach ($result as $key) {
+
             // check if inputfield is a file upload field
             $formElement = $this->getFormelementByName($key);
             if ($formElement instanceof InputFile) {
                 $values[$key] = $_FILES[$key]['name'];
             } else {
-                $values[$key] = $this->values[$key];
+                if(array_key_exists($key, $this->values))
+                    $values[$key] = $this->values[$key];
             }
         }
         return $values; // array
