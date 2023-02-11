@@ -1728,7 +1728,7 @@ class Form extends Tag
      * Return the names of all input fields inside a form as an array
      * @return array
      */
-    protected function getNamesOfInputFields(): array
+    public function getNamesOfInputFields(): array
     {
         $elements = [];
         if ($this->formElements) {
