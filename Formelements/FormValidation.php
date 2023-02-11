@@ -234,6 +234,8 @@ class FormValidation extends Wire
             if ($this->wire('session')->get('doubleSubmission-' . $form->getID()) == $secretFormValue) {
                 return true;
             }
+            // make a redirect to clear all form fields if page will be reloaded after successfull submission
+            $this->wire('session')->redirect($form->getAttribute('action'));
             return false;
         } else {
             throw new Exception("Token value to prevent double form submission is missing", 1);
