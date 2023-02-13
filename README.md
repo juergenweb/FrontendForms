@@ -26,6 +26,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 * [Fieldsets](#fieldsets)
 * [Buttons](#buttons)
 * [Default fields](#default-fields)
+* [File uploads](#file-uploads)
 * [Hooking](#hooking)
 * [Multi-language](#multi-language)
 * [HTML email templates](#email-templates)
@@ -1072,6 +1073,12 @@ BTW you will find all pre-defined input types inside the "defaults" folders.
 - Formelements/Inputelements/Inputs/defaults/
 - Formelements/Inputelements/Select/defaults/
 - Formelements/Inputelements/Textarea/defaults/
+
+## File uploads
+There are 2 scenarios of uploading files with FrontendForms:
+
+1. Upload a file for sending it with an email
+2. Upload a file for storing it under site/assets/files
 
 ## Hooking
 Hooking is not really necessary in most cases, because you have so much configuration options to achieve your desired 
