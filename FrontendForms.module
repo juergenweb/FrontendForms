@@ -696,7 +696,8 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $data = $event->arguments(1);
         // run only on FrontendForms module
         if ($class == 'FrontendForms') {
-            $data['input_blacklist'] = $this->cleanUpPasswordList($data['input_blacklist']);
+            if(!is_null($data['input_blacklist']))
+                $data['input_blacklist'] = $this->cleanUpPasswordList($data['input_blacklist']);
 
         }
         $event->arguments(1, $data);
