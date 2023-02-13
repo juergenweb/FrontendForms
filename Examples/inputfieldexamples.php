@@ -19,6 +19,15 @@ $form->setMaxAttempts(5);
 $form->setErrorMsg('Ouups! There are some errors.');
 $form->setSuccessMsg('Congratulation! There are no errors.');
 
+$file1 = new \FrontendForms\InputFile('fileupload1');
+$file1->setLabel('Multiple files upload');
+$file1->allowMultiple(true);
+$form->add($file1);
+
+$file2 = new \FrontendForms\InputFile('fileupload2');
+$file2->setLabel('Single file upload');
+$form->add($file2);
+
 $datalist = new \FrontendForms\Datalist('datalist');
 $datalist->setLabel('Browsers');
 $datalist->addOption('Edge', 'Edge');
