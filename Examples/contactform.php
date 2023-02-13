@@ -63,14 +63,14 @@ $message->setLabel('Message');
 $message->setRule('required')->setCustomFieldName('The message');
 $form->add($message);
 
-$files = new \FrontendForms\InputFile('fileupload1');
-$files->setLabel('Multiple files upload');
-$files->allowMultiple(true);
-$form->add($files);
+$file1 = new \FrontendForms\InputFile('fileupload1');
+$file1->setLabel('Multiple files upload');
+$file1->allowMultiple(true);
+$form->add($file1);
 
-$file = new \FrontendForms\InputFile('fileupload2');
-$file->setLabel('Single file upload');
-$form->add($file);
+$file2 = new \FrontendForms\InputFile('fileupload2');
+$file2->setLabel('Single file upload');
+$form->add($file2);
 
 $accept = new \FrontendForms\InputCheckbox('accept');
 $accept->setLabel('I accept the data privacy');
