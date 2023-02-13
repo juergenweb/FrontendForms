@@ -19,27 +19,36 @@ namespace ProcessWire;
  */
 
 echo  '<h2>A simple working file upload form for uploading files to a page</h2>';
-echo  '<p>Put this piece of code inside your template file.</p>';
 
 $form = new \FrontendForms\Form('upload');
 $form->setAttribute('enctype', 'multipart/form-data');
 $form->setUploadPath($page->id, true);
 
-$files = new \FrontendForms\InputFile('fileupload1');
-$files->setLabel('Multiple files upload');
-$files->allowMultiple(true);
-$form->add($files);
+$file1 = new \FrontendForms\InputFile('fileupload1');
+$file1->setLabel('Multiple files upload');
+$file1->allowMultiple(true);
+$form->add($file1);
 
-$file = new \FrontendForms\InputFile('fileupload2');
-$file->setLabel('Single file upload');
-$form->add($file);
+$file2 = new \FrontendForms\InputFile('fileupload2');
+$file2->setLabel('Single file upload');
+$form->add($file2);
 
 $button = new \FrontendForms\Button('submit');
 $button->setAttribute('value', 'Send');
 $form->add($button);
 
 if ($form->isValid()) {
-    echo '<p>The file(s) has been uploaded successfully.</p>';
+    echo '<p>The file(s) has/have been uploaded successfully.</p>';
 }
 
 echo $form->render();
+
+$page_files = $files->find($config->paths->assets.'files/'.$page->id);
+if($page_files){
+    echo '<p>List of page files:</p>';
+    echo '<ul>';
+    foreach($page_files as $value){
+        echo '<li>'.$value.'</li>';
+    }
+    echo '</ul>';
+}
