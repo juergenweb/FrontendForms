@@ -1088,7 +1088,7 @@ In this case you have to add the sendAttachement() method to the WireMail object
 ### Upload a file for storing it under site/assets/files
 The site/assets/files ist the Processwire directory where all the file will be stored. This directory is public reachable, so that the files could be fetched via fe a link.
 If you want to upload a file under this directory you have to use the setUploadPath() method of the form. With this method you set the target folder, where the file should be stored after the upload.
-You will find more information about the setUploadPath() method here.
+You will find more information about the setUploadPath() method [here](#setUploadPath).
 
 ## Hooking
 Hooking is not really necessary in most cases, because you have so much configuration options to achieve your desired 
