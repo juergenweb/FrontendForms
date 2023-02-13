@@ -1080,6 +1080,16 @@ There are 2 scenarios of uploading files with FrontendForms:
 1. Upload a file for sending it with an email
 2. Upload a file for storing it under site/assets/files
 
+If you want to see a working real world example, please take a look at the example page at site/modules/FrontendForms/Examples/fileuploadtopage.php inside the Examples folder.
+
+### Upload a file for sending it with an email
+In this case you have to add the sendAttachement() method to the WireMail object. Otherwise the files will not be sended with the email. You will find more information about the sendAttachements() method here.
+
+### Upload a file for storing it under site/assets/files
+The site/assets/files ist the Processwire directory where all the file will be stored. This directory is public reachable, so that the files could be fetched via fe a link.
+If you want to upload a file under this directory you have to use the setUploadPath() method of the form. With this method you set the target folder, where the file should be stored after the upload.
+You will find more information about the setUploadPath() method here.
+
 ## Hooking
 Hooking is not really necessary in most cases, because you have so much configuration options to achieve your desired 
 result. Anyway, if there is a need for it, every method with 3 underscores is hookable.
