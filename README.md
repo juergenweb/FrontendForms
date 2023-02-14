@@ -36,7 +36,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 
 ## Quick-start guide
 1. Download and extract FrontendForms and put the folder inside site/modules. Be aware that the folder name must be 
-2. FrontendForms.
+FrontendForms and not FrontendForms-main or FrontendForms-master. GitHub adds this appendix by default. So be aware to remove it before you put the folder inside the module folder.
 3. Login to your admin area and refresh all modules.
 4. Now you can grab this module and install it.
 5. After the installation is finished you can change some configuration settings if you want, but for starting it is not
