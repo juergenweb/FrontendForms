@@ -32,21 +32,24 @@ class Privacy extends InputCheckbox
         parent::__construct($id);
         $this->setLabel($this->_('I accept the privacy policy'));
         $this->setRule('required')->setCustomMessage($this->_('You have to accept our privacy policy'));
-        $privacyPage = $this->wire('pages')->get($this->input_privacy);
+
+        // create the link to the privacy page if set
         if($this->input_privacy){
+            $privacyPage = $this->wire('pages')->get($this->input_privacy); // grab the privacy page
             $this->privacyLink = new Link();
             $this->privacyLink->setPageLink($privacyPage);
             $this->privacyLink->setLinkText($this->_('Privacy Policy'));
             $this->privacyLink->setAttribute('title', $this->_('To the Privacy Policy page'));
-        }
+            $this->setLabel($this->getLabel()->getText() . ' (' . $this->privacyLink->___render() . ')');
+       }
 
-    }
+   }
 
-    /**
-     * Method to set the url where you can find the privacy policy
-     * @param string|null $privacyUrl
-     * @return Link
-     */
+   /**
+    * Method to set the url where you can find the privacy policy
+    * @param string|null $privacyUrl
+    * @return Link
+    */
     public function setPrivacyUrl(?string $privacyUrl = null): Link
     {
         return $this->privacyLink->setUrl($privacyUrl);
@@ -67,11 +70,6 @@ class Privacy extends InputCheckbox
      */
     public function renderPrivacy(): string
     {
-        if ($this->input_privacy) // add the privacy link after the label
-        {
-            $this->setLabel($this->getLabel()->getText() . ' (' . $this->privacyLink->___render() . ')');
-        }
-
         return parent::___renderInputCheckbox();
     }
 
