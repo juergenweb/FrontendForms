@@ -56,8 +56,10 @@ If you have a multi-language site you have to set the code dynamically ($user->l
 
 ```php
 // Example for a multi-language site
-$frontendforms = new FrontendForms(); 
-$frontendforms->setLang($user->language->name); // in this case I set the the site language dynamically 
+// Maybe this code must be adapted a little bit to your needs, but you get the idea...
+$frontendforms = new FrontendForms();
+if($user->language->name != 'default') // default is not a correct 2-letter code for a language
+$frontendforms->setLang($user->language->name); // in this case I set the the site language dynamically
 ```
 
 Now you are ready to use the module in any template file.
