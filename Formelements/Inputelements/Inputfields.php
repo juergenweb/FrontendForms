@@ -228,28 +228,28 @@ abstract class Inputfields extends Element
         switch ($className) {
             case ('InputHidden'):
                 $this->removeAttribute('class');// we need no class attribute for styling on hidden fields
-                $out .= $this->renderInputHidden(). PHP_EOL;// we do not need label, wrapper divs,... only the input element
+                $out .= $this->renderInputHidden() . PHP_EOL;// we do not need label, wrapper divs,... only the input element
                 break;
             case ('InputCheckbox'):
             case ('InputRadio'):
                 switch ($this->markupType) {
                     case ('bootstrap5.json'):
                         $this->label->setCSSClass('checklabelClass');
-                        $label = $input . $this->label->render(). PHP_EOL;
+                        $label = $input . $this->label->render() . PHP_EOL;
                         break;
                     default: // uikit3.json, none
                         // render label and input different on single checkbox and single radio
                         $this->label->removeAttributeValue('class', $this->getCSSClass('checklabel'));
                         if ($this->appendLabel) {
-                            $label = $input . $this->label->render(). PHP_EOL;
+                            $label = $input . $this->label->render() . PHP_EOL;
                         } else {
                             $this->label->setContent($input . $this->getLabel()->getText());
-                            $label = $this->label->render(). PHP_EOL;
+                            $label = $this->label->render() . PHP_EOL;
                         }
                 }
                 // error message and error class
                 if ($this->getErrormessage()->getText()) {
-                    $errormsg = $this->errormessage->___render(). PHP_EOL;
+                    $errormsg = $this->errormessage->___render() . PHP_EOL;
                     //add error message for validation
                     $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getErrorClass());
                     // add error class to the wrapper container
@@ -264,17 +264,17 @@ abstract class Inputfields extends Element
                     if ($this->input_framework === 'bootstrap5.json') {
                         $this->inputWrapper->setAttribute('class', 'form-check');
                     }
-                    $content .= $this->inputWrapper->___render(). PHP_EOL;
+                    $content .= $this->inputWrapper->___render() . PHP_EOL;
                 }
                 break;
             default:
                 if ($this->getLabel()->getText()) {
-                    $content .= $this->label->render(). PHP_EOL;
+                    $content .= $this->label->render() . PHP_EOL;
                 }
                 // Error message
                 $errormsg = '';
                 if ($this->getErrormessage()->getText()) {
-                    $errormsg = $this->errormessage->___render(). PHP_EOL;
+                    $errormsg = $this->errormessage->___render() . PHP_EOL;
                     //add error message for validation
                     $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getErrorClass());
                     // add error class to the wrapper container
@@ -282,7 +282,7 @@ abstract class Inputfields extends Element
                 // add input-wrapper
                 if ($this->useInputWrapper) {
                     $this->inputWrapper->setContent($input . $errormsg);
-                    $content .= $this->inputWrapper->___render(). PHP_EOL;
+                    $content .= $this->inputWrapper->___render() . PHP_EOL;
                 } else {
                     $content .= $input . $errormsg;
                 }
@@ -291,17 +291,17 @@ abstract class Inputfields extends Element
         if ($className != 'InputHidden') {
             // Description
             if ($this->getDescription()->getText()) {
-                $content .= $this->description->___render(). PHP_EOL;
+                $content .= $this->description->___render() . PHP_EOL;
             }
             // Notes
             if ($this->getNotes()->getText()) {
-                $content .= $this->notes->___render(). PHP_EOL;
+                $content .= $this->notes->___render() . PHP_EOL;
             }
             if (!$this->useFieldWrapper) {
                 $out .= $content;
             } else {
                 $this->fieldWrapper->setContent($content);
-                $out .= $this->fieldWrapper->___render(). PHP_EOL;
+                $out .= $this->fieldWrapper->___render() . PHP_EOL;
             }
         }
         return $out;
@@ -431,7 +431,7 @@ abstract class Inputfields extends Element
     }
 
     /**
-     * Set (a) default value(s) for an input field (fe firstname and lastname if user is logged in)
+     * Set (a) default value(s) for an input field on first page load
      * Enter values as a string: Each value has to be separated by a comma ('default value1', 'default value2')
      * Enter values as an array: ['default value1', 'default value2']
      * @param string|array|null $default
@@ -439,26 +439,28 @@ abstract class Inputfields extends Element
      */
     public function setDefaultValue(string|array|null $default = null): self
     {
-        if (!is_null($default)) {
-            if (is_string($default)) {
-                //create array out of string
-                $default = func_get_args();
-                //sanitize array values and set them as a string
-                array_walk($default, function (&$item) {
-                    $item = trim($item);
-                });
-            }
-            //check if input type can have multiple values or not
-            if (($this->className() === 'InputCheckboxMultiple') || ($this->className() === 'InputSelectMultiple')) {
-                $value = $default;
-            } else {
-                // take only the first item of the array (single value only)
-                $value = $default[0];
-            }
-            if (($this->className() != 'InputCheckboxMultiple') || ($this->className() != 'InputSelectMultiple')) {
-                $this->setAttribute('value', $value);
-                // set only default value and value if a value attribute is present or it is a select input field
-                $this->defaultValue = $default;
+        if(!$_POST) { // set default value(s) only before form is submitted
+            if (!is_null($default)) {
+                if (is_string($default)) {
+                    //create array out of string
+                    $default = func_get_args();
+                    //sanitize array values and set them as a string
+                    array_walk($default, function (&$item) {
+                        $item = trim($item);
+                    });
+                }
+                //check if input type can have multiple values or not
+                if (($this->className() === 'InputCheckboxMultiple') || ($this->className() === 'InputSelectMultiple')) {
+                    $value = $default;
+                } else {
+                    // take only the first item of the array (single value only)
+                    $value = $default[0];
+                }
+                if (($this->className() != 'InputCheckboxMultiple') || ($this->className() != 'InputSelectMultiple')) {
+                    $this->setAttribute('value', $value);
+                    // set only default value and value if a value attribute is present or it is a select input field
+                    $this->defaultValue = $default;
+                }
             }
         }
         return $this;
