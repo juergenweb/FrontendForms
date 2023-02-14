@@ -465,13 +465,17 @@ class Form extends Tag
     /**
      * Set a new placeholder variable with a specific value to the mailPlaceholder array
      * @param string $placeholderName
-     * @param string|null $placeholderValue
+     * @param string|array|null $placeholderValue
      * @return $this
      */
-    public function setMailPlaceholder(string $placeholderName, string|null $placeholderValue): self
+    public function setMailPlaceholder(string $placeholderName, string|array|null $placeholderValue): self
     {
         if (!is_null($placeholderValue)) {
             $placeholderName = strtoupper(trim($placeholderName));
+            if(is_array($placeholderValue)){
+                // convert array of values to comma separated string
+                $placeholderValue = implode(', ', $placeholderValue);
+            }
             $placeholderValue = trim($placeholderValue);
             // merge it to the mailPlaceholder array
             $this->mailPlaceholder = array_merge($this->getMailPlaceholders(), [$placeholderName => $placeholderValue]);
@@ -1306,6 +1310,7 @@ class Form extends Tag
                 $values[$element->getAttribute('name')] = $element->getAttribute('value');
                 // set all form values to a placeholder
                 $fieldName = str_replace($this->getID() . '-', '', $element->getAttribute('name')) . 'value';
+
                 $this->setMailPlaceholder($fieldName, $element->getAttribute('value'));
             }
         }
