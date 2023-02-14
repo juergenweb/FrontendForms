@@ -553,7 +553,7 @@ By default, this method only returns values from inputfields. If you need values
 This method is the same as the getValues() method, but it returns all post values as a string instead of an array.
 
 ```php
-  $form->getValues();
+  $form->getValuesAsString();
 ```
 #### getValue()
 This will return the value of a specific input field after a successful form submission. You have to write the name of the input field inside the parenthesis.
