@@ -50,7 +50,7 @@ $frontendforms->setLang('de'); // in this case I set the the site language to Ge
 ```
 
 With the method setLang(), you set the language for the pre-defined error messages of the form after the form submission. If you do not set the language, then all error messages are always in English (independent of what language you have set on the frontend.
-Be aware, that the value of the language code inside the parenthesis must be in ISO 639-1 format (2-letter code). This module supports over 20 different languages for the error messages by default. You will find them at [](). You can use every language code, that you will find inside this directory. If you enter a language code, where no file could be found, than the default language English will be used instead.
+Be aware, that the value of the language code inside the parenthesis must be in ISO 639-1 format (2-letter code). This module supports over 20 different languages for the error messages by default. You will find them inside the [FrontendForms/lang](https://github.com/juergenweb/FrontendForms/tree/main/lang) directory. You can use every language code, that you will find inside this directory. If you enter a language code, where no file could be found, than the default language English will be used instead.
 
 If you have a multi-language site you have to set the code dynamically ($user->language->name) and not static as described above. In this case the property "name" must be in the format as written before.
 
