@@ -286,7 +286,7 @@ Add IP-addresses to a blacklist to prevent them accessing your forms. If the vis
 which informs the visitor, that his IP is on the blacklist. The form itself will not be displayed in this case.
 
 ## CAPTCHA
-This module offers various type of CAPTCHA, that can be used. BTW: CAPTCHA should be used only if the other traps failed.
+This module offers various types of a CAPTCHA, that can be used. BTW: CAPTCHA should be used only if the other traps failed and you get a lot of SPAM over your forms.
 Most users do not like CAPTCHA, but it is up to you whether to use them or not.
 At the moment, following CAPTCHA types will be provided:
 
