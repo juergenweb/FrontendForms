@@ -39,24 +39,27 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 FrontendForms and not FrontendForms-main or FrontendForms-master. GitHub adds this appendix by default. So be aware to remove it before you put the folder inside the module folder.
 3. Login to your admin area and refresh all modules.
 4. Now you can grab this module and install it.
-5. After the installation is finished you can change some configuration settings if you want, but for starting it is not
-6. really necessary.
-7. Include the module in your project by putting these 2 lines of code fe inside your _init.php inside your template 
-8. folder, so you can use FrontendForms across your site. This works only if you set 
-9. $config->prependTemplateFile = '_init.php' inside your /site/config.php.
-By the way you can include these 2 lines also inside the template file where you want to create your form, but it is 
-10. not the recommended way.
+5. After the installation is finished you can change some configuration settings if you want, but it works out of the box
+7. Add the following 2 lines of code inside your _init.php inside your template 
+folder. These lines are especially needed if you are running a multi-language site or single-language site, where the language is not English. If the language of your site is English, you can skip this step.
 
 ```php
-$frontendforms = new FrontendForms();
-$frontendforms->setLang('de');
+// Example for a single-language site
+$frontendforms = new FrontendForms(); 
+$frontendforms->setLang('de'); // in this case I set the the site language to German (hard coded)
 ```
 
-Line 1 loads the module with all its classes and on line 2 (optional) you can define a language (default is English) for
-the pre-defined error messages.
-Please take a look inside the folder lang of this module which languages are available. These files contain pre-defined 
-error messages in each language for the different validation types, but you can also set your custom error messages if 
-you want (read more at the customization part later on).
+With the method setLang(), you set the language for the pre-defined error messages of the form after the form submission. If you do not set the language, then all error messages are always in English (independent of what language you have set on the frontend.
+Be aware, that the value of the language code inside the parenthesis must be in ISO 639-1 format (2-letter code). This module supports over 20 different languages for the error messages by default. You will find them at [](). You can use every language code, that you will find inside this directory. If you enter a language code, where no file could be found, than the default language English will be used instead.
+
+If you have a multi-language site you have to set the code dynamically ($user->language->name) and not static as described above. In this case the property "name" must be in the format as written before.
+
+```php
+// Example for a multi-language site
+$frontendforms = new FrontendForms(); 
+$frontendforms->setLang($user->language->name); // in this case I set the the site language dynamically 
+```
+
 Now you are ready to use the module in any template file.
 
 6. Copy the following code and paste it in a template of your choice
