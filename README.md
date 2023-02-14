@@ -285,6 +285,12 @@ The double-submission check can be disabled if necessary.
 Add IP-addresses to a blacklist to prevent them accessing your forms. If the visitor's IP is on this list, an alert box will be displayed,
 which informs the visitor, that his IP is on the blacklist. The form itself will not be displayed in this case.
 
+### Statistic section of blocked users to identify spammer
+In addition to the IP-banning blacklist, a statistic section which informs you about users that have been blocked, is part
+of the anti-spam measures.
+A user will be blocked if he needs, for example, too many attempts to send the form (depending on your settings in the backend).
+In this section you can get more information about this user, and you have 2 buttons: add the user to or remove him from the IP blacklist.
+
 ## CAPTCHA
 This module offers various types of a CAPTCHA, that can be used. BTW: CAPTCHA should be used only if the other traps failed and you get a lot of SPAM over your forms.
 Most users do not like CAPTCHA, but it is up to you whether to use them or not.
@@ -292,19 +298,19 @@ At the moment, following CAPTCHA types will be provided:
 
 ### Image CAPTCHA
 The image CAPTCHA shows an image and the user has to answer which category fits to the image. The following categories
-exist at the moment: tee, house, lake, flower, animal, mountain, ship, car.
-You can manipulate the image by using various filters (can be set in the configuration).
+exist at the moment: trees, houses, lakes, flowers, animals, mountains, ships and cars.
+You can also manipulate the images by using various filters (can be set in the configuration).
 
 ### Random string CAPTCHA
 A random string will be provided inside an image and the user has to write this string into the input field below.
 
 ### Even string CAPTCHA
-This is almost the same as the random string CAPTCHA with the only difference, that the user has to enter ever second
+This is almost the same as the random string CAPTCHA with the only difference, that the user has to enter every second
 character (even character) and not the whole string.
 
 ### Reverse string CAPTCHA
 This is also almost the same as the random string CAPTCHA with the only difference, that the user has to enter the characters
-from right to left (reverse order).
+from right to left (reverse order) instead of left to right.
 
 ### Math CAPTCHA
 The user has to solve a simple calculation.
@@ -321,7 +327,7 @@ users), you want to disable it.
 ### Password blacklist
 If you are dealing with user login/registration on your site, there is always a risk, that clients use unsafe passwords
 and this could be a serious security issue for an account to be hacked.
-For this reason, you have a blacklist of forbidden passwords in the module configuration. To make it much more simple 
+For this reason, you have the oportunity create a blacklist of forbidden passwords in the module configuration. To make it much more simple 
 for you, it uses passwords from the top 100 most common passwords list from GitHub. In addition, you can add your own 
 passwords too.
 
@@ -333,7 +339,7 @@ be added to keep the list as short as possible (better performance).
 
 Example:
 Your password requirements as set in the field configuration of the field "pass" are set to "letter" and "number", which 
-means each password must consists of at least one letter and number.
+means each password must consists of letters and numbers (other types like symbols are not required).
 Passwords that does not fulfill this minimum requirements will be filtered out by the "meetsPasswordConditions" validator
 before, which will be added by default to every password field.
 So there is no need to add these passwords to the blacklist, because they do not fulfill the requirements at all.
@@ -342,16 +348,10 @@ On the module configuration page you will find a very detailed description how t
 
 Only to mention:
 The top 100 password list will be checked once a month on GitHub, if the file has been modified. Once a month is enough
-and GitHub allows only a certain amount of requests per day. Otherwise you will get a 403 error.
-So checking it once a month does not bomb their server with too much requests.
+and GitHub allows only a certain amount of requests per day. Otherwise you will get a 403 error (too many requests).
+So checking it once a month does not bomb their server with too many requests.
 If something has been changed on the list, it will be downloaded and added to the blacklist automatically.
 So the list is always up-to-date.
-
-### Statistic section of blocked users to identify spammer
-In addition to the IP-banning blacklist, a statistic section which informs you about users that have been blocked, is part
-of the anti-spam measures.
-A user will be blocked if, for example, he needs too many attempts to send the form (depending on your settings in the backend).
-In this section you can get more information about this user, and you have 2 buttons to add or remove it to the IP blacklist.
 
 ## Module configuration settings
 At the backend there are a lot of options for global settings. Fe you can choose if you want to add a wrapper container to the input field or not or if you want to add an outer wrapper to the complete form field (including label, input field, description, notes,...).
