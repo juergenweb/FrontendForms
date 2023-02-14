@@ -62,13 +62,13 @@ if($user->language->name != 'default') // default is not a correct 2-letter code
 $frontendforms->setLang($user->language->name); // in this case I set the the site language dynamically
 ```
 
-Now you are ready to use the module in any template file.
-
 6. Copy the following code and paste it in a template of your choice
 
 Be aware of namespaces!! If you are using a namespace on the top of your template file, you have to adapt the 
 instantiation of the class by using the FrontendForms namespace. 
-This module runs in its own namespace called FrontendForms. Take a look at the following example:
+This module runs in its own namespace called *FrontendForms*.
+
+Take a look at the following example:
 
 ```php
 
@@ -136,13 +136,13 @@ echo $form->render();
 
 ```
 ### Short Explanation step by step
-* As you can see first you have to create a new form object. Inside the constructor you have to add the id of the form.
-* After that you have to add each form field to the form. Each form field must have a name attribute inside the 
+* First of all you have to create a new form object. Inside the constructor you have to add the id of the form.
+* After that you can create each form field of the form. Each form field must have a name attribute inside the 
 * constructor (required).
 * You can set various properties to each form field (setLabel(), setNotes(), setDescription();setRule(), setSanitizer(),...)
 * Use the add method to add the field to the form object.
 * The isValid() method returns true or false, and you can use it to send fe the values as an email or save values to the
-* database, to login a user,....you got the idea. The validation and sanitization of the form values happens inside this method.
+* database, to login a user,....you get the idea. The validation and sanitization of the form values happens inside this method.
 * The render method outputs the markup of the form.
 
 I highly recommend you to study the examples inside the 'examples' folder. There you will find a lot of different use 
