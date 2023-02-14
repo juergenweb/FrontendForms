@@ -1,6 +1,7 @@
 # FrontendForms
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![ProcessWire 3](https://img.shields.io/badge/ProcessWire-3.x-orange.svg)](https://github.com/processwire/processwire)
+[![Total Downloads](https://poser.pugx.org/juergenweb/frontendforms/downloads.png)](https://packagist.org/packages/juergenweb/downloads)
 
 A module for ProcessWire to create and validate forms on the frontend easily using the [Valitron](https://github.com/vlucas/valitron) library.
 
