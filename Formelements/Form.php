@@ -304,6 +304,7 @@ class Form extends Tag
      * @return void
      * @throws WireException
      */
+    /*
     protected function includeBodyTemplate(WireMail $mail): void
     {
 
@@ -320,6 +321,7 @@ class Form extends Tag
         // set replaced body content back to bodyHTML property
         $mail->bodyHTML($body);
     }
+    */
 
     /**
      * Include the body template in the mail if it was set in the configuration or directly on the WireMail object
@@ -361,7 +363,7 @@ class Form extends Tag
         $mail = $event->object;
         // set the placeholder for the title if present
         $this->setMailPlaceholder('title', $mail->title);
-        $this->includeBodyTemplate($mail); // include/use body template if set
+        //$this->includeBodyTemplate($mail); // include/use body template if set
         $this->includeMailTemplate($mail); // include/use mail template if set
         return $mail;
     }
@@ -589,13 +591,15 @@ class Form extends Tag
 
     /**
      * Set a custom upload path for uploaded files
-     * @param string $folderName
+     * @param string|int $folderName
      * @param bool $keepFiles -> delete files afterwards (false) or keep files (true)
      * @return void
      * @throws WireException
      */
-    public function setUploadPath(string $folderName, bool $keepFiles = false): void
+    public function setUploadPath(string|int $folderName, bool $keepFiles = false): void
     {
+        if(is_int($folderName))
+            $folderName = (string)$folderName; // convert int to string
         //sanitize folder name first to remove trailing slashes from start and end
         $folderName = trim($folderName, '/');
         $to = $this->wire('config')->paths->assets . 'files/' . $folderName . '/';
