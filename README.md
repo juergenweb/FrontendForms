@@ -283,7 +283,7 @@ The double-submission check can be disabled if necessary.
 
 ## IP-banning
 Add IP-addresses to a blacklist to prevent them accessing your forms. If the visitor's IP is on this list, an alert box will be displayed,
-which informs the visitor, that his IP is on the blacklist. The form itself will not be displayed.
+which informs the visitor, that his IP is on the blacklist. The form itself will not be displayed in this case.
 
 ## CAPTCHA
 This module offers various type of CAPTCHA, that can be used. BTW: CAPTCHA should be used only if the other traps failed.
