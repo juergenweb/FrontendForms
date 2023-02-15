@@ -232,6 +232,8 @@ abstract class Inputfields extends Element
                 break;
             case ('InputCheckbox'):
             case ('InputRadio'):
+            case ('Privacy'):
+            case ('SendCopy'):
                 switch ($this->markupType) {
                     case ('bootstrap5.json'):
                         $this->label->setCSSClass('checklabelClass');
