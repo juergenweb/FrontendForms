@@ -1172,22 +1172,24 @@ automatically.
 
 In most cases forms are used to send data via emails (fe a simple contact form).
 ProcessWire is shipped with the WireMail class to send emails.
-Unfortunately this class does not support the usage of stylish HTML email templates by default, so I have decided to enhance 
-this class with a new method to simply choose an email template, which is stored inside the email_templates folder.
+Unfortunately this class does not support the usage of stylish HTML email templates by default, so I decided to enhance 
+this class with a new method to simply choose an email template, which is stored inside the email_templates folder of this module.
 
 ### New method mailTemplate()
 First you need to know, that inside the email_templates folder you will find HTML files with various names 
 (fe template_1.html, template_2.html,...).
 These files are the one you can use as the parameter within the brackets of this method:
-You can find a select list of all existing email templates files inside the module configuration page too.
+You can find a input select containing all existing email templates files inside the module configuration page too, where you can set an email template globally.
+
+If you want to overwrite the global setting for the template on per form base you have to use this mailTemplate() method. Otherwise the global settings will be used. So, the usage of this method is optional.
 
 ```php
 $mail = new WireMail();
 $mail->mailTemplate('template_1.html'); // this adds the template with the file template_1.html to the email
 ```
-These files are email templates, and they contain placeholder for your content.
+Every template file contains placeholders for your content.
 F.e. the text of the subject will be rendered inside the placeholder [[SUBJECTVALUE]],
-the text of the body inside the placeholder [[SUBJECTVALUE]].
+the text of the body inside the placeholder [[BODY]].
 I have decided to use the double square brackets syntax, because this syntax is also used in the Hanna code module.
 It is recommended to take a look at the email templates which are shipped with this module. You can take them as an 
 example on how to write your own email templates (or download free templates from the internet and add the placeholders 
@@ -1196,17 +1198,15 @@ by yourself).
 If you have created a template on your own, add it to the email_templates folder as the other templates, and now you are
 ready to use it.
 
-Using this method renders your email as a stylish HTML email using the selected email template.
-
 ### Images inside email templates
 You can also use images in your email templates, but be aware to use the absolute URL to this image (not relative).
 Template file "template_2.html" uses the ProcessWire logo with an absolute URL from the internet. You can take a look
 at this template file how to include images in email templates.
 
 #### Storage place for images for email templates
-This module creates a new folder inside the site/assets/files folder of PW called FrontendForms during the module
-installation. This folder is for images that you can use within the email templates. This folder has public readability
-and can be reached from outside. This is necessary to view the images inside the emails.
+This module creates a new folder inside the site/assets/files folder of ProcessWire called FrontendForms during the module
+installation. This folder intended to be used for images that you want to use within the email templates. This folder has public readability
+and can be reached from outside. This is absolutely necessary to be able to view images inside the emails.
 Before the module will be installed, there is also a folder called assets inside this module. It contains images for the
 ready to use email templates.
 During the installation process, these images will be copied from the assets folder inside the module to the newly 
@@ -1222,10 +1222,10 @@ Please note: If you are running your site on a local server (XAMPP, WAMPP,..), l
 inside the emails because they are locally and therefore not reachable via the internet. 
 After you have transferred your site to a live server, the images should be displayed properly inside the emails.
 
-### Placeholder variables for usage in email templates and email body
+### Placeholder variables for usage in email templates
 Placeholder variables are variables that can be integrated easily in the email templates. Their purpose is to add some 
 data to the email templates without using php code. They can also be used for the body text of the email (you will find
-a real world example in the contactform.php inside the examples folder).
+a real world example in the contactform.php inside the [examples folder](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactform.php)).
 Each placeholder variable is surrounded by 2 square brackets (fe. [[DATEVALUE]]) and has to be written in 
 uppercase letters.
 This variable will be replaced on the fly by the appropriate value, provided by a php code.
@@ -1236,15 +1236,15 @@ There are a lot more placeholder variables: You can take a look if you are using
 object. You will get an array of all available placeholders, that can be used.
 
 ```php
-$form = getPlaceholders();
+$form = getPlaceholders(); // this will output an array of all global placeholders that can be used inside your templates
 ```
 
-A placeholder for each will field of a form will be created automatically.
-Assume you have an input field in your form for the name and the name/id attribute of this field is "myname".
+In addition, a placeholder for each field of the form will be created automatically.
+Assume you have an input field in your form with the name/id attribute of this field "myname".
 2 Placeholder will be created automatically for the label and the value of the field and both can
 be used inside the email template or the email body text.
 
-Take a look at the form:
+Take a look at the example form below:
 
 ```php
 $namefield = new \FrontendForms\InputfieldText('myname');
@@ -1260,11 +1260,9 @@ So it takes the name/id attribute of the form field and adds LABEL for the label
 You can use both of them inside the body variable of your form. Both placeholders will be replaced by their appropriate
 values before the email has been sent.
 
-So beside the global placeholders you can use also placeholder values of fields inside the form.
+So beside the global placeholders you can use also placeholder values of fields inside the form. The usage of placeholders is a nice way to add data to a template without using PHP code, so this method keeps your template clean from code.
 
-Only to mention: The primary reason for placeholders is the usage inside templates, and for later usage inside modules,
-which descend from this module, but you can also use it inside your mail body variable, which contains the content of the
-email.
+You can also set placeholders to the mail->body().
 
 ```php
 $mail->body(_('These are the form values: [[SURNAMELABEL]]: [[SURNAMEVALUE]], [[NAMELABEL]]: [[NAMEVALUE]]'));
@@ -1279,7 +1277,7 @@ If you think about creating or using a custom HTML email template, and you want 
 ```php
 $form->setPlaceholder('companyname', 'My company');
 ```
-Then you will be able to add the custom placeholder to your new email template: [[COMPANYNAME]].
+Then you will be able to use the custom placeholder inside your email template: [[COMPANYNAME]].
 Before sending of the email the placeholder will be replaced by "My company".
 
 BTW, adding the company name via a placeholder is not really a good example, because the company name is always
