@@ -28,8 +28,6 @@ class Email extends InputEmail
         $this->setRule('required')->setCustomFieldName($this->_('Email'));
         $this->setRule('email');
         $this->setRule('emailDNS');
-        if($this->wire('user')->isLoggedin())
-            $this->setDefaultValue($this->wire('user')->email);
     }
 
     /**
