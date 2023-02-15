@@ -33,8 +33,8 @@ class Username extends InputText
         $this->setSanitizer('pageName');
         $this->setRule('required')->setCustomFieldName($this->_('Username'));
         $this->setRule('usernameSyntax');
-        if ($this->wire('user')->isLoggedIn())
-            $this->setAttribute('value', $this->wire('user')->name);
+        if($this->wire('user')->isLoggedin())
+            $this->setDefaultValue($this->wire('user')->name);
     }
 
     /**
