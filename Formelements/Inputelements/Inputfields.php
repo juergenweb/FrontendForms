@@ -439,7 +439,7 @@ abstract class Inputfields extends Element
      */
     public function setDefaultValue(string|array|null $default = null): self
     {
-        if(!$_POST) { // set default value(s) only before form is submitted
+        if(!$this->isSubmitted()) { // set default value(s) only before form is submitted
             if (!is_null($default)) {
                 if (is_string($default)) {
                     //create array out of string
