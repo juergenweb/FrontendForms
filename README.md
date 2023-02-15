@@ -1292,15 +1292,15 @@ This makes the email template code much more cleaner.
 
 ### Following Placeholders are supported by default for the usage in HTML email template
 
-* {TITLE} : Renders the value of the $mail->title inside the template.
-* {SUBJECT} : Renders the value of the $mail->subject inside the template.
-* {BODY} : Renders the value of the $mail->body inside the template.
-* {USERNAME} : Renders the value of the username inside the template, if the user is logged in.
-* {DOMAIN}: Renders the domain of the site (fe http://www.mysite.com)
+* [[TITLE]] : Renders the value of the $mail->title inside the template.
+* [[SUBJECT]] : Renders the value of the $mail->subject inside the template.
+* [[BODY]] : Renders the value of the $mail->body inside the template.
+* [[USERNAME]] : Renders the value of the username inside the template, if the user is logged in.
+* [[DOMAIN]]: Renders the domain of the site (fe http://www.mysite.com)
 
 #### New method title()
 
-The title method adds a title attribute to the HTML template which will be displayed under the subject. You can also output it inside your template with the placeholder {TITLE}
+The title method adds a title attribute to the HTML template which will be displayed under the subject. You can also output it inside your template with the placeholder [[TITLE]]
 
 ```php
 $mail = new WireMail();
@@ -1315,5 +1315,5 @@ The addPlaceholder() method consists of 2 parameters: placeholder name and place
 $mail = new WireMail();
 $mail->addPlaceholder('date', '01.01.2022');
 ```
-The placeholder is always the name in uppercase letters and inside brackets: {DATE}
-With the example above you can use the placeholder {DATE} inside your mail template to output '01.01.2022' inside the template (in this case).
+The placeholder is always the name in uppercase letters and inside brackets: [[DATE]]
+With the example above you can use the placeholder [[DATE] inside your mail template to output '01.01.2022' inside the template (in this case).
