@@ -92,7 +92,7 @@ $this->Validator::addRule('uniqueEmail', function ($value) {
     }
     $user = $this->wire('users')->get('email=' . $value);
     if ($user) {
-        if($user->id != 0){
+        if ($user->id != 0) {
             return false;
         }
     }
@@ -212,10 +212,60 @@ $this->Validator::addRule('checkCaptcha', function ($field, $value, array $param
  * 15) Check if password is safe - in other words: is not in the list of the most popular passwords
  */
 $this->Validator::addRule('safePassword', function ($field, $value) {
-    $passwords =  $this->wire('modules')->getConfig('FrontendForms')['input_blacklist'];
+    $passwords = $this->wire('modules')->getConfig('FrontendForms')['input_blacklist'];
     $passwords = explode("\n", $passwords);
-    if(!$passwords)
-        return true; // no passwords in the blacklist -> return tre
+    if (!$passwords) {
+        return true;
+    } // no passwords in the blacklist -> return tre
     return (!in_array($value, $passwords)); // check if password is in the blacklist -> false, otherwise true
 }, $this->_('value is in the list of the most popular passwords and therefore not save. Please select another one.'));
+
+/**
+ * 16) Check if the uploaded file is not larger than the allowed filesize
+ */
+$this->Validator::addRule('allowedFileSize', function ($field, $value, array $params) {
+    if (count($value) == count($value, COUNT_RECURSIVE)){
+        // one dimensional array = single upload
+        $value = [$value];
+    }
+    foreach($value as $file){
+        //$name = $file['name'];
+        $allowedFileSize = $params[0];
+        //$params = [$name, $allowedFileSize];
+        $fileSize = $file['size'];
+        if ($fileSize <= $allowedFileSize) {
+            return true;
+        }
+        return false;
+    }
+}, $this->_('is larger than the allowed filesize of %s.'));
+
+/**
+ * 17) Check if an error occur during the upload of the file
+ */
+$this->Validator::addRule('noErrorOnUpload', function ($field, $value) {
+    if (count($value) == count($value, COUNT_RECURSIVE)){
+        // one dimensional array = single upload
+        $value = [$value];
+    }
+    foreach($value as $file){
+        return $file['error'];
+    }
+}, $this->_('caused an error during the upload.'));
+
+/**
+ * 18) Check if uploaded files are of the allowed extensions
+ */
+$this->Validator::addRule('allowedFileExt', function ($field, $value, array $params) {
+    // check if single or multiple file upload
+    if (count($value) == count($value, COUNT_RECURSIVE)){
+        // one dimensional array = single upload
+        $value = [$value];
+    }
+    $allowedExt = array_map('strtolower', $params[0]); // convert all values to lowercase
+    foreach($value as $file){
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)); // convert value to lowercase
+        return (in_array($ext, $allowedExt));
+    }
+}, $this->_('does not belong to the allowed file types: %s'));
 
