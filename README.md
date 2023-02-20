@@ -4,6 +4,8 @@
 
 A module for ProcessWire to create and validate forms on the frontend easily using the [Valitron](https://github.com/vlucas/valitron) library.
 
+> ⚠ Please do not use CAPTCHA at the moment - This leads to errors!! Do not use this repository on live sites. I am working on a solution, but it needs more time.
+
 ## Highlights
 1. Simple form creation
 2. 40+ validation types
