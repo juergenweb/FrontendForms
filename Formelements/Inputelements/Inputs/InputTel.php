@@ -14,7 +14,7 @@ namespace FrontendForms;
 
 use Exception;
 
-class InputTel extends Input
+class InputTel extends InputText
 {
 
     /**
@@ -33,7 +33,7 @@ class InputTel extends Input
      */
     public function ___renderInputTel(): string
     {
-        return $this->renderInput();
+        return parent::___renderInputText();
     }
 
 }
