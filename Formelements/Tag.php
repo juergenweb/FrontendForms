@@ -19,7 +19,6 @@ use ProcessWire\Wire as Wire;
 use ProcessWire\WireException;
 use ProcessWire\WirePermissionException;
 
-
 abstract class Tag extends Wire
 {
     const MULTIVALUEATTR = ['class', 'rel', 'style']; // array of all attributes that can have more than 1 value
@@ -79,7 +78,6 @@ abstract class Tag extends Wire
     protected string $input_wrapperFormElementsCSSClass = '';
     protected int|string $input_removeJS = 0;
     protected int|string $input_removeCSS = 0;
-    protected int|string $input_addHTML5req = 0;
     protected string $input_framework = 'none.json';
     protected array $input_appendLabel = [];
     protected string $input_emailTemplate = '';
@@ -101,8 +99,9 @@ abstract class Tag extends Wire
         parent::__construct();
         //  set the property values from the configuration settings from DB and sanitize it
         foreach ($this->wire('modules')->getConfig('FrontendForms') as $key => $value) {
-            if($value != null)
+            if ($value != null) {
                 $this->$key = $value;
+            }
         }
         $this->input_uploadPath = $this->wire('config')->paths->siteModules . 'FrontendForms/temp_uploads/';
         // Extract values from configuration arrays to single properties of type bool
@@ -114,7 +113,6 @@ abstract class Tag extends Wire
         // load the json file from CSSClass directory
         $this->classes = json_decode(file_get_contents($this->wire('config')->paths->FrontendForms . 'CSSClasses' . DIRECTORY_SEPARATOR . $this->input_framework));
     }
-
 
     /**
      * Flatten a mixed array (strings and arrays)
@@ -492,8 +490,16 @@ abstract class Tag extends Wire
                         }
                         $value = implode(';', $newArray);
                     } else {
-                        // if numeric add a whitespace as separator between the attribute values ( fe class, rel,..)
-                        $value = implode(' ', $value);
+                        if (count($value) != count($value, COUNT_RECURSIVE)) {
+                            // if it is multidimensional array (can only be $_FILES) - set the value to empty string
+                            // otherwise the value will be an array with the error value 4 (no file was uploaded)
+                            $value = '';
+                            // TODO: check why $_FILES is inside attribute - should not be there
+                        } else {
+                            // if numeric add a whitespace as separator between the attribute values ( fe class, rel,..)
+                            $value = implode(' ', $value);
+                        }
+
                     }
                 }
                 if (in_array($value, self::BOOLEANATTR)) {
@@ -547,8 +553,11 @@ abstract class Tag extends Wire
      * here you can add it as attribute value too
      * @return string
      */
-    protected function renderNonSelfclosingTag(string $tag, bool $showNoContent = false, bool $showAttributeValue = false): string
-    {
+    protected function renderNonSelfclosingTag(
+        string $tag,
+        bool $showNoContent = false,
+        bool $showAttributeValue = false
+    ): string {
         $out = '';
         $show = match ($this->getContent()) {
             null, '' => $showNoContent,
