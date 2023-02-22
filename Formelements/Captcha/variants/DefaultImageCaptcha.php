@@ -25,8 +25,6 @@ class DefaultImageCaptcha extends AbstractImageCaptcha
     public function __construct()
     {
         parent::__construct();
-        $this->title = $this->_('Image captcha');
-        $this->desc = $this->_('Please choose what you see in the picture.');
     }
 
 }
