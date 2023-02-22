@@ -36,7 +36,7 @@ class InputFile extends Input
         // set this validation rules as default on file upload field
         $this->setRule('noErrorOnUpload'); // check for upload errors on default
         $this->setRule('phpIniFilesize'); // add the max file size of php.ini as absolute limit of file size by default
-        if ($this->input_framework === 'uikit3') {
+        if ($this->input_framework === 'uikit3.json') {
             // instantiate the button for the uikit3 framework
             $this->button = new Button();
             $this->button->setAttribute('type', 'button');
@@ -82,7 +82,8 @@ class InputFile extends Input
         if($this->getMultiple())
             $this->setAttribute('name', $this->getAttribute('name').'[]');
         switch ($this->input_framework) {
-            case('uikit3'):
+            case('uikit3.json'):
+
                 $out = $this->renderInput();
                 $out .= $this->button->___render();
                 $this->wrapper->setContent($out);
