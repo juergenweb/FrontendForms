@@ -17,7 +17,7 @@ use Exception;
 /**
  * Class for creating an input datetime element
  */
-class InputDateTime extends Input
+class InputDateTime extends InputDate
 {
 
     /**
