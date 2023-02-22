@@ -8,24 +8,28 @@ namespace ProcessWire;
  * Fe you have to use $form = new \FrontendForms\Form('myForm'); or $form = new FrontendForms\Form('myForm'); and not only $form = new Form('myForm');
  */
 
-echo '<h1>Test page for various inputfields</h1>';
-echo '<p>you have to adapt/remove the namespace from the objects depending on if you are using a namespace inside your templates or not.</p>';
+$content = '<h1>Test page for various inputfields</h1>';
+$content .= '<p>you have to adapt/remove the namespace from the objects depending on if you are using a namespace inside your templates or not.</p>';
 
 
 $form = new \FrontendForms\Form('inputfieldtest');
 $form->setMinTime(8);
 $form->setMaxTime(3600);
-$form->setMaxAttempts(5);
+$form->setMaxAttempts(0);
 $form->setErrorMsg('Ouups! There are some errors.');
 $form->setSuccessMsg('Congratulation! There are no errors.');
 
 $file1 = new \FrontendForms\InputFile('fileupload1');
 $file1->setLabel('Multiple files upload');
-$file1->allowMultiple(true);
+$file1->setRule('allowedFileSize', '60000');
+$file1->setRule('allowedFileExt', ['jpg','pdf']);
+
+
 $form->add($file1);
 
 $file2 = new \FrontendForms\InputFile('fileupload2');
 $file2->setLabel('Single file upload');
+$file2->setRule('allowedFileExt');
 $form->add($file2);
 
 $datalist = new \FrontendForms\Datalist('datalist');
@@ -35,7 +39,8 @@ $datalist->addOption('Firefox', 'Firefox');
 $datalist->addOption('Chrome', 'Chrome');
 $datalist->addOption('Opera', 'Opera');
 $datalist->addOption('Safari', 'Safari');
-$datalist->setRule('required');
+//$datalist->setRule('required');
+
 $form->add($datalist);
 
 $inputCheckbox = new \FrontendForms\InputCheckbox('checkbox');
@@ -76,7 +81,6 @@ $form->add($inputcolor);
 
 $inputDate = new \FrontendForms\InputDate('date');
 $inputDate->setLabel('Input Date');
-//$inputDate->setAttribute('value', '2018-07-22');
 $inputDate->setAttribute('min', '018-01-01');
 $inputDate->setAttribute('max', '2018-12-31');
 $inputDate->setRule('required');
@@ -158,7 +162,8 @@ $form->add($inputPhone);
 
 $inputText = new \FrontendForms\InputText('text');
 $inputText->setLabel('Input Text');
-$inputText->setRule('required');
+$inputText->setRule('time');
+//$inputText->setRule('required');
 $form->add($inputText);
 
 $inputTime = new \FrontendForms\InputTime('time');
@@ -245,11 +250,13 @@ $form->add($button);
 if($form->isValid()){
 
 
-    //print_r($form->getValues());
+    print_r($form->getValues());
     // do what you want
 
 }
 
 // render the form
-echo $form->render();
+$content .= $form->render();
+
+echo $content;
 
