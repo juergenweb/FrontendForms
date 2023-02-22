@@ -14,7 +14,6 @@ namespace FrontendForms;
 
 class FieldsetClose extends Element
 {
-
     public function __construct()
     {
         parent::__construct();
