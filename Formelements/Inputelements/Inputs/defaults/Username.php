@@ -41,7 +41,7 @@ class Username extends InputText
      * Render the username input field
      * @return string
      */
-    public function renderUsername(): string
+    public function ___renderUsername(): string
     {
         return parent::___renderInputText();
     }
