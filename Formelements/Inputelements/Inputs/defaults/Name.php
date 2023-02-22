@@ -32,7 +32,7 @@ class Name extends InputText
      * Render the name input field
      * @return string
      */
-    public function renderName(): string
+    public function ___renderName(): string
     {
         return parent::___renderInputText();
     }
