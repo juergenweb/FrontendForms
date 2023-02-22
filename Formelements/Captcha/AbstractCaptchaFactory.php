@@ -32,7 +32,6 @@ abstract class AbstractCaptchaFactory extends Wire
         parent::__construct();
     }
 
-
     /**
      * Extract the type of the captcha from its class name
      * @param string $variant
