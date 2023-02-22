@@ -30,7 +30,6 @@ class SimpleMathTextCaptcha extends AbstractMath
         $this->desc = $this->_('Enter the result of the calculation in the input field.');
     }
 
-
     /**
      * Set the characters inside the captcha in reverse order as value for the captcha validation
      * @param string $content
