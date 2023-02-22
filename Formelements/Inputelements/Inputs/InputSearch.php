@@ -17,7 +17,7 @@ use Exception;
 /**
  * Class for creating an input search element
  */
-class InputSearch extends Input
+class InputSearch extends InputText
 {
 
     /**
@@ -36,7 +36,7 @@ class InputSearch extends Input
      */
     public function ___renderInputSearch(): string
     {
-        return $this->renderInput();
+        return parent::___renderInputText();
     }
 
 }
