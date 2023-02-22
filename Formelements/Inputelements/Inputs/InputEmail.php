@@ -14,7 +14,7 @@ namespace FrontendForms;
 
 use Exception;
 
-class InputEmail extends Input
+class InputEmail extends InputText
 {
 
     /**
@@ -25,6 +25,9 @@ class InputEmail extends Input
     {
         parent::__construct($id);
         $this->setAttribute('type', 'email');
+        //set default validators
+        $this->setRule('email');
+        $this->setRule('emailDNS');
     }
 
     /**
@@ -33,7 +36,7 @@ class InputEmail extends Input
      */
     public function ___renderInputEmail(): string
     {
-        return $this->renderInput();
+        return parent::___renderInputText();
     }
 
 }
