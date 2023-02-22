@@ -386,7 +386,7 @@ abstract class Tag extends Wire
      * @param string $className
      * @return $this;
      */
-    protected function removeCSSClass(string $className): self
+    public function removeCSSClass(string $className): self
     {
         $class = $this->getCSSClass($className);
         if ((!is_null($class)) && ($class != '')) {
