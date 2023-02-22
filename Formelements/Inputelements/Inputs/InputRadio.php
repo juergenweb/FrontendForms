@@ -25,6 +25,7 @@ class InputRadio extends InputRadioCheckbox
     {
         parent::__construct($id);
         $this->setAttribute('type', 'radio');
+        $this->removeCSSClass('inputClass');
         $this->setCSSClass('radioClass');
     }
 
