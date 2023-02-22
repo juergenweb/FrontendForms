@@ -42,6 +42,7 @@ trait TraitOption
     {
         $option = new Option();
         $option->setContent($optionLabel);
+        $option->setAttribute('value', '');
         $this->options = array_merge($this->options, [$option]);
         return $option;
     }
