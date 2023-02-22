@@ -32,7 +32,7 @@ class Surname extends InputText
      * Render the surname input field
      * @return string
      */
-    public function renderSurname(): string
+    public function ___renderSurname(): string
     {
         return parent::___renderInputText();
     }
