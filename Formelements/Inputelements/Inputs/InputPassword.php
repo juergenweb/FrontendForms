@@ -16,7 +16,7 @@ use Exception;
 use ProcessWire\WireException;
 use ProcessWire\WirePermissionException;
 
-class InputPassword extends Input
+class InputPassword extends InputText
 {
     protected $passwordField; // the password field object
     protected string $passwordFieldName = 'pass';
@@ -82,7 +82,7 @@ class InputPassword extends Input
 
         $this->append($this->showPasswordToggle()->___render());
 
-        return $this->renderInput();
+        return parent::___renderInputText();
     }
 
     /**
