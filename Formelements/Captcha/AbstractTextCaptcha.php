@@ -26,7 +26,6 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
 
     protected string $captchaContent = ''; // the content of the captcha (random string or calculation) as shown in the image
     protected string $pathToFonts = ''; // the path to the ttf font files directory
-
     public string $title = ''; // the name for the captcha in the backend select
     public string $desc = ''; // the description of the captcha in the backend select
 
@@ -110,7 +109,6 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
     {
         return $this->input_bgnumberOfColors;
     }
-
 
     /**
      * Set the text color
@@ -224,7 +222,6 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
         return $this->captchaContent;
     }
 
-
     /**
      * Add the text for the captcha to the image
      * @param GdImage $img
@@ -247,7 +244,7 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
             $captcha_string = str_split($content);
             $initial = 15;
             $randomHeight = ($this->getHeight() - $this->getFontSize());
-            $heightInterval = [(int)($randomHeight * 0.6), (int)($randomHeight * 0.8)];
+            $heightInterval = [(int)($randomHeight * 1.0), (int)($randomHeight * 1.1)];
 
             for ($i = 0; $i < count($captcha_string); $i++) {
                 $letter_space = ($this->getWidth() - ($initial * 2)) / (count($captcha_string));
@@ -270,20 +267,12 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
      */
     public function createCaptchaImage(string $formID): void
     {
+
         // create image object
         $img = imagecreate($this->getWidth(), $this->getHeight());
 
         // fill the background with color(s)
         $this->createBackground($img);
-        /*
-        // create the background of the captcha image
-        if ($this->getBackgroundToMultiColor()) {
-            $this->createMultiColorRectangleBackground($img);
-        } else {
-            $this->createSingleColorBackground($img);
-        }
-        */
-
 
         // set the text inside the image
         $textcolor = $this->getTextColor();
@@ -294,7 +283,7 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
         $this->createLines($img);
 
         // output the final image
-        header('Content-Type: image/png');
+        header("Content-type: image/png");
         imagepng($img, null, 0, PNG_NO_FILTER);
         imagedestroy($img);
 
@@ -310,6 +299,7 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
     {
         // start creating the captcha input field including image and reload link
         $captchaInput = new InputText('captcha');
+        $captchaInput->setRule('required'); // CAPTCHA is always required
         // Remove or add wrappers depending on settings
         $captchaInput->setAttribute('name', $formID . '-captcha');
         $captchaInput->useInputWrapper($this->useInputWrapper);
@@ -335,6 +325,7 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
     protected function createRandomColorsArray(int $number): array
     {
         $colors = [];
+
         for ($i = 1; $i <= $number; $i++) {
             for ($i = 0; $i < $number; $i++) {
                 $colors[$i] = [rand(0, 255), rand(0, 255), rand(0, 255)];
@@ -364,7 +355,6 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
     protected function createBackground(GdImage $img): void
     {
         imageantialias($img, true);
-
         $numberOfRectangles = (int)($this->getHeight() / 5); // calculate number of rectangles depending on the height
         if ($this->getBackgroundType() == 'custom') {
             // custom colors
@@ -381,6 +371,7 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
             }
             $colors = $this->createRandomColorsArray($this->getNumberOfColors());
         }
+
         $this->wire('session')->set('color', $this->getNumberOfColors());
         $bgc = imagecolorallocate($img, $colors[0][0], $colors[0][1], $colors[0][2]);
         imagefill($img, 0, 0, $bgc);
@@ -412,8 +403,6 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
                 }
             }
         }
-
-
     }
 
 }
