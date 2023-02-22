@@ -86,10 +86,9 @@ class Label extends TextElements
      * Method is Hook-able
      * @return string
      */
-    protected function ___renderAsterisk(): string
+    public function ___renderAsterisk(): string
     {
         return '<span class="asterisk">*</span>';
     }
-
 
 }
