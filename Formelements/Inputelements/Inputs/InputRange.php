@@ -14,7 +14,7 @@ namespace FrontendForms;
 
 use Exception;
 
-class InputRange extends Input
+class InputRange extends InputNumber
 {
 
     /**
