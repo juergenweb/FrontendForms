@@ -78,7 +78,7 @@ class FormValidation extends Wire
             $numberOfRequiredFieldWithValues = count(array_filter($requiredFields));
             // calculate new min time depending on the required fields, which has no value at the moment
             if ($numberOfRequiredFieldWithValues) {
-                $newMinTime = (round(($this->form->getMinTime() * (count($requiredFields) - $numberOfRequiredFieldWithValues))/count($requiredFields)));
+                $newMinTime = (round(($this->form->getMinTime() * (count($requiredFields) - $numberOfRequiredFieldWithValues)) / count($requiredFields)));
                 $this->form->setMinTime((int)$newMinTime);
             }
 
