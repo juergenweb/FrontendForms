@@ -24,7 +24,6 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
     protected string $randomImage = ''; // path to the random image
     protected array $catOptions = []; // array of all captcha categories (car, ship, house,..)
 
-
     public function __construct()
     {
         parent::__construct();
@@ -201,7 +200,6 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
     public function createCaptchaImage(string $formID): void
     {
         $this->setRandomImage(); // set the path to a random image
-
         $category = $this->getImageCategory($this->getRandomImage());
 
         // resize the image
@@ -225,7 +223,6 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
         if ($this->getGrayscale()) {
             imagefilter($img, IMG_FILTER_GRAYSCALE);
         }
-
 
         // add some distortion lines
         $this->createLines($img);
@@ -272,19 +269,19 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
     {
 
         // start creating the captcha input field including image and reload link
-
         $this->captchaInput->alignVertical();
         // Remove or add wrappers depending on settings
         $this->captchaInput->setAttribute('name', $formID . '-captcha');
-
 
         $this->captchaInput->useInputWrapper($this->useInputWrapper);
         $this->captchaInput->useFieldWrapper($this->useFieldWrapper);
         $this->captchaInput->getFieldWrapper()->setAttribute('class', 'captcha');
         $this->captchaInput->getInputWrapper()->setAttribute('class', 'captcha');
-        $this->captchaInput->setLabel('Captcha field for security');
 
-        $this->captchaInput->getMultipleWrapper()->prepend($this->createCaptchaImageTag($formID)
+        $this->captchaInput->setLabel('Captcha field for security');
+        $this->captchaInput->setRule('required'); // CAPTCHA is always required
+
+        $this->captchaInput->getInputWrapper()->prepend($this->createCaptchaImageTag($formID)
                 ->setAttribute('id', $formID . '-captcha-image')
                 ->___render() . // render captcha image
             $this->createReloadLink()
