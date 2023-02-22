@@ -34,6 +34,7 @@ abstract class Inputfields extends Element
     protected bool $useFieldWrapper = true; // show or hide the wrapper for the complete field element including label
     protected string $markupType = ''; // the selected markup type (fe UiKit, none, Bootstrap,... whatever)
     protected array $defaultValue = []; // array of all default values
+    protected array $notes_array = []; // property that holds multiple notes as an array - needed for some fields internally
 
     /**
      * Every input field must have a name, so the name is required as parameter in the constructor
@@ -132,20 +133,35 @@ abstract class Inputfields extends Element
     }
 
     /**
+     * Convert filesize in bytes to KB, MB, GB or TB for better readability
+     * @param string|int|float $size
+     * @return string
+     */
+    protected function convertToReadableSize(string|int|float $size): string
+    {
+        $base = log((float)$size) / log(1024);
+        $suffix = array("", "KB", "MB", "GB", "TB");
+        $f_base = floor($base);
+        return round(pow(1024, $base - floor($base))) . $suffix[$f_base];
+    }
+
+    /**
      * Set a validator rule to validate the input value
      * Checks first if the validator method exists, otherwise does nothing
      * Check https://processwire.com/api/ref/sanitizer/ for all sanitizer methods
      * @param string $validator - the name of the validator
      * @return $this
      */
-    public function setRule(string $validator): self
+    public function setRule($validator): self
     {
-        $args = func_get_args();
+
+        $args = func_get_args(); // get all parameter inside the parenthesis
         $validator = $args[0];
         $variables = [];
 
-        if (count($args) > 1) {
-            array_shift($args); // remove the first element
+        // check if paramters were set
+        if (func_num_args() > 1) {
+            array_shift($args); // remove the first element (validator name)
             $variables = $args;
         }
 
@@ -153,6 +169,36 @@ abstract class Inputfields extends Element
         $this->api->setValidator($validator);
         $result = $this->api->setRule($validator, $variables);
         $this->validatonRules[$result['name']] = ['options' => $variables];
+
+        // add notes if a special validator has been added
+        // this is special designed for file upload field to inform the user about the restrictions
+        // fe only 40kb, only jpg,....
+        // but can be used for other fields to if needed
+
+        // inform about max filesize
+        if ($validator == 'allowedFileSize') {
+            $this->notes_array['allowedFileSize']['text'] = sprintf($this->_('Please do not upload files larger than %s.'),
+                $this->convertToReadableSize($variables[0]));
+            $this->notes_array['allowedFileSize']['value'] = $variables[0];
+        }
+
+        // inform about allowed extensions
+        if ($validator == 'allowedFileExt') {
+            if(isset($variables[0])){
+            $this->notes_array['allowedFileExt']['text'] = sprintf($this->_('Allowed file types: %s.'),
+                implode(', ', $variables[0]));
+            $this->notes_array['allowedFileExt']['value'] = implode(', ', $variables[0]);
+            }
+        }
+
+        // inform about max filesize according to php.ini value
+        if ($validator == 'phpIniFilesize') {
+            $max_file_size = (int)ini_get("upload_max_filesize") * 1024;
+            $this->notes_array['phpIniFilesize']['text'] = sprintf($this->_('Please do not upload files larger than %s.'),
+                $this->convertToReadableSize($max_file_size));
+            $this->notes_array['phpIniFilesize']['value'] = $max_file_size;
+        }
+
         return $this;
     }
 
@@ -168,7 +214,6 @@ abstract class Inputfields extends Element
         $this->validatonRules = $rules;
         return $this;
     }
-
 
     /**
      * Method to overwrite default error message with a custom error message
@@ -221,6 +266,20 @@ abstract class Inputfields extends Element
             $this->label->setRequired();
             $this->setAttribute('required')->setCustomFieldName($this->getLabel()->getText());// set label as field name by default
         }
+
+        if ($this->notes->getContent() && $this->notes_array) {
+            // add this value at the beginning of the note_array
+            $this->notes_array = ['notes' => ['text' => $this->notes->getContent()]] + $this->notes_array;
+        }
+
+        // merge all notes texts
+        if ($this->notes_array) {
+            // grab all key with the name 'text'
+            $texts = array_column($this->notes_array, 'text');
+            $this->setNotes(implode('<br>', $texts));
+        }
+
+
         $out = $content = '';
         $className = $this->className();
         $inputfield = 'render' . $className;
@@ -275,6 +334,7 @@ abstract class Inputfields extends Element
                 }
                 // Error message
                 $errormsg = '';
+
                 if ($this->getErrormessage()->getText()) {
                     $errormsg = $this->errormessage->___render() . PHP_EOL;
                     //add error message for validation
@@ -326,7 +386,7 @@ abstract class Inputfields extends Element
      * Get all validation rules for an input field
      * @return array
      */
-    protected function getRules(): array
+    public function getRules(): array
     {
         return $this->validatonRules;
     }
@@ -441,7 +501,7 @@ abstract class Inputfields extends Element
      */
     public function setDefaultValue(string|array|null $default = null): self
     {
-        if(!$this->isSubmitted()) { // set default value(s) only before form is submitted
+        if (!$this->isSubmitted()) { // set default value(s) only before form is submitted
             if (!is_null($default)) {
                 if (is_string($default)) {
                     //create array out of string
@@ -494,6 +554,16 @@ abstract class Inputfields extends Element
             throw new Exception('This sanitizer method does not exist in ProcessWire.');
         }
     }
+
+    /**
+     * Get all sanitizer that were set to a field
+     * @return array
+     */
+    public function getSanitizers(): array
+    {
+        return $this->sanitizer;
+    }
+
 
     /**
      * Check if inputfield contains the given sanitizer
