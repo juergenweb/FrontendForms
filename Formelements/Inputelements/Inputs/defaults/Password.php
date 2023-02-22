@@ -36,7 +36,7 @@ class Password extends InputPassword
      * @throws WireException
      * @throws WirePermissionException
      */
-    public function renderPassword(): string
+    public function ___renderPassword(): string
     {
         return parent::___renderInputPassword();
     }
