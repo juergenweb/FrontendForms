@@ -99,7 +99,6 @@ $this->Validator::addRule('uniqueEmail', function ($value) {
     return true;
 }, $this->_('must be unique. This email is already in use. Please use another email address.'));
 
-
 /**
  * 6) Check if entered password is the correct password stored in the DB for the current user
  * This is useful fe if the user has to fill in the old password before he enters the new one
@@ -224,33 +223,37 @@ $this->Validator::addRule('safePassword', function ($field, $value) {
  * 16) Check if the uploaded file is not larger than the allowed filesize
  */
 $this->Validator::addRule('allowedFileSize', function ($field, $value, array $params) {
-    if (count($value) == count($value, COUNT_RECURSIVE)){
+    if (count($value) == count($value, COUNT_RECURSIVE)) {
         // one dimensional array = single upload
         $value = [$value];
     }
-    foreach($value as $file){
-        //$name = $file['name'];
-        $allowedFileSize = $params[0];
-        //$params = [$name, $allowedFileSize];
-        $fileSize = $file['size'];
-        if ($fileSize <= $allowedFileSize) {
+    foreach ($value as $file) {
+        if (($file['error'] == '4') || ($file['error'] == '0')) {
             return true;
         }
-        return false;
+        return ($file['size'] <= $params[0]);
     }
 }, $this->_('is larger than the allowed filesize of %s.'));
+
 
 /**
  * 17) Check if an error occur during the upload of the file
  */
 $this->Validator::addRule('noErrorOnUpload', function ($field, $value) {
-    if (count($value) == count($value, COUNT_RECURSIVE)){
+
+    if (count($value) == count($value, COUNT_RECURSIVE)) {
         // one dimensional array = single upload
-        $value = [$value];
+
+        $value = array_filter([$value]);
     }
-    foreach($value as $file){
+
+    foreach ($value as $file) {
+        if (($file['error'] == '4') || ($file['error'] == '0')) {
+            return true;
+        }
         return $file['error'];
     }
+    return true;
 }, $this->_('caused an error during the upload.'));
 
 /**
@@ -258,14 +261,72 @@ $this->Validator::addRule('noErrorOnUpload', function ($field, $value) {
  */
 $this->Validator::addRule('allowedFileExt', function ($field, $value, array $params) {
     // check if single or multiple file upload
-    if (count($value) == count($value, COUNT_RECURSIVE)){
+    if ($value) {
+        if (count($value) == count($value, COUNT_RECURSIVE)) {
+            // one dimensional array = single upload
+            $value = [$value];
+        }
+        $allowedExt = array_map('strtolower', $params[0]); // convert all values to lowercase
+        foreach ($value as $file) {
+            if (($file['error'] == '4') || ($file['error'] == '0')) {
+                return true;
+            }
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)); // convert value to lowercase
+            return (in_array($ext, $allowedExt));
+        }
+    }
+    return true;
+}, $this->_('does not belong to the allowed file types: %s'));
+
+
+/**
+ * 20) Check if the uploaded file is not larger than the allowed filesize as declared inside the php.ini
+ */
+$this->Validator::addRule('phpIniFilesize', function ($field, $value) {
+    if ($value) {
+        if (count($value) == count($value, COUNT_RECURSIVE)) {
+            // one dimensional array = single upload
+            $value = [$value];
+        }
+        foreach ($value as $file) {
+            if (($file['error'] == '4') || ($file['error'] == '0')) {
+                return true;
+            }
+            return ($file['size'] <= ((int)ini_get("upload_max_filesize") * 1024));
+        }
+    }
+    return true;
+}, $this->_('is larger than the max. allowed filesize.'));
+
+/**
+ * 21) Check if uploaded files are not of the forbidden extensions
+ * This is the opposition of the allowedFileExt
+ */
+$this->Validator::addRule('forbiddenFileExt', function ($field, $value, array $params) {
+    // check if single or multiple file upload
+    if (count($value) == count($value, COUNT_RECURSIVE)) {
         // one dimensional array = single upload
         $value = [$value];
     }
-    $allowedExt = array_map('strtolower', $params[0]); // convert all values to lowercase
-    foreach($value as $file){
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)); // convert value to lowercase
-        return (in_array($ext, $allowedExt));
+    $forbiddenExt = array_map('strtolower', $params[0]); // convert all values to lowercase
+    foreach ($value as $file) {
+        if ($file['name']) {
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)); // convert value to lowercase
+            return (!in_array($ext, $forbiddenExt));
+        } else {
+            return true;
+        }
     }
-}, $this->_('does not belong to the allowed file types: %s'));
+}, $this->_('is of one of the forbidden file types: %s'));
 
+/**
+ * Check if entered string is a valid time
+ */
+$this->Validator::addRule('time', function ($value) {
+    if ($value) {
+        $time_regex = '#^([01]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$#'; //regex for 24-hour format
+        return (preg_match($time_regex, $value));
+    }
+    return true;
+
+}, $this->_('is not a valid time.'));
