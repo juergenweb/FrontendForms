@@ -116,7 +116,6 @@ $password->setRule('required');
 $password->setRule('safePassword');
 $password->showPasswordRequirements();
 $password->showPasswordToggle();
-$password->getFieldWrapper()->prepend('<div class="uk-child-width-1-2" data-uk-grid>')->removeAttributeValue('class', 'uk-margin');
 $form->add($password);
 
 $singleRadio = new \FrontendForms\InputRadio('single');
