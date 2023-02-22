@@ -66,7 +66,6 @@ class Button extends Element
         $this->showAttributeValue = $showAttributeValue;
         return $this;
     }
-
   
     /**
      * Creates a new wrapper object
@@ -84,7 +83,6 @@ class Button extends Element
     {
         $this->removeWrap();
     }
-
 
     /**
      * Render the button
