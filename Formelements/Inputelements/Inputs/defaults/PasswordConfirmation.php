@@ -41,7 +41,7 @@ class PasswordConfirmation extends InputPassword
      * @throws WireException
      * @throws WirePermissionException
      */
-    public function renderPasswordConfirmation(): string
+    public function ___renderPasswordConfirmation(): string
     {
         return parent::___renderInputPassword();
     }
