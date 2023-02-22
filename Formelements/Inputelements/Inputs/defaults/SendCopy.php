@@ -30,7 +30,7 @@ class SendCopy extends InputCheckbox
      * Render checkbox for sending a copy to the sender
      * @return string
      */
-    public function renderSendCopy(): string
+    public function ___renderSendCopy(): string
     {
         return parent::___renderInputCheckbox();
     }
