@@ -4,13 +4,6 @@
 
 A module for ProcessWire to create and validate forms on the frontend easily using the [Valitron](https://github.com/vlucas/valitron) library.
 
-## Requirements
-* PHP>=8.0.0
-* ProcessWire>=3.0.181
-* GD-Library for CAPTCHA image creation
-
-This module will work without GD-Library too, but you will not be able to use CAPTCHA in this case.
-
 ## Highlights
 1. Simple form creation
 2. 60+ pre-defined validation types (rules) to validate form fields with the possibility to add your own validators if necessary
@@ -20,6 +13,13 @@ This module will work without GD-Library too, but you will not be able to use CA
 6. Hookable methods for further customization
 7. Multi-language
 8. Option to send emails using HTML email templates within the WireMail class (additional methods and properties)
+
+## Requirements
+* PHP>=8.0.0
+* ProcessWire>=3.0.181
+* GD-Library for CAPTCHA image creation
+
+This module will work without GD-Library too, but you will not be able to use CAPTCHA in this case.
 
 ## Table of contents
 * [Quick-start guide](#quick-start-guide)
