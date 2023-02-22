@@ -5,9 +5,9 @@ declare(strict_types=1);
  * File description
  *
  * Created by Jürgen K.
- * https://github.com/juergenweb 
+ * https://github.com/juergenweb
  * File name: captchaimage.php
- * Created: 01.10.2022 
+ * Created: 01.10.2022
  */
 
 use FrontendForms\AbstractCaptchaFactory;
@@ -27,6 +27,7 @@ header("Cache-Control: no-store, no-cache, must-revalidate");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
-
+// create an object of the appropriate CAPTCHA class defined by $captchaType and $captchaVariant
 $captcha = AbstractCaptchaFactory::make($captchaType, $captchaVariant);
 $captcha->createCaptchaImage($formID);
+
