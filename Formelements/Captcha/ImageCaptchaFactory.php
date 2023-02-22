@@ -10,7 +10,6 @@ declare(strict_types=1);
  * Created: 16.08.2022 
  */
 
-
 namespace FrontendForms;
 
 class ImageCaptchaFactory extends AbstractCaptchaFactory
@@ -21,4 +20,5 @@ class ImageCaptchaFactory extends AbstractCaptchaFactory
             default => new DefaultImageCaptcha()
         };
     }
+
 }
