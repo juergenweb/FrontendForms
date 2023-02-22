@@ -32,7 +32,7 @@ class Subject extends InputText
      * Render the subject input field
      * @return string
      */
-    public function renderSubject(): string
+    public function ___renderSubject(): string
     {
         return parent::___renderInputText();
     }
