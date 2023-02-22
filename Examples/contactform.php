@@ -18,11 +18,10 @@ namespace ProcessWire;
  * Fe you have to use $form = new \FrontendForms\Form('myForm'); or $form = new FrontendForms\Form('myForm'); and not only $form = new Form('myForm');
  */
 
-echo  '<h2>A simple working contact form using the WireMail class</h2>';
-echo '<p>Please replace the recipient email address with your own.</p>';
+$content =  '<h2>A simple working contact form using the WireMail class</h2>';
+$content .=  '<p>Please replace the recipient email address with your own.</p>';
 
 $form = new \FrontendForms\Form('contact');
-$form->setAttribute('enctype', 'multipart/form-data');
 
 $gender = new \FrontendForms\InputRadioMultiple('gender');
 $gender->setLabel('Gender')->setAttribute('class', 'myextralabelclass');
@@ -49,8 +48,6 @@ if($user->isLoggedIn())
     $email->setAttribute('value', $user->email);
 $email->setSanitizer('email');
 $email->setRule('required')->setCustomFieldName('The Email address');
-$email->setRule('email');
-$email->setRule('emailDNS');
 $form->add($email);
 
 $subject = new \FrontendForms\InputText('subject');
@@ -65,11 +62,14 @@ $form->add($message);
 
 $file1 = new \FrontendForms\InputFile('fileupload1');
 $file1->setLabel('Multiple files upload');
-$file1->allowMultiple(true);
+$file1->setMultiple(true);
+$file1->setRule('allowedFileSize', '40000');
+$file1->setRule('allowedFileExt', ['pdf', 'docx','txt']);
 $form->add($file1);
 
 $file2 = new \FrontendForms\InputFile('fileupload2');
 $file2->setLabel('Single file upload');
+$file2->setRule('allowedFileSize', '10000');
 $form->add($file2);
 
 $accept = new \FrontendForms\InputCheckbox('accept');
@@ -87,23 +87,28 @@ if ($form->isValid()) {
     // send the form with wireMail
     $m = wireMail();
     $m->to('myemail@example.com');// please change this email address to your own
+    if($form->getValue('sendcopy')){
+        // send copy to sender
+        $m->to($form->getValue('email'));
+    }
     $m->from($form->getValue('email'));
     $m->subject($form->getValue('subject'));
-    $m->title('A new message via contact form'); // this is a new property from this module
+    $m->title('<h1>'.$this->_('A new message via contact form').'</h1>'); // this is a new property from this module
 
     /** You can grab the values with the getValue() method - this is the default way */
     /*
     $body = $m->title;
-    $body .= '<p>Sender: '.$form->getValue('gender').' '. $form->getValue('firstname').' '.$form->getValue('lastname').'</p>';
-    $body .= '<p>Mail'): '.$form->getValue('email').'</p>';
-    $body .= '<p>Subject: '.$form->getValue('subject').'</p>';
-    $body .= '<p>Message: '.$form->getValue('message').'</p>';
+    $body .= '<p>'.$this->_('Sender').': '.$form->getValue('gender').' '. $form->getValue('firstname').' '.$form->getValue('lastname').'</p>';
+    $body .= '<p>'.$this->_('Mail').': '.$form->getValue('email').'</p>';
+    $body .= '<p>'.$this->_('Subject').': '.$form->getValue('subject').'</p>';
+    $body .= '<p>'.$this->_('Message').': '.$form->getValue('message').'</p>';
     */
 
     /** NEW: or you can use placeholders for the labels and the values of the form fields
      * This is the new way - only available at version 2.1.9 or higher
      * Big advantage: The placeholders can be easier integrated in HTML as PHP code
      * But it is up to you, if you want to use placeholders or do it the old way
+     * If you want to use the placeholder, please read the doc first ;-)
      */
 
     $body = '<p>[[TITLE]]</p><ul>
@@ -116,8 +121,7 @@ if ($form->isValid()) {
           </ul>';
 
     $m->bodyHTML($body);
-
-
+    $m->sendAttachments($form, true);
 
     if (!$m->send())
     {
@@ -125,3 +129,7 @@ if ($form->isValid()) {
     }
 
 }
+
+$content = $form->render();
+echo $content;
+
