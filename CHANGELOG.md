@@ -194,4 +194,14 @@ into the email body and they will be replaced on the fly by the appropriate valu
 ### Corrections of code and translation
 Last but not least, a lot of corrections/improvements of the code and translation strings were made.
 
+## [2.1.12] - 2023-02-22
+This versions comes with major improvements and changes. If you are upgrading please note, that there are some changes
+according uploading files and sending of attachments. 
+To make it easier for you all examples at the Examples folder were update, so you can see how do it now.
 
+In addition HTML5 browser validation was added as a configurable setting. This means you can turn on browser validation 
+by checking a checkbox in the admin if you want.
+
+Some pre-defined input types for added for easier usage (FileUploadSingle, FileUploadMultiple).
+
+A lot of bugs were corrected 
