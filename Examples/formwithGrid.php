@@ -9,12 +9,13 @@ namespace ProcessWire;
  * Fe you have to use $form = new \FrontendForms\Form('myForm'); or $form = new FrontendForms\Form('myForm'); and not only $form = new Form('myForm');
  */
 
-echo '<h1>Test page for a form inside a grid</h1>';
-echo '<p>In this case a UiKit grid system is used.</p>';
+$content = '<h2>Test page for a form inside a grid</h2>';
+$content .= '<p>In this case a UiKit grid system is used.</p>';
 
 $form = new \FrontendForms\Form('gridform');
 $form->useInputWrapper(false);
 $form->setAttributes(['data-uk-grid', 'class' => 'uk-grid-small']);
+
 
 $test1 = new \FrontendForms\InputText('test1');
 $test1->setLabel('Input 1');
@@ -60,10 +61,12 @@ $form->add($button);
 
 if ($form->isValid()) {
 
-    print_r($form->getValues());
+    $content .= 'Submission was successful!';
     // or do what you want
 
 }
 
 // render the form
-echo $form->render();
+$content .= $form->render();
+
+echo $content;
