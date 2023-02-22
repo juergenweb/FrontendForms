@@ -60,8 +60,8 @@ trait TraitCheckboxesAndRadiosMultiple
     }
 
     /**
-     * Change the markup and add the CSS class depending if the alignment of radios or checkboxes (multiple)
-     * is horizontal or vetical
+     * Change the markup and add the CSS class depending on if the alignment of radios or checkboxes (multiple)
+     * is horizontal or vertical
      * @param string $markupType
      * @param InputCheckboxMultiple|InputRadioMultiple $input
      * @return string
@@ -85,6 +85,5 @@ trait TraitCheckboxesAndRadiosMultiple
         }
         return $out;
     }
-
 
 }
