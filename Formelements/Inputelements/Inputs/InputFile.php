@@ -20,7 +20,7 @@ class InputFile extends Input
 
     protected Button $button; // the button object for uikit3
     protected ?Wrapper $wrapper; // the wrapper object for uikit3
-    protected bool $allowMultiple = false; // by default only 1 file is allowed for upload
+    protected bool $multiple = true; // allow multiple file upload or not
 
     /**
      * @param string $id
@@ -31,7 +31,11 @@ class InputFile extends Input
         parent::__construct($id);
         $this->setAttribute('type', 'file');
         $this->setCSSClass('input_fileClass');
-        $this->allowMultiple($this->allowMultiple);
+        $this->setMultiple(); // allow multiple file upload by default
+        $this->setLabel($this->_('File upload'));
+        // set this validation rules as default on file upload field
+        $this->setRule('noErrorOnUpload'); // check for upload errors on default
+        $this->setRule('phpIniFilesize'); // add the max file size of php.ini as absolute limit of file size by default
         if ($this->input_framework === 'uikit3') {
             // instantiate the button for the uikit3 framework
             $this->button = new Button();
@@ -46,27 +50,26 @@ class InputFile extends Input
     }
 
     /**
-     * Allow or disallow upload of multiple files
-     * true: uploading multiple files is allowed
-     * false: only 1 file is allowed for upload
-     * @param bool $allowMultiple
-     * @return void
+     * Enable/disable multiple file upload
+     * @param bool $multiple
+     * @return $this
      */
-    public function allowMultiple(bool $allowMultiple): void
+    public function setMultiple(bool $multiple = true): self
     {
-        $this->allowMultiple = $allowMultiple;
-        if ($this->allowMultiple) {
+        $this->multiple = $multiple;
+        if($multiple){
             $this->setAttribute('multiple');
         }
+        return $this;
     }
 
     /**
-     * Returns true or false, depending on the settings
+     * Get the boolean value whether multiple file upload is enabled or not
      * @return bool
      */
-    public function getAllowMultiple(): bool
+    public function getMultiple(): bool
     {
-        return $this->allowMultiple;
+        return $this->multiple;
     }
 
     /**
@@ -76,7 +79,7 @@ class InputFile extends Input
     public function ___renderInputFile(): string
     {
         // add brackets to name attribute if multiple attribute is present
-        if($this->hasAttribute('multiple'))
+        if($this->getMultiple())
             $this->setAttribute('name', $this->getAttribute('name').'[]');
         switch ($this->input_framework) {
             case('uikit3'):
@@ -87,6 +90,35 @@ class InputFile extends Input
             default:
                 return $this->renderInput();
         }
+    }
+
+    /**
+     * Render the input field including additional notes for validators used for file uploads
+     * @return string
+     */
+    public function ___render(): string
+    {
+        // check for simultaneously presence of 'phpIniFilesize' and 'allowedFileSize'
+        if ((array_key_exists('phpIniFilesize', $this->notes_array)) && (array_key_exists('allowedFileSize',
+                $this->notes_array))) {
+            if ((int)$this->notes_array['allowedFileSize']['value'] <= (int)$this->notes_array['phpIniFilesize']['value']) {
+                // allowed filesize is larger than the one in ini.php - so take only the value of php.ini
+                unset($this->notes_array['phpIniFilesize']); // remove phpIniFilesize from the array
+            } else {
+                unset($this->notes_array['allowedFileSize']); // remove allowedFileSize from the array
+            }
+        }
+        // create HTML5 max-size attribute depending on validator settings
+        if((array_key_exists('phpIniFilesize',$this->notes_array)) || (array_key_exists('allowedFileSize',$this->notes_array))){
+            $file_size = $this->notes_array['phpIniFilesize']['value'] ?? $this->notes_array['allowedFileSize']['value'];
+            $this->setAttribute('max-size', (string)$file_size);
+        }
+
+        // create HTML5 accept attribute depending on validator settings
+        if(array_key_exists('allowedFileExt',$this->notes_array)){
+            $this->setAttribute('accept', $this->notes_array['allowedFileExt']['value']);
+        }
+        return parent::___render();
     }
 
 }
