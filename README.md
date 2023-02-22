@@ -1,24 +1,28 @@
-# FrontendForms (⚠ Only for testing purposes at the moment)
+# FrontendForms
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![ProcessWire 3](https://img.shields.io/badge/ProcessWire-3.x-orange.svg)](https://github.com/processwire/processwire)
 
 A module for ProcessWire to create and validate forms on the frontend easily using the [Valitron](https://github.com/vlucas/valitron) library.
 
-> ⚠ Please do not use CAPTCHA at the moment - This leads to errors!! Do not use this repository on live sites. I am working on a solution, but it needs more time.
+## Requirements
+* PHP>=8.0.0
+* ProcessWire>=3.0.181
+* GD-Library for CAPTCHA image creation
+
+This module will work without GD-Library too, but you will not be able to use CAPTCHA in this case.
 
 ## Highlights
 1. Simple form creation
-2. 40+ validation types
+2. 60+ pre-defined validation types (rules) to validate form fields with the possibility to add your own validators if necessary
 3. Support for UiKit 3 and Bootstrap 5 CSS framework
 4. SPAM protection
 5. Highly customizable
 6. Hookable methods for further customization
 7. Multi-language
-8. Usage of HTML email templates possible if you are sending emails with your forms
+8. Option to send emails using HTML email templates within the WireMail class (additional methods and properties)
 
 ## Table of contents
 * [Quick-start guide](#quick-start-guide)
-* [Which validation rules are ready to use](#which-validation-rules-are-ready-to-use)
 * [Which input types are supported?](#which-input-types-are-supported)
 * [SPAM protection](#spam-protection)
 * [Prevent double form submission](#prevent-double-form-submission)
@@ -27,6 +31,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 * [General methods](#general-methods)
 * [Form and its methods](#form-and-its-methods)
 * [Input fields and their methods](#input-fields-and-their-methods)
+* [Which validation rules are ready to use](#which-validation-rules-are-ready-to-use)
 * [Customization of validation](#customization-of-validation)
 * [Fieldsets](#fieldsets)
 * [Buttons](#buttons)
@@ -37,21 +42,21 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 * [HTML email templates](#email-templates)
 
 ## Quick-start guide
-1. Download and extract FrontendForms and put the folder inside site/modules. Be aware that the folder name must be 
-FrontendForms and not FrontendForms-main or FrontendForms-master. GitHub adds this appendix by default. So be aware to remove it before you put the folder inside the module folder.
-3. Login to your admin area and refresh all modules.
-4. Now you can grab this module and install it.
-5. After the installation is finished you can change some configuration settings if you want, but it works out of the box
-7. Add the following 2 lines of code inside your _init.php inside your template 
-folder. These lines are especially needed if you are running a multi-language site or single-language site, where the language is not English. If the language of your site is English, you can skip this step.
+1. Download and extract FrontendForms and put the folder inside site/modules. Be aware that the folder name must be
+   FrontendForms and not FrontendForms-main or FrontendForms-master. GitHub adds this appendix by default. So be aware to remove it before you put the folder inside the module folder.
+2. Login to your admin area and refresh all modules.
+3. Now you can grab this module and install it.
+4. After the installation is finished you can change some configuration settings if you want, but it works out of the box
+5. Add the following 2 lines of code inside your _init.php inside your template
+   folder. These lines are especially needed if you are running a multi-language site or single-language site, where the language is not English. If the language of your site is English, you can skip this step.
 
 ```php
 // Example for a single-language site
 $frontendforms = new FrontendForms(); 
-$frontendforms->setLang('de'); // in this case I set the the site language to German (hard coded)
+$frontendforms->setLang('de'); // in this case I set the site language to German (hard coded)
 ```
 
-With the method setLang(), you set the language for the pre-defined error messages of the form after the form submission. If you do not set the language, then all error messages are always in English (independent of what language you have set on the frontend.
+With the method setLang(), you set the language for the pre-defined error messages of the form after the form submission. If you do not set the language, then all error messages are always in English (independent of what language you have set on the frontend).
 Be aware, that the value of the language code inside the parenthesis must be in ISO 639-1 format (2-letter code).
 This module supports over 20 different languages for the error messages by default. You will find them inside the [FrontendForms/lang](https://github.com/juergenweb/FrontendForms/tree/main/lang) directory.
 You can use every language code, that you will find inside this directory. If you enter a language code, where no file could be found, than the default language English will be used instead.
@@ -60,16 +65,16 @@ If you have a multi-language site you have to set the code dynamically ($user->l
 
 ```php
 // Example for a multi-language site
-// Maybe this code must be adapted a little bit to your needs, but you get the idea...
+// Maybe this code must be adapted a little to your needs, but you get the idea...
 $frontendforms = new FrontendForms();
 if($user->language->name != 'default') // default is not a correct 2-letter code for a language
-$frontendforms->setLang($user->language->name); // in this case I set the the site language dynamically
+$frontendforms->setLang($user->language->name); // in this case I set the site language dynamically
 ```
 
-6. Copy the following code and paste it in a template of your choice
+Copy the following code and paste it in a template of your choice
 
-Be aware of namespaces!! If you are using a namespace on the top of your template file, you have to adapt the 
-instantiation of the class by using the FrontendForms namespace. 
+Be aware of namespaces!! If you are using a namespace on the top of your template file, you have to adapt the
+instantiation of the class by using the FrontendForms namespace.
 This module runs in its own namespace called *FrontendForms*.
 
 Take a look at the following example:
@@ -141,7 +146,7 @@ echo $form->render();
 ```
 ### Short Explanation step by step
 * First of all you have to create a new form object. Inside the constructor you have to add the id of the form.
-* After that you can create each form field of the form. Each form field must have a name attribute inside the 
+* After that you can create each form field of the form. Each form field must have a name attribute inside the
 * constructor (required).
 * You can set various properties to each form field (setLabel(), setNotes(), setDescription();setRule(), setSanitizer(),...)
 * Use the add method to add the field to the form object.
@@ -149,73 +154,10 @@ echo $form->render();
 * database, to login a user,....you get the idea. The validation and sanitization of the form values happens inside this method.
 * The render method outputs the markup of the form.
 
-I highly recommend you to study the examples inside the 'examples' folder. There you will find a lot of different use 
+I highly recommend you to study the examples inside the 'examples' folder. There you will find a lot of different use
 cases.
 
 Now you are ready to test the module inside your project!
-
-## Which validation rules are ready to use
-Please take a look at [Valitron validationtypes](https://github.com/vlucas/valitron#built-in-validation-rules) for all 
-available validation rules. There you will find the explanation to each validation rule.
-In addition, I have added 13 custom validation rules especially for ProcessWire:
-
-* **uniqueUsername**\
-Checks if a username is used by another user or not - useful for user registration form.
-
-* **matchUsername**\
-Has to be added to the password field; checks if password and username matches - useful for login form.
-
-* **meetsPasswordConditions**\
-Has to be added to the password field; checks if password meets the required conditions set in the backend - useful for registration form.
-
-* **usernameSyntax**\
-Checks if the entered username only contains a-z0-9-_. characters - useful for registration or profile form.
-
-* **uniqueEmail**\
-Checks if an email address is used by another user or not - useful for registration and profile form.
-
-* **checkPasswordOfUser**\
-This validation rule is for logged-in users only. Idea: If you want to change your password you have to enter the old password before.
-And for that reason I have created this rule. So this rule is for a password field where you have to enter the current password for security reasons - useful for the profile form.
-
-* **matchEmail**\
-Has to be added to the password field; checks if password and email matches - useful for login form.
-It is the same validation as matchUsername, but in this case you can use email and password for the login.
-
-* **isBooleanAndTrue**\
-You can check if a value is from type boolean and true.
-
-* **isBooleanAndFalse**\
-You can check if a value is from type boolean and false.
-
-* **exactValue**\
-You can check if a value entered inside a text field is exactly the same value as a value given.
-
-* **differentValue**\
-You can check if a value entered inside a text field is different from a value given.
-
-* **checkTfaCode**\
-This is a special method for the login process if you are using TfaEmail component. It checks if the code sent by the 
-TfaEmail module is correct.
-
-* **differentPassword**\
-This validation checks if the password is different from the old password stored inside the database. 
-Useful if a user wants to change his password.
-
-* **safePassword**\
-  This validation checks if the password is not on the blacklist, which contains the 100 most common passwords.
-  This validator is added to password fields by default, so no need to add it manually.
-  This validator is useful, if you offer a user registration on your site.
-
-Maybe other custom validation rules will be added in the future. If you have some ideas, please write a pull request.
-
-Inside the folder 'examples' you will find examples of the usage of validation rules inside the validationTypes.php.
-Take a look at these examples on how to write and add validation rules to your input fields. 
-You can use as much validators for a field as you need.
-
-### Custom validation rules
-It is also possible to create your own custom validation rules and use them inside your forms. On the Valitron GitHub page you can find more information about how to create rules on your own.
-You have to write your custom rules inside your init.php after the module integration. For demonstration purposes I will show you how to add a custom rule named allFail. This rule makes no sense and returns always false if you enter a value inside the input, where you have added it.
 
 ```php
 $forms = new FrontendForms();
@@ -287,7 +229,7 @@ Can be disabled by setting the value to zero.
 Only to mention: There is also a session active which prevents double form submission after successful validation.
 It compares the session value with the value of a hidden field. If the values are different, it is an indication that
 the form would be submitted twice. In this case the submission will be stopped before it takes place, and you will
-be redirected to the form page itself. 
+be redirected to the form page itself.
 The double-submission check can be disabled if necessary.
 
 ## IP-banning
@@ -301,7 +243,7 @@ A user will be blocked if he needs, for example, too many attempts to send the f
 In this section you can get more information about this user, and you have 2 buttons: add the user to or remove him from the IP blacklist.
 
 ## CAPTCHA
-This module offers various types of a CAPTCHA, that can be used. BTW: CAPTCHA should be used only if the other traps failed and you get a lot of SPAM over your forms.
+This module offers various types of a CAPTCHA, that can be used. BTW: CAPTCHA should be used only if the other traps failed, and you get a lot of SPAM over your forms.
 Most users do not like CAPTCHA, but it is up to you whether to use them or not.
 At the moment, following CAPTCHA types will be provided:
 
@@ -336,18 +278,18 @@ users), you want to disable it.
 ### Password blacklist
 If you are dealing with user login/registration on your site, there is always a risk, that clients use unsafe passwords
 and this could be a serious security issue for an account to be hacked.
-For this reason, you have the oportunity create a blacklist of forbidden passwords in the module configuration. To make it much more simple 
-for you, it uses passwords from the top 100 most common passwords list from GitHub. In addition, you can add your own 
+For this reason, you have the opportunity create a blacklist of forbidden passwords in the module configuration. To make it much more simple
+for you, it uses passwords from the top 100 most common passwords list from GitHub. In addition, you can add your own
 passwords too.
 
-The best of the blacklist: 
+The best of the blacklist:
 It cares about your password requirement settings and does not add all 100 passwords of the top list by default to the
 blacklist.
-This means, only passwords that fulfill your password requirements will be added to the blacklist - all others will not 
+This means, only passwords that fulfill your password requirements will be added to the blacklist - all others will not
 be added to keep the list as short as possible (better performance).
 
 Example:
-Your password requirements as set in the field configuration of the field "pass" are set to "letter" and "number", which 
+Your password requirements as set in the field configuration of the field "pass" are set to "letter" and "number", which
 means each password must consists of letters and numbers (other types like symbols are not required).
 Passwords that does not fulfill this minimum requirements will be filtered out by the "meetsPasswordConditions" validator
 before, which will be added by default to every password field.
@@ -357,7 +299,7 @@ On the module configuration page you will find a very detailed description how t
 
 Only to mention:
 The top 100 password list will be checked once a month on GitHub, if the file has been modified. Once a month is enough
-and GitHub allows only a certain amount of requests per day. Otherwise you will get a 403 error (too many requests).
+and GitHub allows only a certain amount of requests per day. Otherwise, you will get a 403 error (too many requests).
 So checking it once a month does not bomb their server with too many requests.
 If something has been changed on the list, it will be downloaded and added to the blacklist automatically.
 So the list is always up-to-date.
@@ -493,7 +435,7 @@ This will add or remove the honeypot field. Enter true or false as parameter
 ```
 
 #### useDoubleFormSubmissionCheck()
-This will enable/disable the checking of double form submission. This is useful on profile forms, where you can change 
+This will enable/disable the checking of double form submission. This is useful on profile forms, where you can change
 your data multiple times.
 
 ```php
@@ -647,15 +589,15 @@ folder of this module. This is the default folder, for storing the files and if 
 the module grabs the files for attachments from this "temp_uploads" folder and remove all files inside this folder after
 successful submission.
 So this folder will not be the right place if you want to store files permanently. For this case you have the possibility
-to change the upload folder. 
-If you are adding true as second parameter inside the parenthesis, the folder will be created if it does not exist, otherwise you will get 
+to change the upload folder.
+If you are adding true as second parameter inside the parenthesis, the folder will be created if it does not exist, otherwise you will get
 an error message, that this folder does not exist.
 All files will be saved at site/assets/files, which is the Processwire files directory
 
 ```php
 $form->setUploadPath('mycustomfolder/', true); // the files will be stored at site/assets/files/mycustomfolder/
 ```
-This works before and after POST. If you use this method before POST, then all files will be stored directly inside the 
+This works before and after POST. If you use this method before POST, then all files will be stored directly inside the
 given folder.
 If the method is used after POST, then the files will be stored inside the temp_uploads folder first and will be moved to the
 new directory afterwards.
@@ -786,6 +728,14 @@ Returns true or false.
 $field->hasSanitizer('text');
 ```
 
+#### getSanitizers()
+If you want to know, which sanitizers are added to a field, you can use this method which returns an array containing
+all sanitizer names of this field.
+
+```php
+$field->getSanitizers();
+```
+
 #### removeSanitizers()
 You can remove all sanitizers (including the sanitizers applied by default) with this method if you enter no value inside the parenthesis.
 By entering one sanitizer as a string you can remove only this one.
@@ -804,6 +754,17 @@ Method to add a validator to the form field. You can find examples of all valida
 ```php
 $field->setRule('required');
 $field->setRule('number');
+```
+
+#### getRules()
+
+Method to get all validators of a form field.
+This is especially useful, if you want to know which validators are set to a field.
+Most of the input fields have validators set by default, so you do not need to add them manually.
+This method will turn an array with all validators set at the moment.
+
+```php
+$field->getRules();
 ```
 
 #### removeRule()
@@ -906,7 +867,7 @@ $select->addEmptyOption('Please select your choice');
 $select->addOption('Value 1', '1');
 $select->addOption('Value 2', '2');
 ```
-By adding the addEmptyOption() method, the first option in line will not be selected by default. You do not need to add a text inside the parenthesis. By default "-" will be shown.
+By adding the addEmptyOption() method, the first option in line will not be selected by default. You do not need to add a text inside the parenthesis. By default, "-" will be shown.
 Just add it to your select to see how it works.
 
 #### setOptionsFromField() for select multiple, radio multiple, checkbox multiple and datalist input fields
@@ -942,9 +903,14 @@ $password = new InputPassword('password');
 $password->showPasswordToggle();
 ```
 
-#### sendAttachment() for file input fields
-This method has to be used with the WireMail class. It is the same as the WireMail attachment() method, but it has some
-extra functionality. It saves the uploaded files in a pre-defined temp folder called "temp_uploads".
+#### sendAttachment() for file input fields (only for FrontendForms <= 2.1.12)
+> ⚠ This method is depreciated and only necessary if you are using FrontendForms 2.1.12 or lower.
+In newer versions you do not need to add this method, because it will be added automatically via a Hook to the WireMail
+object if a file upload field is present in the form.
+
+This method has to be used with the WireMail class (only on FrontenForms 2.1.12 or lower). It is the same as the
+WireMail attachment() method, but it has some extra functionality. It saves the uploaded files in a pre-defined temp
+folder called "temp_uploads".
 You do not need to enter the path to the files manually. After the files were sent, all files in the temp folder will be
 deleted.
 You can disable the deletion of the files afterwards if you enter true inside the parenthesis.
@@ -965,25 +931,235 @@ Take a look at the contact form in the example folder which uses file upload too
 By default, file upload fields only allow to upload 1 file. With this method you can change this behaviour by adding true
 or false inside the parenthesis:
 True: renders a multiple upload field
-False: renders a single upload field 
+False: renders a single upload field
 
 ```php
 $m = wireMail();
 $m->allowMultiple(true);
 ```
-#### mailTemplate() to change the email template
+#### mailTemplate() to change/disable the email template
 With this method you can overwrite the global setting from the module configuration. Use this if you want to use another
-template for sending emails on that form. 
-If setting it to 'none', no template will be used.
+template for sending emails on or to disable the usage of a template.
+If setting is set to 'none', no template will be used.
 
 ```php
 $m = wireMail();
 $m->mailTemplate('template1');
 ```
 
+
+## Form validation
+The [Valitron validation library](https://github.com/vlucas/valitron) is used to validate form values and this validation
+class comes with a lot of ready-to-use validation rules.
+Please take a look at [Valitron validationtypes](https://github.com/vlucas/valitron#built-in-validation-rules) for all
+available validation rules. There you will find the explanation to each validation rule too.
+At the time of writing, Valitron offers 42 validation rules.
+
+In addition, I have added 21 custom validation rules especially designed for the usage with ProcessWire, so there are 
+more than 60 validators available out of the box.
+
+Afterwards, I will give you an overview about all custom rule and their usage:
+
+* **uniqueUsername**\
+  Checks if a username is used by another user or not - useful for user registration form.
+
+* First parameter: validation name
+
+```php
+$field->setRule('uniqueUsername');
+```
+
+* **matchUsername**\
+  Has to be added to the password field; checks if password and username matches - useful for login form.
+
+* First parameter: validation name
+* Second parameter: the field name of username field
+
+```php
+$field->setRule('matchUsername', 'myemailfieldname');
+```
+
+* **meetsPasswordConditions**\
+  Has to be added to the password field; checks if password meets the required conditions set in the backend - useful for registration form.
+
+* First parameter: validation name
+
+```php
+$field->setRule('meetsPasswordConditions');
+```
+
+* **usernameSyntax**\
+  Checks if the entered username only contains a-z0-9-_. characters - useful for registration or profile form.
+
+* First parameter: validation name
+
+```php
+$field->setRule('usernameSyntax');
+```
+
+* **uniqueEmail**\
+  Checks if an email address is used by another user or not - useful for registration and profile form. Has to be added
+  to an email field.
+
+* First parameter: validation name
+
+```php
+$field->setRule('uniqueEmail');
+```
+
+* **checkPasswordOfUser**\
+  This validation rule is for logged-in users only. Idea: If you want to change your password you have to enter the old password before.
+  And for that reason I have created this rule. So this rule is for a password field where you have to enter the current password for security reasons - useful for the profile form.
+
+* First parameter: validation name
+* Second parameter: The user object
+
+```php
+$field->setRule('checkPasswordOfUser', $user);
+```
+
+* **matchEmail**\
+  Has to be added to the password field; checks if password and email matches - useful for login form.
+  It is the same validation as matchUsername, but in this case you can use email and password for the login.
+
+* First parameter: validation name
+* Second parameter: the field name of the email field
+
+```php
+$field->setRule('matchEmail', 'myemailfieldname');
+```
+
+* **isBooleanAndTrue**\
+  You can check if a value is from type boolean and true.
+
+* First parameter: validation name
+
+```php
+$field->setRule('isBooleanAndTrue');
+```
+
+* **isBooleanAndFalse**\
+  You can check if a value is from type boolean and false.
+
+* First parameter: validation name
+
+```php
+$field->setRule('isBooleanAndFalse');
+```
+
+* **exactValue**\
+  You can check if a value entered inside a text field is exactly the same value as a value given.
+
+* First parameter: validation name
+* Second parameter: the value that the field must have
+
+```php
+$field->setRule('exactValue', 'mygivenValue');
+```
+
+* **differentValue**\
+  You can check if a value entered inside a text field is different from a value given.
+
+* First parameter: validation name
+* Second parameter: the value that the field cannot have
+
+```php
+$field->setRule('differentValue', 'myvalue');
+```
+
+* **checkTfaCode**\
+  This is a special method for the login process if you are using TfaEmail component. It checks if the code sent by the
+  TfaEmail module is correct. This validator is not intended to be for normal field validation.
+
+* **differentPassword**\
+  This validation checks if the password is different from the old password stored inside the database.
+  Useful if a user wants to change his password, and you have a password field for the old password and the new one.
+  So it compares the 2 fields that the value in the old password field is not the same as in the new one.
+
+* First parameter: validation name
+* Second parameter: field name of the password field
+
+```php
+$field->setRule('differentPassword' 'mypasswordfield');
+```
+
+* **safePassword**\
+  This validation checks if the password is not on the blacklist, which contains the 100 most common passwords.
+  This validator is added to password fields by default, so no need to add it manually.
+  This validator is useful, if you offer a user registration on your site.
+
+* First parameter: validation name
+
+```php
+$field->setRule('safePassword');
+```
+
+* **allowedFileSize**\
+  This validation checks if an uploaded file is not larger than the allowed filesize. It takes the value of
+  $_FILES['size'] and compare it the max file size set as second parameter.
+  The value of the filesize must be in Bytes (fe 10 000 Bytes equals 10kB).
+
+* First parameter: validation name
+* Second parameter: allowed filesize in Bytes
+
+```php
+$field->setRule('allowedFileSize', '10000');
+```
+
+* **noErrorOnUpload**\
+  This validation checks if an error occurs during the upload of a file. It takes the value of
+  $_FILES['error'] and outputs an error message if the value is not 0.
+
+* First parameter: validation name
+
+
+```php
+$field->setRule('noErrorOnUpload');
+```
+
+* **allowedFileExt**\
+  This validation checks if an uploaded file is of one of the allowed extensions. It takes the value of
+  $_FILES['name'] and extracts the extension. If the extension is not in the array of allowed extensions
+  an error message will be displayed.
+
+* First parameter: validation name
+* Second parameter: array of allowed file extensions
+
+```php
+$field->setRule('allowedFileExt', ['jpg','pdf','doc']);
+```
+
+* **forbiddenFileExt**\
+  This validation checks if an uploaded file is of one of the forbidden extensions. It takes the value of
+  $_FILES['name'] and extracts the extension. If the extension is in the array of forbidden extensions
+  an error message will be displayed.
+
+* First parameter: validation name
+* Second parameter: array of forbidden file extensions
+
+```php
+$field->setRule('forbiddenFileExt', ['exe','pps']);
+```
+
+* **phpIniFilesize**\
+  This validation checks if an uploaded file is not larger than the allowed filesize as declared in the php.ini file.
+  It takes the value of $_FILES['size'] and compare it the max file size of the php.ini file.
+
+* First parameter: validation name
+
+```php
+$field->setRule('phpIniFilesize');
+```
+
+Maybe other custom validation rules will be added in the future. If you have some ideas, please write a pull request.
+
+Inside the folder 'examples' you will find examples of the usage of validation rules inside the validationTypes.php.
+Take a look at these examples on how to write and add validation rules to your input fields.
+You can use as many validators for a field as you need.
+
 ## Customization of validation
-For each validator, there is a pre-defined error message inside the lang folder. This is ok for most cases, but 
-sometimes you need to show another error message than the pre-defined one. For these cases you can customize your error 
+For each validator, there is a pre-defined error message inside the lang folder. This is ok for most cases, but
+sometimes you need to show another error message than the pre-defined one. For these cases you can customize your error
 messages with 2 methods.
 
 Default error message:
@@ -996,7 +1172,7 @@ $field->seRule('required');
 If the validation fails, the error message will look like this:
 Privacy is required
 
-If you do not want that the name of the field (in this case privacy) should be used, then you can change this in the 
+If you do not want that the name of the field (in this case privacy) should be used, then you can change this in the
 following way:
 
 ### setCustomFieldName()
@@ -1044,10 +1220,10 @@ $form->add($buttonReset);
 ```
 
 ## Default fields
-To make life a little easier I have created the most common fields in forms as pre-defined default fields with 
+To make life a little easier I have created the most common fields in forms as pre-defined default fields with
 its own class.
 
-These are: 
+These are:
 
 * Email (Input text to enter an email address - class name: Email)
 * Name (Input text to enter a name - class name: Name)
@@ -1060,9 +1236,14 @@ These are:
 * Message (Textarea to enter a text - class name: Message)
 * Gender (Select to choose the gender - class name: Gender)
 * Username (Input text to enter a username - class name: Username)
+* FileUpload (Input file to upload files - class name: UploadFile)
 
 Instead of creating this type of input fields every time on your own, you can use the pre-defined input types as listed above.
-Every input type has the validation rules and sanitizers included, the labels and error messages are defined and instead of writing 
+Every input type has the validation rules and sanitizers included, the labels and error messages are defined set, so
+you can use it as they are - but you are free to add additional sanitizer and validation rules, or you can change the
+error messages to your need.
+
+This is the way you write usually an email field by hand:
 
 ```php
     $emailfield = new \FrontendForms\InputfieldText('myemailfield');
@@ -1072,44 +1253,85 @@ Every input type has the validation rules and sanitizers included, the labels an
     $emailfield->setRule('emailDNS');
 ```
 
-you only need to write 
+There is nothing wrong with it, but by using the Email() class, you only have to write one line instead of multiple.
+All the properties as you can see above are implemented by default. So this will be a real time saver to you and keeps
+the code inside your template as short as possible.
+Another advantage is that the labels and error messages are set multilingual, and you do not add them manually.
+
 ```php
     $emailfield = new \FrontendForms\Email();
 ```
 
-This is the same as the example above but shorter and nicer and you can be sure, that every email field is the same.
+You can do the same with all others mentioned pre-defined input types. You only have to instantiate the class of the
+input type and add the field to the form.
+BTW you will find the files of all pre-defined input types inside the "defaults" folders of each input type.
 
-You can do the same with all others mentioned pre-defined input types. You only have to instantiate the class of the input type and add the field to the form.
-BTW you will find all pre-defined input types inside the "defaults" folders.
+- [Formelements/Inputelements/Inputs/defaults/](https://github.com/juergenweb/FrontendForms/tree/main/Formelements/Inputelements/Inputs/defaults)
+- [Formelements/Inputelements/Select/defaults/](https://github.com/juergenweb/FrontendForms/tree/main/Formelements/Inputelements/Select/defaults)
+- [Formelements/Inputelements/Textarea/defaults/](https://github.com/juergenweb/FrontendForms/tree/main/Formelements/Inputelements/Textarea/defaults)
 
-- Formelements/Inputelements/Inputs/defaults/
-- Formelements/Inputelements/Select/defaults/
-- Formelements/Inputelements/Textarea/defaults/
+You can study the code to see, what validators and sanitizers are included by default. If you have an idea for another
+inputfield, please let me know.
 
 ## File uploads
-There are 2 scenarios of uploading files with FrontendForms:
-
-1. Upload a file for sending it with an email
-2. Upload a file for storing it under site/assets/files
-
-### Upload a file for sending it with an email
-In this case you have to add the sendAttachement() method to the WireMail object. Otherwise the files will not be sent with the email. You will find more information about the sendAttachements() method [here](#sendattachment-for-file-input-fields).
-
-If you want to see a working real world example, please take a look at the example page at [site/modules/FrontendForms/Examples/contactform.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactform.php) inside the Examples folder.
+Uploading files is sometimes needed, so this module supports uploading files for storing it inside the site/assets/files
+folder or to send it via email.
 
 ### Upload a file for storing it under site/assets/files
-The site/assets/files ist the Processwire directory where all the file will be stored. This directory is public reachable, so that the files could be fetched via fe a link.
-If you want to upload a file under this directory you have to use the setUploadPath() method of the form. With this method you set the target folder, where the file should be stored after the upload.
+The site/assets/files ist the Processwire directory where all the file will be stored. This directory is public
+reachable, so that the files could be fetched via fe a link.
+If you want to upload a file under this directory you have to do nothing, because this is the default behavior.
+Add only a file upload field to your form, and you are done. Each uploaded file will be stored under
+site/assets/files/ and the number of the page, where the form belongs to (fe site/assets/files/1094).
+If you want to store the file at another location you can change the target folder by using the setUploadPath() method.
 You will find more information about the setUploadPath() method [here](#setUploadPath).
 
-If you want to see a working real world example, please take a look at the example page at [site/modules/FrontendForms/Examples/fileuploadtopage.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/fileuploadtopage.php) inside the Examples folder.
+If you want to see a real world example, please take a look at the example page at [site/modules/FrontendForms/Examples/fileuploadtopage.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/fileuploadtopage.php) inside the Examples folder.
+
+### Upload a file for sending it with an email
+In this case you have to add the sendAttachements() method to the WireMail object. Otherwise, the files will not be sent
+with the email. You will find more information about the sendAttachements() method [here](#sendattachment-for-file-input-fields).
+This method takes the file from the location where it was stored after the upload and add it to the mail.
+
+```php
+$mail->sendAttachements($form);
+```
+
+As you can see, you have to set the form object as parameter inside the brackets. This is necessary otherwise it will
+work. This is all you have to do to send your files as mail attachments.
+
+By default, the files will be removed from the server after the mail have been sent.
+
+This method offers you 2 additional possibilities by adding a second parameter to the method:
+
+* do not delete the file after sending and 
+* move the file to another location after sending
+
+To keep the file after sending, you only have to add boolean true as the second parameter:
+
+```php
+$mail->sendAttachements($form, true);
+```
+In this case, the files will be sent, but will not be removed afterwards.
+
+To move files after sending to a new location, you have to enter the path to the new location as second parameter:
+
+```php
+$mail->sendAttachements($form, 'path/to/the/new/location');
+```
+To be honest, these are rare case scenarios, but if you need it, it will be possible. :-)
+
+If you want to see a working real world example of sending attachments, please take a look at the example page at
+[site/modules/FrontendForms/Examples/contactform.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactform.php) 
+inside the Examples folder.
+
 
 ## Hooking
-Hooking is not really necessary in most cases, because you have so much configuration options to achieve your desired 
+Hooking is not really necessary in most cases, because you have so much configuration options to achieve your desired
 result. Anyway, if there is a need for it, every method with 3 underscores is hookable.
 
 ### Hook example 1: Change the asterisk markup via a Hook
-If you are not satisfied with the markup for the asterisk on required fields, you can use the following Hook inside 
+If you are not satisfied with the markup for the asterisk on required fields, you can use the following Hook inside
 your init.php to create your own markup.
 
 Before:
@@ -1154,7 +1376,7 @@ This module supports multi-language. All text strings are fully translatable in 
 The default language is English.
 
 ### Using translation files from languages folder
-If you are using ProcessWire version 3.0.181 or higher, you can take advantage of the new feature of using CSV files 
+If you are using ProcessWire version 3.0.181 or higher, you can take advantage of the new feature of using CSV files
 for different languages. All other versions below do not support this feature.
 The folder languages includes translation files for the following languages at the moment:
 
@@ -1164,26 +1386,26 @@ Maybe other language files will be added in the future.
 
 #### How to install the module language files in ProcessWire
 After you have installed the module go to the configuration page of the module.
-There you will find inside the module info tab a new item called "Languages". Beside this there will be a link to 
+There you will find inside the module info tab a new item called "Languages". Beside this there will be a link to
 install the existing language files. Click the link, choose the correct file for your language and press the save button.
 Now the language files shipped with this module are installed, and you did not have to translate the strings by yourself.
-Only to mention: If the language files will be updated, you have to install them once more. They will not be updated 
+Only to mention: If the language files will be updated, you have to install them once more. They will not be updated
 automatically.
 
 ## Email templates
 
 In most cases forms are used to send data via emails (fe a simple contact form).
 ProcessWire is shipped with the WireMail class to send emails.
-Unfortunately this class does not support the usage of stylish HTML email templates by default, so I decided to enhance 
+Unfortunately this class does not support the usage of stylish HTML email templates by default, so I decided to enhance
 this class with a new method to simply choose an email template, which is stored inside the email_templates folder of this module.
 
 ### New method mailTemplate()
-First you need to know, that inside the email_templates folder you will find HTML files with various names 
+First you need to know, that inside the email_templates folder you will find HTML files with various names
 (fe template_1.html, template_2.html,...).
 These files are the one you can use as the parameter within the brackets of this method:
-You can find a input select containing all existing email templates files inside the module configuration page too, where you can set an email template globally.
+You can find an input select containing all existing email templates files inside the module configuration page too, where you can set an email template globally.
 
-If you want to overwrite the global setting for the template on per form base you have to use this mailTemplate() method. Otherwise the global settings will be used. So, the usage of this method is optional.
+If you want to overwrite the global setting for the template on per form base you have to use this mailTemplate() method. Otherwise, the global settings will be used. So, the usage of this method is optional.
 
 ```php
 $mail = new WireMail();
@@ -1193,8 +1415,8 @@ Every template file contains placeholders for your content.
 F.e. the text of the subject will be rendered inside the placeholder [[SUBJECTVALUE]],
 the text of the body inside the placeholder [[BODY]].
 I have decided to use the double square brackets syntax, because this syntax is also used in the Hanna code module.
-It is recommended to take a look at the email templates which are shipped with this module. You can take them as an 
-example on how to write your own email templates (or download free templates from the internet and add the placeholders 
+It is recommended to take a look at the email templates which are shipped with this module. You can take them as an
+example on how to write your own email templates (or download free templates from the internet and add the placeholders
 by yourself).
 
 If you have created a template on your own, add it to the email_templates folder as the other templates, and now you are
@@ -1211,30 +1433,30 @@ installation. This folder intended to be used for images that you want to use wi
 and can be reached from outside. This is absolutely necessary to be able to view images inside the emails.
 Before the module will be installed, there is also a folder called assets inside this module. It contains images for the
 ready to use email templates.
-During the installation process, these images will be copied from the assets folder inside the module to the newly 
+During the installation process, these images will be copied from the assets folder inside the module to the newly
 created FrontedForms directory. The assets folder inside the module directory will be deleted afterwards.
-If you uninstall the module, the assets folder will be copied back to the module folder. Afterwards the FrontendForms 
+If you uninstall the module, the assets folder will be copied back to the module folder. Afterwards the FrontendForms
 folder will be removed from the site/assets directory.
 So if you are creating your own email template, please put the images inside the FrontendForms
 folder. It is recommended to use a separate folder for each template (fe. site/assets/FrontendForms/mytemplateFolder).
 
-You can find an example of using a local stored image inside the "template_3.html" file. So take a look there how to 
+You can find an example of using a local stored image inside the "template_3.html" file. So take a look there how to
 accomplish this.
 Please note: If you are running your site on a local server (XAMPP, WAMPP,..), local stored images will not be displayed
-inside the emails because they are locally and therefore not reachable via the internet. 
+inside the emails because they are locally and therefore not reachable via the internet.
 After you have transferred your site to a live server, the images should be displayed properly inside the emails.
 
 ### Placeholder variables for usage in email templates
-Placeholder variables are variables that can be integrated easily in the email templates. Their purpose is to add some 
+Placeholder variables are variables that can be integrated easily in the email templates. Their purpose is to add some
 data to the email templates without using php code. They can also be used for the body text of the email (you will find
 a real world example in the contactform.php inside the [examples folder](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactform.php)).
-Each placeholder variable is surrounded by 2 square brackets (fe. [[DATEVALUE]]) and has to be written in 
+Each placeholder variable is surrounded by 2 square brackets (fe. [[DATEVALUE]]) and has to be written in
 uppercase letters.
 This variable will be replaced on the fly by the appropriate value, provided by a php code.
 For example: If you want to add the current date to a template, you only have to write [[CURRENTDATEVALUE]] and this placeholder
 will be replaced by the current date.
 
-There are a lot more placeholder variables: You can take a look if you are using the method getPlaceholders() on your form 
+There are a lot more placeholder variables: You can take a look if you are using the method getPlaceholders() on your form
 object. You will get an array of all available placeholders, that can be used.
 
 ```php
@@ -1256,7 +1478,7 @@ $namefield->setLabel($this->_('My name'));
 As you can see, the inputfield has the name/id "myname."
 The placeholders, that will be created automatically are:
 
-[[MYNAMELABEL]] and [[MYNAMEVALUE]] 
+[[MYNAMELABEL]] and [[MYNAMEVALUE]]
 
 So it takes the name/id attribute of the form field and adds LABEL for the label value and VALUE for the value itself.
 You can use both of them inside the body variable of your form. Both placeholders will be replaced by their appropriate
@@ -1270,7 +1492,7 @@ You can also set placeholders to the mail->body().
 $mail->body(_('These are the form values: [[SURNAMELABEL]]: [[SURNAMEVALUE]], [[NAMELABEL]]: [[NAMEVALUE]]'));
 ```
 
-So there will be no need to include the values with php code, but you can do it, if you want. 
+So there will be no need to include the values with php code, but you can do it, if you want.
 
 #### Adding custom placeholders for usage in templates
 If you think about creating or using a custom HTML email template, and you want to use a special placeholder there
@@ -1318,4 +1540,4 @@ $mail = new WireMail();
 $mail->addPlaceholder('date', '01.01.2022');
 ```
 The placeholder is always the name in uppercase letters and inside brackets: [[DATE]]
-With the example above you can use the placeholder [[DATE] inside your mail template to output '01.01.2022' inside the template (in this case).
+With the example above you can use the placeholder [[DATE]] inside your mail template to output '01.01.2022' inside the template (in this case).
