@@ -14,7 +14,7 @@ namespace FrontendForms;
 
 use Exception;
 
-class InputUrl extends Input
+class InputUrl extends InputText
 {
 
     /**
@@ -25,6 +25,8 @@ class InputUrl extends Input
     {
         parent::__construct($id);
         $this->setAttribute('type', 'url');
+        $this->setRule('url');
+        $this->setRule('urlActive');
     }
 
     /**
