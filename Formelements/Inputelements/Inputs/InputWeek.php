@@ -14,7 +14,7 @@ namespace FrontendForms;
 
 use Exception;
 
-class InputWeek extends Input
+class InputWeek extends InputNumber
 {
 
     /**
