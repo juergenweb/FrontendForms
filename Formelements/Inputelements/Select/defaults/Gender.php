@@ -37,7 +37,7 @@ class Gender extends Select
         if ($fieldName) {
             $this->setOptionsFromField($fieldName);
         } else {
-            $this->addEmptyOption($this->_('I prefer not to say'));
+            $this->addEmptyOption($this->_('Please select'));
             $this->addOption($this->_('Mister'), $this->_('Mister'));
             $this->addOption($this->_('Miss'), $this->_('Miss'));
             $this->addOption($this->_('Diverse'), $this->_('Diverse'));
