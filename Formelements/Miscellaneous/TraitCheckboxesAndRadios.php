@@ -38,5 +38,3 @@ trait TraitCheckboxesAndRadios
     }
 
 }
-
-
