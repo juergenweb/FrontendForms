@@ -68,7 +68,7 @@ class Privacy extends InputCheckbox
      * Render the privacy checkbox
      * @return string
      */
-    public function renderPrivacy(): string
+    public function ___renderPrivacy(): string
     {
         return parent::___renderInputCheckbox();
     }
