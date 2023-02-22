@@ -22,9 +22,6 @@ use ProcessWire\WirePermissionException;
 abstract class AbstractCaptcha extends Tag
 {
 
-
-    // General properties for all types of a captcha
-
     // distortion lines
     protected string $input_captchaLinesColor = '#666'; // the color for the distortion lines over the captcha content
     protected string|int $input_captchaNumberOfLines = 0; // number of the distortion lines in the captcha image - the higher, the more lines
@@ -38,7 +35,7 @@ abstract class AbstractCaptcha extends Tag
     protected string $category = ''; // the category type of the captcha (text or image)
     protected string $type = ''; // the name of the captcha
 
-    // Properties only for image captchas
+    // Properties only for image CAPTCHA
     protected string|int $input_blurlevel = 0; // the intensity of the blur effect for images
     protected string|int $input_pixelatelevel = 0; // the intensity of the pixelated effect for images
 
@@ -72,7 +69,6 @@ abstract class AbstractCaptcha extends Tag
             $this->$key = $value;
         }
         $this->type = $this->className(); // set the name of the captcha from the class name
-
         // instantiate link an image object
         $this->reloadLink = new Link(); // instantiate reload link object
         $this->captchaImageTag = new Image(); // instantiate the image tag object
@@ -281,30 +277,6 @@ abstract class AbstractCaptcha extends Tag
     }
 
     /**
-     * Validate if the numbers entered are a valid RGBa color code
-     * @param int $R
-     * @param int $G
-     * @param int $B
-     * @return bool
-     */
-    /*
-    public static function validateRGBColor(int $R, int $G, int $B): bool
-    {
-        if ($R < 0 || $R > 255) {
-            return false;
-        } else {
-            if ($G < 0 || $G > 255) {
-                return false;
-            } else {
-                if ($B < 0 || $B > 255) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }*/
-
-    /**
      * Convert hex color string to rgb color array
      * Alpha channel will be ignored if present (no rgba)
      * Source: Based on https://github.com/eislambey/hex2rgba/blob/master/src/hex2rgba.php
@@ -333,7 +305,6 @@ abstract class AbstractCaptcha extends Tag
      * Image manipulation (distortion, noise, ...)
      */
 
-
     /**
      * Create array out of string separated by line breaks \n from textarea
      * @param string|null $textarea_value
@@ -342,7 +313,6 @@ abstract class AbstractCaptcha extends Tag
      */
     public static function linebreaksValuesToArray(string|null $textarea_value, string $fallback = '#fff'): array
     {
-
         if ($textarea_value) {
             return array_map('trim', explode("\n", $textarea_value)); // to remove extra spaces from each value of array
         }
