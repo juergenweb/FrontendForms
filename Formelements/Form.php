@@ -19,6 +19,7 @@ use ProcessWire\FrontendForms;
 use ProcessWire\HookEvent;
 use ProcessWire\Language;
 use ProcessWire\User;
+use ProcessWire\Page;
 use ProcessWire\WireException;
 use ProcessWire\WireMail;
 use ProcessWire\WirePermissionException;
@@ -52,47 +53,46 @@ class Form extends Tag
     protected string $defaultDateFormat = 'Y-m-d'; // the default format for date strings
     protected string $defaultTimeFormat = 'H:i a'; // the default format for time strings
     protected string $receiverAddress = ''; // the email address of the receiver of the mails
-
     protected string $emailTemplatesDirPath = ''; // the path to the email templates directory
     protected string $emailTemplate = ''; // the filename of the email template including extension (fe. template.html)
     protected string $emailTemplatePath = ''; // the path to the body template
-
-    // these properties are only for usage with modules
-    protected string $bodyTemplateDirPath = ''; // the path to the folder, which includes the body templates
-    protected string $bodyTemplate = ''; // the name of the body template (fe template_1)
-    protected string|NULL $bodyTemplatePath = NULL; // the complete path to the body template file
-    protected array $bodyTemplates = []; // array that holds all body templates for sending emails
+    protected array $uploaded_files = []; // array which holds all currently uploaded files with path as value
 
     /* objects */
     protected Alert $alert; // alert box
     protected RequiredTextHint $requiredHint; // hint to inform that all required fields have to be filled out
     protected Wrapper $formElementsWrapper; // the wrapper object over all form elements
-    protected User $user; // the user, who visits the form (the page)
+    protected User $user; // the user, who views the form (the page)
     protected Language $userLang; // the language object of the user/visitor
+    protected Page $page; // the current page object, where the form is used
 
     /**
      * Every form must have an id. You can set it custom via the constructor - otherwise a random ID will be generated.
-     * The id will be taken for further automatic id generation of the inputfields
+     * The id will be taken for further automatic id generation of the input fields
      * @throws WireException
      */
     public function __construct(string $id)
     {
         parent::__construct();
 
-        // Body template
-        // set path to the template folder for the body templates
+        // set path to the template folder for the email templates
         $this->emailTemplatesDirPath = $this->wire('config')->paths->siteModules . 'FrontendForms/email_templates/';
-        // set the path to the body template from the module config
+
+        // set the path to the email template from the module config
         if ($this->input_emailTemplate != 'none') {
             $this->emailTemplate = $this->input_emailTemplate; // set filename
             $this->emailTemplatePath = $this->emailTemplatesDirPath . $this->emailTemplate; // set file path
         }
 
+        // set the current user
         $this->user = $this->wire('user');
+
+        // set the current page
+        $this->page = $this->wire('page');
 
         // check if LanguageSupport module is installed and multi-language is enabled
         if ($this->wire('modules')->isInstalled('LanguageSupport') && isset($this->wire('user')->language)) {
-            $this->userLang = $this->user->language;
+            $this->userLang = $this->user->language; // the language object
         }
         $this->setLangAppendix(); // set the appendix for multi-language module configuration fields (fe. __1012)
 
@@ -105,14 +105,13 @@ class Form extends Tag
         $this->visitorIP = $this->wire('session')->getIP();
         $this->showForm = $this->allowFormViewByIP(); // show or hide the form depending on IP ban
         $this->setAttribute('method', 'post'); // default is post
-        if ($this->wire('page')) { // suppress warning if API is not ready in the backend
-            $this->setAttribute('action',
-                $this->wire('page')->url); // stay on the same page - needs to run after API is ready
-        }
+        //if ($this->page) { // suppress warning if API is not ready in the backend
+        $this->setAttribute('action', $this->page->url); // stay on the same page - needs to run after API is ready
+        //}
         $this->setAttribute('id', $id); // set the id
         $this->setAttribute('name', $this->getID() . '-' . time());
-        $this->setAttribute('novalidate'); // set novalidate by default
-        $this->setAttribute('autocomplete', 'off');
+        $this->setHtml5Validation($this->input_html5_validation);
+        $this->setAttribute('autocomplete', 'off'); // set autocomplete off by default
         $this->setTag('form'); // set the form tag
         $this->setCSSClass('formClass'); // add the CSS class
         $this->setSuccessMsg($this->getLangValueOfConfigField('input_alertSuccessText'));
@@ -126,19 +125,59 @@ class Form extends Tag
         $this->setRequiredText($this->getLangValueOfConfigField('input_requiredText'));
         $this->logFailedAttempts($this->input_logFailedAttempts); // enable or disable the logging of blocked visitor's IP depending on config settings
         $this->setMaxAttempts($this->input_maxAttempts); // set max attempts
+        $this->setMaxAttempts(0);
         $this->setMinTime($this->input_minTime); // set min time
         $this->setMaxTime($this->input_maxTime); // set max time
         $this->setCaptchaType($this->input_captchaType); // enable or disable the captcha and set type of captcha
+        // set the folder of the page in assets/files as default target folder for file uploads
+        $this->setUploadPath($this->wire('config')->paths->assets . 'files/' . $this->page->id . '/');
 
         // Global text for auto-generated emails
         $this->doNotReply = $this->_('This email was generated automatically. So please do not reply to this email.');
 
-        // create and set all general placeholdervariables
+        // create and set all general placeholder variables
         $this->createGeneralPlaceholders();
 
         // add a hook method to render mail templates before sending the mail
         $this->addHookBefore('WireMail::send', $this, 'renderTemplate');
 
+    }
+
+    /**
+     * Get all files that were uploaded
+     */
+    public function getUploadedFiles(): array
+    {
+        return $this->uploaded_files;
+    }
+
+    /**
+     * Enable/disable HTML5 form validation
+     * @param bool $validation
+     * @return $this
+     */
+    public
+    function setHtml5Validation(
+        string|int|bool|null $validation
+    ): self {
+        $validation = (bool)$validation;
+        $this->input_html5_validation = $validation;
+        if ($validation) {
+            $this->removeAttribute('novalidate');
+        } else {
+            $this->setAttribute('novalidate');
+        }
+        return $this;
+    }
+
+    /**
+     * Return if HTML5 form validation is enabled or not
+     * @return bool
+     */
+    public
+    function getHTML5Validation(): bool
+    {
+        return $this->input_html5_validation;
     }
 
     /**
@@ -149,8 +188,10 @@ class Form extends Tag
      * @return void
      * @throws WireException
      */
-    public function useDoubleFormSubmissionCheck(int|string|bool $useDoubleFormSubmissionCheck): void
-    {
+    public
+    function useDoubleFormSubmissionCheck(
+        int|string|bool $useDoubleFormSubmissionCheck
+    ): void {
         $useDoubleFormSubmissionCheck = $this->sanitizeValueToInt($useDoubleFormSubmissionCheck); // sanitize to int
 
         $this->useDoubleFormSubmissionCheck = $useDoubleFormSubmissionCheck; // set the property
@@ -175,8 +216,10 @@ class Form extends Tag
      * @param bool|int $show
      * @return void
      */
-    public function showFormAfterValidSubmission(bool|int $show): void
-    {
+    public
+    function showFormAfterValidSubmission(
+        bool|int $show
+    ): void {
         $this->showFormAfterValidSubmission = $show;
     }
 
@@ -184,7 +227,8 @@ class Form extends Tag
      * Get the value whether the form should be displayed after successful submission or not
      * @return bool
      */
-    public function getShowFormAfterValidSubmission(): bool
+    public
+    function getShowFormAfterValidSubmission(): bool
     {
         return (bool)$this->showFormAfterValidSubmission;
     }
@@ -196,8 +240,10 @@ class Form extends Tag
      * @return void
      * @throws WireException
      */
-    protected function getConfigValues(string $moduleName): void
-    {
+    protected
+    function getConfigValues(
+        string $moduleName
+    ): void {
         $configValues = $this->wire('modules')->getConfig($moduleName);
         // create a property of each module config of this module
         foreach ($configValues as $key => $value) {
@@ -212,7 +258,8 @@ class Form extends Tag
      * @return array
      * @throws WireException
      */
-    private function generalPlaceholders(): array
+    private
+    function generalPlaceholders(): array
     {
         return [
             'domainlabel' => $this->_('Domain'),
@@ -240,7 +287,8 @@ class Form extends Tag
      * @return void
      * @throws WireException
      */
-    private function createGeneralPlaceholders(): void
+    private
+    function createGeneralPlaceholders(): void
     {
         foreach ($this->generalPlaceholders() as $placeholderName => $placeholderValue) {
             $this->setMailPlaceholder($placeholderName, $placeholderValue);
@@ -254,7 +302,8 @@ class Form extends Tag
      * @return void
      * @throws WireException
      */
-    protected function setLangAppendix(): void
+    protected
+    function setLangAppendix(): void
     {
         if ($this->wire('languages')) {
             $this->langAppendix = $this->userLang->isDefault() ? '' : '__' . $this->userLang->id;
@@ -266,75 +315,20 @@ class Form extends Tag
      */
 
     /**
-     * Find all body templates inside the given path and add them to the property $bodyTemplates as
-     * an numeric array containing the filenames (fe [0] => template1.html, [1] => template2.html,....)
-     * @param string|null $path
-     * @return void
-     * @throws WireException
-     */
-    protected function setBodyTemplates(?string $path = NULL): void
-    {
-        $array = [];
-        if(!is_null($path)){
-            $files = $this->wire('files')->find($this->bodyTemplatesDirPath);
-            if($files){
-                foreach($files as $path){
-                    $key = pathinfo($path, PATHINFO_BASENAME);
-                    $array[] = $key;
-                }
-                $this->bodyTemplates = $array;
-            }
-        }
-    }
-
-    /**
-     * Get all bodyTemplates as an numeric array
-     * @return array
-     */
-    protected function getBodyTemplates(): array
-    {
-        return $this->bodyTemplates;
-    }
-
-    /**
-     * FrontendForms has no body templates for emails - only modules descending from this module (should) have body templates
-     * In this case, no template will be loaded - instead all placeholders will be replaced and the content
-     * will be set to the placeholder variable body
-     * @param WireMail $mail
-     * @return void
-     * @throws WireException
-     */
-    /*
-    protected function includeBodyTemplate(WireMail $mail): void
-    {
-
-        $mail->body_template = (in_array($this->bodyTemplate, $this->getBodyTemplates())) ? $this->bodyTemplate : 'default.html';
-        $template_path = $this->bodyTemplatesDirPath.$mail->body_template;
-        $body = '';
-        if($this->wire('files')->exists($template_path))
-            $body = $this->loadTemplate($template_path);
-
-        $body = wirePopulateStringTags($body, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
-
-        // set the body content as placeholder body if a mail template will be used
-        $this->setMailPlaceholder('body', $body);
-        // set replaced body content back to bodyHTML property
-        $mail->bodyHTML($body);
-    }
-    */
-
-    /**
      * Include the body template in the mail if it was set in the configuration or directly on the WireMail object
      * Takes the input_emailTemplate property to check whether a template should be used or not
      * @param WireMail $mail
      * @return void
      * @throws WireException
      */
-    protected function includeMailTemplate(WireMail $mail): void
-    {
+    protected
+    function includeMailTemplate(
+        WireMail $mail
+    ): void {
         // set email_template property if it was not set before
-        if(!$mail->email_template)
+        if (!$mail->email_template) {
             $mail->email_template = $this->input_emailTemplate;
+        }
 
         // check if email template is set
         if ($mail->email_template != 'none') {
@@ -355,15 +349,71 @@ class Form extends Tag
     }
 
     /**
-     * Render the mail: replace placeholders and use templates (body and/or email template)
+     * Check if the form has at least one file upload field
+     * Needs to be called after all fields were added
+     * @return bool -> true: a file upload field was found, false: no file upload field found
+     */
+    protected
+    function hasFileUploadField(): bool
+    {
+        if (($this->hasAttribute('enctype')) && ($this->getAttribute('enctype') == 'multipart/form-data')) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * If file upload fields are present in a form - get an array of objects containing all file upload fields
+     * @return array
+     */
+    protected
+    function getFileUploadFields(): array
+    {
+        $fields = [];
+        if ($this->hasFileUploadField()) {
+            foreach ($this->formElements as $uploadfield) {
+                if (($uploadfield instanceof InputFile) || (is_subclass_of($uploadfield, 'InputFile'))) {
+                    $fields[] = $uploadfield;
+                }
+            }
+        }
+        return $fields;
+    }
+
+    /**
+     * Render the mail template: replace placeholders and use templates (body and/or email template)
+     * Add the sendAttachments() method too to send files via mail
      * @throws WireException
      */
-    public function renderTemplate(HookEvent $event): WireMail
-    {
+    public
+    function renderTemplate(
+        HookEvent $event
+    ): WireMail {
         $mail = $event->object;
+
+        /*
+        // add the file sending method by default
+        if ($this->hasFileUploadField()) {
+            $mail->sendAttachments();
+        }
+        */
+
         // set the placeholder for the title if present
         $this->setMailPlaceholder('title', $mail->title);
-        //$this->includeBodyTemplate($mail); // include/use body template if set
+        // set the placeholder for the body
+
+        if (($mail->bodyHTML) || ($mail->body)) {
+
+            // set $mail->bodyHTML as prefered value
+            $content = $mail->bodyHTML ?: $mail->body;
+            if ($content) {
+                $body = wirePopulateStringTags($content, $this->getMailPlaceholders(),
+                    ['tagOpen' => '[[', 'tagClose' => ']]']);
+                $this->setMailPlaceholder('body', $body);
+            }
+
+        }
+
         $this->includeMailTemplate($mail); // include/use mail template if set
         return $mail;
     }
@@ -375,7 +425,8 @@ class Form extends Tag
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function redirectAfterSubmission(): void
+    protected
+    function redirectAfterSubmission(): void
     {
         if ($this->wire('session')->get('valid')) {
             $this->wire('session')->remove('valid');
@@ -396,8 +447,10 @@ class Form extends Tag
      * @param string $templatePath - the path to the template that should be rendered
      * @return string - the html template
      */
-    protected function loadTemplate(string $templatePath): string
-    {
+    protected
+    function loadTemplate(
+        string $templatePath
+    ): string {
         ob_start();
         include($templatePath);
         $var = ob_get_contents();
@@ -414,8 +467,10 @@ class Form extends Tag
      * @throws WireException
      * @throws Exception
      */
-    public function to(string $email): self
-    {
+    public
+    function to(
+        string $email
+    ): self {
         if ($this->wire('sanitizer')->email($email)) {
             $this->receiverAddress = $email;
         } else {
@@ -431,8 +486,10 @@ class Form extends Tag
      * @return string
      * @throws WireException
      */
-    public function getDate(string|null $dateTime = null): string
-    {
+    public
+    function getDate(
+        string|null $dateTime = null
+    ): string {
         $fieldName = 'input_dateformat' . $this->langAppendix;
         $format = $this->$fieldName ?? $this->defaultDateFormat;
         return $this->wire('datetime')->date($format, $dateTime);
@@ -445,8 +502,10 @@ class Form extends Tag
      * @return string
      * @throws WireException
      */
-    public function getTime(string|null $dateTime = null): string
-    {
+    public
+    function getTime(
+        string|null $dateTime = null
+    ): string {
         $fieldName = 'input_timeformat' . $this->langAppendix;
         $format = $this->$fieldName ?? $this->defaultTimeFormat;
         return $this->wire('datetime')->date($format, $dateTime);
@@ -459,8 +518,10 @@ class Form extends Tag
      * @return string
      * @throws WireException
      */
-    public function getDateTime(string|null $dateTime = null): string
-    {
+    public
+    function getDateTime(
+        string|null $dateTime = null
+    ): string {
         return $this->getDate($dateTime) . ' ' . $this->getTime($dateTime);
     }
 
@@ -470,18 +531,33 @@ class Form extends Tag
      * @param string|array|null $placeholderValue
      * @return $this
      */
-    public function setMailPlaceholder(string $placeholderName, string|array|null $placeholderValue): self
-    {
+    public
+    function setMailPlaceholder(
+        string $placeholderName,
+        string|array|null $placeholderValue
+    ): self {
+
         if (!is_null($placeholderValue)) {
             $placeholderName = strtoupper(trim($placeholderName));
-            if(is_array($placeholderValue)){
-                // convert array of values to comma separated string
-                $placeholderValue = implode(', ', $placeholderValue);
+            if (is_array($placeholderValue)) {
+                // check if array is multidimensional like multiple file uploads
+                if (count($placeholderValue) == count($placeholderValue, COUNT_RECURSIVE)) {
+                    // one-dimensional: convert array of values to comma separated string
+                    $placeholderValue = implode(', ', $placeholderValue);
+                } else {
+                    $file_names = [];
+                    // multi-dimensional $_FILES array
+                    foreach ($placeholderValue as $file) {
+                        // adding all file names to the array - independent if the name exists or not
+                        $file_names[] = $file['name'];
+                    }
+                    // clean the array by removing empty array elements
+                    $placeholderValue = implode(',', array_filter($file_names));
+                }
             }
-            $placeholderValue = trim($placeholderValue);
-            // merge it to the mailPlaceholder array
-            $this->mailPlaceholder = array_merge($this->getMailPlaceholders(), [$placeholderName => $placeholderValue]);
-
+            // trim and merge it to the mailPlaceholder array
+            $this->mailPlaceholder = array_merge($this->getMailPlaceholders(),
+                [$placeholderName => trim($placeholderValue)]);
         }
         return $this;
     }
@@ -491,8 +567,10 @@ class Form extends Tag
      * @param string $placeholderName
      * @return void
      */
-    public function removePlaceholder(string $placeholderName): void
-    {
+    public
+    function removePlaceholder(
+        string $placeholderName
+    ): void {
         $key = strtoupper(trim($placeholderName));
         if (array_key_exists($key, $this->getMailPlaceholders())) {
             unset($this->getMailPlaceholders()[$key]);
@@ -504,19 +582,21 @@ class Form extends Tag
      * For usage in body template of emails
      * @return array
      */
-    public function getMailPlaceholders(): array
+    public
+    function getMailPlaceholders(): array
     {
         return $this->mailPlaceholder;
     }
-
 
     /**
      * Get the value of a certain placeholder by its name
      * @param string $placeholderName
      * @return string
      */
-    public function getMailPlaceholder(string $placeholderName): string
-    {
+    public
+    function getMailPlaceholder(
+        string $placeholderName
+    ): string {
         $content = '';
         if (array_key_exists(strtoupper($placeholderName), $this->mailPlaceholder)) {
             $content = $this->mailPlaceholder[$placeholderName];
@@ -529,7 +609,8 @@ class Form extends Tag
      * For usage in body template of emails
      * @return array
      */
-    protected function getFormFieldClasses(): array
+    protected
+    function getFormFieldClasses(): array
     {
         $classes = [];
         foreach ($this->formElements as $fieldObject) {
@@ -543,20 +624,23 @@ class Form extends Tag
      * @param string $fieldName
      * @return bool
      */
-    public function formfieldExists(string $fieldName): bool
-    {
+    public
+    function formfieldExists(
+        string $fieldName
+    ): bool {
         $fieldName = (trim($fieldName));
         return (in_array(strtolower($fieldName), array_map("strtolower", $this->getFormFieldClasses())));
     }
-
 
     /**
      * Output the value of multilang fields from the module configuration
      * @param string $fieldName
      * @return string
      */
-    protected function getLangValueOfConfigField(string $fieldName): string
-    {
+    protected
+    function getLangValueOfConfigField(
+        string $fieldName
+    ): string {
         $fieldNameLang = $fieldName . $this->langAppendix;
         if (property_exists($this, $fieldNameLang)) {
             return $this->$fieldNameLang != '' ? $this->$fieldNameLang : $this->$fieldName;
@@ -570,8 +654,10 @@ class Form extends Tag
      * @param string|int|bool $value
      * @return int
      */
-    protected function sanitizeValueToInt(string|int|bool $value): int
-    {
+    protected
+    function sanitizeValueToInt(
+        string|int|bool $value
+    ): int {
         if (is_string($value)) {
             if ($value !== '') {
                 return 1;
@@ -591,53 +677,17 @@ class Form extends Tag
 
     /**
      * Set a custom upload path for uploaded files
-     * @param string|int $folderName
+     * If no path is selected, then the files will be stored inside the dir of this page in site/assets/files
+     * @param string|int|null $folderName
      * @param bool $keepFiles -> delete files afterwards (false) or keep files (true)
      * @return void
      * @throws WireException
      */
-    public function setUploadPath(string|int $folderName, bool $keepFiles = false): void
-    {
-        if(is_int($folderName))
-            $folderName = (string)$folderName; // convert int to string
-        //sanitize folder name first to remove trailing slashes from start and end
-        $folderName = trim($folderName, '/');
-        $to = $this->wire('config')->paths->assets . 'files/' . $folderName . '/';
-        if ($this->isSubmitted()) {
-            // create folder if it does not exist
-            if (!$this->wire('files')->exists($to)) {
-                $this->wire('files')->mkdir($to);
-            }
-            $this->saveUploadedFile($this->input_uploadPath, $to, $keepFiles);
-            // set the new property value for the upload path
-            $this->input_uploadPath = $to;
-        }
+    public function setUploadPath(string $path_to_folder): self {
+        $this->input_uploadPath = trim($path_to_folder);
+        return $this;
     }
 
-    /**
-     * Copy uploaded files from the temp_uploads folder to the newly created folder
-     * @param string $from -> the folder where the files are stored
-     * @param string $to -> the folder where the files should be stored
-     * @param string $folderName -> the name of the new folder
-     * @param bool $keepFiles -> should the files in the temp folder be kept (true) or deleted afterwards (false)
-     * @return void
-     * @throws WireException
-     */
-    private function saveUploadedFile(string $from, string $to, bool $keepFiles): void
-    {
-        $files = $this->wire('files')->find($from);
-        // move files from temp_uploads to the newly created directory
-        if ($files) {
-            if ($this->wire('files')->copy($from, $to)) {
-                if (!$keepFiles) {
-                    foreach ($files as $file) {
-                        // unlink all files
-                        $this->wire('files')->unlink($file);
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * This method is only for testing of ip addresses that should be banned
@@ -646,8 +696,10 @@ class Form extends Tag
      * @return void
      * @throws Exception
      */
-    public function testIPBan(string $ip): void
-    {
+    public
+    function testIPBan(
+        string $ip
+    ): void {
         if (filter_var($ip, FILTER_VALIDATE_IP)) {
             $this->visitorIP = $ip;
         } else {
@@ -660,8 +712,10 @@ class Form extends Tag
      * @param bool $enabled
      * @return void
      */
-    public function useIPBan(int|string|bool $enabled): void
-    {
+    public
+    function useIPBan(
+        int|string|bool $enabled
+    ): void {
         $this->input_useIPBan = $this->sanitizeValueToInt($enabled);
     }
 
@@ -670,8 +724,10 @@ class Form extends Tag
      * @param string $captchaType
      * @return void
      */
-    protected function setCaptchaType(string $captchaType): void
-    {
+    protected
+    function setCaptchaType(
+        string $captchaType
+    ): void {
         $this->input_captchaType = $captchaType;
         if ($this->input_captchaType !== 'none') {
             $this->setCaptchaCategory($captchaType); //
@@ -683,7 +739,8 @@ class Form extends Tag
      * Public method to disable the captcha on per form base if needed
      * @return void
      */
-    public function disableCaptcha(): void
+    public
+    function disableCaptcha(): void
     {
         $this->setCaptchaType('none');
     }
@@ -692,7 +749,8 @@ class Form extends Tag
      * Get the captcha type set
      * @return string
      */
-    protected function getCaptchaType(): string
+    protected
+    function getCaptchaType(): string
     {
         return $this->input_captchaType;
     }
@@ -702,8 +760,10 @@ class Form extends Tag
      * @param string $captchaType
      * @return void
      */
-    protected function setCaptchaCategory(string $captchaType): void
-    {
+    protected
+    function setCaptchaCategory(
+        string $captchaType
+    ): void {
         $this->captchaCategory = AbstractCaptchaFactory::getCaptchaTypeFromClass($captchaType);
     }
 
@@ -711,7 +771,8 @@ class Form extends Tag
      * Get the captcha category
      * @return string
      */
-    public function getCaptchaCategory(): string
+    public
+    function getCaptchaCategory(): string
     {
         return $this->captchaCategory;
     }
@@ -720,7 +781,8 @@ class Form extends Tag
      * Get the captcha object for further manipulations
      * @return object|null
      */
-    protected function getCaptcha(): object|null
+    protected
+    function getCaptcha(): object|null
     {
         return $this->captcha;
     }
@@ -729,7 +791,8 @@ class Form extends Tag
      * Check if visitor is on the black list or not
      * @return bool - true if visitor is not on the black list
      */
-    protected function allowFormViewByIP(): bool
+    protected
+    function allowFormViewByIP(): bool
     {
         if (!$this->input_useIPBan) {
             return true;
@@ -747,8 +810,10 @@ class Form extends Tag
      * @param string|null $textarea - the value of the textarea field
      * @return array
      */
-    protected function newLineToArray(string $textarea = null): array
-    {
+    protected
+    function newLineToArray(
+        string $textarea = null
+    ): array {
         $final_array = [];
         if (!is_null($textarea)) {
             $textarea_array = array_map('trim', explode("\n", $textarea)); // remove extra spaces from each array value
@@ -766,8 +831,10 @@ class Form extends Tag
      * @param string|bool|int $logFailedAttempts
      * @return void
      */
-    public function logFailedAttempts(string|bool|int $logFailedAttempts): void
-    {
+    public
+    function logFailedAttempts(
+        string|bool|int $logFailedAttempts
+    ): void {
         $this->input_logFailedAttempts = $this->sanitizeValueToInt($logFailedAttempts);
     }
 
@@ -776,8 +843,10 @@ class Form extends Tag
      * @param bool $showButtonValues
      * @return string
      */
-    public function getValuesAsString(bool $showButtonValues = false): string
-    {
+    public
+    function getValuesAsString(
+        bool $showButtonValues = false
+    ): string {
         $postData = $this->flattenMixedArray($this->getValues($showButtonValues));
         $dataAttributes = array_map(function ($value, $key) {
             return $key . '=' . $value;
@@ -792,7 +861,8 @@ class Form extends Tag
      * @return array
      * @throws WireException
      */
-    protected function getAllAvailableLanguages(): array
+    protected
+    function getAllAvailableLanguages(): array
     {
         $path = $this->wire('config')->paths->siteModules . 'FrontendForms/lang';
         $langFiles = $this->wire('files')->find($path);
@@ -809,8 +879,10 @@ class Form extends Tag
      * @return void
      * @throws WireException
      */
-    public function setLang(?string $languageCode): void
-    {
+    public
+    function setLang(
+        ?string $languageCode
+    ): void {
         if (!is_null($languageCode) && in_array($languageCode, $this->getAllAvailableLanguages())) {
             $frontendforms = new FrontendForms();
             $frontendforms->setLang($languageCode);
@@ -823,8 +895,10 @@ class Form extends Tag
      * @param bool $wrap
      * @return void
      */
-    public function appendLabelOnCheckboxes(bool $wrap): void
-    {
+    public
+    function appendLabelOnCheckboxes(
+        bool $wrap
+    ): void {
         $this->appendcheckbox = $wrap;
     }
 
@@ -832,19 +906,22 @@ class Form extends Tag
      * Get the value of appendcheckbox
      * @return bool
      */
-    protected function getAppendLabelOnCheckboxes(): bool
+    protected
+    function getAppendLabelOnCheckboxes(): bool
     {
         return $this->appendcheckbox;
     }
 
     /**
-     * Enable/disable the wrapping of checkboxes by its label
+     * Enable/disable the wrapping of radios by its label
      * This is useful for some cases where you need to add the label after the input (fe. some CSS frameworks
      * @param bool $wrap
      * @return void
      */
-    public function appendLabelOnRadios(bool $wrap): void
-    {
+    public
+    function appendLabelOnRadios(
+        bool $wrap
+    ): void {
         $this->appendradio = $wrap;
     }
 
@@ -852,7 +929,8 @@ class Form extends Tag
      * Get the value of appendradio
      * @return bool
      */
-    protected function getAppendLabelOnRadios(): bool
+    protected
+    function getAppendLabelOnRadios(): bool
     {
         return $this->appendradio;
     }
@@ -862,8 +940,10 @@ class Form extends Tag
      * @param string $requiredText
      * @return RequiredTextHint
      */
-    public function setRequiredText(string $requiredText): RequiredTextHint
-    {
+    public
+    function setRequiredText(
+        string $requiredText
+    ): RequiredTextHint {
         if ($requiredText === '') {
             $requiredText = $this->_('All fields marked with (*) are mandatory and must be completed.');
         }
@@ -875,11 +955,11 @@ class Form extends Tag
      * Get the required text hint object for further manipulations
      * @return RequiredTextHint
      */
-    public function getRequiredText(): RequiredTextHint
+    public
+    function getRequiredText(): RequiredTextHint
     {
         return $this->requiredHint;
     }
-
 
     /**
      * This method creates an inner wrapper over all form elements if set to true, or it removes the wrapper if set to
@@ -888,8 +968,10 @@ class Form extends Tag
      * @param bool $useFormElementsWrapper
      * @return Wrapper
      */
-    public function useFormElementsWrapper(int|string|bool $useFormElementsWrapper): Wrapper
-    {
+    public
+    function useFormElementsWrapper(
+        int|string|bool $useFormElementsWrapper
+    ): Wrapper {
         $useFormElementsWrapper = $this->sanitizeValueToInt($useFormElementsWrapper); // sanitize to int
         $this->input_wrapperFormElements = $useFormElementsWrapper;
         return $this->formElementsWrapper;
@@ -899,7 +981,8 @@ class Form extends Tag
      * Return the wrapper object
      * @return Wrapper
      */
-    public function getFormElementsWrapper(): Wrapper
+    public
+    function getFormElementsWrapper(): Wrapper
     {
         return $this->formElementsWrapper;
     }
@@ -910,8 +993,10 @@ class Form extends Tag
      * @param string $successMsg
      * @return void
      */
-    public function setSuccessMsg(string $successMsg): void
-    {
+    public
+    function setSuccessMsg(
+        string $successMsg
+    ): void {
         if ($successMsg === '') {
             $successMsg = $this->_('Thank you for your message.');
         }
@@ -924,21 +1009,23 @@ class Form extends Tag
      * @param string $errorMsg
      * @return void
      */
-    public function setErrorMsg(string $errorMsg): void
-    {
+    public
+    function setErrorMsg(
+        string $errorMsg
+    ): void {
         if ($errorMsg === '') {
             $errorMsg = $this->_('Sorry, some errors occur. Please check your inputs once more.');
         }
         $this->input_alertErrorText = trim($errorMsg);
     }
 
-
     /**
      * Static method to check if SeoMaestro is installed or not
      * returns the SeoMaestro object on true, otherwise null
      * @return Field|null
      */
-    public static function getSeoMaestro(): ?Field
+    public
+    static function getSeoMaestro(): ?Field
     {
         if (wire('modules')->isInstalled("SeoMaestro")) {
             // grab seo maestro input field
@@ -956,8 +1043,10 @@ class Form extends Tag
      * @param string $name - the name attribute of the input field
      * @return string|array|null
      */
-    public function getValue(string $name): string|array|null
-    {
+    public
+    function getValue(
+        string $name
+    ): string|array|null {
         $name = $this->createElementName(trim($name));
         if (($this->getValues()) && (isset($this->getValues()[$name]))) {
             return $this->getValues()[$name];
@@ -970,8 +1059,10 @@ class Form extends Tag
      * @param string $name - the name attribute of the element
      * @return string - returns the name attribute including the form id as prefix
      */
-    private function createElementName(string $name): string
-    {
+    private
+    function createElementName(
+        string $name
+    ): string {
         $name = trim($name);
         $formID = $this->getID();
         if (!str_starts_with($name, $formID)) {
@@ -985,8 +1076,10 @@ class Form extends Tag
      * @param bool $buttonValue
      * @return array|null
      */
-    public function getValues(bool $buttonValue = false): array|null
-    {
+    public
+    function getValues(
+        bool $buttonValue = false
+    ): array|null {
         if ($buttonValue) {
             return $this->values;
         }
@@ -1000,8 +1093,9 @@ class Form extends Tag
             if ($formElement instanceof InputFile) {
                 $values[$key] = $_FILES[$key]['name'];
             } else {
-                if(array_key_exists($key, $this->values))
+                if (array_key_exists($key, $this->values)) {
                     $values[$key] = $this->values[$key];
+                }
             }
         }
         return $values; // array
@@ -1014,8 +1108,11 @@ class Form extends Tag
      * @param boolean $checkPrefix - true to check if form id is added for inputfield name or false to ignore this
      * @return object|bool - the form element object or false if not found
      */
-    public function getFormelementByName(string $name, bool $checkPrefix = true): object|bool
-    {
+    public
+    function getFormelementByName(
+        string $name,
+        bool $checkPrefix = true
+    ): object|bool {
         //check if id of the form was added as prefix of the element name
         if ($checkPrefix) {
             $name = $this->createElementName($name);
@@ -1030,8 +1127,10 @@ class Form extends Tag
      * @param string $position - has to be 'top' or 'bottom'
      * @return void
      */
-    public function setRequiredTextPosition(string $position): void
-    {
+    public
+    function setRequiredTextPosition(
+        string $position
+    ): void {
         $position = trim($position);
         $this->defaultRequiredTextPosition = in_array($position, ['none', 'top', 'bottom']) ? $position : 'top';
     }
@@ -1040,7 +1139,8 @@ class Form extends Tag
      * Get the alert object for further manipulations
      * @return Alert
      */
-    public function getAlert(): Alert
+    public
+    function getAlert(): Alert
     {
         return $this->alert;
     }
@@ -1050,8 +1150,10 @@ class Form extends Tag
      * @param int|string|bool $honeypot
      * @return void
      */
-    public function useHoneypot(int|string|bool $honeypot): void
-    {
+    public
+    function useHoneypot(
+        int|string|bool $honeypot
+    ): void {
         $this->input_useHoneypot = $this->sanitizeValueToInt($honeypot);
     }
 
@@ -1060,8 +1162,10 @@ class Form extends Tag
      * @param array $file_post
      * @return array
      */
-    private function reArrayFiles(array $file_post): array
-    {
+    private
+    function reArrayFiles(
+        array $file_post
+    ): array {
         $file_ary = array();
         $file_count = count($file_post['name']);
         $file_keys = array_keys($file_post);
@@ -1076,31 +1180,79 @@ class Form extends Tag
     /**
      * Internal method to store uploaded files via InputFile field in the chosen folder
      * @param array $formElements
-     * @return void
+     * @return array
      */
-    private function storeUploadedFiles(array $formElements): void
-    {
+    private
+    function storeUploadedFiles(
+        array $formElements
+    ): array {
+        $uploaded_files = [];
         if ($_FILES) {
+            // create directory if it does not exist
+            $this->wire('files')->mkdir($this->input_uploadPath);
             // get all upload fields inside the form
             foreach ($formElements as $element) {
                 if ($element instanceof InputFile) {
                     $fieldName = $element->getAttribute('name'); // the name of the upload field
-                    if ($element->getAllowMultiple()) {
+                    if ($element->getMultiple()) {
                         // multiple files
                         $files = $this->reArrayFiles($_FILES[$fieldName]);
                         foreach ($files as $file) {
-                            $target_file = $this->input_uploadPath . basename($file['name']);
-                            move_uploaded_file($file['tmp_name'], $target_file);
+                            if ($file['error'] == 0) {
+                                $target_file = $this->input_uploadPath . basename($file['name']);
+                                $uploaded_files[] = $target_file;
+                                move_uploaded_file($file['tmp_name'], $target_file);
+                            }
                         }
                     } else {
                         // single file
                         $file = $_FILES[$fieldName];
-                        $target_file = $this->input_uploadPath . basename($file['name']);
-                        move_uploaded_file($file['tmp_name'], $target_file);
+                        if ($file['error'] == 0) {
+                            $target_file = $this->input_uploadPath . basename($file['name']);
+                            $uploaded_files[] = $target_file;
+                            move_uploaded_file($file['tmp_name'], $target_file);
+                        }
                     }
                 }
             }
         }
+        return $uploaded_files;
+    }
+
+    /**
+     * Convert the complicated $_FILES array to a simpler one
+     * @param array $files
+     * @return array
+     */
+    protected
+    function simplifyMultiFileArray(
+        array $files = []
+    ): array {
+        $sFiles = [];
+        if (is_array($files) && $files['error'] != '4') {
+            foreach ($files as $key => $file) {
+                foreach ($file as $index => $attr) {
+                    $sFiles[$index][$key] = $attr;
+                }
+            }
+        }
+        return $sFiles;
+    }
+
+    /**
+     * Internal method to put required rule always on the first place of validation
+     * Checking if value is present is always logical the first step before checking for other things
+     * @param array $rules
+     * @return array
+     */
+    protected function putRequiredOnTop(array $rules): array
+    {
+        if(count($rules) > 1){
+            if(array_key_exists('required', $rules)){
+                $rules = ['required' => $rules['required']] + $rules;
+            }
+        }
+        return $rules;
     }
 
     /**
@@ -1110,13 +1262,30 @@ class Form extends Tag
      * @throws WireException
      * @throws Exception
      */
-    public function isValid(): bool
+    public
+    function ___isValid(): bool
     {
-
+        // set WireInput array depth to 2 because auf multiple file uploads
+        $this->wire('config')->wireInputArrayDepth = 2;
         $formMethod = $this->getAttribute('method'); // grab the method (get or post)
         $input = $this->wire('input')->$formMethod; // get the GET or POST values after submission
         $formElements = $this->formElements; //grab all form elements as an array of objects
 
+        // check for file upload fields inside the form
+        $file_upload_fields = $this->getFileUploadFields();
+        if ($file_upload_fields) {
+            foreach ($file_upload_fields as $field) {
+                $name = $field->getAttribute('name');
+                if (!empty($_FILES)) {
+                    if ($field->hasAttribute('multiple')) {
+                        // convert $_FILES array to a simpler one
+                        $input[$name] = $this->simplifyMultiFileArray($_FILES[$name]);
+                    } else {
+                        $input[$name] = $_FILES[$name];
+                    }
+                }
+            }
+        }
 
         // instantiates the FormValidation object
         $validation = new FormValidation($input, $this, $this->alert);
@@ -1164,7 +1333,9 @@ class Form extends Tag
                             foreach ($formElements as $element) {
                                 // run validation only if there is at least one validation rule set
                                 if (count($element->getRules()) > 0) {
-                                    foreach ($element->getRules() as $validatorName => $parameters) {
+                                    // add required validation to be the first
+                                    $rules = $this->putRequiredOnTop($element->getRules());
+                                    foreach ($rules as $validatorName => $parameters) {
                                         $v->rule($validatorName, $element->getAttribute('name'), ...
                                             $parameters['options']);
                                         // Add custom error message text if present
@@ -1173,6 +1344,11 @@ class Form extends Tag
                                         }
                                         if (isset($parameters['customFieldName'])) {
                                             $v->label($parameters['customFieldName']);
+                                        } else {
+                                            if($element->getLabel()->getText()){
+                                                // use the label if present, otherwise use the name attribute
+                                                $v->label($element->getLabel()->getText());
+                                            }
                                         }
                                     }
                                 }
@@ -1207,7 +1383,7 @@ class Form extends Tag
                                 // remove the session for checking for double form submission
                                 $this->showForm = false;
                                 // check if files were uploaded and store them inside the chosen folder
-                                $this->storeUploadedFiles($formElements);
+                                $this->uploaded_files = $this->storeUploadedFiles($formElements);
                                 return true;
                             } else {
                                 // set error alert
@@ -1269,7 +1445,8 @@ class Form extends Tag
      * Create a honeypot field for spam protection
      * @return InputText
      */
-    private function createHoneypot(): InputText
+    private
+    function createHoneypot(): InputText
     {
         $honeypot = new InputText('seca');
         $honeypot->setAttribute('name', $this->createElementName('seca'));
@@ -1288,8 +1465,10 @@ class Form extends Tag
      * @param bool $useInputWrapper
      * @return void
      */
-    public function useInputWrapper(bool $useInputWrapper): void
-    {
+    public
+    function useInputWrapper(
+        bool $useInputWrapper
+    ): void {
         $this->useInputWrapper = $useInputWrapper;
     }
 
@@ -1298,7 +1477,10 @@ class Form extends Tag
      * @param bool $useFieldWrapper
      * @return void
      */
-    public function useFieldWrapper(bool $useFieldWrapper): void {
+    public
+    function useFieldWrapper(
+        bool $useFieldWrapper
+    ): void {
         $this->useFieldWrapper = $useFieldWrapper;
     }
 
@@ -1306,11 +1488,12 @@ class Form extends Tag
      * Internal method to add all form values to the values array
      * @return void
      */
-    private function setValues(): void
+    private
+    function setValues(): void
     {
         $values = [];
         foreach ($this->formElements as $element) {
-            if($element->getAttribute('value')){
+            if ($element->getAttribute('value')) {
                 $values[$element->getAttribute('name')] = $element->getAttribute('value');
                 // set all form values to a placeholder
                 $fieldName = str_replace($this->getID() . '-', '', $element->getAttribute('name')) . 'value';
@@ -1325,7 +1508,8 @@ class Form extends Tag
      * Get the success message
      * @return string
      */
-    protected function getSuccessMsg(): string
+    protected
+    function getSuccessMsg(): string
     {
         return $this->input_alertSuccessText;
     }
@@ -1334,7 +1518,8 @@ class Form extends Tag
      * Get the error message
      * @return string
      */
-    protected function getErrorMsg(): string
+    protected
+    function getErrorMsg(): string
     {
         return $this->input_alertErrorText;
     }
@@ -1343,7 +1528,8 @@ class Form extends Tag
      * Get the max attempts
      * @return int
      */
-    public function getMaxAttempts(): int
+    public
+    function getMaxAttempts(): int
     {
         return $this->maxAttempts;
     }
@@ -1355,7 +1541,10 @@ class Form extends Tag
      * @param int $maxAttempts
      * @return void
      */
-    public function setMaxAttempts(int $maxAttempts): void {
+    public
+    function setMaxAttempts(
+        int $maxAttempts
+    ): void {
         if ($maxAttempts < 1) {
             $this->input_logFailedLogins = 0;
         } //disable logging of failed attempts
@@ -1369,7 +1558,8 @@ class Form extends Tag
      * @return bool -> returns true if the user is blocked, otherwise false
      * @throws WireException
      */
-    public function isBlocked(): bool
+    public
+    function isBlocked(): bool
     {
         if ($this->wire('session')->get('blocked')) {
             return true;
@@ -1382,11 +1572,11 @@ class Form extends Tag
      * @return string
      * @throws WireException
      */
-    public function render(): string
+    public
+    function render(): string
     {
-        //$this->redirectAfterSubmission();
-        /* Check if form contains file upload fields and add enctype
-        independent whether it is present or not */
+
+        /* Check if form contains file upload fields, then add enctype attribute */
         foreach ($this->formElements as $obj) {
             if ($obj instanceof InputFile) {
                 $this->setAttribute('enctype', 'multipart/form-data');
@@ -1398,7 +1588,10 @@ class Form extends Tag
             $this->alert->setCSSClass('alert_warningClass');
             $this->alert->setText(sprintf($this->_('We are sorry, but your IP address %s is on the list of forbidden IP addresses. Therefore the form will not be displayed. If you think your IP address is mistakenly on the list, please contact the administrator of the site.'),
                 $this->visitorIP));
+            // do not display form to banned visitors
+            $this->showForm = false;
         }
+
         $out = $this->prepend;
         $out .= $this->append;
         // allow only get or post - if value is not get or post set post as default value
@@ -1457,6 +1650,7 @@ class Form extends Tag
         $hiddenField3->setAttribute('name', 'form_id');
         $hiddenField3->setAttribute('value', $this->getID());
         $this->add($hiddenField3);
+
         //create hidden field to send the timestamp (encoded) when the form was loaded
         if (($this->getMinTime()) || $this->getMaxTime()) {
             $hiddenField4 = new InputHidden('load_time');
@@ -1476,7 +1670,6 @@ class Form extends Tag
             }
         }
 
-
         // Output the form markup
         $out .= $this->alert->___render();
         // render the alert box on top for success or error message
@@ -1490,9 +1683,11 @@ class Form extends Tag
             $formElements = '';
 
             foreach ($this->formElements as $element) {
+
                 //create input ID as a combination of form id and input name
                 $oldId = $element->getAttribute('id');
                 $element->setAttribute('id', $this->getID() . '-' . $oldId);
+
                 // change the name attribute of the CSRF field
                 if ($element->getID() == $this->getID() . '-post_token') {
                     $element->setAttribute('name', $tokenName);
@@ -1501,12 +1696,12 @@ class Form extends Tag
                 // Label (Only on input fields)
                 if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
                     // add unique id to the field-wrapper if present
-                    $element->getFieldWrapper()?->setAttribute('id',
+                    $element->getFieldWrapper()->setAttribute('id',
                         $this->getID() . '-' . $oldId . '-fieldwrapper');
                     // add unique id to the input-wrapper if present
-                    $element->getInputWrapper()?->setAttribute('id',
+                    $element->getInputWrapper()->setAttribute('id',
                         $this->getID() . '-' . $oldId . '-inputwrapper');
-                    $element->getLabel()?->setAttribute('for', $element->getAttribute('id'));
+                    $element->getLabel()->setAttribute('for', $element->getAttribute('id'));
                 }
                 $name = $element->getAttribute('id');
 
@@ -1515,6 +1710,7 @@ class Form extends Tag
                 if (($element instanceof InputCheckbox) || ($element instanceof InputCheckboxMultiple)) {
                     $element->appendLabel($this->getAppendLabelOnCheckboxes());
                 }
+
                 if (($element instanceof InputRadio) || ($element instanceof InputRadioMultiple)) {
                     $element->appendLabel($this->getAppendLabelOnRadios());
                 }
@@ -1548,14 +1744,15 @@ class Form extends Tag
         return $out;
     }
 
-
     /**
      * Append a field object to the form
      * @param object $field - object of inputfield, fieldset, button,...
      * @return void
      */
-    public function add(object $field): void
-    {
+    public
+    function add(
+        object $field
+    ): void {
         // add or remove wrapper divs on each form element
         if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
             $field->useInputWrapper($this->useInputWrapper);
@@ -1578,7 +1775,10 @@ class Form extends Tag
      * @param object $field
      * @return void
      */
-    public function remove(object $field): void {
+    public
+    function remove(
+        object $field
+    ): void {
         if (($key = array_search($field, $this->formElements)) !== false) {
             unset($this->formElements[$key]);
             // remove the placeholders too, if they are present
@@ -1592,7 +1792,8 @@ class Form extends Tag
      * Get the min time value
      * @return int
      */
-    public function getMinTime(): int
+    public
+    function getMinTime(): int
     {
         return $this->minTime;
     }
@@ -1602,7 +1803,10 @@ class Form extends Tag
      * @param int $minTime
      * @return $this
      */
-    public function setMinTime(int $minTime): self {
+    public
+    function setMinTime(
+        int $minTime
+    ): self {
         $this->minTime = $minTime;
         return $this;
     }
@@ -1611,7 +1815,8 @@ class Form extends Tag
      * Get the max time value
      * @return int
      */
-    protected function getMaxTime(): int
+    protected
+    function getMaxTime(): int
     {
         return $this->maxTime;
     }
@@ -1621,7 +1826,10 @@ class Form extends Tag
      * @param int $maxTime
      * @return $this
      */
-    public function setMaxTime(int $maxTime): self {
+    public
+    function setMaxTime(
+        int $maxTime
+    ): self {
         $this->maxTime = $maxTime;
         return $this;
     }
@@ -1631,8 +1839,11 @@ class Form extends Tag
      * @param string $method
      * @return string
      */
-    public static function encryptDecrypt(string $string, string $method = 'encrypt'): string
-    {
+    public
+    static function encryptDecrypt(
+        string $string,
+        string $method = 'encrypt'
+    ): string {
         // encryption settings
         $encrypt_method = 'AES-256-CBC';
         $secret_key = 'd0a7e7997b6d5fcd55f4b5c32611b87cd923e88837b63bf2941ef819dc8ca282';
@@ -1658,8 +1869,10 @@ class Form extends Tag
      * @param string $position - has to be 'top' or 'bottom'
      * @return string
      */
-    private function renderRequiredText(string $position): string
-    {
+    private
+    function renderRequiredText(
+        string $position
+    ): string {
         if ($this->defaultRequiredTextPosition === $position) {
             return $this->requiredHint->___render();
         }
@@ -1671,8 +1884,10 @@ class Form extends Tag
      * @param int $charLength - the length of the random string - default is 100
      * @return string - returns a slug version of the generated random string that can be used inside an url
      */
-    protected function createQueryCode(int $charLength = 100): string
-    {
+    protected
+    function createQueryCode(
+        int $charLength = 100
+    ): string {
         $pass = new \ProcessWire\Password();
         if ($charLength <= 0) {
             $charLength = 10;
@@ -1688,8 +1903,10 @@ class Form extends Tag
      * @param $string - the string
      * @return string
      */
-    protected function generateSlug(string $string): string
-    {
+    protected
+    function generateSlug(
+        string $string
+    ): string {
         return preg_replace('/[^A-Za-z\d-]+/', '-', $string);
     }
 
@@ -1699,8 +1916,10 @@ class Form extends Tag
      * @return string|null - a readable string of the time (fe 1 day instead of 86400 seconds)
      * @throws Exception
      */
-    protected function readableTimestringFromSeconds(int $seconds = 0): ?string
-    {
+    protected
+    function readableTimestringFromSeconds(
+        int $seconds = 0
+    ): ?string {
         $then = new DateTime(date('Y-m-d H:i:s', 0));
         $now = new DateTime(date('Y-m-d H:i:s', $seconds));
         $interval = $then->diff($now);
@@ -1737,7 +1956,8 @@ class Form extends Tag
      * Return the names of all input fields inside a form as an array
      * @return array
      */
-    public function getNamesOfInputFields(): array
+    public
+    function getNamesOfInputFields(): array
     {
         $elements = [];
         if ($this->formElements) {
@@ -1755,7 +1975,8 @@ class Form extends Tag
      * This is a general message that could be used for all forms
      * @return void
      */
-    protected function generateEmailSentErrorAlert(): void
+    protected
+    function generateEmailSentErrorAlert(): void
     {
         $this->alert->setCSSClass('alert_dangerClass');
         $this->alert->setText($this->_('Email could not be sent due to possible wrong email configuration settings.'));
