@@ -9,17 +9,14 @@ namespace ProcessWire;
  * Fe you have to use $form = new \FrontendForms\Form('myForm'); or $form = new FrontendForms\Form('myForm'); and not only $form = new Form('myForm');
  */
 
-echo '<h1>Complex form</h1>';
-
-
-$form = new \FrontendForms\Form('registration');
+$form = new \FrontendForms\Form('complex-form');
 $form->setMinTime(8);
 $form->setMaxTime(3600);
 $form->setMaxAttempts(5);
 $form->setErrorMsg('Ouups! There are some errors.');
 $form->setSuccessMsg('Congratulation! There are no errors.');
 
-
+// create the first fieldset
 $userdata = new \FrontendForms\FieldsetOpen();
 $userdata->setLegend('User data')->append('<p>Please fill out all required fields.</p>');
 $form->add($userdata);
@@ -27,13 +24,13 @@ $form->add($userdata);
 $singleRadio = new \FrontendForms\InputRadio('single');
 $singleRadio->setLabel('Single radio button');
 $singleRadio->setAttribute('value', 'single');
-$singleRadio->setRule('required');
+$singleRadio->setRule('required')->setCustomFieldname('This senseless field'); // use a custom text instead of the label
 $singleRadio->setNotes('This field makes no sense');
 $form->add($singleRadio);
 
 $gender = new \FrontendForms\InputRadioMultiple('gender');
 $gender->setLabel('Gender')->setAttribute('class', 'myextralabelclass');
-$gender->setDefaultValue('Male');
+$gender->setDefaultValue('Male'); // this will be selected on page load
 $gender->addOption('Male', 'Male')->setAttribute('class', 'male');
 $gender->addOption('Female', 'Female')->setAttribute('class', 'female');
 $gender->addOption('Diverse', 'Diverse')->setAttribute('class', 'diverse');
@@ -42,7 +39,7 @@ $form->add($gender);
 
 $firstname = new \FrontendForms\InputText('firstname');
 $firstname->setLabel('Firstname');
-$firstname->setRule('required');
+$firstname->setRule('required')->setCustomMessage('Please enter your first name.'); // customize the error message
 $firstname->getFieldWrapper()->prepend('<div class="uk-child-width-1-2" data-uk-grid>')->removeAttributeValue('class', 'uk-margin');
 $form->add($firstname);
 
@@ -67,10 +64,8 @@ $form->add($number);
 
 $email = new \FrontendForms\InputEmail('email');
 $email->setLabel('Email address');
-$email->setSanitizer('email');
 $email->setRule('required');
-$email->setRule('email');
-$email->setRule('emailDNS');
+// no need to add special other validation rules for emails because they will be added by default by the InputEmail class
 $email->getFieldWrapper()->prepend('<div class="uk-child-width-1-3" data-uk-grid>')->removeAttributeValue('class', 'uk-margin');
 $form->add($email);
 
@@ -89,7 +84,7 @@ $form->add($fax);
 $birthday = new \FrontendForms\InputDate('birthday');
 $birthday->setLabel('My birthday');
 $birthday->setRule('required')->setCustomFieldName('The day of my birth');
-$birthday->setRule('date');
+// no need to add special other validation rules for dates because they will be added by default by the InputEmail class
 $form->add($birthday);
 
 $children = new \FrontendForms\InputNumber('children');
@@ -102,6 +97,7 @@ $form->add($children);
 $userdataClose = new \FrontendForms\FieldsetClose();
 $form->add($userdataClose);
 
+// create the second fieldset
 $interestsOpen = new \FrontendForms\FieldsetOpen();
 $interestsOpen->setLegend('My interest');
 $form->add($interestsOpen);
@@ -128,7 +124,7 @@ $form->add($php);
 
 $css = new \FrontendForms\SelectMultiple('css');
 $css->setLabel('I have knowledge in');
-$css->setDefaultValue('Less', 'CSS 1');
+$css->setDefaultValue('Less', 'CSS 1'); // in this case we set 2 default values
 $css->addOption('CSS 1', 'CSS 1');
 $css->addOption('CSS 2', 'CSS 2');
 $css->addOption('CSS 3', 'CSS 3');
@@ -153,7 +149,6 @@ $button = new \FrontendForms\Button('submit');
 $button->setAttribute('value', 'Send');
 $form->add($button);
 
-
 if ($form->isValid()) {
 
     print_r($form->getValues());
@@ -162,4 +157,5 @@ if ($form->isValid()) {
 }
 
 // render the form
-echo $form->render();
+$content = $form->render();
+echo $content;
