@@ -14,7 +14,7 @@ namespace FrontendForms;
 
 use Exception;
 
-class InputTime extends Input
+class InputTime extends InputNumber
 {
 
     /**
@@ -25,6 +25,7 @@ class InputTime extends Input
     {
         parent::__construct($id);
         $this->setAttribute('type', 'time');
+        $this->setRule('time');
     }
 
     /**
