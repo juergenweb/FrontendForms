@@ -39,7 +39,6 @@ class InputCheckboxMultiple extends Input
         $this->topLabel->setTag('div');
     }
 
-
     /**
      * Returns an array of all option objects
      * @return array
