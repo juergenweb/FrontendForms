@@ -22,7 +22,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 This module will work without GD-Library too, but you will not be able to use CAPTCHA in this case.
 
 ## Table of contents
-* [Quick-start guide](#quick-start-guide)
+* [Installation and Quick-start guide](#installation-and-quick-start-guide)
 * [Which input types are supported?](#which-input-types-are-supported)
 * [SPAM protection](#spam-protection)
 * [Prevent double form submission](#prevent-double-form-submission)
