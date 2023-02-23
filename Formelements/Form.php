@@ -74,7 +74,6 @@ class Form extends Tag
     public function __construct(string $id)
     {
         parent::__construct();
-
         // set path to the template folder for the email templates
         $this->emailTemplatesDirPath = $this->wire('config')->paths->siteModules . 'FrontendForms/email_templates/';
 
@@ -683,7 +682,8 @@ class Form extends Tag
      * @return void
      * @throws WireException
      */
-    public function setUploadPath(string $path_to_folder): self {
+    public function setUploadPath(string $path_to_folder): self
+    {
         $this->input_uploadPath = trim($path_to_folder);
         return $this;
     }
@@ -1247,8 +1247,8 @@ class Form extends Tag
      */
     protected function putRequiredOnTop(array $rules): array
     {
-        if(count($rules) > 1){
-            if(array_key_exists('required', $rules)){
+        if (count($rules) > 1) {
+            if (array_key_exists('required', $rules)) {
                 $rules = ['required' => $rules['required']] + $rules;
             }
         }
@@ -1328,6 +1328,43 @@ class Form extends Tag
                                 }
                             }
                             // Instantiate Valitron and start validation of the sanitized values
+                            $path_lang_dir = $this->wire('config')->paths->siteModules . 'FrontendForms/lang/';
+
+                            // set fallback for validator language first (the default language)
+                            $validator_lang = 'en';
+
+                            // grab languages set in the module configuration if present
+                            if ($this->wire('languages')) {
+
+                                // grab user language
+                                $user_lang_value = $this->user->language->name == 'default' ? 'en' : $this->user->language->name;
+                                // language support is enabled
+                                if (count($this->wire('languages')) > 1) {
+                                    // multi-language site
+                                    foreach ($this->wire('languages') as $lang) {
+                                        $lang_value_name = 'input_language_select_' . $lang->name;
+                                        $lang_value = $this->$lang_value_name;
+                                        if ($user_lang_value == $lang_value) {
+                                            $validator_lang = $user_lang_value;
+                                        }
+                                    }
+                                } else {
+                                    // single language site
+                                    // language support is not enabled
+                                    if ((!is_null($this->input_language_select_default)) || ($this->input_language_select_default != '')) {
+                                        $validator_lang = $this->input_language_select_default;
+                                    }
+                                }
+                            } else {
+                                // language support is not enabled
+                                if ((!is_null($this->input_language_select_default)) || ($this->input_language_select_default != '')) {
+                                    $validator_lang = $this->input_language_select_default;
+                                }
+                            }
+
+                            Validator::langDir($this->wire('config')->paths->siteModules . 'FrontendForms/lang/');
+                            // set language for the error messages depending on user language
+                            Validator::lang($validator_lang);
                             $v = new Validator($sanitizedValues);
 
                             foreach ($formElements as $element) {
@@ -1345,7 +1382,7 @@ class Form extends Tag
                                         if (isset($parameters['customFieldName'])) {
                                             $v->label($parameters['customFieldName']);
                                         } else {
-                                            if($element->getLabel()->getText()){
+                                            if ($element->getLabel()->getText()) {
                                                 // use the label if present, otherwise use the name attribute
                                                 $v->label($element->getLabel()->getText());
                                             }
