@@ -441,14 +441,6 @@ Set the max number of attempts to submit a form successful. If the number of uns
   $form->setMaxAttempts(10);
 ```
 
-### setLang()
-
-Set the language of each form individually by using the setLang() method.
-
-```php
-  $form->setLang('de');
-```
-
 ### getValues()
 This method returns all form values after successful validation as an array. Use this method to process the values further (fe send via email).
 By default, this method only returns values from inputfields. If you need values from buttons to, please add true inside the parenthesis.
@@ -460,46 +452,46 @@ By default, this method only returns values from inputfields. If you need values
 ```php
   $form->getValues(true); // this also outputs the value of a button (fe send) if needed
 ```
-#### getValuesAsString()
+### getValuesAsString()
 This method is the same as the getValues() method, but it returns all post values as a string instead of an array.
 
 ```php
   $form->getValuesAsString();
 ```
-#### getValue()
+### getValue()
 This will return the value of a specific input field after a successful form submission. You have to write the name of the input field inside the parenthesis.
 ```php
   $form->getValue('subject'); // this will return the value of the input field with the name attribute subject
 ```
-#### add()
+### add()
 This is the method to add a field to the form. You have to enter the field object inside the parenthesis.
 ```php
   $form->add($field);
 ```
 
-#### remove()
+### remove()
 This is the method to remove a field from the form. You have to enter the field object inside the parenthesis.
 ```php
   $form->remove($field);
 ```
-#### getFormelementByName()
+### getFormelementByName()
 Grab a form element by its name attribute - returns the field object for further manipulation.
 Fe if you want to get the field with the name attribute "email" add "email" as parameter inside the parenthesis, and you will get the form field object as return value.
 ```php
   $form->getFormelementByName($fieldname); // fieldname could be fe email, pass or whatever
 ```
 
-#### setErrorMsg()
+### setErrorMsg()
 With this method you can overwrite the default error message which appears inside the alert box after an unsuccessful form submission.
 ```php
   $form->setErrorMsg('Sorry, but there are errors!');
 ```
-#### setSuccessMsg()
+### setSuccessMsg()
 With this method you can overwrite the default success message which appears inside the alert box after a successful form submission.
 ```php
   $form->setSuccessMsg('Congratulations, your message was submitted successfully!');
 ```
-#### useFormElementsWrapper()
+### useFormElementsWrapper()
 With this method you can wrap all form fields in an extra div, or remove the wrapper
 ```html
   <form>
@@ -514,13 +506,13 @@ You only have to add this method to your form object with bool parameter
   $form->useFormElementsWrapper(false); // removes the wrapper
 ```
 
-#### getFormElementsWrapper()
+### getFormElementsWrapper()
 This method returns the wrapper object for all form fields for fe further manipulations.
 ```php
   $form->getFormElementsWrapper();
 ```
 
-#### appendLabelOnCheckboxes() and appendLabelOnRadios() for checkboxes and radio buttons
+### appendLabelOnCheckboxes() and appendLabelOnRadios() for checkboxes and radio buttons
 By default, all checkboxes and radio buttons are wrapped by their label tag.
 
 ```html
@@ -543,40 +535,23 @@ $form->appendLabelOnCheckboxes(false); // the input tag will be wrapped by the l
 ```
 You can do the same for radio buttons by using the appendLabelOnRadios() method.
 
-#### setUploadPath()
-If you are using a file upload field on your form, by default all uploaded files will be stored inside the "temp_uploads"
-folder of this module. This is the default folder, for storing the files and if you are sending emails with attachment,
-the module grabs the files for attachments from this "temp_uploads" folder and remove all files inside this folder after
-successful submission.
-So this folder will not be the right place if you want to store files permanently. For this case you have the possibility
-to change the upload folder.
-If you are adding true as second parameter inside the parenthesis, the folder will be created if it does not exist, otherwise you will get
-an error message, that this folder does not exist.
-All files will be saved at site/assets/files, which is the Processwire files directory
+### setUploadPath()
+If you are using a file upload field inside your form, all uploaded files will be in the site/assets/files/ directory inside a folder named after the id of the page where the form  is included. Fe the id of the page where the form is included is 1000, then the files will be stored inside site/assets/files/1000. 
+This is usually the way to go, but in rare cases you will need to store the files at an other location. 
+For this use case you can use this method.
 
 ```php
-$form->setUploadPath('mycustomfolder/', true); // the files will be stored at site/assets/files/mycustomfolder/
+$form->setUploadPath('mycustomfolder/'); // the files will be stored at site/assets/files/mycustomfolder/
 ```
-This works before and after POST. If you use this method before POST, then all files will be stored directly inside the
-given folder.
-If the method is used after POST, then the files will be stored inside the temp_uploads folder first and will be moved to the
-new directory afterwards.
 
-#### IP banning
-You have the possibility to add IP addresses to a blacklist in the module configuration.
-This means that visitors with an IP listed in this list are not able to view a form
-on the page. This setting is global for all forms created with this module, but you can
-change the settings on per form base if needed. Take a look at the following methods.
-Only to mention: The visitor can visit the page, but the form is not visible for him (as written some lines below).
-
-##### useIPBan()
+### useIPBan()
 You can disable the checking of the IP address on each form manually.
 
 ```php
 $form->useIPBan(true); // IP checking will be enabled on this form - this is the default value
 $form->useIPBan(false); // IP checking will be disabled on this form
 ```
-##### testIPBan()
+#### testIPBan()
 This is only a testing method to check if IP banning works.
 Enter an IP address inside the module configuration and then use this method on the form by entering the IP inside the parenthesis.
 
@@ -585,21 +560,21 @@ $form->testIPBan('146.70.36.200'); //
 ```
 By visiting the page, an alert box will be displayed on the frontend instead of the form. Try it out to see how it works.
 
-#### logFailedAttempts()
+### logFailedAttempts()
 You can enable/disable the logging of blocked visitors IP on per form base.
 
 ```php
 $form->logFailedAttempts(true); // blocked visitors will be logged on this form
 $form->logFailedAttempts(false); // no log entry will be written if visitors are blocked -> this is the default setting
 ```
-#### isValid()
+### isValid()
 This is the most important method. It takes the user data, sanitizes it, validates it and outputs possible errors or the success message.
 Returns true or false after form submission. You have to use this method to process the submitted form data further.
 ```php
   $form->isValid();
 ```
 
-#### isBlocked()
+### isBlocked()
 
 If you want to do another logic if a user was blocked, then use the isBlocked() method and run your code inside it.
 Only to mention: A user will be blocked if the max number of attempts to submit the form with success was reached.
@@ -613,12 +588,14 @@ Only to mention: A user will be blocked if the max number of attempts to submit 
   }
   $form->render()
 ```
-#### render()
+### render()
 Render the form on the page.
+
 ```php
-  $form->render();
+  echo $form->render();
 ```
-## Input fields and their methods
+
+## Input field methods
 
 ### Anatomy of input fields
 
@@ -644,7 +621,7 @@ This is a container element around the input field. You can set or remove it in 
 #### Label, notes, description
 These elements do not need a more detailed explanation. Only to mention here: you can customize all of them by chaining methods to set/remove attributes.
 
-### General Methods for input fields
+### General Methods for all input fields
 These methods can be used on each input field.
 
 #### setLabel()
