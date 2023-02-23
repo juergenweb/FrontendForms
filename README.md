@@ -132,8 +132,7 @@ echo $form->render();
 * database, to login a user,....you get the idea. The validation and sanitization of the form values happens inside this method.
 * The render method outputs the markup of the form.
 
-I highly recommend you to study the examples inside the 'examples' folder. There you will find a lot of different use
-cases. Some examples are simple, others are more complex. There are also examples including file upload.
+I highly recommend you to study the examples inside the ['examples'](https://github.com/juergenweb/FrontendForms/tree/main/Examples) folder. There you will find a lot of different use cases. Some examples are simple, others are more complex. There are also examples including file upload.
 
 Now you are ready to test the module inside your project!
 
@@ -154,7 +153,25 @@ You can find examples of all supported input types inside the 'examples' folder 
 ## SPAM protection
 There are multiple traps for spambots included.
 
-### Honeypot field
+### Measure 1: Set max number of invalid attempts
+You can set a number of max attempts for submitting the form successfully inside the module configuration or by adding the [setMaxAttempts()](#setmaxattempts)
+method to your form object.
+If the number of unsuccessful attempts is higher than the allowed number, the form submission will be blocked.
+It is only a soft block by using a session. The user will be prompted to close the browser to remove the session and to re-open the page again. If the session is active, the form will not be displayed on the page. 
+Can be disabled by setting the value to zero.
+
+### Measure 2: Time measurement
+You can set a global min and max time inside the module configuration, but you can set the them also manually on per form base. In this case you only have to add the [setMinTime() and/or setMaxTime()](#setmintime-setmaxtime) method(s) to your form object. Setting the value to zero disables this feature.
+If a user or a SPAM bot submits the form outside of this time range, the form will not be submitted.
+By the way, SPAM bots tend to fill out forms very quickly or analyse the forms very long and submit them after a long while.
+After every submission the time will be calculated new. 
+
+**Good to know, but you do not have to do something special**
+
+The value entered for the min time refers to filling out all empty required fields of a form. If some fields contain a value after submission, the time will be
+reduced for filling out the form, because there are less fields left. So checking the min time takes care about how manyfields are filled out at the time of submission. This leads to that, that the min time will be reduced, if there a less fields left. So do not be surprised, if the the min time changes during multiple submission attempts.
+
+### Measure 3: Honeypot field
 A honeypot field, which changes the position on every page load in random order, will be added automatically by default. If you do not want to include the honeypot field you need to add the [useHoneypot(false)](#usehoneypot) method to you form object (not recommended).
 Info: A honeypot field is a field which is hidden to the user, but a SPAM bot can read it and if this field will be filled out it will be detected as spam.
 Please note that the honeypot field will be hidden via the frontendforms.css file.
@@ -172,37 +189,7 @@ Please note that the honeypot field will be hidden via the frontendforms.css fil
 ```
 You can remove the embedding of the file inside the module configuration, and you can embed this code in your own CSS file if you want.
 
-### Time measurement
-You can set a min and max time for filling out the form. You only have to add the setMinTime() and/or setMaxTime()
-method(s) to your form object. If a user or a SPAM bot submits the form outside this time range, the form will not be
-submitted.
-SPAM bots tend to fill out forms very quickly or analyse the forms very long and submit them after a long while.
-So with this time trap you can detect SPAM bots.
-Can be disabled by setting the values to zero.
-After every submission the time will be calculated new. This means that the min time set in the configuration refers to
-the time which is needed to fill out all empty required fields. If some required fields contain a value after submission, the time will be
-reduced for filling out the form, because there are less field left. So checking the min time takes care about how many
-fields are filled out at the time of submission.
-What you have to do is to estimate how long it will take to fill out all required fields as minimum time for filling out
-the form.
-
-### Set max number of invalid attempts
-You can set a number of max attempts for submitting the form successfully by adding the setMaxAttempts()
-method to your form object.
-If the number of unsuccessful attempts is higher than the allowed number the form submission will be blocked.
-It is only a soft block by using a session. The user will be prompted to close the browser to remove the session and
-to re-open the page again. If the session is active, the form will not be displayed on the page and therefore cannot be
-filled out. SPAM bots fill out input fields sometimes randomly and therefore make a lot of mistakes.
-Can be disabled by setting the value to zero.
-
-## Prevent double form submission
-Only to mention: There is also a session active which prevents double form submission after successful validation.
-It compares the session value with the value of a hidden field. If the values are different, it is an indication that
-the form would be submitted twice. In this case the submission will be stopped before it takes place, and you will
-be redirected to the form page itself.
-The double-submission check can be disabled if necessary.
-
-## IP-banning
+## IP-Blacklist
 Add IP-addresses to a blacklist to prevent them accessing your forms. If the visitor's IP is on this list, an alert box will be displayed,
 which informs the visitor, that his IP is on the blacklist. The form itself will not be displayed in this case.
 
@@ -212,9 +199,10 @@ of the anti-spam measures.
 A user will be blocked if he needs, for example, too many attempts to send the form (depending on your settings in the backend).
 In this section you can get more information about this user, and you have 2 buttons: add the user to or remove him from the IP blacklist.
 
-## CAPTCHA
+## Measure 5: CAPTCHA
 This module offers various types of a CAPTCHA, that can be used. BTW: CAPTCHA should be used only if the other traps failed, and you get a lot of SPAM over your forms.
 Most users do not like CAPTCHA, but it is up to you whether to use them or not.
+You can make all CAPTCHA settings inside the module configuration. The only thing you can do manually is to disable the CAPTCHA on per form base by using the [disableCaptcha()]()
 At the moment, following CAPTCHA types will be provided:
 
 ### Image CAPTCHA
@@ -242,9 +230,7 @@ The configuration is global and cannot be changed on per form base. The only thi
 disable the CAPTCHA on per form base. This is useful if you want to use a CAPTCHA, but on certain forms (fe. forms for logged-in
 users), you want to disable it.
 
-```php
-  $form->disableCaptcha();
-```
+
 ### Password blacklist
 If you are dealing with user login/registration on your site, there is always a risk, that clients use unsafe passwords
 and this could be a serious security issue for an account to be hacked.
@@ -273,6 +259,15 @@ and GitHub allows only a certain amount of requests per day. Otherwise, you will
 So checking it once a month does not bomb their server with too many requests.
 If something has been changed on the list, it will be downloaded and added to the blacklist automatically.
 So the list is always up-to-date.
+
+## Prevent double form submission
+Only to mention: There is also a session active which prevents double form submission after successful validation.
+It compares the session value with the value of a hidden field. If the values are different, it is an indication that
+the form would be submitted twice. In this case the submission will be stopped before it takes place, and you will
+be redirected to the form page itself.
+The double-submission check can be set manually (enable/disable) if necessary by using the [useDoubleFormSubmissionCheck()](#usedoubleformsubmissioncheck) method.
+
+
 
 ## Module configuration settings
 At the backend there are a lot of options for global settings. Fe you can choose if you want to add a wrapper container to the input field or not or if you want to add an outer wrapper to the complete form field (including label, input field, description, notes,...).
@@ -413,6 +408,12 @@ your data multiple times.
   $form->useDoubleFormSubmissionCheck(false); // double form submission check will be disabled on the form
 ```
 
+#### disableCaptcha()
+With this method you can disable the usage of CAPTCHA on per form base. This makes sense, fe if the user is logged in and you do not want to show the CAPTCHA inside his profile form.
+
+```php
+  $form->disableCaptcha();
+```
 #### setRequiredText()
 With this method you can overwrite the default hint that will be displayed on the form to inform the user that he has to fill all required fields marked with an asterisk.
 
