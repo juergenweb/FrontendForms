@@ -27,7 +27,7 @@ class Password extends InputPassword
     {
         parent::__construct($id);
         $this->setLabel($this->_('Password')); // set default label
-        $this->setRule('required')->setCustomFieldName($this->_('Password'));
+        $this->setRule('required');
         $this->setRule('safePassword');
     }
 
