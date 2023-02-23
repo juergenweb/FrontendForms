@@ -77,22 +77,22 @@ if ($form->isValid()) {
 
     // send the form with WireMail
     $m = wireMail();
-    $m->to('webdesign@linznet.at');// please change this email address to your own
+    $m->to('myemail@example.com');// please change this email address to your own
     if ($form->getValue('sendcopy')) {
         // send copy to sender
         $m->to($form->getValue('email'));
     }
     $m->from($form->getValue('email'));
     $m->subject($form->getValue('subject'));
-    $m->title('<h1>' . $this->_('A new message via contact form') . '</h1>'); // this is a new property from this module
+    $m->title('<h1>A new message via contact form</h1>'); // this is a new property from this module
 
     /** You can grab the values with the getValue() method - this is the default way */
     /*
     $body = $m->title;
-    $body .= '<p>'.$this->_('Sender').': '.$form->getValue('gender').' '. $form->getValue('firstname').' '.$form->getValue('lastname').'</p>';
-    $body .= '<p>'.$this->_('Mail').': '.$form->getValue('email').'</p>';
-    $body .= '<p>'.$this->_('Subject').': '.$form->getValue('subject').'</p>';
-    $body .= '<p>'.$this->_('Message').': '.$form->getValue('message').'</p>';
+    $body .= '<p>Sender: '.$form->getValue('gender').' '. $form->getValue('firstname').' '.$form->getValue('lastname').'</p>';
+    $body .= '<p>Mail: '.$form->getValue('email').'</p>';
+    $body .= '<p>Subject: '.$form->getValue('subject').'</p>';
+    $body .= '<p>Message: '.$form->getValue('message').'</p>';
     */
 
     /** NEW: or you can use placeholders for the labels and the values of the form fields
