@@ -27,7 +27,6 @@ This module will work without GD-Library too, but you will not be able to use CA
 * [SPAM protection](#spam-protection)
 * [Prevent double form submission](#prevent-double-form-submission)
 * [Module configuration settings](#module-configuration-settings)
-* [Support for UiKit 3 and Boostrap 5](#support-for-uikit-3-and-boostrap-5)
 * [General methods](#general-methods)
 * [Form and its methods](#form-and-its-methods)
 * [Input fields and their methods](#input-fields-and-their-methods)
@@ -150,7 +149,7 @@ You can find examples of all supported input types inside the 'examples' folder 
 * Datalist
 
 
-## SPAM protection
+## SPAM protection and security features
 There are multiple traps for spambots included.
 
 ### Measure 1: Set max number of invalid attempts
@@ -202,7 +201,8 @@ In this section you can get more information about this user, and you have 2 but
 ## Measure 5: CAPTCHA
 This module offers various types of a CAPTCHA, that can be used. BTW: CAPTCHA should be used only if the other traps failed, and you get a lot of SPAM over your forms.
 Most users do not like CAPTCHA, but it is up to you whether to use them or not.
-You can make all CAPTCHA settings inside the module configuration. The only thing you can do manually is to disable the CAPTCHA on per form base by using the [disableCaptcha()]()
+You can make all CAPTCHA settings inside the module configuration. The only thing you can do manually is to disable the CAPTCHA on per form base by using the [disableCaptcha()](#disablecaptcha) method.
+
 At the moment, following CAPTCHA types will be provided:
 
 ### Image CAPTCHA
@@ -226,20 +226,16 @@ The user has to solve a simple calculation.
 
 In the backend, there are a lot of configuration settings to adapt the CAPTCHA to your needs or to adapt it to your project
 design. The settings are self explaining, so I do not want to go into detail.
-The configuration is global and cannot be changed on per form base. The only thing that you can do is to
-disable the CAPTCHA on per form base. This is useful if you want to use a CAPTCHA, but on certain forms (fe. forms for logged-in
-users), you want to disable it.
+The configuration is global and cannot be changed on per form base.
 
-
-### Password blacklist
+### Measure 6: Password blacklist
 If you are dealing with user login/registration on your site, there is always a risk, that clients use unsafe passwords
 and this could be a serious security issue for an account to be hacked.
 For this reason, you have the opportunity create a blacklist of forbidden passwords in the module configuration. To make it much more simple
-for you, it uses passwords from the top 100 most common passwords list from GitHub. In addition, you can add your own
-passwords too.
+for you, it uses passwords from the [top 100 most common passwords](https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-100.txt) list from GitHub, but you can also add your own passwords.
 
-The best of the blacklist:
-It cares about your password requirement settings and does not add all 100 passwords of the top list by default to the
+**The best of the blacklist:**
+The module takes care about your password requirement settings and does not add all 100 passwords of the top list by default to the
 blacklist.
 This means, only passwords that fulfill your password requirements will be added to the blacklist - all others will not
 be added to keep the list as short as possible (better performance).
@@ -253,12 +249,20 @@ So there is no need to add these passwords to the blacklist, because they do not
 
 On the module configuration page you will find a very detailed description how the blacklist works.
 
-Only to mention:
+**Only to mention:**
 The top 100 password list will be checked once a month on GitHub, if the file has been modified. Once a month is enough
-and GitHub allows only a certain amount of requests per day. Otherwise, you will get a 403 error (too many requests).
-So checking it once a month does not bomb their server with too many requests.
+and GitHub allows only a certain amount of requests per day if you are not using the API. Otherwise, you will get a 403 error (too many requests).
+So, checking once a month should be enough and will prevent a 403 error from occurring.
 If something has been changed on the list, it will be downloaded and added to the blacklist automatically.
-So the list is always up-to-date.
+So you do not have to take care about it and the list is always up-to-date.
+
+### Measure 7: HTML 5 browser validation
+If you want to make a frontend validation before the the server-side validation, you can enable HTML 5 browser validation in the module configuration. 
+This will take HTML 5 attributes (fe. min attribute) and validates it by the browser.
+Only to mention: not all browsers support each attribute and the design of the validation messages can differ from browser to browser.
+
+**Good to know**
+If you are setting validation rules to a form field, the appropriate HTML5 attribute will be added automatically, but you can add them manually too.
 
 ## Prevent double form submission
 Only to mention: There is also a session active which prevents double form submission after successful validation.
@@ -267,15 +271,10 @@ the form would be submitted twice. In this case the submission will be stopped b
 be redirected to the form page itself.
 The double-submission check can be set manually (enable/disable) if necessary by using the [useDoubleFormSubmissionCheck()](#usedoubleformsubmissioncheck) method.
 
-
-
 ## Module configuration settings
 At the backend there are a lot of options for global settings. Fe you can choose if you want to add a wrapper container to the input field or not or if you want to add an outer wrapper to the complete form field (including label, input field, description, notes,...).
 Nearly each CSS class for the various form elements can be overwritten too. So you can use your own preferred class names if you want - no Hooks are necessary.
 Take a look at the configuration page - all different settings are described there.
-
-## Support for UiKit 3 and Bootstrap 5
-In the backend you can select if you want to render the markup with UiKit 3, Bootstrap 5 or no framework.
 
 ## General methods
 General methods are methods that can be used on each object: form, input field, label, description, notes, wrappers, fieldset,...
