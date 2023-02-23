@@ -45,31 +45,10 @@ This module will work without GD-Library too, but you will not be able to use CA
 1. Download and extract FrontendForms and put the folder inside site/modules. Be aware that the folder name must be
    FrontendForms and not FrontendForms-main or FrontendForms-master. GitHub adds this appendix by default. So be aware to remove it before you put the folder inside the module folder.
 2. Login to your admin area and refresh all modules.
-3. Now you can grab this module and install it.
-4. After the installation is finished you can change some configuration settings if you want, but it works out of the box
-5. Add the following 2 lines of code inside your _init.php inside your template
-   folder. These lines are especially needed if you are running a multi-language site or single-language site, where the language is not English. If the language of your site is English, you can skip this step.
+3. Find this module and install it.
+4. After the installation is finished you can make some configuration settings if you want, but the module works out of the box. The only setting that you have to take care of ist the language setting for the Valitron error messages. You will find this configuration field on the top. Link the language for the Valitron error messages to the appropriate site language, so that that the pre-defined error messages will be displayed in the right language on the frontend.
+If you forget to make this settings, the error messages will always be displayed in English.
 
-```php
-// Example for a single-language site
-$frontendforms = new FrontendForms(); 
-$frontendforms->setLang('de'); // in this case I set the site language to German (hard coded)
-```
-
-With the method setLang(), you set the language for the pre-defined error messages of the form after the form submission. If you do not set the language, then all error messages are always in English (independent of what language you have set on the frontend).
-Be aware, that the value of the language code inside the parenthesis must be in ISO 639-1 format (2-letter code).
-This module supports over 20 different languages for the error messages by default. You will find them inside the [FrontendForms/lang](https://github.com/juergenweb/FrontendForms/tree/main/lang) directory.
-You can use every language code, that you will find inside this directory. If you enter a language code, where no file could be found, than the default language English will be used instead.
-
-If you have a multi-language site you have to set the code dynamically ($user->language->name) and not static as described above. In this case the property "name" must be in the format as written before.
-
-```php
-// Example for a multi-language site
-// Maybe this code must be adapted a little to your needs, but you get the idea...
-$frontendforms = new FrontendForms();
-if($user->language->name != 'default') // default is not a correct 2-letter code for a language
-$frontendforms->setLang($user->language->name); // in this case I set the site language dynamically
-```
 
 Copy the following code and paste it in a template of your choice
 
