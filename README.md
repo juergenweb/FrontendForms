@@ -47,7 +47,7 @@ This module will work without GD-Library too, but you will not be able to use CA
 2. Login to your admin area and refresh all modules.
 3. Find this module and install it.
 4. After the installation is finished you can make some configuration settings if you want, but the module works out of the box. The only setting that you have to take care of ist the language setting for the Valitron error messages. You will find this configuration field on the top. Link the language for the Valitron error messages to the appropriate site language, so that that the pre-defined error messages will be displayed in the right language on the frontend.
-If you forget to make this settings, the error messages will always be displayed in English.
+If you forget to make this setting, the error messages will always be displayed in English.
 
 
 Copy the following code and paste it in a template of your choice
