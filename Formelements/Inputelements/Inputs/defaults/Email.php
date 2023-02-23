@@ -25,7 +25,7 @@ class Email extends InputEmail
     {
         parent::__construct($id);
         $this->setLabel($this->_('Email'));
-        $this->setRule('required')->setCustomFieldName($this->_('Email'));
+        $this->setRule('required');
     }
 
 
