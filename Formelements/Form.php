@@ -873,21 +873,6 @@ class Form extends Tag
         return $languages;
     }
 
-    /**
-     * Set the language of the form directly in the form object
-     * @param string|null $languageCode
-     * @return void
-     * @throws WireException
-     */
-    public
-    function setLang(
-        ?string $languageCode
-    ): void {
-        if (!is_null($languageCode) && in_array($languageCode, $this->getAllAvailableLanguages())) {
-            $frontendforms = new FrontendForms();
-            $frontendforms->setLang($languageCode);
-        }
-    }
 
     /**
      * Enable/disable the wrapping of checkboxes by its label
