@@ -26,7 +26,6 @@ This module will work without GD-Library too, but you will not be able to use CA
 * [Which input types are supported?](#which-input-types-are-supported)
 * [SPAM protection](#spam-protection)
 * [Prevent double form submission](#prevent-double-form-submission)
-* [Module configuration settings](#module-configuration-settings)
 * [General methods](#general-methods)
 * [Form and its methods](#form-and-its-methods)
 * [Input fields and their methods](#input-fields-and-their-methods)
@@ -188,36 +187,36 @@ Please note that the honeypot field will be hidden via the frontendforms.css fil
 ```
 You can remove the embedding of the file inside the module configuration, and you can embed this code in your own CSS file if you want.
 
-## IP-Blacklist
+### Measure 4: IP-Blacklist
 Add IP-addresses to a blacklist to prevent them accessing your forms. If the visitor's IP is on this list, an alert box will be displayed,
 which informs the visitor, that his IP is on the blacklist. The form itself will not be displayed in this case.
 
-### Statistic section of blocked users to identify spammer
+#### Statistic section of blocked users to identify spammer
 In addition to the IP-banning blacklist, a statistic section which informs you about users that have been blocked, is part
 of the anti-spam measures.
 A user will be blocked if he needs, for example, too many attempts to send the form (depending on your settings in the backend).
 In this section you can get more information about this user, and you have 2 buttons: add the user to or remove him from the IP blacklist.
 
-## Measure 5: CAPTCHA
+### Measure 5: CAPTCHA
 This module offers various types of a CAPTCHA, that can be used. BTW: CAPTCHA should be used only if the other traps failed, and you get a lot of SPAM over your forms.
 Most users do not like CAPTCHA, but it is up to you whether to use them or not.
 You can make all CAPTCHA settings inside the module configuration. The only thing you can do manually is to disable the CAPTCHA on per form base by using the [disableCaptcha()](#disablecaptcha) method.
 
 At the moment, following CAPTCHA types will be provided:
 
-### Image CAPTCHA
+#### Image CAPTCHA
 The image CAPTCHA shows an image and the user has to answer which category fits to the image. The following categories
 exist at the moment: trees, houses, lakes, flowers, animals, mountains, ships and cars.
 You can also manipulate the images by using various filters (can be set in the configuration).
 
-### Random string CAPTCHA
+#### Random string CAPTCHA
 A random string will be provided inside an image and the user has to write this string into the input field below.
 
-### Even string CAPTCHA
+#### Even string CAPTCHA
 This is almost the same as the random string CAPTCHA with the only difference, that the user has to enter every second
 character (even character) and not the whole string.
 
-### Reverse string CAPTCHA
+#### Reverse string CAPTCHA
 This is also almost the same as the random string CAPTCHA with the only difference, that the user has to enter the characters
 from right to left (reverse order) instead of left to right.
 
@@ -271,10 +270,6 @@ the form would be submitted twice. In this case the submission will be stopped b
 be redirected to the form page itself.
 The double-submission check can be set manually (enable/disable) if necessary by using the [useDoubleFormSubmissionCheck()](#usedoubleformsubmissioncheck) method.
 
-## Module configuration settings
-At the backend there are a lot of options for global settings. Fe you can choose if you want to add a wrapper container to the input field or not or if you want to add an outer wrapper to the complete form field (including label, input field, description, notes,...).
-Nearly each CSS class for the various form elements can be overwritten too. So you can use your own preferred class names if you want - no Hooks are necessary.
-Take a look at the configuration page - all different settings are described there.
 
 ## General methods
 General methods are methods that can be used on each object: form, input field, label, description, notes, wrappers, fieldset,...
@@ -343,7 +338,7 @@ You can prepend/append a string before and after an object. So you can add addit
   $field->prepend('<div class="grid">')->append('</div>');  
 ```
 
-## Form and its methods
+## Form methods
 
 The form object holds all the input fields, fieldsets, additional markup,...
 
@@ -352,9 +347,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
   $form = new Form('myForm');
 ```
 
-### Methods for the form
-
-#### useFieldWrapper(), getFieldWrapper()
+### useFieldWrapper(), getFieldWrapper()
 Add, remove or get the most outer container for form fields.
 The useFieldWrapper() method overwrites the settings in the module configuration.
 The getFieldWrapper() method returns the Field wrapper object, so you can manipulate it, if you need.
@@ -365,7 +358,7 @@ $form->useFieldWrapper(true); // add the field wrapper to all input elements
 $form->useFieldWrapper(false); // remove the field wrapper from all input elements
 $form->getFieldWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the wrapper object
 ```
-#### useFieldWrapper(), useInputWrapper()
+### useFieldWrapper(), useInputWrapper()
 Add or remove the fieldwrapper and inputwrapper from the form elements.
 These methods overwrite the settings in the module configuration.
 
@@ -379,9 +372,8 @@ $form->useInputWrapper(true); // add the input wrapper to all input elements - t
 $form->useInputWrapper(false); // remove the input wrapper from all input elements
 ```
 
-#### getFieldWrapper(), getInputWrapper()
+### getFieldWrapper(), getInputWrapper()
 With these methods you can grab the wrapper object for further manipulations, if needed
-
 
 ```php
 $form = new Form('myForm');
@@ -390,7 +382,7 @@ $form->getInputWrapper()->setAttribute('class', 'newClass')->removeAttribute('cl
 // and the same for the field wrapper object
 $form->getFieldWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the field wrapper object
 ```
-#### useHoneypot()
+### useHoneypot()
 This will add or remove the honeypot field. Enter true or false as parameter
 
 ```php
@@ -398,7 +390,7 @@ This will add or remove the honeypot field. Enter true or false as parameter
     $form->useHoneypot(true); // this will add the honeypot field to the form - this is the default setting
 ```
 
-#### useDoubleFormSubmissionCheck()
+### useDoubleFormSubmissionCheck()
 This will enable/disable the checking of double form submission. This is useful on profile forms, where you can change
 your data multiple times.
 
@@ -407,33 +399,33 @@ your data multiple times.
   $form->useDoubleFormSubmissionCheck(false); // double form submission check will be disabled on the form
 ```
 
-#### disableCaptcha()
+### disableCaptcha()
 With this method you can disable the usage of CAPTCHA on per form base. This makes sense, fe if the user is logged in and you do not want to show the CAPTCHA inside his profile form.
 
 ```php
   $form->disableCaptcha();
 ```
-#### setRequiredText()
+### setRequiredText()
 With this method you can overwrite the default hint that will be displayed on the form to inform the user that he has to fill all required fields marked with an asterisk.
 
 ```php
   $form->setRequiredText('Please fill out all required fields');
 ```
 
-#### setRequiredTextPosition()
+### setRequiredTextPosition()
 With this method you can overwrite the position of the required text in the global settings in the backend. As parameter, you have none, top or bottom. If set to top, the text will be displayed above the form, otherwise below. If you choose none, then the text will not be displayed at all.
 
 ```php
   $form->setRequiredTextPosition('bottom');
 ```
 
-#### setMethod()
+### setMethod()
 Set the form method (post, get). If you want to use post as your method, you do not need to add this method explicitly, because this method was set as the default method.
 
 ```php
   $form->setMethod('post');
 ```
-#### setMinTime(), setMaxTime()
+### setMinTime(), setMaxTime()
 
 Set the min and max time for form submission in seconds. The form will only be submitted if the submission time is in between the time range.
 
@@ -441,7 +433,7 @@ Set the min and max time for form submission in seconds. The form will only be s
   $form->setMinTime(5);
   $form->setMaxTime(3600);
 ```
-#### setMaxAttempts()
+### setMaxAttempts()
 
 Set the max number of attempts to submit a form successful. If the number of unsuccessful attempts is higher than the max number of attempts, the form submission will be blocked.
 
@@ -449,17 +441,15 @@ Set the max number of attempts to submit a form successful. If the number of uns
   $form->setMaxAttempts(10);
 ```
 
-#### setLang()
+### setLang()
 
 Set the language of each form individually by using the setLang() method.
 
 ```php
   $form->setLang('de');
 ```
-Please note: It is recommended to set the language globally inside the init.php. In this case you do not have
-to set the language on each form.
 
-#### getValues()
+### getValues()
 This method returns all form values after successful validation as an array. Use this method to process the values further (fe send via email).
 By default, this method only returns values from inputfields. If you need values from buttons to, please add true inside the parenthesis.
 
