@@ -205,3 +205,7 @@ by checking a checkbox in the admin if you want.
 Some pre-defined input types for added for easier usage (FileUploadSingle, FileUploadMultiple).
 
 A lot of bugs were corrected 
+
+## [2.1.13] - 2023-02-23
+
+New language configuration field for setting the language for Valitron error messages added to the module configuration. Now it is no longer needed to add language settings to the _init.php  file inside the templates folder.
