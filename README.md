@@ -41,7 +41,7 @@ This module will work without GD-Library too, but you will not be able to use CA
 * [Multi-language](#multi-language)
 * [HTML email templates](#email-templates)
 
-## Quick-start guide
+## Installation and Quick-start guide
 1. Download and extract FrontendForms and put the folder inside site/modules. Be aware that the folder name must be
    FrontendForms and not FrontendForms-main or FrontendForms-master. GitHub adds this appendix by default. So be aware to remove it before you put the folder inside the module folder.
 2. Login to your admin area and refresh all modules.
