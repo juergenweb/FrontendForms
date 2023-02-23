@@ -25,7 +25,7 @@ class Surname extends InputText
     {
         parent::__construct($id);
         $this->setLabel($this->_('Surname'));
-        $this->setRule('required')->setCustomFieldName($this->_('Surname'));
+        $this->setRule('required');
     }
 
     /**
