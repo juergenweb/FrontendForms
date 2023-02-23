@@ -149,7 +149,6 @@ You can find examples of all supported input types inside the 'examples' folder 
 
 
 ## SPAM protection and security features
-There are multiple traps for spambots included.
 
 ### Measure 1: Set max number of invalid attempts
 You can set a number of max attempts for submitting the form successfully inside the module configuration or by adding the [setMaxAttempts()](#setmaxattempts)
@@ -597,6 +596,8 @@ Render the form on the page.
 
 ## Input field methods
 
+For better understanding of methods explained afterwards, take a look of the anatomy of input fields first.
+
 ### Anatomy of input fields
 
 ```html
@@ -612,20 +613,19 @@ Render the form on the page.
 ```
 
 #### Field wrapper
-The field wrapper is the most outer container. You can enable/disable it in the global settings in the backend. But you can overwrite the global settings on each form individually by using the useFieldwrapper() method at the form object.
-If you want to customize the field wrapper you can use the getFieldWrapper() method which returns the field wrapper object itself.
+The field wrapper is the most outer container. You can enable/disable it in the global settings in the backend. But you can overwrite the global settings on each form individually by using the [useFieldwrapper()](#usefieldwrapper-getfieldwrapper) method at the form object.
+If you want to customize the field wrapper you can use the [getFieldwrapper()](#usefieldwrapper-getfieldwrapper) method which returns the field wrapper object itself.
 
 #### Input wrapper
-This is a container element around the input field. You can set or remove it in the same way as the field wrapper by using the useInputWrapper() and getInputWrapper() methods.
+This is a container element around the input field. You can set or remove it in the same way as the field wrapper by using the [useInputWrapper()](#usefieldwrapper-useinputwrapper) and [getInputWrapper()](#getfieldwrapper-getinputwrapper) methods.
 
 #### Label, notes, description
 These elements do not need a more detailed explanation. Only to mention here: you can customize all of them by chaining methods to set/remove attributes.
 
 ### General Methods for all input fields
-These methods can be used on each input field.
+These methods can be used on each input field independent of the input type.
 
 #### setLabel()
-
 Method to add a label to the form field. Returns a label object.
 
 ```php
@@ -633,7 +633,6 @@ $field->setLabel('E-Mail address');
 ```
 
 #### setNotes()
-
 Method to add notes to the form field. Returns a notes object.
 
 ```php
@@ -641,7 +640,6 @@ $field->setNotes('You have to fill out this field');
 ```
 
 #### setDescription()
-
 Method to add a description to the form field. Returns a description object.
 
 ```php
@@ -649,9 +647,11 @@ $field->setDescription('This text describes the input field more in detail');
 ```
 
 #### setSanitizer()
-
 Method to add a sanitizer to the form field. Returns a sanitizer object. You can use all ProcessWire sanitizer methods by adding the sanitizer name inside the parenthesis of the setSanitizer() method. You can also set multiple sanitizer methods to one field if necessary.
-Please note: For security reasons, the text sanitizer will be applied to each input field automatically, so you do not have to add it manually. The only exception is input textarea, where a textarea sanitizer will be applied by default.
+
+**Please note:**
+
+For security reasons, the text sanitizer will be applied to each input field automatically, so you do not have to add it manually. The only exception is input textarea, where a textarea sanitizer will be applied by default instead.
 
 ```php
 $field->setSanitizer('text');
@@ -667,7 +667,7 @@ $field->hasSanitizer('text');
 
 #### getSanitizers()
 If you want to know, which sanitizers are added to a field, you can use this method which returns an array containing
-all sanitizer names of this field.
+the names of all sanitizer added to this field.
 
 ```php
 $field->getSanitizers();
@@ -685,8 +685,7 @@ $field->removeSanitizers(['text', 'number']); // removes multiple sanitizers fro
 ```
 
 #### setRule()
-
-Method to add a validator to the form field. You can find examples of all validators in the validationTypes.php inside the 'examples' folder. Add the name of the validator  inside the parenthesis of the setRule() method. You can also set multiple validation methods to one field if necessary.
+Method to add a validator to the form field. You can find examples of all validators in the validationTypes.php inside the 'examples' folder. Add the name of the validator inside the parenthesis of the setRule() method. You can also set multiple validation methods to one field if necessary.
 
 ```php
 $field->setRule('required');
@@ -698,17 +697,17 @@ $field->setRule('number');
 Method to get all validators of a form field.
 This is especially useful, if you want to know which validators are set to a field.
 Most of the input fields have validators set by default, so you do not need to add them manually.
-This method will turn an array with all validators set at the moment.
+This method will turn an array with the names of all validators set to this field.
 
 ```php
 $field->getRules();
 ```
 
 #### removeRule()
-This is the opposite of setRule(). You can remove unwanted rules with this method. This is useful if you use pre-defined Inputs, which contains some validation rules by default.
+This is the opposite of setRule(). You can remove unwanted rules with this method. This is useful if you use ['default fields'](#default-fields), which contains some validation rules by default.
 
 ```php
-$field->removeRule('required');
+$field->removeRule('required'); // this removes the required validator from the field
 ```
 
 #### hasRule()
@@ -720,7 +719,7 @@ $field->hasRule('required');
 ```
 
 #### getErrorMessage()
-You can use this method to manipulate attributes of the error message on per field base.
+You can use this method to manipulate attributes of the error message on per field base. Returns the error message object for further manipulations.
 ```php
 $field->getErrorMessage()->setAttribute('class', 'myErrorClass');
 ```
@@ -761,7 +760,10 @@ As written above, setDefaultValue() can only be used for inputs with values.
 Single checkboxes do not need values. To make them checked by default, you have to use
 the setChecked() method instead of the setDefaultValue() method.
 Using this method is necessary and the only way to mark checkboxes without a value attribute by default.
-Please note: This method works on checkboxes with value too, but in this case it is
+
+**Please note:**
+
+This method works on checkboxes with value too, but in this case it is
 recommended for consistency to use the getDefaultValue() method.
 
 ```php
@@ -772,15 +774,16 @@ $checkbox->setChecked();
 
 #### render()
 Method to render an input field. You do not need this method until you want to render an input field on its own.
+
 ```php
-$field->render();
+echo $field->render();
 ```
 
 ### Special Methods for input fields
 These methods can only be used on certain input fields.
 
 #### alignVertical() for checkboxes and radio buttons
-This is only a method for multiple checkboxes and radio buttons to align them vertical instead of horizontal.
+This is only a method for multiple checkboxes and radio buttons to align them vertical instead of horizontal (default).
 
 ```php
 $checkbox = new InputCheckboxMultiple('myCheckbox')
@@ -840,60 +843,62 @@ $password = new InputPassword('password');
 $password->showPasswordToggle();
 ```
 
-#### sendAttachment() for file input fields (only for FrontendForms <= 2.1.12)
-> ⚠ This method is depreciated and only necessary if you are using FrontendForms 2.1.12 or lower.
-In newer versions you do not need to add this method, because it will be added automatically via a Hook to the WireMail
-object if a file upload field is present in the form.
+#### sendAttachment()
+This method has to be used with the WireMail class. It needs the form object as first parameter. This method is similar to the WireMail attachment() method, but it has some extra functionality and needs to be taken instead of the attachment() method. 
 
-This method has to be used with the WireMail class (only on FrontenForms 2.1.12 or lower). It is the same as the
-WireMail attachment() method, but it has some extra functionality. It saves the uploaded files in a pre-defined temp
-folder called "temp_uploads".
-You do not need to enter the path to the files manually. After the files were sent, all files in the temp folder will be
-deleted.
-You can disable the deletion of the files afterwards if you enter true inside the parenthesis.
-Just to mention, you have the possibility at the form object to change the path to your upload folder with the
-setUploadPath() method to your own preference. Do not do this on forms that send emails with attachments. It will only
-work if the attachment files will be uploaded in the "temp_uploads" folder.
+**Upload multiple files**
+This method supports the upload of multiple files at once. The WireMail attachment() method supports only upload of 1 file.
+
+**Keep files after mail sent**
+By default all files that will be uploaded and sent via mail will be deleted after the mail has been sent. You can disable the deletion of the file afterwards by adding 'true' as second parameter. In this case the files will be stored under the site/assets/files directory inside the appropriate page folder.
+
+**Move uploaded files after mail have been sent**
+You can also move the files after mail have been sent to a new location by adding the path to the new location as second parameter.
 
 ```php
 $m = wireMail();
-$m->sendAttachment(); // attachments will be deleted after sending
+$m->sendAttachment($form); // attachments will be deleted after sending
 
 $m = wireMail();
-$m->sendAttachment(true); // attachments will not be deleted after sending
+$m->sendAttachment($form, true); // attachments will not be deleted after sending
 ```
-Take a look at the contact form in the example folder which uses file upload too.
+$m = wireMail();
+$m->sendAttachment($form, 'path/to/new/location'); // attachments will be moved to a new location after sending
+```
+Take a look at the [contact form](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactform.php) in the example folder which uses file upload fields too.
 
 #### allowMultiple() for file input fields
-By default, file upload fields only allow to upload 1 file. With this method you can change this behaviour by adding true
+By default, file upload fields only allow to upload 1 file. With this method you can add support for multiple file uploads by adding true
 or false inside the parenthesis:
-True: renders a multiple upload field
-False: renders a single upload field
+
+**True**: renders a multiple upload field
+**False**: renders a single upload field
 
 ```php
 $m = wireMail();
 $m->allowMultiple(true);
 ```
-#### mailTemplate() to change/disable the email template
-With this method you can overwrite the global setting from the module configuration. Use this if you want to use another
-template for sending emails on or to disable the usage of a template.
-If setting is set to 'none', no template will be used.
+#### mailTemplate() to change/disable the usage email template manually
+This is a new method for the WireMail class, that I have created to support the usage of stylish HTML email templates. Usually you will make this setting in the module configuration, but you can overwrite it manually on per form base if needed with this method.
+Use this if you want to use another template for sending emails or to disable the usage of a template.
+If setting is set to 'none', no template will be used. Otherwise add the name of the template file.
+BTW: You will find all available template files inside the [email-templates folder](https://github.com/juergenweb/FrontendForms/tree/main/email_templates).
 
 ```php
 $m = wireMail();
-$m->mailTemplate('template1');
+$m->mailTemplate('template1,html');
 ```
-
 
 ## Form validation
 The [Valitron validation library](https://github.com/vlucas/valitron) is used to validate form values and this validation
 class comes with a lot of ready-to-use validation rules.
 Please take a look at [Valitron validationtypes](https://github.com/vlucas/valitron#built-in-validation-rules) for all
-available validation rules. There you will find the explanation to each validation rule too.
-At the time of writing, Valitron offers 42 validation rules.
+available validation rules. There you will all validation rules with their explanation.
 
-In addition, I have added 21 custom validation rules especially designed for the usage with ProcessWire, so there are 
+In addition, I have added over 20 custom validation rules especially designed for the usage with ProcessWire, so there are 
 more than 60 validators available out of the box.
+
+In addition, some of the validation rules add HTML 5 attributes to the input tag, which will be used for browser validation, if enabled.
 
 Afterwards, I will give you an overview about all custom rule and their usage:
 
@@ -1100,30 +1105,32 @@ sometimes you need to show another error message than the pre-defined one. For t
 messages with 2 methods.
 
 Default error message:
-By default the error message uses the name of the input field and prepends it before the error message.
+By default the error message uses label of the input field and prepends it before the error message.
 
 ```php
 $field = new InputCheckbox('privacy')
+$field->seLabel('Privacy');
 $field->seRule('required');
 ```
 If the validation fails, the error message will look like this:
 Privacy is required
 
-If you do not want that the name of the field (in this case privacy) should be used, then you can change this in the
+If you do not want to use the label (in this case 'Privacy') of the field, then you can change it in the
 following way:
 
 ### setCustomFieldName()
-By using the setCustomFieldName() method you can change the name of the input field in the error message
+By using the setCustomFieldName() method you can replace the label of the input field with a custom text in the error message
 
 ```php
 $field = new InputCheckbox('privacy')
+$field->seLabel('Privacy');
 $field->seRule('required')->setCustomFieldName('This field');
 ```
 If the validation fails, the error message will look like this:
-"This field is required" instead of "privacy is required".
+"This field is required" instead of "Privacy is required".
 
 ### setCustomMessage()
-Use this method if you want to overwrite the default error message completely.
+Use this method if you want to overwrite the default error message completely (not only the label text).
 
 ```php
 $field = new InputCheckbox('privacy')
@@ -1157,6 +1164,7 @@ $form->add($buttonReset);
 ```
 
 ## Default fields
+Writing fields is a lot of work. But it is getting more frustrating if you have to write always the same fields inside different forms.
 To make life a little easier I have created the most common fields in forms as pre-defined default fields with
 its own class.
 
@@ -1173,30 +1181,29 @@ These are:
 * Message (Textarea to enter a text - class name: Message)
 * Gender (Select to choose the gender - class name: Gender)
 * Username (Input text to enter a username - class name: Username)
-* FileUpload (Input file to upload files - class name: UploadFile)
+* FileUploadSingle (Input file to upload a single files - class name: FileUploadSingle)
+* FileUploadMultiple (Input file to upload multiple files - class name: FileUploadMultiple)
 
-Instead of creating this type of input fields every time on your own, you can use the pre-defined input types as listed above.
+Instead of creating these types of input fields every time on your own, you can use the pre-defined input types listed above instead.
 Every input type has the validation rules and sanitizers included, the labels and error messages are defined set, so
 you can use it as they are - but you are free to add additional sanitizer and validation rules, or you can change the
-error messages to your need.
+error messages to your needs.
+To make this better understandable, take a look at the example below:
 
 This is the way you write usually an email field by hand:
 
 ```php
     $emailfield = new \FrontendForms\InputfieldText('myemailfield');
     $emailfield->setLabel($this->_('Email'));
-    $emailfield->setRule('required')->setCustomFieldName($this->_('Email'));
-    $emailfield->setRule('email');
-    $emailfield->setRule('emailDNS');
+    $emailfield->setRule('required');
 ```
 
 There is nothing wrong with it, but by using the Email() class, you only have to write one line instead of multiple.
-All the properties as you can see above are implemented by default. So this will be a real time saver to you and keeps
-the code inside your template as short as possible.
-Another advantage is that the labels and error messages are set multilingual, and you do not add them manually.
+So this will be a real time saver to you and keeps the code inside your template as short as possible.
+Another advantage is that the labels and error messages are set multilingual, and you do not have to add them manually.
 
 ```php
-    $emailfield = new \FrontendForms\Email();
+    $emailfield = new \FrontendForms\Email('myemailfield');
 ```
 
 You can do the same with all others mentioned pre-defined input types. You only have to instantiate the class of the
