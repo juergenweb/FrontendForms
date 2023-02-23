@@ -25,7 +25,7 @@ class Subject extends InputText
     {
         parent::__construct($id);
         $this->setLabel($this->_('Subject'));
-        $this->setRule('required')->setCustomFieldName($this->_('Subject'));
+        $this->setRule('required');
     }
 
     /**
