@@ -31,7 +31,7 @@ class Username extends InputText
         parent::__construct($id);
         $this->setLabel($this->_('Username'));
         $this->setSanitizer('pageName');
-        $this->setRule('required')->setCustomFieldName($this->_('Username'));
+        $this->setRule('required');
         $this->setRule('usernameSyntax');
         if($this->wire('user')->isLoggedin())
             $this->setDefaultValue($this->wire('user')->name);
