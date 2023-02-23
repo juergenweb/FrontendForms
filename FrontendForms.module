@@ -142,6 +142,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
     protected bool $gd_lib = false; // GD library is enabled/installed or not
 
+
     /**
      * Get all meta data for the module
      * @return array
@@ -153,7 +154,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             'summary' => 'Create forms and validate them using the Valitron library.',
             'author' => "Jürgen Kern",
             'href' => 'https://github.com/juergenweb/FrontendForms',
-            'version' => '2.1.12',
+            'version' => '2.1.13',
             'singular' => true,
             'autoload' => true,
             'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
@@ -1275,6 +1276,51 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     {
 
         $modules = $this->wire()->modules;
+
+        $fieldset0 = $modules->get('InputfieldFieldset');
+        $fieldset0->label = $this->_('Language settings');
+        $fieldset0->description = $this->_('Valitron comes with a lot of translation files for the error messages, but they must be linked to the language(s) of this ProcessWire installation to work properly.');
+        $fieldset0->collapsed = 1;
+        $fieldset0->icon = 'fa-language';
+
+        $languageFiles = $this->wire('files')->find($this->modulePath . 'lang/');
+
+        $lang_codes = [];
+        foreach($languageFiles as $lang){
+            $code = pathinfo($lang, PATHINFO_FILENAME);
+            $lang_codes[$code] = $code;
+        }
+
+        if($this->wire('languages')){
+            // Select language for Valitron messages for site with languages enabled
+
+        foreach($this->wire('languages') as $language){
+            // Select language for Valitron messages
+            $languageSelect = $modules->get('InputfieldSelect');
+            $lang_name = 'input_language_select_'.$language->name;
+            $languageSelect->attr('name', $lang_name);
+            $languageSelect->label = $language->title.' ('.$language->name.')';
+            $languageSelect->description = sprintf($this->_('Select the language for the Valitron error messages in "%s" by selecting the appropriate language code.'), $language->title);
+            $languageSelect->notes = sprintf($this->_('If you did not select one, than English will be used as language for the error messages in %s.'), $language->title);
+                $languageSelect->addOptions($lang_codes);
+            $languageSelect->attr('value', $this->$lang_name);
+            $fieldset0->add($languageSelect);
+
+        }
+        } else {
+            // Select language for Valitron messages for site without languages enabled
+            $languageSelect = $modules->get('InputfieldSelect');
+            $languageSelect->attr('name', 'input_language_select_default');
+            $languageSelect->label = $this->_('Language');
+            $languageSelect->description = $this->_('Select the language for the Valitron error messages by selecting the appropriate language code.');
+            $languageSelect->notes = $this->_('If you did not select one, than English will be used as language for the error messages.');
+            $languageSelect->addOptions($lang_codes);
+            $languageSelect->attr('value', $this->input_language_select_default);
+            $fieldset0->add($languageSelect);
+        }
+
+
+        $inputfields->add($fieldset0);
 
         $fieldset1 = $modules->get('InputfieldFieldset');
         $fieldset1->label = $this->_('Markup and styling settings for the forms');
