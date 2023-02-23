@@ -49,11 +49,10 @@ This module will work without GD-Library too, but you will not be able to use CA
 4. After the installation is finished you can make some configuration settings if you want, but the module works out of the box. The only setting that you have to take care of ist the language setting for the Valitron error messages. You will find this configuration field on the top. Link the language for the Valitron error messages to the appropriate site language, so that that the pre-defined error messages will be displayed in the right language on the frontend.
 If you forget to make this setting, the error messages will always be displayed in English.
 
+### Create the first form
 
-Copy the following code and paste it in a template of your choice
-
-Be aware of namespaces!! If you are using a namespace on the top of your template file, you have to adapt the
-instantiation of the class by using the FrontendForms namespace.
+Before you start creating your own forms, I recommend you to start with a ready to use example. Copy the following code and paste it in a template of your choice, but be aware of namespaces!!
+If you are using a namespace on the top of your template file, you have to adapt the instantiation of the class by using the FrontendForms namespace.
 This module runs in its own namespace called *FrontendForms*.
 
 Take a look at the following example:
@@ -128,24 +127,16 @@ echo $form->render();
 * After that you can create each form field of the form. Each form field must have a name attribute inside the
 * constructor (required).
 * You can set various properties to each form field (setLabel(), setNotes(), setDescription();setRule(), setSanitizer(),...)
-* Use the add method to add the field to the form object.
+* Use the add() method to add the field to the form object.
 * The isValid() method returns true or false, and you can use it to send fe the values as an email or save values to the
 * database, to login a user,....you get the idea. The validation and sanitization of the form values happens inside this method.
 * The render method outputs the markup of the form.
 
 I highly recommend you to study the examples inside the 'examples' folder. There you will find a lot of different use
-cases.
+cases. Some examples are simple, others are more complex. There are also examples including file upload.
 
 Now you are ready to test the module inside your project!
 
-```php
-$forms = new FrontendForms();
-$forms->setLang('de');
-
-$forms->Validator::addRule('allFail', function ($field, $value, array $params) {
-  return false;
-}, 'is wrong');
-```
 ## Which input types are supported?
 You can find examples of all supported input types inside the 'examples' folder in the inputTypes.php
 
@@ -164,7 +155,7 @@ You can find examples of all supported input types inside the 'examples' folder 
 There are multiple traps for spambots included.
 
 ### Honeypot field
-A honeypot field, which changes the position on every page load in random order, will be added automatically by default. If you do not want to include the honeypot field you need to add the useHoneypot(false) method to you form object (not recommended).
+A honeypot field, which changes the position on every page load in random order, will be added automatically by default. If you do not want to include the honeypot field you need to add the [useHoneypot(false)](#usehoneypot) method to you form object (not recommended).
 Info: A honeypot field is a field which is hidden to the user, but a SPAM bot can read it and if this field will be filled out it will be detected as spam.
 Please note that the honeypot field will be hidden via the frontendforms.css file.
 
