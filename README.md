@@ -30,8 +30,7 @@ This module will work without GD-Library too, but you will not be able to use CA
 * [Input fields and their methods](#input-field-methods)
 * [Form validation](#form-validation)
 * [Customization of validation](#customization-of-validation)
-* [Fieldsets](#fieldsets)
-* [Buttons](#buttons)
+* [Other form elements](#fieldsets)
 * [Default fields](#default-fields)
 * [File uploads](#file-uploads)
 * [Hooking](#hooking)
@@ -1161,6 +1160,7 @@ If the validation fails, the error message will look like this:
 `You must accept our privacy policy`
 
 ## Other form elements
+No only field can be part of a form. Afterwards you will find additonal form elements that can be used within your forms.
 
 ### Fieldsets
 You can also add fieldsets and a legend to the form.
