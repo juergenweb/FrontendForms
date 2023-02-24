@@ -231,7 +231,8 @@ and this could be a serious security issue for an account to be hacked.
 For this reason, you have the opportunity create a blacklist of forbidden passwords in the module configuration. To make it much more simple
 for you, it uses passwords from the [top 100 most common passwords](https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-100.txt) list from GitHub, but you can also add your own passwords.
 
-**The best of the blacklist:**
+**Automatic filtering of the blacklist according to your password settings:**
+
 The module takes care about your password requirement settings and does not add all 100 passwords of the top list by default to the
 blacklist.
 This means, only passwords that fulfill your password requirements will be added to the blacklist - all others will not
@@ -246,7 +247,8 @@ So there is no need to add these passwords to the blacklist, because they do not
 
 On the module configuration page you will find a very detailed description how the blacklist works.
 
-**Only to mention:**
+**Automatic update of the blacklist:**
+
 The top 100 password list will be checked once a month on GitHub, if the file has been modified. Once a month is enough
 and GitHub allows only a certain amount of requests per day if you are not using the API. Otherwise, you will get a 403 error (too many requests).
 So, checking once a month should be enough and will prevent a 403 error from occurring.
@@ -259,6 +261,7 @@ This will take HTML 5 attributes (fe. min attribute) and validates it by the bro
 Only to mention: not all browsers support each attribute and the design of the validation messages can differ from browser to browser.
 
 **Good to know**
+
 If you are setting validation rules to a form field, the appropriate HTML5 attribute will be added automatically, but you can add them manually too.
 
 ## Prevent double form submission
@@ -272,7 +275,7 @@ The double-submission check can be set manually (enable/disable) if necessary by
 ## General methods
 General methods are methods that can be used on each object: form, input field, label, description, notes, wrappers, fieldset,...
 
-### setAttribute()
+### setAttribute() - add a single attribute to a tag
 You can add every attribute to an object by adding the attribute name and the value inside the parenthesis separated by a comma.
 
 ```php
@@ -298,21 +301,21 @@ For attributes that can have multiple values like classes, rel, style please wri
   $field->setAttribute('class', 'class3');
 ```
 
-### setAttributes()
+### setAttributes() - add multiple attributes to a tag
 You can also set multiple attributes at once, but you have to put the attributes inside an array.
 
 ```php
   $field->setAttributes(['id' => 'myId', 'class' => 'myClass']);
 ```
 
-### removeAttribute()
+### removeAttribute() - remove a single attribute
 You can remove an attribute by adding the attribute name inside the parenthesis. In this case you will remove the attribute completely.
 
 ```php
   $field->removeAttribute('class'); // this removes the class attribute completely from the tag
 ```
 
-### removeAttributeValue()
+### removeAttributeValue() - remove specific value of an attribute
 You can also remove a specific value of an attribute and not the attribute itself. This is only useful if you want to remove a value from a multi-value attribute (like the class attribute)
 
 ```php
@@ -329,7 +332,7 @@ will be added in the future.
   $field->setAttribute('id','myID'); 
 ```
 
-### prepend(), append()
+### prepend(), append() - prepend or append a string to an object (field, form, button,..)
 You can prepend/append a string before and after an object. So you can add additional markup if you want.
 
 ```php
@@ -345,20 +348,17 @@ The form object holds all the input fields, fieldsets, additional markup,...
   $form = new Form('myForm');
 ```
 
-### useFieldWrapper(), getFieldWrapper()
-Add, remove or get the most outer container for form fields.
-The useFieldWrapper() method overwrites the settings in the module configuration.
-The getFieldWrapper() method returns the Field wrapper object, so you can manipulate it, if you need.
+### useFieldWrapper() - add/remove of the most outer container to/from all formfields
+Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
 
 ```php
 $form = new Form('myForm');
 $form->useFieldWrapper(true); // add the field wrapper to all input elements
 $form->useFieldWrapper(false); // remove the field wrapper from all input elements
-$form->getFieldWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the wrapper object
 ```
-### useFieldWrapper(), useInputWrapper()
-Add or remove the fieldwrapper and inputwrapper from the form elements.
-These methods overwrite the settings in the module configuration.
+
+### useInputWrapper() - add/remove of input container to/from all formfields
+Add/remove the [input-wrapper](#input-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
 
 ```php
 $form = new Form('myForm');
@@ -370,17 +370,8 @@ $form->useInputWrapper(true); // add the input wrapper to all input elements - t
 $form->useInputWrapper(false); // remove the input wrapper from all input elements
 ```
 
-### getFieldWrapper(), getInputWrapper()
-With these methods you can grab the wrapper object for further manipulations, if needed
 
-```php
-$form = new Form('myForm');
-// input wrapper object
-$form->getInputWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the input wrapper object
-// and the same for the field wrapper object
-$form->getFieldWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the field wrapper object
-```
-### useHoneypot()
+### useHoneypot() - enable/disable honeypot field
 This will add or remove the honeypot field. Enter true or false as parameter
 
 ```php
@@ -388,7 +379,7 @@ This will add or remove the honeypot field. Enter true or false as parameter
     $form->useHoneypot(true); // this will add the honeypot field to the form - this is the default setting
 ```
 
-### useDoubleFormSubmissionCheck()
+### useDoubleFormSubmissionCheck() - enable/disable double form submission check
 This will enable/disable the checking of double form submission. This is useful on profile forms, where you can change
 your data multiple times.
 
@@ -397,33 +388,33 @@ your data multiple times.
   $form->useDoubleFormSubmissionCheck(false); // double form submission check will be disabled on the form
 ```
 
-### disableCaptcha()
+### disableCaptcha() - remove the CAPTCHA on per form base
 With this method you can disable the usage of CAPTCHA on per form base. This makes sense, fe if the user is logged in and you do not want to show the CAPTCHA inside his profile form.
 
 ```php
   $form->disableCaptcha();
 ```
-### setRequiredText()
+### setRequiredText() - customize text for required fields
 With this method you can overwrite the default hint that will be displayed on the form to inform the user that he has to fill all required fields marked with an asterisk.
 
 ```php
   $form->setRequiredText('Please fill out all required fields');
 ```
 
-### setRequiredTextPosition()
+### setRequiredTextPosition() - change required text position
 With this method you can overwrite the position of the required text in the global settings in the backend. As parameter, you have none, top or bottom. If set to top, the text will be displayed above the form, otherwise below. If you choose none, then the text will not be displayed at all.
 
 ```php
   $form->setRequiredTextPosition('bottom');
 ```
 
-### setMethod()
+### setMethod() - change the form sending method
 Set the form method (post, get). If you want to use post as your method, you do not need to add this method explicitly, because this method was set as the default method.
 
 ```php
   $form->setMethod('post');
 ```
-### setMinTime(), setMaxTime()
+### setMinTime(), setMaxTime() - change min/max time for submitting a form
 
 Set the min and max time for form submission in seconds. The form will only be submitted if the submission time is in between the time range.
 
@@ -431,7 +422,7 @@ Set the min and max time for form submission in seconds. The form will only be s
   $form->setMinTime(5);
   $form->setMaxTime(3600);
 ```
-### setMaxAttempts()
+### setMaxAttempts() - change max number of invalid submission attempts 
 
 Set the max number of attempts to submit a form successful. If the number of unsuccessful attempts is higher than the max number of attempts, the form submission will be blocked.
 
@@ -439,7 +430,7 @@ Set the max number of attempts to submit a form successful. If the number of uns
   $form->setMaxAttempts(10);
 ```
 
-### getValues()
+### getValues() - get all $_POST values after successfull form submission as array
 This method returns all form values after successful validation as an array. Use this method to process the values further (fe send via email).
 By default, this method only returns values from inputfields. If you need values from buttons to, please add true inside the parenthesis.
 
@@ -450,47 +441,51 @@ By default, this method only returns values from inputfields. If you need values
 ```php
   $form->getValues(true); // this also outputs the value of a button (fe send) if needed
 ```
-### getValuesAsString()
+### getValuesAsString() - get all $_POST values after successfull form submission as a string
 This method is the same as the getValues() method, but it returns all post values as a string instead of an array.
 
 ```php
   $form->getValuesAsString();
 ```
-### getValue()
+### getValue() - get a single $_POST value by its name
 This will return the value of a specific input field after a successful form submission. You have to write the name of the input field inside the parenthesis.
 ```php
   $form->getValue('subject'); // this will return the value of the input field with the name attribute subject
 ```
-### add()
+### add() - add a field to the form object
 This is the method to add a field to the form. You have to enter the field object inside the parenthesis.
+
 ```php
   $form->add($field);
 ```
 
-### remove()
+### remove() - remove a field from the form object
 This is the method to remove a field from the form. You have to enter the field object inside the parenthesis.
+
 ```php
   $form->remove($field);
 ```
-### getFormelementByName()
+### getFormelementByName() - get a specific form field by is name
 Grab a form element by its name attribute - returns the field object for further manipulation.
 Fe if you want to get the field with the name attribute "email" add "email" as parameter inside the parenthesis, and you will get the form field object as return value.
 ```php
   $form->getFormelementByName($fieldname); // fieldname could be fe email, pass or whatever
 ```
 
-### setErrorMsg()
+### setErrorMsg() - overwrite the default error message after form submission
 With this method you can overwrite the default error message which appears inside the alert box after an unsuccessful form submission.
 ```php
   $form->setErrorMsg('Sorry, but there are errors!');
 ```
-### setSuccessMsg()
+### setSuccessMsg() - overwrite the default success message after form submission
 With this method you can overwrite the default success message which appears inside the alert box after a successful form submission.
 ```php
   $form->setSuccessMsg('Congratulations, your message was submitted successfully!');
 ```
-### useFormElementsWrapper()
-With this method you can wrap all form fields in an extra div, or remove the wrapper
+### useFormElementsWrapper() - add/rmove an additional div container (wrapper) over all form fields
+A user requested this functionality for usage with a specific framework (I cannot remember which one), so I have added this functionality.
+With this method you can wrap all form fields in an extra div, or remove the wrapper.
+
 ```html
   <form>
     <div id="formelementswrapper">
@@ -504,36 +499,38 @@ You only have to add this method to your form object with bool parameter
   $form->useFormElementsWrapper(false); // removes the wrapper
 ```
 
-### getFormElementsWrapper()
+### getFormElementsWrapper() - get the form elements wrapper object
 This method returns the wrapper object for all form fields for fe further manipulations.
+
 ```php
   $form->getFormElementsWrapper();
 ```
 
 ### appendLabelOnCheckboxes() and appendLabelOnRadios() for checkboxes and radio buttons
-By default, all checkboxes and radio buttons are wrapped by their label tag.
+By default, all checkboxes and radio buttons are wrapped(surrounded) by their label tag. This is what you can see in most CSS frameworks, but sometimes this is not the case and the labels should be appended to the input field instead.
+
+Default case: Labels surrounded by the input tag
 
 ```html
 <label><input type="checkbox">Checkbox Label</label>
 ```
-Sometimes it is necessary (fe. by using certain CSS frameworks), that the label tag is after the input tag.
+
+Special case: Label will be appended after the input tag
+
 ```html
 <input type="checkbox"><label>Checkbox Label</label>
 ```
-For this case you can use these two methods, which should be added to the form object.
+
 You can set this behavior globally in the module configuration, but you can overwrite it on per form base if needed.
 
 ```php
-$form->appendLabelOnCheckboxes(); // or
 $form->appendLabelOnCheckboxes(true); //appends the label after the input tag
-```
-
-```php
 $form->appendLabelOnCheckboxes(false); // the input tag will be wrapped by the label tag
 ```
+
 You can do the same for radio buttons by using the appendLabelOnRadios() method.
 
-### setUploadPath()
+### setUploadPath() - change the default storage location for uploaded files
 If you are using a file upload field inside your form, all uploaded files will be in the site/assets/files/ directory inside a folder named after the id of the page where the form  is included. Fe the id of the page where the form is included is 1000, then the files will be stored inside site/assets/files/1000. 
 This is usually the way to go, but in rare cases you will need to store the files at an other location. 
 For this use case you can use this method.
@@ -542,14 +539,16 @@ For this use case you can use this method.
 $form->setUploadPath('mycustomfolder/'); // the files will be stored at site/assets/files/mycustomfolder/
 ```
 
-### useIPBan()
+### useIPBan() - enable/disable checking of forbidden IP address
+As written in the [security part](#measure-4-ip-blacklist), you can log every IP that did not submit a form within the allowed number of max attempts. 
+Each IP that has been logged, cannot view a form until it the logging 
 You can disable the checking of the IP address on each form manually.
 
 ```php
 $form->useIPBan(true); // IP checking will be enabled on this form - this is the default value
 $form->useIPBan(false); // IP checking will be disabled on this form
 ```
-#### testIPBan()
+#### testIPBan() - test method to check if IP ban works (only for dev purpose)
 This is only a testing method to check if IP banning works.
 Enter an IP address inside the module configuration and then use this method on the form by entering the IP inside the parenthesis.
 
@@ -558,22 +557,23 @@ $form->testIPBan('146.70.36.200'); //
 ```
 By visiting the page, an alert box will be displayed on the frontend instead of the form. Try it out to see how it works.
 
-### logFailedAttempts()
+### logFailedAttempts() - enable/disable logging of IP addresses after the number of max failed attempts
+Every visitor, which needs more than the allowed number of max attempts to submit a form, can be logged (written to the log files) if set in the module configuration.
 You can enable/disable the logging of blocked visitors IP on per form base.
 
 ```php
 $form->logFailedAttempts(true); // blocked visitors will be logged on this form
 $form->logFailedAttempts(false); // no log entry will be written if visitors are blocked -> this is the default setting
 ```
-### isValid()
+### isValid() - main method to validate the form
 This is the most important method. It takes the user data, sanitizes it, validates it and outputs possible errors or the success message.
 Returns true or false after form submission. You have to use this method to process the submitted form data further.
 ```php
   $form->isValid();
 ```
 
-### isBlocked()
-
+### isBlocked() - check whether a visitor is blocked or not
+Every visitor, which needs more than the allowed number of max attempts to submit a form, will be blocked by using a session. You will find more info about this [here](#measure-1-set-max-number-of-invalid-attempts).
 If you want to do another logic if a user was blocked, then use the isBlocked() method and run your code inside it.
 Only to mention: A user will be blocked if the max number of attempts to submit the form with success was reached.
 
@@ -586,7 +586,8 @@ Only to mention: A user will be blocked if the max number of attempts to submit 
   }
   $form->render()
 ```
-### render()
+
+### render() - output the markup of the form
 Render the form on the page.
 
 ```php
@@ -624,28 +625,48 @@ These elements do not need a more detailed explanation. Only to mention here: yo
 ### General Methods for all input fields
 These methods can be used on each input field independent of the input type.
 
-#### setLabel()
+### getFieldWrapper() - get the most outer container of a formfield object
+Get the fieldwrapper object for form fields for further manipulations
+The getFieldWrapper() method returns the Field wrapper object, so you can manipulate it, if you need.
+
+```php
+$form = new Form('myForm');
+$form->getFieldWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the wrapper object
+```
+
+### getInputWrapper() - get the container element surrounding the input field
+With this method you can grab the wrapper object for further manipulations, if needed
+
+```php
+$form = new Form('myForm');
+// input wrapper object
+$form->getInputWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the input wrapper object
+// and the same for the field wrapper object
+$form->getFieldWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the field wrapper object
+```
+
+#### setLabel() - add the label text
 Method to add a label to the form field. Returns a label object.
 
 ```php
 $field->setLabel('E-Mail address');
 ```
 
-#### setNotes()
+#### setNotes() - add text for notes under the input field
 Method to add notes to the form field. Returns a notes object.
 
 ```php
 $field->setNotes('You have to fill out this field');
 ```
 
-#### setDescription()
+#### setDescription() - add a description text to an input field
 Method to add a description to the form field. Returns a description object.
 
 ```php
 $field->setDescription('This text describes the input field more in detail');
 ```
 
-#### setSanitizer()
+#### setSanitizer() - set a ProcessWire sanitizer
 Method to add a sanitizer to the form field. Returns a sanitizer object. You can use all ProcessWire sanitizer methods by adding the sanitizer name inside the parenthesis of the setSanitizer() method. You can also set multiple sanitizer methods to one field if necessary.
 
 **Please note:**
@@ -656,7 +677,7 @@ For security reasons, the text sanitizer will be applied to each input field aut
 $field->setSanitizer('text');
 ```
 
-#### hasSanitizer()
+#### hasSanitizer() - check if a special sanitizer was set to the field
 If you want to check if an input field has the given sanitizer, you can use this method.
 Returns true or false.
 
@@ -664,7 +685,7 @@ Returns true or false.
 $field->hasSanitizer('text');
 ```
 
-#### getSanitizers()
+#### getSanitizers() - get all sanitizers set to a the field
 If you want to know, which sanitizers are added to a field, you can use this method which returns an array containing
 the names of all sanitizer added to this field.
 
@@ -672,7 +693,7 @@ the names of all sanitizer added to this field.
 $field->getSanitizers();
 ```
 
-#### removeSanitizers()
+#### removeSanitizers() - remove all previously set sanitizers
 You can remove all sanitizers (including the sanitizers applied by default) with this method if you enter no value inside the parenthesis.
 By entering one sanitizer as a string you can remove only this one.
 By entering multiple sanitizers as an array, you can remove multiple sanitizers at once.
@@ -683,7 +704,7 @@ $field->removeSanitizers('text'); // removes only the text sanitizer from this i
 $field->removeSanitizers(['text', 'number']); // removes multiple sanitizers from this input field
 ```
 
-#### setRule()
+#### setRule() - set a validation rule to a field
 Method to add a validator to the form field. You can find examples of all validators in the validationTypes.php inside the 'examples' folder. Add the name of the validator inside the parenthesis of the setRule() method. You can also set multiple validation methods to one field if necessary.
 
 ```php
@@ -691,8 +712,7 @@ $field->setRule('required');
 $field->setRule('number');
 ```
 
-#### getRules()
-
+#### getRules() - get all previously set validation rules of a field
 Method to get all validators of a form field.
 This is especially useful, if you want to know which validators are set to a field.
 Most of the input fields have validators set by default, so you do not need to add them manually.
@@ -702,14 +722,14 @@ This method will turn an array with the names of all validators set to this fiel
 $field->getRules();
 ```
 
-#### removeRule()
+#### removeRule() - remove all previously set validation rules from a field
 This is the opposite of setRule(). You can remove unwanted rules with this method. This is useful if you use ['default fields'](#default-fields), which contains some validation rules by default.
 
 ```php
 $field->removeRule('required'); // this removes the required validator from the field
 ```
 
-#### hasRule()
+#### hasRule() - check if a field has a specific validation rule set
 If you want to know if a certain field has a specific rule added, you can use this method. Add the name of the rule as
 the parameter inside the parenthesis and the method returns boolean true or false.
 
@@ -717,13 +737,14 @@ the parameter inside the parenthesis and the method returns boolean true or fals
 $field->hasRule('required');
 ```
 
-#### getErrorMessage()
+#### getErrorMessage() - get the error message object of a field for further manipulations
 You can use this method to manipulate attributes of the error message on per field base. Returns the error message object for further manipulations.
+
 ```php
 $field->getErrorMessage()->setAttribute('class', 'myErrorClass');
 ```
 
-#### setDefaultValue()
+#### setDefaultValue() - set a default value for an input field on page load
 Set pre-defined values on page load to each input field. If it is an input field that can contain more than 1 value (fe select multiple, checkbox multiple), you can add multiple values separated by a comma.
 Another possibility is to add 1 or multiple values as an array instead of a string.
 Be aware: This works only on input fields with a value set (not fe on checkboxes with no value).
@@ -754,7 +775,7 @@ $multifield->setDefaultValue(['Tennis', 'Polo', 'Swimming']);
 
 There is no wrong or right: it depends on your preference of writing.
 
-#### setChecked() for single checkboxes without values
+#### setChecked() - set default value for single checkboxes without values
 As written above, setDefaultValue() can only be used for inputs with values.
 Single checkboxes do not need values. To make them checked by default, you have to use
 the setChecked() method instead of the setDefaultValue() method.
@@ -771,7 +792,7 @@ $checkbox = new Checkbox('singlecheckbox')
 $checkbox->setChecked();
 ```
 
-#### render()
+#### render() - output the markup of an input field
 Method to render an input field. You do not need this method until you want to render an input field on its own.
 
 ```php
@@ -781,7 +802,7 @@ echo $field->render();
 ### Special Methods for input fields
 These methods can only be used on certain input fields.
 
-#### alignVertical() for checkboxes and radio buttons
+#### alignVertical() - set the alignment for checkboxes and radio buttons
 This is only a method for multiple checkboxes and radio buttons to align them vertical instead of horizontal (default).
 
 ```php
@@ -789,7 +810,7 @@ $checkbox = new InputCheckboxMultiple('myCheckbox')
 $checkbox->alignVertical();
 ```
 
-#### addOption() for checkboxes, radio buttons, select and datalist
+#### addOption() - add option tags for checkboxes, radio buttons, select and datalist
 Method for multiple checkboxes, multiple radio buttons, select and datalist inputs to add an option element. As parameters, you have to add the label as first and the value as second parameter. Afterwards is an example with a multiple checkbox.
 
 ```php
@@ -798,7 +819,7 @@ $checkbox->addOption('Checkbox 1', '1');
 $checkbox->addOption('Checkbox 2', '2');
 ```
 
-#### addEmptyOption() for select and select multiple
+#### addEmptyOption() - add an empty option at the top for select and select multiple
 
 ```php
 $select = new SelectMultiple('mySelect');
@@ -809,7 +830,7 @@ $select->addOption('Value 2', '2');
 By adding the addEmptyOption() method, the first option in line will not be selected by default. You do not need to add a text inside the parenthesis. By default, "-" will be shown.
 Just add it to your select to see how it works.
 
-#### setOptionsFromField() for select multiple, radio multiple, checkbox multiple and datalist input fields
+#### setOptionsFromField() - use options from a ProcessWire field for select multiple, radio multiple, checkbox multiple and datalist input fields
 
 ```php
 $select = new SelectMultiple('myField');
@@ -820,7 +841,7 @@ With this method you can use the options from a ProcessWire field of the type Fi
 You only have to enter the name of the PW field and the field must be of the type FieldtypeOptions.
 Otherwise, it will not work.
 
-#### showPasswordRequirements() for password fields
+#### showPasswordRequirements() - show the password requirements under a password field
 This method can be added to a password field and shows the password conditions set on the password field in the backend (fe has to contain digit uppercase, digit lowercase,...) under the input field.
 By default, the requirements of the password field with the name "pass" will be shown. If your password field has another name, please insert the name as parameter to the method.
 
@@ -833,7 +854,7 @@ $password2 = new InputPassword('password2');
 $password2->showPasswordRequirements('test'); // the values from the field "test" will be used
 ```
 
-#### showPasswordToggle() for password fields
+#### showPasswordToggle() - show a checkbox to make the password value visible next to a password field
 This method can be added to a password field and adds a checkbox below the input field. If the checkbox will be checked, the password entered will be displayed in plain text, otherwise not.
 JavaScript is used to show/hide the password in plain text.
 
@@ -842,7 +863,7 @@ $password = new InputPassword('password');
 $password->showPasswordToggle();
 ```
 
-#### sendAttachment()
+#### sendAttachment() - send files via the WireMail class
 This method has to be used with the WireMail class. It needs the form object as first parameter. This method is similar to the WireMail attachment() method, but it has some extra functionality and needs to be taken instead of the attachment() method. 
 
 **Upload multiple files**
@@ -877,7 +898,7 @@ or false inside the parenthesis:
 $m = wireMail();
 $m->allowMultiple(true);
 ```
-#### mailTemplate() to change/disable the usage email template manually
+#### mailTemplate() - change/disable the usage of an email template manually
 This is a new method for the WireMail class, that I have created to support the usage of stylish HTML email templates. Usually you will make this setting in the module configuration, but you can overwrite it manually on per form base if needed with this method.
 Use this if you want to use another template for sending emails or to disable the usage of a template.
 If setting is set to 'none', no template will be used. Otherwise add the name of the template file.
@@ -885,7 +906,12 @@ BTW: You will find all available template files inside the [email-templates fold
 
 ```php
 $m = wireMail();
-$m->mailTemplate('template1,html');
+$m->mailTemplate('template1,html'); // use template1.html for sending emails with this form
+```
+
+```php
+$m = wireMail();
+$m->mailTemplate('none'); // disable the usage of email templates for sending emails with this form
 ```
 
 ## Form validation
@@ -1092,7 +1118,7 @@ $field->setRule('forbiddenFileExt', ['exe','pps']);
 $field->setRule('phpIniFilesize');
 ```
 
-Maybe other custom validation rules will be added in the future. If you have some ideas, please write a pull request.
+Maybe other custom validation rules will be added in the future. If you have an idea for an useful validator, please let me know.
 
 Inside the folder 'examples' you will find examples of the usage of validation rules inside the validationTypes.php.
 Take a look at these examples on how to write and add validation rules to your input fields.
