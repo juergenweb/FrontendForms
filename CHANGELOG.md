@@ -209,3 +209,7 @@ A lot of bugs were corrected
 ## [2.1.13] - 2023-02-23
 
 New language configuration field for setting the language for Valitron error messages added to the module configuration. Now it is no longer needed to add language settings to the _init.php  file inside the templates folder.
+
+## [2.1.14] - 2023-02-24
+New language configuration fields have been removed again and the default Valitron error message language files inside the lang folder have been removed and have been replaced by translatable ProcessWire language strings by adding a new file (errormessages.php) to the valitron directory. 
+Now nothing has to be taken into account get the correct user language for the messages on the frontend.
