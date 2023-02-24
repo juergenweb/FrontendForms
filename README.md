@@ -1212,7 +1212,7 @@ This is the way you write usually an email field by hand:
 
 ```php
     $emailfield = new \FrontendForms\InputfieldText('myemailfield');
-    $emailfield->setLabel($this->_('Email'));
+    $emailfield->setLabel('Email');
     $emailfield->setRule('required');
 ```
 
