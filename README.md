@@ -119,15 +119,13 @@ echo $form->render();
 ```
 ### Short Explanation step by step
 * First of all you have to create a new form object. Inside the constructor you have to add the id of the form.
-* After that you can create each form field of the form. Each form field must have a name attribute inside the
-* constructor (required).
+* After that you can create each form field of the form. Each form field must have a name attribute inside the constructor (required).
 * You can set various properties to each form field (setLabel(), setNotes(), setDescription();setRule(), setSanitizer(),...)
-* Use the add() method to add the field to the form object.
-* The isValid() method returns true or false, and you can use it to send fe the values as an email or save values to the
-* database, to login a user,....you get the idea. The validation and sanitization of the form values happens inside this method.
+* Use the add() method to add each field to the form object.
+* The isValid() method returns true or false, and you can use it to send fe the values via email or save them to the database, to login a user,....you get the idea. The validation and sanitization of the form values happens inside this method.
 * The render method outputs the markup of the form.
 
-I highly recommend you to study the examples inside the ['examples'](https://github.com/juergenweb/FrontendForms/tree/main/Examples) folder. There you will find a lot of different use cases. Some examples are simple, others are more complex. There are also examples including file upload.
+> ⚠️ I highly recommend you to study the examples inside the ['examples'](https://github.com/juergenweb/FrontendForms/tree/main/Examples) folder. There you will find a lot of different use cases. Some examples are simple, others are more complex. There are also examples including file upload.
 
 Now you are ready to test the module inside your project!
 
