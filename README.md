@@ -1435,7 +1435,7 @@ Take a look at the example form below:
 
 ```php
 $namefield = new \FrontendForms\InputfieldText('myname');
-$namefield->setLabel($this->_('My name'));
+$namefield->setLabel('My name');
 ```
 
 As you can see, the inputfield has the name/id "myname."
