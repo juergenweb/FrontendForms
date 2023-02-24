@@ -15,7 +15,6 @@ namespace FrontendForms;
 use DateTime;
 use Exception;
 use ProcessWire\Field as Field;
-use ProcessWire\FrontendForms;
 use ProcessWire\HookEvent;
 use ProcessWire\Language;
 use ProcessWire\User;
@@ -30,7 +29,6 @@ use function ProcessWire\_n;
 
 class Form extends Tag
 {
-
 
     /* constants */
     const FORMMETHODS = ['get', 'post']; // array that holds allowed action methods (get, post)
@@ -107,9 +105,7 @@ class Form extends Tag
         $this->visitorIP = $this->wire('session')->getIP();
         $this->showForm = $this->allowFormViewByIP(); // show or hide the form depending on IP ban
         $this->setAttribute('method', 'post'); // default is post
-        //if ($this->page) { // suppress warning if API is not ready in the backend
         $this->setAttribute('action', $this->page->url); // stay on the same page - needs to run after API is ready
-        //}
         $this->setAttribute('id', $id); // set the id
         $this->setAttribute('name', $this->getID() . '-' . time());
         $this->setHtml5Validation($this->input_html5_validation);
@@ -158,10 +154,8 @@ class Form extends Tag
      * @param bool $validation
      * @return $this
      */
-    public
-    function setHtml5Validation(
-        string|int|bool|null $validation
-    ): self {
+    public function setHtml5Validation(string|int|bool|null $validation): self
+    {
         $validation = (bool)$validation;
         $this->input_html5_validation = $validation;
         if ($validation) {
@@ -176,8 +170,7 @@ class Form extends Tag
      * Return if HTML5 form validation is enabled or not
      * @return bool
      */
-    public
-    function getHTML5Validation(): bool
+    public function getHTML5Validation(): bool
     {
         return $this->input_html5_validation;
     }
@@ -190,10 +183,8 @@ class Form extends Tag
      * @return void
      * @throws WireException
      */
-    public
-    function useDoubleFormSubmissionCheck(
-        int|string|bool $useDoubleFormSubmissionCheck
-    ): void {
+    public function useDoubleFormSubmissionCheck(int|string|bool $useDoubleFormSubmissionCheck): void
+    {
         $useDoubleFormSubmissionCheck = $this->sanitizeValueToInt($useDoubleFormSubmissionCheck); // sanitize to int
 
         $this->useDoubleFormSubmissionCheck = $useDoubleFormSubmissionCheck; // set the property
@@ -218,10 +209,8 @@ class Form extends Tag
      * @param bool|int $show
      * @return void
      */
-    public
-    function showFormAfterValidSubmission(
-        bool|int $show
-    ): void {
+    public function showFormAfterValidSubmission(bool|int $show): void
+    {
         $this->showFormAfterValidSubmission = $show;
     }
 
@@ -229,8 +218,7 @@ class Form extends Tag
      * Get the value whether the form should be displayed after successful submission or not
      * @return bool
      */
-    public
-    function getShowFormAfterValidSubmission(): bool
+    public function getShowFormAfterValidSubmission(): bool
     {
         return (bool)$this->showFormAfterValidSubmission;
     }
@@ -242,10 +230,8 @@ class Form extends Tag
      * @return void
      * @throws WireException
      */
-    protected
-    function getConfigValues(
-        string $moduleName
-    ): void {
+    protected function getConfigValues(string $moduleName): void
+    {
         $configValues = $this->wire('modules')->getConfig($moduleName);
         // create a property of each module config of this module
         foreach ($configValues as $key => $value) {
@@ -260,8 +246,7 @@ class Form extends Tag
      * @return array
      * @throws WireException
      */
-    private
-    function generalPlaceholders(): array
+    private function generalPlaceholders(): array
     {
         return [
             'domainlabel' => $this->_('Domain'),
@@ -289,8 +274,7 @@ class Form extends Tag
      * @return void
      * @throws WireException
      */
-    private
-    function createGeneralPlaceholders(): void
+    private function createGeneralPlaceholders(): void
     {
         foreach ($this->generalPlaceholders() as $placeholderName => $placeholderValue) {
             $this->setMailPlaceholder($placeholderName, $placeholderValue);
@@ -304,8 +288,7 @@ class Form extends Tag
      * @return void
      * @throws WireException
      */
-    protected
-    function setLangAppendix(): void
+    protected function setLangAppendix(): void
     {
         if ($this->wire('languages')) {
             $this->langAppendix = $this->userLang->isDefault() ? '' : '__' . $this->userLang->id;
@@ -323,10 +306,8 @@ class Form extends Tag
      * @return void
      * @throws WireException
      */
-    protected
-    function includeMailTemplate(
-        WireMail $mail
-    ): void {
+    protected function includeMailTemplate(WireMail $mail): void
+    {
         // set email_template property if it was not set before
         if (!$mail->email_template) {
             $mail->email_template = $this->input_emailTemplate;
@@ -355,8 +336,7 @@ class Form extends Tag
      * Needs to be called after all fields were added
      * @return bool -> true: a file upload field was found, false: no file upload field found
      */
-    protected
-    function hasFileUploadField(): bool
+    protected function hasFileUploadField(): bool
     {
         if (($this->hasAttribute('enctype')) && ($this->getAttribute('enctype') == 'multipart/form-data')) {
             return true;
@@ -368,8 +348,7 @@ class Form extends Tag
      * If file upload fields are present in a form - get an array of objects containing all file upload fields
      * @return array
      */
-    protected
-    function getFileUploadFields(): array
+    protected function getFileUploadFields(): array
     {
         $fields = [];
         if ($this->hasFileUploadField()) {
@@ -387,23 +366,14 @@ class Form extends Tag
      * Add the sendAttachments() method too to send files via mail
      * @throws WireException
      */
-    public
-    function renderTemplate(
-        HookEvent $event
-    ): WireMail {
+    public function renderTemplate(HookEvent $event): WireMail
+    {
         $mail = $event->object;
-
-        /*
-        // add the file sending method by default
-        if ($this->hasFileUploadField()) {
-            $mail->sendAttachments();
-        }
-        */
 
         // set the placeholder for the title if present
         $this->setMailPlaceholder('title', $mail->title);
-        // set the placeholder for the body
 
+        // set the placeholder for the body
         if (($mail->bodyHTML) || ($mail->body)) {
 
             // set $mail->bodyHTML as prefered value
@@ -413,6 +383,9 @@ class Form extends Tag
                     ['tagOpen' => '[[', 'tagClose' => ']]']);
                 $this->setMailPlaceholder('body', $body);
             }
+
+            $mail->bodyHTML($body);
+            $mail->body($body);
 
         }
 
@@ -427,8 +400,7 @@ class Form extends Tag
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected
-    function redirectAfterSubmission(): void
+    protected function redirectAfterSubmission(): void
     {
         if ($this->wire('session')->get('valid')) {
             $this->wire('session')->remove('valid');
@@ -449,10 +421,8 @@ class Form extends Tag
      * @param string $templatePath - the path to the template that should be rendered
      * @return string - the html template
      */
-    protected
-    function loadTemplate(
-        string $templatePath
-    ): string {
+    protected function loadTemplate(string $templatePath): string
+    {
         ob_start();
         include($templatePath);
         $var = ob_get_contents();
@@ -469,10 +439,7 @@ class Form extends Tag
      * @throws WireException
      * @throws Exception
      */
-    public
-    function to(
-        string $email
-    ): self {
+    public function to(string $email): self {
         if ($this->wire('sanitizer')->email($email)) {
             $this->receiverAddress = $email;
         } else {
@@ -488,10 +455,8 @@ class Form extends Tag
      * @return string
      * @throws WireException
      */
-    public
-    function getDate(
-        string|null $dateTime = null
-    ): string {
+    public function getDate(string|null $dateTime = null): string
+    {
         $fieldName = 'input_dateformat' . $this->langAppendix;
         $format = $this->$fieldName ?? $this->defaultDateFormat;
         return $this->wire('datetime')->date($format, $dateTime);
@@ -504,10 +469,8 @@ class Form extends Tag
      * @return string
      * @throws WireException
      */
-    public
-    function getTime(
-        string|null $dateTime = null
-    ): string {
+    public function getTime(string|null $dateTime = null): string
+    {
         $fieldName = 'input_timeformat' . $this->langAppendix;
         $format = $this->$fieldName ?? $this->defaultTimeFormat;
         return $this->wire('datetime')->date($format, $dateTime);
@@ -520,10 +483,8 @@ class Form extends Tag
      * @return string
      * @throws WireException
      */
-    public
-    function getDateTime(
-        string|null $dateTime = null
-    ): string {
+    public function getDateTime(string|null $dateTime = null): string
+    {
         return $this->getDate($dateTime) . ' ' . $this->getTime($dateTime);
     }
 
@@ -533,11 +494,8 @@ class Form extends Tag
      * @param string|array|null $placeholderValue
      * @return $this
      */
-    public
-    function setMailPlaceholder(
-        string $placeholderName,
-        string|array|null $placeholderValue
-    ): self {
+    public function setMailPlaceholder(string $placeholderName, string|array|null $placeholderValue): self
+    {
 
         if (!is_null($placeholderValue)) {
             $placeholderName = strtoupper(trim($placeholderName));
@@ -569,10 +527,8 @@ class Form extends Tag
      * @param string $placeholderName
      * @return void
      */
-    public
-    function removePlaceholder(
-        string $placeholderName
-    ): void {
+    public function removePlaceholder(string $placeholderName): void
+    {
         $key = strtoupper(trim($placeholderName));
         if (array_key_exists($key, $this->getMailPlaceholders())) {
             unset($this->getMailPlaceholders()[$key]);
@@ -584,8 +540,7 @@ class Form extends Tag
      * For usage in body template of emails
      * @return array
      */
-    public
-    function getMailPlaceholders(): array
+    public function getMailPlaceholders(): array
     {
         return $this->mailPlaceholder;
     }
@@ -595,10 +550,8 @@ class Form extends Tag
      * @param string $placeholderName
      * @return string
      */
-    public
-    function getMailPlaceholder(
-        string $placeholderName
-    ): string {
+    public function getMailPlaceholder(string $placeholderName): string
+    {
         $content = '';
         if (array_key_exists(strtoupper($placeholderName), $this->mailPlaceholder)) {
             $content = $this->mailPlaceholder[$placeholderName];
@@ -611,8 +564,7 @@ class Form extends Tag
      * For usage in body template of emails
      * @return array
      */
-    protected
-    function getFormFieldClasses(): array
+    protected function getFormFieldClasses(): array
     {
         $classes = [];
         foreach ($this->formElements as $fieldObject) {
@@ -626,10 +578,8 @@ class Form extends Tag
      * @param string $fieldName
      * @return bool
      */
-    public
-    function formfieldExists(
-        string $fieldName
-    ): bool {
+    public function formfieldExists(string $fieldName): bool
+    {
         $fieldName = (trim($fieldName));
         return (in_array(strtolower($fieldName), array_map("strtolower", $this->getFormFieldClasses())));
     }
@@ -639,10 +589,8 @@ class Form extends Tag
      * @param string $fieldName
      * @return string
      */
-    protected
-    function getLangValueOfConfigField(
-        string $fieldName
-    ): string {
+    protected function getLangValueOfConfigField(string $fieldName): string
+    {
         $fieldNameLang = $fieldName . $this->langAppendix;
         if (property_exists($this, $fieldNameLang)) {
             return $this->$fieldNameLang != '' ? $this->$fieldNameLang : $this->$fieldName;
@@ -680,10 +628,8 @@ class Form extends Tag
     /**
      * Set a custom upload path for uploaded files
      * If no path is selected, then the files will be stored inside the dir of this page in site/assets/files
-     * @param string|int|null $folderName
-     * @param bool $keepFiles -> delete files afterwards (false) or keep files (true)
-     * @return void
-     * @throws WireException
+     * @param string $path_to_folder
+     * @return Form
      */
     public function setUploadPath(string $path_to_folder): self
     {
@@ -1168,6 +1114,7 @@ class Form extends Tag
      * Internal method to store uploaded files via InputFile field in the chosen folder
      * @param array $formElements
      * @return array
+     * @throws WireException
      */
     private
     function storeUploadedFiles(
