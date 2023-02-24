@@ -191,8 +191,8 @@ which informs the visitor, that his IP is on the blacklist. The form itself will
 #### Statistic section of blocked users to identify spammer
 In addition to the IP-banning blacklist, a statistic section which informs you about users that have been blocked, is part
 of the anti-spam measures.
-A user will be blocked if he needs, for example, too many attempts to send the form (depending on your settings in the backend).
-In this section you can get more information about this user, and you have 2 buttons: add the user to or remove him from the IP blacklist.
+A visitor will be blocked if he needs, for example, too many attempts to send the form (depending on your settings).
+In this section you can get more information about this visitor, and you have 2 buttons: add the visitor to or remove him from the IP blacklist.
 
 ### Measure 5: CAPTCHA
 This module offers various types of a CAPTCHA, that can be used. BTW: CAPTCHA should be used only if the other traps failed, and you get a lot of SPAM over your forms.
