@@ -10,9 +10,8 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 3. Support for UiKit 3 and Bootstrap 5 CSS framework
 4. SPAM protection
 5. Highly customizable
-6. Hookable methods for further customization
-7. Multi-language
-8. Option to send emails using HTML email templates within the WireMail class (additional methods and properties)
+6. Multi-language
+7. Option to send emails using HTML email templates within the WireMail class (additional methods and properties)
 
 ## Requirements
 * PHP>=8.0.0
@@ -219,7 +218,7 @@ character (even character) and not the whole string.
 This is also almost the same as the random string CAPTCHA with the only difference, that the user has to enter the characters
 from right to left (reverse order) instead of left to right.
 
-### Math CAPTCHA
+#### Math CAPTCHA
 The user has to solve a simple calculation.
 
 In the backend, there are a lot of configuration settings to adapt the CAPTCHA to your needs or to adapt it to your project
