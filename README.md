@@ -927,7 +927,7 @@ $field->setRule('uniqueUsername');
 * **matchUsername**\
   Has to be added to the password field; checks if password and username matches - useful for login form.
 
-   Parameter: validation name / Second parameter: the field name of username field
+   First parameter: validation name / Second parameter: the field name of username field
 
 ```php
 $field->setRule('matchUsername', 'myemailfieldname');
@@ -1002,7 +1002,7 @@ $field->setRule('isBooleanAndFalse');
 * **exactValue**\
   You can check if a value entered inside a text field is exactly the same value as a value given.
 
-Parameter: validation name / Second parameter: the value that the field must have
+First parameter: validation name / Second parameter: the value that the field must have
 
 ```php
 $field->setRule('exactValue', 'mygivenValue');
