@@ -1138,7 +1138,8 @@ $field->seLabel('Privacy');
 $field->seRule('required');
 ```
 If the validation fails, the error message will look like this:
-Privacy is required
+
+`Privacy is required`
 
 If you do not want to use the label (in this case 'Privacy') of the field, then you can change it in the
 following way:
@@ -1152,7 +1153,8 @@ $field->seLabel('Privacy');
 $field->seRule('required')->setCustomFieldName('This field');
 ```
 If the validation fails, the error message will look like this:
-"This field is required" instead of "Privacy is required".
+
+`This field is required` instead of `Privacy is required`.
 
 ### setCustomMessage()
 Use this method if you want to overwrite the default error message completely (not only the label text).
@@ -1162,7 +1164,8 @@ $field = new InputCheckbox('privacy')
 $field->seRule('required')->setCustomMessage('You must accept our privacy policy');
 ```
 If the validation fails, the error message will look like this:
-You must accept our privacy policy
+
+`You must accept our privacy policy`
 
 ## Fieldsets
 You can also add fieldsets and a legend to the form.
