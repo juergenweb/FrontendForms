@@ -795,8 +795,8 @@ Method to render an input field. You do not need this method until you want to r
 echo $field->render();
 ```
 
-### Special Methods for input fields
-These methods can only be used on certain input fields.
+### Special Methods for special input fields
+These methods can only be used on certain input fields and not at all.
 
 #### alignVertical() - set the alignment for checkboxes and radio buttons
 This is only a method for multiple checkboxes and radio buttons to align them vertical instead of horizontal (default).
