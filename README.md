@@ -869,7 +869,7 @@ $m->sendAttachment($form); // sends attachment and delete them after sending fro
 
 $m = wireMail();
 $m->sendAttachment($form, true); // sends attachment and keep them after sending from inside upload directory
-```
+
 $m = wireMail();
 $m->sendAttachment($form, 'path/to/new/location');  sends attachment and move them after sending to a new location
 ```
