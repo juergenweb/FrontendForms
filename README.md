@@ -50,7 +50,7 @@ The most simple way is to install it via the ProcessWire module manager in the a
 
 ### Create the first form
 
-Before you start creating your own forms, I recommend you to start with a ready to use example. Copy the following code and paste it in a template of your choice, but be aware of namespaces!!
+Before you start creating your own forms, I recommend you to start with a ready to use example. Copy the following code and paste it inside a template of your choice, but be aware of namespaces!!
 If you are using a namespace on the top of your template file, you have to adapt the instantiation of the class by using the FrontendForms namespace.
 This module runs in its own namespace called *FrontendForms*.
 
@@ -131,7 +131,7 @@ echo $form->render();
 
 > ⚠️ I highly recommend you to study the examples inside the ['examples'](https://github.com/juergenweb/FrontendForms/tree/main/Examples) folder. There you will find a lot of different use cases. Some examples are simple, others are more complex. There are also examples including file upload.
 
-Now you are ready to test the module inside your project!
+Now you are ready to use the module inside your project!
 
 ## Which input types are supported?
 You can find examples of all supported input types inside the 'examples' folder in the inputTypes.php
@@ -153,12 +153,12 @@ You can find examples of all supported input types inside the 'examples' folder 
 You can set a number of max attempts for submitting the form successfully inside the module configuration or by adding the [setMaxAttempts()](#setmaxattempts)
 method to your form object.
 If the number of unsuccessful attempts is higher than the allowed number, the form submission will be blocked.
-It is only a soft block by using a session. The user will be prompted to close the browser to remove the session and to re-open the page again. If the session is active, the form will not be displayed on the page. 
+It is only a soft block by using a session. The vistor will be prompted to close the browser to remove the session and to re-open the page again. If the session is active, the form will not be displayed on the page. 
 Can be disabled by setting the value to zero.
 
 ### Measure 2: Time measurement
-You can set a global min and max time inside the module configuration, but you can set the them also manually on per form base. In this case you only have to add the [setMinTime() and/or setMaxTime()](#setmintime-setmaxtime) method(s) to your form object. Setting the value to zero disables this feature.
-If a user or a SPAM bot submits the form outside of this time range, the form will not be submitted.
+You can set a global min and max time for submit a form inside the module configuration, but you can set the them also manually on per form base. In this case you only have to add the [setMinTime() and/or setMaxTime()](#setmintime-setmaxtime) method(s) to your form object. Setting the value to zero disables this feature.
+If a visitor or a SPAM bot submits the form outside of this time range, the form will not be submitted.
 By the way, SPAM bots tend to fill out forms very quickly or analyse the forms very long and submit them after a long while.
 After every submission the time will be calculated new. 
 
@@ -169,7 +169,7 @@ reduced for filling out the form, because there are less fields left. So checkin
 
 ### Measure 3: Honeypot field
 A honeypot field, which changes the position on every page load in random order, will be added automatically by default. If you do not want to include the honeypot field you need to add the [useHoneypot(false)](#usehoneypot) method to you form object (not recommended).
-Info: A honeypot field is a field which is hidden to the user, but a SPAM bot can read it and if this field will be filled out it will be detected as spam.
+Info: A honeypot field is a field which is hidden to the visitor, but a SPAM bot can read it and if this field will be filled out it will be detected as spam.
 Please note that the honeypot field will be hidden via the frontendforms.css file.
 
 ```css
@@ -189,37 +189,37 @@ You can remove the embedding of the file inside the module configuration, and yo
 Add IP-addresses to a blacklist to prevent them accessing your forms. If the visitor's IP is on this list, an alert box will be displayed,
 which informs the visitor, that his IP is on the blacklist. The form itself will not be displayed in this case.
 
-#### Statistic section of blocked users to identify spammer
-In addition to the IP-banning blacklist, a statistic section which informs you about users that have been blocked, is part
+#### Statistic section of blocked visitors to identify spammer
+In addition to the IP-banning blacklist, a statistic section which informs you about visitors that have been blocked, is part
 of the anti-spam measures.
 A visitor will be blocked if he needs, for example, too many attempts to send the form (depending on your settings).
 In this section you can get more information about this visitor, and you have 2 buttons: add the visitor to or remove him from the IP blacklist.
 
 ### Measure 5: CAPTCHA
 This module offers various types of a CAPTCHA, that can be used. BTW: CAPTCHA should be used only if the other traps failed, and you get a lot of SPAM over your forms.
-Most users do not like CAPTCHA, but it is up to you whether to use them or not.
+Most visitors do not like CAPTCHA, but it is up to you whether to use them or not.
 You can make all CAPTCHA settings inside the module configuration. The only thing you can do manually is to disable the CAPTCHA on per form base by using the [disableCaptcha()](#disablecaptcha) method.
 
 At the moment, following CAPTCHA types will be provided:
 
 #### Image CAPTCHA
-The image CAPTCHA shows an image and the user has to answer which category fits to the image. The following categories
+The image CAPTCHA shows an image and the visitor has to answer which category fits to the image. The following categories
 exist at the moment: trees, houses, lakes, flowers, animals, mountains, ships and cars.
-You can also manipulate the images by using various filters (can be set in the configuration).
+You can also manipulate the images by using various filters (can be set in the configuration) to make them more difficult to be identified by spambots.
 
 #### Random string CAPTCHA
-A random string will be provided inside an image and the user has to write this string into the input field below.
+A random string will be provided inside an image and the visitor has to write this string into the input field below.
 
 #### Even string CAPTCHA
-This is almost the same as the random string CAPTCHA with the only difference, that the user has to enter every second
+This is almost the same as the random string CAPTCHA with the only difference, that the visitor has to enter every second
 character (even character) and not the whole string.
 
 #### Reverse string CAPTCHA
-This is also almost the same as the random string CAPTCHA with the only difference, that the user has to enter the characters
+This is also almost the same as the random string CAPTCHA with the only difference, that the visitor has to enter the characters
 from right to left (reverse order) instead of left to right.
 
 #### Math CAPTCHA
-The user has to solve a simple calculation.
+The visitor has to solve a simple calculation.
 
 In the backend, there are a lot of configuration settings to adapt the CAPTCHA to your needs or to adapt it to your project
 design. The settings are self explaining, so I do not want to go into detail.
@@ -395,7 +395,7 @@ With this method you can disable the usage of CAPTCHA on per form base. This mak
   $form->disableCaptcha();
 ```
 ### setRequiredText() - customize text for required fields
-With this method you can overwrite the default hint that will be displayed on the form to inform the user that he has to fill all required fields marked with an asterisk.
+With this method you can overwrite the default hint that will be displayed on the form to inform the visitor that he has to fill all required fields marked with an asterisk.
 
 ```php
   $form->setRequiredText('Please fill out all required fields');
@@ -574,8 +574,8 @@ Returns true or false after form submission. You have to use this method to proc
 
 ### isBlocked() - check whether a visitor is blocked or not
 Every visitor, which needs more than the allowed number of max attempts to submit a form, will be blocked by using a session. You will find more info about this [here](#measure-1-set-max-number-of-invalid-attempts).
-If you want to do another logic if a user was blocked, then use the isBlocked() method and run your code inside it.
-Only to mention: A user will be blocked if the max number of attempts to submit the form with success was reached.
+If you want to do another logic if a visitor was blocked, then use the isBlocked() method and run your code inside it.
+Only to mention: A visitor will be blocked if the max number of attempts to submit the form with success was reached.
 
 ```php
   $form = new Form('myForm');
