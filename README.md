@@ -864,26 +864,18 @@ $password->showPasswordToggle();
 ```
 
 #### sendAttachment() - send files via the WireMail class
-This method has to be used with the WireMail class. It needs the form object as first parameter. This method is similar to the WireMail attachment() method, but it has some extra functionality and needs to be taken instead of the attachment() method. 
-
-**Upload multiple files**
-This method supports the upload of multiple files at once. The WireMail attachment() method supports only upload of 1 file.
-
-**Keep files after mail sent**
-By default all files that will be uploaded and sent via mail will be deleted after the mail has been sent. You can disable the deletion of the file afterwards by adding 'true' as second parameter. In this case the files will be stored under the site/assets/files directory inside the appropriate page folder.
-
-**Move uploaded files after mail have been sent**
-You can also move the files after mail have been sent to a new location by adding the path to the new location as second parameter.
+This method has to be used with the WireMail class. It needs the form object as first parameter. This method is similar to the WireMail attachment() method, but it has some extra functionality and needs to be taken instead of the attachment() method. You will find more detailled information inside the [file-upload-section](#file-uploads) later on. 
+The form oject has to added as parameter in any case.
 
 ```php
 $m = wireMail();
-$m->sendAttachment($form); // attachments will be deleted after sending
+$m->sendAttachment($form); // sends attachment and delete them after sending from the upload directory
 
 $m = wireMail();
-$m->sendAttachment($form, true); // attachments will not be deleted after sending
+$m->sendAttachment($form, true); // sends attachment and keep them after sending from inside upload directory
 ```
 $m = wireMail();
-$m->sendAttachment($form, 'path/to/new/location'); // attachments will be moved to a new location after sending
+$m->sendAttachment($form, 'path/to/new/location');  sends attachment and move them after sending to a new location
 ```
 Take a look at the [contact form](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactform.php) in the example folder which uses file upload fields too.
 
@@ -1160,14 +1152,17 @@ If the validation fails, the error message will look like this:
 Use this method if you want to overwrite the default error message completely (not only the label text).
 
 ```php
-$field = new InputCheckbox('privacy')
+$field = new InputCheckbox('privacy');
+$field->setLabel('Accept the privacy policy');
 $field->seRule('required')->setCustomMessage('You must accept our privacy policy');
 ```
 If the validation fails, the error message will look like this:
 
 `You must accept our privacy policy`
 
-## Fieldsets
+## Other form elements
+
+### Fieldsets
 You can also add fieldsets and a legend to the form.
 
 ```php
@@ -1180,7 +1175,7 @@ $fieldsetEnd = new FieldsetClose();
 $form->add($fieldsetEnd);
 ```
 
-## Buttons
+### Buttons
 Here is an example of a form button.
 
 ```php
@@ -1245,6 +1240,8 @@ BTW you will find the files of all pre-defined input types inside the "defaults"
 You can study the code to see, what validators and sanitizers are included by default. If you have an idea for another
 inputfield, please let me know.
 
+Contact form 2 inside the examples folder uses these pre-defined input types. [Take a look](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactform-2.php) at it to see how you can use pre-defined input types to make your life easier.
+
 ## File uploads
 Uploading files is sometimes needed, so this module supports uploading files for storing it inside the site/assets/files
 folder or to send it via email.
@@ -1263,7 +1260,7 @@ If you want to see a real world example, please take a look at the example page 
 ### Upload a file for sending it with an email
 In this case you have to add the sendAttachements() method to the WireMail object. Otherwise, the files will not be sent
 with the email. You will find more information about the sendAttachements() method [here](#sendattachment-for-file-input-fields).
-This method takes the file from the location where it was stored after the upload and add it to the mail.
+This method takes the file from the location where it was stored after the upload and adds it to the mail.
 
 ```php
 $mail->sendAttachements($form);
@@ -1299,7 +1296,7 @@ inside the Examples folder.
 
 
 ## Hooking
-Hooking is not really necessary in most cases, because you have so much configuration options to achieve your desired
+Hooking is not really necessary in most cases, because you have so much configuration options and public methods to achieve your desired
 result. Anyway, if there is a need for it, every method with 3 underscores is hookable.
 
 ### Hook example 1: Change the asterisk markup via a Hook
@@ -1365,11 +1362,10 @@ Only to mention: If the language files will be updated, you have to install them
 automatically.
 
 ## Email templates
-
 In most cases forms are used to send data via emails (fe a simple contact form).
 ProcessWire is shipped with the WireMail class to send emails.
 Unfortunately this class does not support the usage of stylish HTML email templates by default, so I decided to enhance
-this class with a new method to simply choose an email template, which is stored inside the email_templates folder of this module.
+this class with a new method to simply choose an email template, which is stored inside the [email_templates folder](https://github.com/juergenweb/FrontendForms/tree/main/email_templates) of this module.
 
 ### New method mailTemplate()
 First you need to know, that inside the email_templates folder you will find HTML files with various names
@@ -1383,7 +1379,8 @@ If you want to overwrite the global setting for the template on per form base yo
 $mail = new WireMail();
 $mail->mailTemplate('template_1.html'); // this adds the template with the file template_1.html to the email
 ```
-Every template file contains placeholders for your content.
+
+Every template file contains placeholders for your content. You will find more information about placeholders [here](#placeholder-variables-for-usage-in-email-templates).
 F.e. the text of the subject will be rendered inside the placeholder [[SUBJECTVALUE]],
 the text of the body inside the placeholder [[BODY]].
 I have decided to use the double square brackets syntax, because this syntax is also used in the Hanna code module.
@@ -1412,8 +1409,7 @@ folder will be removed from the site/assets directory.
 So if you are creating your own email template, please put the images inside the FrontendForms
 folder. It is recommended to use a separate folder for each template (fe. site/assets/FrontendForms/mytemplateFolder).
 
-You can find an example of using a local stored image inside the "template_3.html" file. So take a look there how to
-accomplish this.
+You can find an example of using a local stored image inside the ["template_3.html"](https://github.com/juergenweb/FrontendForms/blob/main/email_templates/template_3.html#L365) file. So take a look there how to accomplish this.
 Please note: If you are running your site on a local server (XAMPP, WAMPP,..), local stored images will not be displayed
 inside the emails because they are locally and therefore not reachable via the internet.
 After you have transferred your site to a live server, the images should be displayed properly inside the emails.
@@ -1486,14 +1482,6 @@ $form->setPlaceholder('ordernumber', '123456');
 By using a placeholder variable, there is no need to add php code to the email template to grab the order number.
 This makes the email template code much more cleaner.
 
-### Following Placeholders are supported by default for the usage in HTML email template
-
-* [[TITLE]] : Renders the value of the $mail->title inside the template.
-* [[SUBJECT]] : Renders the value of the $mail->subject inside the template.
-* [[BODY]] : Renders the value of the $mail->body inside the template.
-* [[USERNAME]] : Renders the value of the username inside the template, if the user is logged in.
-* [[DOMAIN]]: Renders the domain of the site (fe http://www.mysite.com)
-
 #### New method title()
 
 The title method adds a title attribute to the HTML template which will be displayed under the subject. You can also output it inside your template with the placeholder [[TITLE]]
@@ -1505,6 +1493,7 @@ $mail->title('This is my title');
 
 #### Add and output a custom placeholder inside your email template with addPlaceholder() method
 
+With this method you can add your placeholders directly to the WireMail object instead of to the form object, but the functionality is the same as the [setPlaceholder()](#adding-custom-placeholders-for-usage-in-templates) method.
 The addPlaceholder() method consists of 2 parameters: placeholder name and placeholder value.
 
 ```php
