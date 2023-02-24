@@ -6,9 +6,9 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 
 ## Highlights
 1. Simple form creation
-2. 60+ pre-defined validation types (rules) to validate form fields
+2. 60+ validation types (rules) to validate form fields
 3. Support for UiKit 3 and Bootstrap 5 CSS framework
-4. SPAM protection
+4. SPAM protection and security features
 5. Highly customizable
 6. Multi-language
 7. Option to send emails using HTML email templates within the WireMail class (additional methods and properties)
