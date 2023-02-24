@@ -257,15 +257,12 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         // Create Valitron Validator instance
         $this->Validator = new Validator();
-        //  set lang directory for validator
-        $this->Validator::langDir(__DIR__ . '/lang');
-        //  set lang for validator
-        $this->Validator::lang($this->getLang());
         include_once(__DIR__ . '/valitron/customValidators.php');
 
         //get all classes from the currently loaded framework from the folder CSSClasses
         $this->defaultClasses = json_decode(file_get_contents($this->modulePath . 'CSSClasses/' . $this->input_framework));
     }
+
 
     /**
      * Get the response of a GitHub repository page by a given url
