@@ -1423,11 +1423,11 @@ This variable will be replaced on the fly by the appropriate value, provided by 
 For example: If you want to add the current date to a template, you only have to write [[CURRENTDATEVALUE]] and this placeholder
 will be replaced by the current date.
 
-There are a lot more placeholder variables: You can take a look if you are using the method getPlaceholders() on your form
+There are a lot more placeholder variables: You can take a look if you are using the method getMailPlaceholders() on your form
 object. You will get an array of all available placeholders, that can be used.
 
 ```php
-$form = getPlaceholders(); // this will output an array of all global placeholders that can be used inside your templates
+$form = getMailPlaceholders(); // this will output an array of all global placeholders that can be used inside your templates
 ```
 
 In addition, a placeholder for each field of the form will be created automatically.
