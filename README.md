@@ -925,7 +925,8 @@ $field->setRule('uniqueUsername');
 ```
 
 * **matchUsername**\
-  Has to be added to the password field; checks if password and username matches - useful for login form.
+  This is intended to be used on login forms where you login with username and password.
+  Has to be added to the password field; checks if password and username matches.
 
    First parameter: validation name / Second parameter: the field name of username field
 
@@ -972,7 +973,8 @@ $field->setRule('checkPasswordOfUser', $user);
 ```
 
 * **matchEmail**\
-  Has to be added to the password field; checks if password and email matches - useful for login form.
+  This is intended to be used on login forms where you login with email and password.
+  Has to be added to the password field; checks if password and email matches.
   It is the same validation as matchUsername, but in this case you can use email and password for the login.
 
 First parameter: validation name / Second parameter: the field name of the email field
