@@ -918,7 +918,7 @@ Afterwards, I will give you an overview about all custom rule and their usage:
 * **uniqueUsername**\
   Checks if a username is used by another user or not - useful for user registration form.
 
-* First parameter: validation name
+   First parameter: validation name
 
 ```php
 $field->setRule('uniqueUsername');
@@ -927,8 +927,9 @@ $field->setRule('uniqueUsername');
 * **matchUsername**\
   Has to be added to the password field; checks if password and username matches - useful for login form.
 
-* First parameter: validation name
-* Second parameter: the field name of username field
+   First parameter: validation name
+   
+   Second parameter: the field name of username field
 
 ```php
 $field->setRule('matchUsername', 'myemailfieldname');
