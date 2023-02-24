@@ -918,7 +918,7 @@ Afterwards, I will give you an overview about all custom rule and their usage:
 * **uniqueUsername**\
   Checks if a username is used by another user or not - useful for user registration form.
 
-   First parameter: validation name
+   Parameter: validation name
 
 ```php
 $field->setRule('uniqueUsername');
@@ -927,9 +927,7 @@ $field->setRule('uniqueUsername');
 * **matchUsername**\
   Has to be added to the password field; checks if password and username matches - useful for login form.
 
-   First parameter: validation name
-   
-   Second parameter: the field name of username field
+   Parameter: validation name / Second parameter: the field name of username field
 
 ```php
 $field->setRule('matchUsername', 'myemailfieldname');
@@ -938,7 +936,7 @@ $field->setRule('matchUsername', 'myemailfieldname');
 * **meetsPasswordConditions**\
   Has to be added to the password field; checks if password meets the required conditions set in the backend - useful for registration form.
 
-* First parameter: validation name
+Parameter: validation name
 
 ```php
 $field->setRule('meetsPasswordConditions');
@@ -947,7 +945,7 @@ $field->setRule('meetsPasswordConditions');
 * **usernameSyntax**\
   Checks if the entered username only contains a-z0-9-_. characters - useful for registration or profile form.
 
-* First parameter: validation name
+Parameter: validation name
 
 ```php
 $field->setRule('usernameSyntax');
@@ -957,7 +955,7 @@ $field->setRule('usernameSyntax');
   Checks if an email address is used by another user or not - useful for registration and profile form. Has to be added
   to an email field.
 
-* First parameter: validation name
+Parameter: validation name
 
 ```php
 $field->setRule('uniqueEmail');
@@ -967,8 +965,7 @@ $field->setRule('uniqueEmail');
   This validation rule is for logged-in users only. Idea: If you want to change your password you have to enter the old password before.
   And for that reason I have created this rule. So this rule is for a password field where you have to enter the current password for security reasons - useful for the profile form.
 
-* First parameter: validation name
-* Second parameter: The user object
+First parameter: validation name / Second parameter: The user object
 
 ```php
 $field->setRule('checkPasswordOfUser', $user);
@@ -978,8 +975,7 @@ $field->setRule('checkPasswordOfUser', $user);
   Has to be added to the password field; checks if password and email matches - useful for login form.
   It is the same validation as matchUsername, but in this case you can use email and password for the login.
 
-* First parameter: validation name
-* Second parameter: the field name of the email field
+First parameter: validation name / Second parameter: the field name of the email field
 
 ```php
 $field->setRule('matchEmail', 'myemailfieldname');
@@ -988,7 +984,7 @@ $field->setRule('matchEmail', 'myemailfieldname');
 * **isBooleanAndTrue**\
   You can check if a value is from type boolean and true.
 
-* First parameter: validation name
+Parameter: validation name
 
 ```php
 $field->setRule('isBooleanAndTrue');
@@ -997,7 +993,7 @@ $field->setRule('isBooleanAndTrue');
 * **isBooleanAndFalse**\
   You can check if a value is from type boolean and false.
 
-* First parameter: validation name
+Parameter: validation name
 
 ```php
 $field->setRule('isBooleanAndFalse');
@@ -1006,8 +1002,7 @@ $field->setRule('isBooleanAndFalse');
 * **exactValue**\
   You can check if a value entered inside a text field is exactly the same value as a value given.
 
-* First parameter: validation name
-* Second parameter: the value that the field must have
+Parameter: validation name / Second parameter: the value that the field must have
 
 ```php
 $field->setRule('exactValue', 'mygivenValue');
@@ -1016,8 +1011,7 @@ $field->setRule('exactValue', 'mygivenValue');
 * **differentValue**\
   You can check if a value entered inside a text field is different from a value given.
 
-* First parameter: validation name
-* Second parameter: the value that the field cannot have
+First parameter: validation name / Second parameter: the value that the field cannot have
 
 ```php
 $field->setRule('differentValue', 'myvalue');
@@ -1032,8 +1026,7 @@ $field->setRule('differentValue', 'myvalue');
   Useful if a user wants to change his password, and you have a password field for the old password and the new one.
   So it compares the 2 fields that the value in the old password field is not the same as in the new one.
 
-* First parameter: validation name
-* Second parameter: field name of the password field
+First parameter: validation name / Second parameter: field name of the password field
 
 ```php
 $field->setRule('differentPassword' 'mypasswordfield');
@@ -1044,7 +1037,7 @@ $field->setRule('differentPassword' 'mypasswordfield');
   This validator is added to password fields by default, so no need to add it manually.
   This validator is useful, if you offer a user registration on your site.
 
-* First parameter: validation name
+Parameter: validation name
 
 ```php
 $field->setRule('safePassword');
@@ -1055,8 +1048,7 @@ $field->setRule('safePassword');
   $_FILES['size'] and compare it the max file size set as second parameter.
   The value of the filesize must be in Bytes (fe 10 000 Bytes equals 10kB).
 
-* First parameter: validation name
-* Second parameter: allowed filesize in Bytes
+First parameter: validation name / Second parameter: allowed filesize in Bytes
 
 ```php
 $field->setRule('allowedFileSize', '10000');
@@ -1066,7 +1058,7 @@ $field->setRule('allowedFileSize', '10000');
   This validation checks if an error occurs during the upload of a file. It takes the value of
   $_FILES['error'] and outputs an error message if the value is not 0.
 
-* First parameter: validation name
+Parameter: validation name
 
 
 ```php
@@ -1078,8 +1070,7 @@ $field->setRule('noErrorOnUpload');
   $_FILES['name'] and extracts the extension. If the extension is not in the array of allowed extensions
   an error message will be displayed.
 
-* First parameter: validation name
-* Second parameter: array of allowed file extensions
+First parameter: validation name / Second parameter: array of allowed file extensions
 
 ```php
 $field->setRule('allowedFileExt', ['jpg','pdf','doc']);
@@ -1090,8 +1081,7 @@ $field->setRule('allowedFileExt', ['jpg','pdf','doc']);
   $_FILES['name'] and extracts the extension. If the extension is in the array of forbidden extensions
   an error message will be displayed.
 
-* First parameter: validation name
-* Second parameter: array of forbidden file extensions
+First parameter: validation name / Second parameter: array of forbidden file extensions
 
 ```php
 $field->setRule('forbiddenFileExt', ['exe','pps']);
@@ -1101,7 +1091,7 @@ $field->setRule('forbiddenFileExt', ['exe','pps']);
   This validation checks if an uploaded file is not larger than the allowed filesize as declared in the php.ini file.
   It takes the value of $_FILES['size'] and compare it the max file size of the php.ini file.
 
-* First parameter: validation name
+Parameter: validation name
 
 ```php
 $field->setRule('phpIniFilesize');
