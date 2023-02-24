@@ -228,17 +228,17 @@ The configuration is global and cannot be changed on per form base.
 ### Measure 6: Password blacklist
 If you are dealing with user login/registration on your site, there is always a risk, that clients use unsafe passwords
 and this could be a serious security issue for an account to be hacked.
-For this reason, you have the opportunity create a blacklist of forbidden passwords in the module configuration. To make it much more simple
+For this reason, you have the opportunity to create a blacklist of forbidden passwords in the module configuration. To make it much more simple
 for you, it uses passwords from the [top 100 most common passwords](https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-100.txt) list from GitHub, but you can also add your own passwords.
 
 **Automatic filtering of the blacklist according to your password settings:**
 
 The module takes care about your password requirement settings and does not add all 100 passwords of the top list by default to the
-blacklist.
-This means, only passwords that fulfill your password requirements will be added to the blacklist - all others will not
-be added to keep the list as short as possible (better performance).
+blacklist. This would be an overhead.
+Therefore only passwords that fulfill your password requirements will be added to the blacklist - all others will be ignored to keep the list as short as possible (better performance).
 
-Example:
+Example for better understanding:
+
 Your password requirements as set in the field configuration of the field "pass" are set to "letter" and "number", which
 means each password must consists of letters and numbers (other types like symbols are not required).
 Passwords that does not fulfill this minimum requirements will be filtered out by the "meetsPasswordConditions" validator
@@ -250,22 +250,22 @@ On the module configuration page you will find a very detailed description how t
 **Automatic update of the blacklist:**
 
 The top 100 password list will be checked once a month on GitHub, if the file has been modified. Once a month is enough
-and GitHub allows only a certain amount of requests per day if you are not using the API. Otherwise, you will get a 403 error (too many requests).
+and GitHub allows only a certain amount of requests per day if you are not using their API. Otherwise, you will get a 403 error (too many requests).
 So, checking once a month should be enough and will prevent a 403 error from occurring.
 If something has been changed on the list, it will be downloaded and added to the blacklist automatically.
-So you do not have to take care about it and the list is always up-to-date.
+So you do not have to take care about it and the list will be always up-to-date.
 
 ### Measure 7: HTML 5 browser validation
 If you want to make a frontend validation before the the server-side validation, you can enable HTML 5 browser validation in the module configuration. 
-This will take HTML 5 attributes (fe. min attribute) and validates it by the browser.
+This will take HTML 5 attributes (fe. min or required attribute) and validates it by the browser before the form will be submitted to the server.
 Only to mention: not all browsers support each attribute and the design of the validation messages can differ from browser to browser.
 
 **Good to know**
 
-If you are setting validation rules to a form field, the appropriate HTML5 attribute will be added automatically, but you can add them manually too.
+If you are setting validation rules to a form field, the appropriate HTML5 attribute will be added automatically, but you can add them manually too.This works not for all HTML5 attributes, but for the most.
 
 ## Prevent double form submission
-Only to mention: There is also a session active which prevents double form submission after successful validation.
+There is also a session active which prevents double form submission after successful validation.
 It compares the session value with the value of a hidden field. If the values are different, it is an indication that
 the form would be submitted twice. In this case the submission will be stopped before it takes place, and you will
 be redirected to the form page itself.
@@ -864,23 +864,23 @@ $password->showPasswordToggle();
 ```
 
 #### sendAttachment() - send files via the WireMail class
-This method has to be used with the WireMail class. It needs the form object as first parameter. This method is similar to the WireMail attachment() method, but it has some extra functionality and needs to be taken instead of the attachment() method. You will find more detailled information inside the [file-upload-section](#file-uploads) later on. 
-The form oject has to added as parameter in any case.
+This method has to be used with the WireMail class. The form object has to be added as the first parameter. This method is similar to the WireMail attachment() method, but it has some extra functionality and needs to be taken instead of the attachment() method. You will find more detailled information inside the [file-upload-section](#file-uploads) later on. 
+
 
 ```php
 $m = wireMail();
-$m->sendAttachment($form); // sends attachment and delete them after sending from the upload directory
+$m->sendAttachment($form); // sends attachments and delete them after sending from the upload directory
 
 $m = wireMail();
-$m->sendAttachment($form, true); // sends attachment and keep them after sending from inside upload directory
+$m->sendAttachment($form, true); // sends attachments and keep them after sending from inside upload directory
 
 $m = wireMail();
-$m->sendAttachment($form, 'path/to/new/location');  sends attachment and move them after sending to a new location
+$m->sendAttachment($form, 'path/to/new/location');  sends attachments and move them after sending to a new location
 ```
-Take a look at the [contact form](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactform.php) in the example folder which uses file upload fields too.
+Take a look at the [contact form](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactform.php) in the example folder which includes file upload fields.
 
 #### allowMultiple() for file input fields
-By default, file upload fields only allow to upload 1 file. With this method you can add support for multiple file uploads by adding true
+By default, file upload fields only allow to upload 1 file (single upload). With this method you can add support for multiple file uploads by adding true
 or false inside the parenthesis:
 
 **True**: renders a multiple upload field
@@ -888,13 +888,14 @@ or false inside the parenthesis:
 
 ```php
 $m = wireMail();
-$m->allowMultiple(true);
+$m->allowMultiple(true); // turns a single upload field into a multiple upload field
 ```
 #### mailTemplate() - change/disable the usage of an email template manually
 This is a new method for the WireMail class, that I have created to support the usage of stylish HTML email templates. Usually you will make this setting in the module configuration, but you can overwrite it manually on per form base if needed with this method.
-Use this if you want to use another template for sending emails or to disable the usage of a template.
+Use this if you want to use an other template for sending emails or to disable the usage of a template.
 If setting is set to 'none', no template will be used. Otherwise add the name of the template file.
 BTW: You will find all available template files inside the [email-templates folder](https://github.com/juergenweb/FrontendForms/tree/main/email_templates).
+You can also add your own email templates inside this folder.
 
 ```php
 $m = wireMail();
@@ -1108,15 +1109,16 @@ Maybe other custom validation rules will be added in the future. If you have an 
 
 Inside the folder 'examples' you will find examples of the usage of validation rules inside the validationTypes.php.
 Take a look at these examples on how to write and add validation rules to your input fields.
-You can use as many validators for a field as you need.
+You can use as many validators to a field as you need.
 
 ## Customization of validation
-For each validator, there is a pre-defined error message inside the lang folder. This is ok for most cases, but
-sometimes you need to show another error message than the pre-defined one. For these cases you can customize your error
+For each validator rule exists an error message as a translatable string. This is ok for most cases, but
+sometimes you need to show another error message than the translated one. For these cases you can customize your error
 messages with 2 methods.
 
 Default error message:
-By default the error message uses label of the input field and prepends it before the error message.
+
+By default the error message uses the label of the input field and prepends it before the error message.
 
 ```php
 $field = new InputCheckbox('privacy')
@@ -1155,7 +1157,7 @@ If the validation fails, the error message will look like this:
 `You must accept our privacy policy`
 
 ## Other form elements
-No only field can be part of a form. Afterwards you will find additonal form elements that can be used within your forms.
+No only fields can be part of a form. Afterwards you will find additonal elements that can be used within your forms.
 
 ### Fieldsets
 You can also add fieldsets and a legend to the form.
@@ -1181,10 +1183,20 @@ $buttonReset->addWrapper()->setAttribute('class', 'myButtonWrapper');
 $form->add($buttonReset);
 ```
 
+### Texts
+Here is an example of a text.
+
+```php
+$text = new TextElements();
+$text->setContent('This is a text.');
+$form->add($text);
+```
+
+BTW: You can use all text elements that are inside the Formelements/Textelements directory.
+
 ## Default fields
 Writing fields is a lot of work. But it is getting more frustrating if you have to write always the same fields inside different forms.
-To make life a little easier I have created the most common fields in forms as pre-defined default fields with
-its own class.
+To make life a little easier I have created the most common fields in forms as pre-defined default fields withits own class.
 
 These are:
 
@@ -1208,7 +1220,7 @@ you can use it as they are - but you are free to add additional sanitizer and va
 error messages to your needs.
 To make this better understandable, take a look at the example below:
 
-This is the way you write usually an email field by hand:
+This is the way you will usually write an email field by hand:
 
 ```php
     $emailfield = new \FrontendForms\InputfieldText('myemailfield');
@@ -1218,7 +1230,7 @@ This is the way you write usually an email field by hand:
 
 There is nothing wrong with it, but by using the Email() class, you only have to write one line instead of multiple.
 So this will be a real time saver to you and keeps the code inside your template as short as possible.
-Another advantage is that the labels and error messages are set multilingual, and you do not have to add them manually.
+Another advantage is that the you do not have to set label and other texts manually, because they are set inside the constructor of the class.
 
 ```php
     $emailfield = new \FrontendForms\Email('myemailfield');
@@ -1226,6 +1238,7 @@ Another advantage is that the labels and error messages are set multilingual, an
 
 You can do the same with all others mentioned pre-defined input types. You only have to instantiate the class of the
 input type and add the field to the form.
+
 BTW you will find the files of all pre-defined input types inside the "defaults" folders of each input type.
 
 - [Formelements/Inputelements/Inputs/defaults/](https://github.com/juergenweb/FrontendForms/tree/main/Formelements/Inputelements/Inputs/defaults)
