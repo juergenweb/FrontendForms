@@ -37,6 +37,7 @@ wire('classLoader')->addNamespace('FrontendForms',
 use Exception;
 use Valitron\Validator;
 
+
 class FrontendForms extends WireData implements Module, ConfigurableModule
 {
 
@@ -601,9 +602,6 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $this->addHookBefore('Page::render', $this, 'removeIPButtonSubmit');
         // Hook to find all Font files
         $this->addHookBefore('Page::render', $this, 'findFontFiles');
-        // Hook to remove session of uploaded files after validation
-
-        $this->addHookAfter('FrontendForms\Form::isValid', $this, 'removeUploadSession');
 
         // Show details about the blocked IP address inside a panel
         $this->wire->addHook('/detail-view/{ip}', function ($event) { // event variable is needed
@@ -770,15 +768,6 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         }
     }
 
-    /**
-     * Hook method to remove the session containing all uploaded files
-     * @return void
-     * @throws WireException
-     */
-    protected function removeUploadSession(): void
-    {
-        $this->wire('session')->remove('uploaded_files');
-    }
     /**
      * Update blacklist if field pass was saved
      * @param HookEvent $event
