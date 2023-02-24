@@ -43,6 +43,41 @@ en,de,description,file,hash
 en,de,description,file,hash
 Email,E-Mail,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Email.php,ce8ae9da5b7cd6c3df2929543a9af92d
 en,de,description,file,hash
+"is required","ist erforderlich",,site/modules/FrontendForms/valitron/errormessages.php,0a5fa53f3f20f67f98bd6c3b16df059d
+"must be the same as %s","muss identisch mit '%s' sein",,site/modules/FrontendForms/valitron/errormessages.php,6b745c6821207657445e7dfc3b8c80b5
+"must be different than %s","muss sich von '%s' unterscheiden",,site/modules/FrontendForms/valitron/errormessages.php,74168686ae2b3c1d2cfa7e40da98b746
+"must be accepted","muss markiert sein",,site/modules/FrontendForms/valitron/errormessages.php,df34b78c024b49b0d46ace50a9529a31
+"must be numeric","muss eine Zahl sein",,site/modules/FrontendForms/valitron/errormessages.php,50b1380adf8607e173bb82cfebe3e6fe
+"must be an integer","muss eine ganze Zahl sein",,site/modules/FrontendForms/valitron/errormessages.php,e9b3b28bb29b162e2f0f464a923e0e7f
+"must be %s characters long","muss %s Zeichen lang sein",,site/modules/FrontendForms/valitron/errormessages.php,6b7658f957e3324e9b5dd6ebb541c755
+"must be at least %s","muss größer als %s sein",,site/modules/FrontendForms/valitron/errormessages.php,bcf01e3311c04bb38b76a9372cf954a2
+"must be no more than %s","darf nicht größer als %s  sein",,site/modules/FrontendForms/valitron/errormessages.php,081494c772eaf9d024939580e3430b6d
+"contains invalid value","enthält einen ungültigen Wert",,site/modules/FrontendForms/valitron/errormessages.php,b10f575b64e08ecba5ef751ff23425b1
+"is not a valid IP address","ist keine gültige IP Adresse",,site/modules/FrontendForms/valitron/errormessages.php,395577dbcd36e329d95513ca921f123d
+"is not a valid IPv4 address","ist keine gültige IPv4 Adresse",,site/modules/FrontendForms/valitron/errormessages.php,cd06d89cccef367faee3a46b54b1cb10
+"is not a valid IPv6 address","ist keine gültige IPv6 Adresse",,site/modules/FrontendForms/valitron/errormessages.php,297316b1a8112fd6a31ec3ae6953a300
+"is not a valid email address","ist keine gültige E-Mail Adresse",,site/modules/FrontendForms/valitron/errormessages.php,22e14444e26bb79a2eee83e0f6ac3fad
+"is not a valid URL","ist keine gültige URL",,site/modules/FrontendForms/valitron/errormessages.php,49a4702fcdd59d414613f0328df33974
+"must be an active domain","muss eine aktive Domain sein",,site/modules/FrontendForms/valitron/errormessages.php,c57832881d711e5d333137fa65a568cc
+"must contain only letters a-z","darf nur Buchstaben enthalten",,site/modules/FrontendForms/valitron/errormessages.php,3a4245daa71d9647dd4c32d051c952ec
+"must contain only letters a-z and/or numbers 0-9","darf nur Buchstaben und/oder Ganzzahlen enthalten",,site/modules/FrontendForms/valitron/errormessages.php,09d2ae27fa1ac3bd7cd1316eede4fd43
+"must contain only letters a-z, numbers 0-9, dashes and underscores","darf nur Buchstaben, Ganzzahlen, Schrägstriche und Grundstriche enthalten",,site/modules/FrontendForms/valitron/errormessages.php,91e80cd0d1771541b1d4f6b208644ef3
+"contains invalid characters","enthält ungültige Zeichen",,site/modules/FrontendForms/valitron/errormessages.php,ffc5487c29d4e4931f69e9eff252aa3f
+"is not a valid date","ist kein gültiges Datum",,site/modules/FrontendForms/valitron/errormessages.php,df81591c18caa2a21a45cf205ef582e6
+"must be date with format %s","muss ein Datum im Format %s sein",,site/modules/FrontendForms/valitron/errormessages.php,712493b736557765ff7551b6ede5c656
+"must be date before %s","muss ein Datum vor %s sein",,site/modules/FrontendForms/valitron/errormessages.php,99f97073ba9331de29b6939a2d9c1c50
+"must be date after %s","muss ein Datum nach %s sein",,site/modules/FrontendForms/valitron/errormessages.php,d89125cad865a1a9720b18861269deb1
+"must contain %s","muss %s enthalten",,site/modules/FrontendForms/valitron/errormessages.php,eeb15fe646f4181d9dd45b5eac34a241
+"must be a boolean","muss ein Wahrheitswert sein",,site/modules/FrontendForms/valitron/errormessages.php,ac825b779307863c89193c32e862efdc
+"must be between %s and %s characters","muss zwischen %s und %s Zeichen lang sein",,site/modules/FrontendForms/valitron/errormessages.php,210f857748b94417f125bf0a9ce679b9
+"must be a valid credit card number","muss eine gültige Kreditkartennumber sein",,site/modules/FrontendForms/valitron/errormessages.php,5b217dd9e0aea92ea3c28977100513e5
+"must be at least %s characters long","muss mindestens %s Zeichen lang sein",,site/modules/FrontendForms/valitron/errormessages.php,858c628553ffc6713bb2ddee6dd83903
+"must not exceed %s characters","darf die Anzahl von %s Zeichen nicht überschreiten",,site/modules/FrontendForms/valitron/errormessages.php,238da3a8c619770a668de173d74c0330
+"must be an instance of %s","muss eine Instanz von %s sein",,site/modules/FrontendForms/valitron/errormessages.php,59085bdf2aba2a42578ce10a2cdcd048
+"must contain unique elements only","darf nur eindeutige Elemente enthalten",,site/modules/FrontendForms/valitron/errormessages.php,d4b291f913c2cb80a9fcde5dd15eda84
+"contains an item that is not in the list","enthält ein Element, das nicht in der Liste enthalten ist",,site/modules/FrontendForms/valitron/errormessages.php,69b8c93f1d18e09c519a83abbf791c5b
+"does not contain all required keys","enthält nicht alle erforderlichen Schlüssel",,site/modules/FrontendForms/valitron/errormessages.php,5d908c0847689f6855ecc328427fc0a4
+en,de,description,file,hash
 "Even string captcha","Jedes zweite Zeichen Captcha",,site/modules/FrontendForms/Formelements/Captcha/variants/EvenCharacterTextCaptcha.php,07919a26035f7d7aaec32087cc2c0b4d
 "Enter every second character of the text from the image in the input field.","Geben Sie jedes zweite Zeichen vom Text aus dem Bild in das Eingabefeld ein.",,site/modules/FrontendForms/Formelements/Captcha/variants/EvenCharacterTextCaptcha.php,923fb30f185465aa974330e30a9a97c7
 en,de,description,file,hash
@@ -140,13 +175,6 @@ Details,=,,site/modules/FrontendForms/FrontendForms.module,3ec365dd533ddb7ef3d1c
 "Remove from blacklist","Von der Blacklist entfernen",,site/modules/FrontendForms/FrontendForms.module,5ad3137edf46035a9faf9432f7cd0522
 "Add to blacklist","Zur Blacklist hinzufügen",,site/modules/FrontendForms/FrontendForms.module,218ccb4c1ea08f5bfb6cd390c3ba94e5
 "Sorry, but there is not data available. Please check if logging is enabled.","Es sind leider keine Daten vorhanden. Bitte überprüfen Sie ob das loggen aktiviert is.",,site/modules/FrontendForms/FrontendForms.module,ee765dab27b2a05c8e2f670c2e6968ad
-"Language settings",Sprachen-Einstellungen,,site/modules/FrontendForms/FrontendForms.module,b2e96197b823e728ee5a6be88da8f74b
-"Valitron comes with a lot of translation files for the error messages, but they must be linked to the language(s) of this ProcessWire installation to work properly.","Valitron wird mit vielen Übersetzungsdateien für die Fehlermeldungen geliefert, aber sie müssen diese mit der/den Sprache(n) dieser ProcessWire-Installation verknüpfen, um richtig zu funktionieren.",,site/modules/FrontendForms/FrontendForms.module,6f8a55486cfb5ff8599c996d2c94c588
-"Select the language for the Valitron error messages in ""%s"" by selecting the appropriate language code.","Wählen Sie die Sprache für die Valitron-Fehlermeldungen in „%s“, indem Sie den entsprechenden Sprachcode auswählen.",,site/modules/FrontendForms/FrontendForms.module,30bd66abdfb0348b03674310015c5b04
-"If you did not select one, than English will be used as language for the error messages in %s.","Wenn Sie keine ausgewählt haben, wird Englisch als Sprache für die Fehlermeldungen in %s verwendet.",,site/modules/FrontendForms/FrontendForms.module,5d162bf0b3da6b40864b1fab9ee37b19
-Language,Sprache,,site/modules/FrontendForms/FrontendForms.module,4994a8ffeba4ac3140beb89e8d41f174
-"Select the language for the Valitron error messages by selecting the appropriate language code.","Wählen Sie die Sprache für die Valitron-Fehlermeldungen, indem Sie den entsprechenden Sprachcode auswählen.",,site/modules/FrontendForms/FrontendForms.module,8c64a3c9eb65f7e87962ddd3909610a8
-"If you did not select one, than English will be used as language for the error messages.","Wenn Sie keine ausgewählt haben, wird Englisch als Sprache für die Fehlermeldungen verwendet.",,site/modules/FrontendForms/FrontendForms.module,44b0c91316ab57e99855e9f8b9dbadad
 "Markup and styling settings for the forms","Markup und Styling Einstellung für die Formulare",,site/modules/FrontendForms/FrontendForms.module,7a07ed63e2a6c4a1c8119b711075aff2
 "Make your global settings for the output. Most of the settings can be overwritten on per form base if needed.","Tätigen Sie Ihre globalen Einstellungen für die Ausgabe. Die meisten dieser Einstellungen können für jedes Formular überschrieben werden.",,site/modules/FrontendForms/FrontendForms.module,93acc85a7149f81e94ce8c38c98301b0
 "Settings for required fields","Einstellungen für die Pflichtfelder",,site/modules/FrontendForms/FrontendForms.module,6175c8574382c56b54af9989e0bbf521
