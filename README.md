@@ -30,7 +30,7 @@ This module will work without GD-Library too, but you will not be able to use CA
 * [Input fields and their methods](#input-field-methods)
 * [Form validation](#form-validation)
 * [Customization of validation](#customization-of-validation)
-* [Other form elements](#fieldsets)
+* [Other form elements](#other-form-elements)
 * [Default fields](#default-fields)
 * [File uploads](#file-uploads)
 * [Hooking](#hooking)
