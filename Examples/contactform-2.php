@@ -97,7 +97,7 @@ if ($form->isValid()) {
 
     /** NEW: or you can use placeholders for the labels and the values of the form fields
      * This is the new way - only available at version 2.1.9 or higher
-     * Big advantage: The placeholders can be easier integrated in HTML as PHP code
+     * Big advantage: You do not have to use PHP code and there are a lot of ready-to-use placeholders containing fe the current date, the domain,.....
      * But it is up to you, if you want to use placeholders or do it the old way
      *
      */
