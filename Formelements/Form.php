@@ -30,6 +30,8 @@ use function ProcessWire\_n;
 
 class Form extends Tag
 {
+
+
     /* constants */
     const FORMMETHODS = ['get', 'post']; // array that holds allowed action methods (get, post)
 
@@ -74,6 +76,7 @@ class Form extends Tag
     public function __construct(string $id)
     {
         parent::__construct();
+
         // set path to the template folder for the email templates
         $this->emailTemplatesDirPath = $this->wire('config')->paths->siteModules . 'FrontendForms/email_templates/';
 
@@ -873,7 +876,6 @@ class Form extends Tag
         return $languages;
     }
 
-
     /**
      * Enable/disable the wrapping of checkboxes by its label
      * This is useful for some cases where you need to add the label after the input (fe. some CSS frameworks
@@ -1312,44 +1314,11 @@ class Form extends Tag
                                     $element->removeAllRules();
                                 }
                             }
-                            // Instantiate Valitron and start validation of the sanitized values
-                            $path_lang_dir = $this->wire('config')->paths->siteModules . 'FrontendForms/lang/';
 
-                            // set fallback for validator language first (the default language)
-                            $validator_lang = 'en';
-
-                            // grab languages set in the module configuration if present
-                            if ($this->wire('languages')) {
-
-                                // grab user language
-                                $user_lang_value = $this->user->language->name == 'default' ? 'en' : $this->user->language->name;
-                                // language support is enabled
-                                if (count($this->wire('languages')) > 1) {
-                                    // multi-language site
-                                    foreach ($this->wire('languages') as $lang) {
-                                        $lang_value_name = 'input_language_select_' . $lang->name;
-                                        $lang_value = $this->$lang_value_name;
-                                        if ($user_lang_value == $lang_value) {
-                                            $validator_lang = $user_lang_value;
-                                        }
-                                    }
-                                } else {
-                                    // single language site
-                                    // language support is not enabled
-                                    if ((!is_null($this->input_language_select_default)) || ($this->input_language_select_default != '')) {
-                                        $validator_lang = $this->input_language_select_default;
-                                    }
-                                }
-                            } else {
-                                // language support is not enabled
-                                if ((!is_null($this->input_language_select_default)) || ($this->input_language_select_default != '')) {
-                                    $validator_lang = $this->input_language_select_default;
-                                }
-                            }
-
-                            Validator::langDir($this->wire('config')->paths->siteModules . 'FrontendForms/lang/');
-                            // set language for the error messages depending on user language
-                            Validator::lang($validator_lang);
+                            // set the path to the valitron folder
+                            Validator::langDir($this->wire('config')->paths->siteModules . 'FrontendForms/valitron/');
+                            // set language for the error messages to use the errormessage.php inside valitron folder
+                            Validator::lang('errormessages');
                             $v = new Validator($sanitizedValues);
 
                             foreach ($formElements as $element) {
