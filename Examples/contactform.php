@@ -78,6 +78,11 @@ $accept->setRule('required')->setCustomMessage('You have to accept the data priv
 $accept->setRule('accepted');
 $form->add($accept);
 
+// you can also add text elements to the form - not only input fields
+$text = new TextElements();
+$text->setContent('This is a text.');
+$form->add($text);
+
 $button = new \FrontendForms\Button('submit');
 $button->setAttribute('value', 'Send');
 $form->add($button);
