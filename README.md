@@ -40,6 +40,8 @@ This module will work without GD-Library too, but you will not be able to use CA
 * [HTML email templates](#email-templates)
 
 ## Installation and Quick-start guide
+The most simple way is to install it via the ProcessWire module manager in the administration area, but you can also install it manually following the steps afterwards:
+
 1. Download and extract FrontendForms and put the folder inside site/modules. Be aware that the folder name must be
    FrontendForms and not FrontendForms-main or FrontendForms-master. GitHub adds this appendix by default. So be aware to remove it before you put the folder inside the module folder.
 2. Login to your admin area and refresh all modules.
