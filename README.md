@@ -11,7 +11,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 4. SPAM protection and security features
 5. Highly customizable
 6. Multi-language
-7. Option to send emails using HTML email templates within the WireMail class (additional methods and properties)
+7. Option to send emails using HTML email templates within the WireMail class by using custom methods and properties added to the WireMail class
 
 ## Requirements
 * PHP>=8.0.0
