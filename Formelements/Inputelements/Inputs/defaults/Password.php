@@ -23,7 +23,7 @@ class Password extends InputPassword
      * @param string $id
      * @throws Exception
      */
-    public function __construct(string $id = 'pass')
+    public function __construct(string $id)
     {
         parent::__construct($id);
         $this->setLabel($this->_('Password')); // set default label
