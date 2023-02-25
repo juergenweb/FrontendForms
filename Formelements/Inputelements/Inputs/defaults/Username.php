@@ -26,7 +26,7 @@ class Username extends InputText
      * @throws WireException
      * @throws Exception
      */
-    public function __construct(string $id = 'username')
+    public function __construct(string $id)
     {
         parent::__construct($id);
         $this->setLabel($this->_('Username'));
