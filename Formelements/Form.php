@@ -75,6 +75,9 @@ class Form extends Tag
     {
         parent::__construct();
 
+        // include the custom validators
+        include_once($this->wire('config')->paths->siteModules.'FrontendForms/valitron/customValidators.php');
+
         // set path to the template folder for the email templates
         $this->emailTemplatesDirPath = $this->wire('config')->paths->siteModules . 'FrontendForms/email_templates/';
 
@@ -140,6 +143,7 @@ class Form extends Tag
         $this->addHookBefore('WireMail::send', $this, 'renderTemplate');
 
     }
+
 
     /**
      * Get all files that were uploaded
@@ -1009,10 +1013,7 @@ class Form extends Tag
      * @param bool $buttonValue
      * @return array|null
      */
-    public
-    function getValues(
-        bool $buttonValue = false
-    ): array|null {
+    public function getValues(bool $buttonValue = false): array|null {
         if ($buttonValue) {
             return $this->values;
         }
@@ -1095,10 +1096,8 @@ class Form extends Tag
      * @param array $file_post
      * @return array
      */
-    private
-    function reArrayFiles(
-        array $file_post
-    ): array {
+    private function reArrayFiles(array $file_post): array
+    {
         $file_ary = array();
         $file_count = count($file_post['name']);
         $file_keys = array_keys($file_post);
@@ -1252,20 +1251,23 @@ class Form extends Tag
 
                             // Run sanitizer on all POST values first
                             $sanitizedValues = [];
+
                             foreach ($formElements as $element) {
                                 // remove all form elements which have the disabled attribute, because they do not send values
                                 if (!$element->hasAttribute('disabled')) {
-                                    $sanitizedValues[$element->getAttribute('name')] = $validation->sanitizePostValue($element);
+                                    if($element instanceof InputFile) {
+                                        $file_upload_name = $element->getAttribute('name');
+                                        $sanitizedValues[$file_upload_name] = $this->reArrayFiles($_FILES[$file_upload_name]);
+                                    } else {
+                                        $sanitizedValues[$element->getAttribute('name')] = $validation->sanitizePostValue($element);
+                                    }
+                                    //$sanitizedValues[$element->getAttribute('name')] = $validation->sanitizePostValue($element);
                                 } else {
                                     // remove all validation rules from this element
                                     $element->removeAllRules();
                                 }
                             }
 
-                            // set the path to the valitron folder
-                            Validator::langDir($this->wire('config')->paths->siteModules . 'FrontendForms/valitron/');
-                            // set language for the error messages to use the errormessage.php inside valitron folder
-                            Validator::lang('errormessages');
                             $v = new Validator($sanitizedValues);
 
                             foreach ($formElements as $element) {
@@ -1426,8 +1428,7 @@ class Form extends Tag
      * Internal method to add all form values to the values array
      * @return void
      */
-    private
-    function setValues(): void
+    private function setValues(): void
     {
         $values = [];
         foreach ($this->formElements as $element) {
