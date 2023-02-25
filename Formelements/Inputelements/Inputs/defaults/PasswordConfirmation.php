@@ -27,7 +27,7 @@ class PasswordConfirmation extends InputPassword
      * @param string $id
      * @throws Exception
      */
-    public function __construct(string $passwordfieldName, string $id = 'passconfirm')
+    public function __construct(string $passwordfieldName, string $id)
     {
         parent::__construct($id);
         $this->setLabel($this->_('Password Confirmation')); // set default label
