@@ -256,14 +256,6 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         // create numeric array of all available email templates inside the email folder
         $this->setEmailTemplates();
 
-        // set path to the language folder
-        Validator::langDir($this->wire('config')->paths->siteModules . 'FrontendForms/valitron/');
-        // set language for the error messages to use the errormessage.php inside valitron folder
-        Validator::lang('errormessages');
-        // Create Valitron Validator instance - necessary for usage in custom validators.php
-        $this->Validator = new Validator();
-        include_once(__DIR__ . '/valitron/customValidators.php');
-
         //get all classes from the currently loaded framework from the folder CSSClasses
         $this->defaultClasses = json_decode(file_get_contents($this->modulePath . 'CSSClasses/' . $this->input_framework));
     }
