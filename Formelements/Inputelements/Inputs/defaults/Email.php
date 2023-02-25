@@ -21,7 +21,7 @@ class Email extends InputEmail
      * @param string $id
      * @throws Exception
      */
-    public function __construct(string $id = 'email')
+    public function __construct(string $id)
     {
         parent::__construct($id);
         $this->setLabel($this->_('Email'));
