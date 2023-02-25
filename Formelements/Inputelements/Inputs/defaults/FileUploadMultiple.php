@@ -22,7 +22,7 @@ class FileUploadMultiple extends InputFile
      * @param string $id
      * @throws Exception
      */
-    public function __construct(string $id = 'multi-upload')
+    public function __construct(string $id)
     {
         parent::__construct($id);
         $this->setLabel($this->_('Upload multiple files'));
