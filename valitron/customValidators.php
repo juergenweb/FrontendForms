@@ -13,6 +13,47 @@ namespace FrontendForms;
  */
 
 use ProcessWire\User as User;
+use function ProcessWire\wire;
+
+/**
+ * Get the id of the form where the field is included
+ * @return string|bool
+ */
+function getFormId(): string|bool
+{
+    $request_method = strtolower(wire('input')->requestMethod());
+    $values = wire('input')->$request_method();
+    // grab the form key containing the form id
+    $id = '';
+    foreach($values as $key => $fieldvalue){
+        $needle = substr($key, -8);
+        if($needle == '-form_id'){
+            $id = $fieldvalue;
+            break;
+        }
+    }
+    // if id is not present, what should not be, set it to false in any case
+    if($id == ''){
+        return false;
+    }
+    return $id;
+}
+
+/**
+ * Enter a field name, check if form id prefix is present, otherwise add it
+ * @param string $field_name
+ * @return string
+ */
+function getFieldName(string $field_name): string
+{
+   $form_id = getFormId();
+    // check if form id is used as the pre-fix of the field name
+    if(!substr($field_name, strlen($form_id))){
+        // prefix is not added, so add it to the field name
+        $field_name = $form_id.'-'.$field_name;
+    }
+    return $field_name;
+}
 
 // 1) Check if username is unique
 $this->Validator::addRule('uniqueUsername', function ($value) {
@@ -32,7 +73,8 @@ $this->Validator::addRule('uniqueUsername', function ($value) {
 
 // 2) Check if username and password match
 $this->Validator::addRule('matchUsername', function ($field, $value, array $params) {
-    $fieldName = $params[0];
+
+    $fieldName = getFieldName($params[0]); // get field name including form id prefix
     $username = $this->wire('input')->$fieldName;
     $username = $this->wire('sanitizer')->pageName($username); // important
     $u = $this->wire('users')->get($username);
@@ -118,7 +160,7 @@ $this->Validator::addRule('checkPasswordOfUser', function ($field, $value, array
 * 7) Check if email and password match
 */
 $this->Validator::addRule('matchEmail', function ($field, $value, array $params) {
-    $fieldName = $params[0];
+    $fieldName = getFieldName($params[0]); // get field name including form id prefix
     $email = $this->wire('input')->$fieldName;
     $u = $this->wire('users')->get('email=' . $email);
     if (($u->id != 0) && ($u->pass->matches($value))) {
@@ -189,7 +231,7 @@ $this->Validator::addRule('differentValue', function ($field, $value, array $par
 
 /**
  * 13) Check if the new password entered is different the old one
- * $field->setRule('differentPassword', $user); // entered value must be different from "test" to return true
+ * $field->setRule('differentPassword', $user);
  */
 $this->Validator::addRule('differentPassword', function ($field, $value, array $params) {
     if ($params[0]->pass->matches($value)) {
