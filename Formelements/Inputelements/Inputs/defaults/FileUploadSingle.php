@@ -21,7 +21,7 @@ class FileUploadSingle extends InputFile
      * @param string $id
      * @throws Exception
      */
-    public function __construct(string $id = 'single-upload')
+    public function __construct(string $id)
     {
         parent::__construct($id);
         $this->setMultiple(false);
