@@ -51,22 +51,23 @@ The most simple way is to install it via the ProcessWire module manager in the a
 ### Create the first form
 
 Before you start creating your own forms, I recommend you to start with a ready to use example. Copy the following code and paste it inside a template of your choice, but be aware of namespaces!!
-If you are using a namespace on the top of your template file, you have to adapt the instantiation of the class by using the FrontendForms namespace.
+If you are using a namespace on the top of your template file, you have to adapt the instantiation of the class by using the FrontendForms + leading backslash in front of the namespace.
 This module runs in its own namespace called *FrontendForms*.
 
 Take a look at the following example:
 
 ```php
 
-// if you are not using a namespace on your template file, instantiating a class without using the FrontendForms
-// namespace will be fine
-$form = new Form('myForm'); // usage with custom ID inside the constructor
+// if you are not using a namespace at the top of your template file, you only have to call the namespace without leading backslash at the beginning
+$form = new FrontenForms\Form('myForm'); // usage with custom ID inside the constructor and namespace in front of the class name.
 
-// but if you are using a namespace you have to add the FrontendForms namespace in front of your class name
-$form = new \FrontendForms\Form('myForm');
+// but if you are using a template with a namespace you have to add the leading backslash to the FrontendForms namespace
+$form = new \FrontendForms\Form('myForm'); // take a look at the leading '\' in front of the namespace
 // you have to do it on every class instantiation (fe input field, select field,..) not only on the Form class as in
 // the example above
 ```
+
+Tipp: Instead of writing the namespace in front of every new instantiated form object, you can also use PHPs 'use' function on top of your file - it is up to you. 
 
 ```php
 $form = new Form('myForm');
