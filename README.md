@@ -70,46 +70,46 @@ $form = new \FrontendForms\Form('myForm'); // take a look at the leading '\' in 
 Tipp: Instead of writing the namespace in front of every new instantiated form object, you can also use PHPs 'use' function on top of your file - it is up to you. 
 
 ```php
-$form = new Form('myForm');
+$form = new \FrontendForms\Form('myForm');
 
-$gender = new Select('gender');
+$gender = new \FrontendForms\Select('gender');
 $gender->setLabel('Gender');
 $gender->addOption('Mister', 'Mister');
 $gender->addOption('Miss', 'Miss');
 $form->add($gender);
 
-$surname = new InputText('surname');
+$surname = new \FrontendForms\InputText('surname');
 $surname->setLabel('Surname');
 $surname->setRule('required');
 $form->add($surname);
 
-$name = new InputText('lastname');
+$name = new \FrontendForms\InputText('lastname');
 $name->setLabel('Last Name');
 $name->setRule('required');
 $form->add($name);
 
-$email = new InputText('email');
+$email = new \FrontendForms\InputText('email');
 $email->setLabel('E-Mail');
 $email->setRule('required');
 $email->setRule('email');
 $form->add($email);
 
-$subject = new InputText('subject');
+$subject = new \FrontendForms\InputText('subject');
 $subject->setLabel('Subject');
 $subject->setRule('required');
 $form->add($subject);
 
-$message = new Textarea('message');
+$message = new \FrontendForms\Textarea('message');
 $message->setLabel('Message');
 $message->setRule('required');
 $form->add($message);
 
-$privacy = new InputCheckbox('privacy');
+$privacy = new \FrontendForms\InputCheckbox('privacy');
 $privacy->setLabel('I accept the privacy policy');
 $privacy->setRule('required')->setCustomMessage('You have to accept our privacy policy');
 $form->add($privacy);
 
-$button = new Button('submit');
+$button = new \FrontendForms\Button('submit');
 $button->setAttribute('value', 'Send');
 $form->add($button);
 
