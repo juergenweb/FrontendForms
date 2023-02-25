@@ -20,7 +20,7 @@ class SendCopy extends InputCheckbox
      * @param string $id
      * @throws Exception
      */
-    public function __construct(string $id = 'sendcopy')
+    public function __construct(string $id)
     {
         parent::__construct($id);
         $this->setLabel($this->_('Send a copy of my message to me'));
