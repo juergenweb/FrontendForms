@@ -27,7 +27,7 @@ class Privacy extends InputCheckbox
      * @throws WirePermissionException
      * @throws Exception
      */
-    public function __construct(string $id = 'privacy')
+    public function __construct(string $id)
     {
         parent::__construct($id);
         $this->setLabel($this->_('I accept the privacy policy'));
