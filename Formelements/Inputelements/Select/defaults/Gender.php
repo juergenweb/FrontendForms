@@ -30,7 +30,7 @@ class Gender extends Select
      * @throws WireException
      * @throws WirePermissionException|Exception
      */
-    public function __construct(string $id = 'gender', ?string $fieldName = null)
+    public function __construct(string $id, ?string $fieldName = null)
     {
         parent::__construct($id);
         $this->setLabel($this->_('Gender'));
