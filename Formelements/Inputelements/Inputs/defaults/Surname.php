@@ -21,7 +21,7 @@ class Surname extends InputText
      * @param string $id
      * @throws Exception
      */
-    public function __construct(string $id = 'surname')
+    public function __construct(string $id)
     {
         parent::__construct($id);
         $this->setLabel($this->_('Surname'));
