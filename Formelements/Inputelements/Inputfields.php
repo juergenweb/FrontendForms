@@ -54,7 +54,6 @@ abstract class Inputfields extends Element
         $this->errormessage = new Errormessage();// instantiate the error message object
         $this->notes = new Notes();// instantiate the notes object
         $this->description = new Description();// instantiate the description object
-        $this->validator = new Validator([]);// instantiate the Valitron object
         $this->markupType = $this->input_framework;//grab the markup type (fe uikit, none, bootstrap,...) and save it to a variable
         //  Set text sanitizer to all input elements (except multi-value inputs) for security reasons
         if (!in_array($this->className(), Tag::MULTIVALCLASSES)) {
