@@ -213,3 +213,6 @@ New language configuration field for setting the language for Valitron error mes
 ## [2.1.14] - 2023-02-24
 New language configuration fields have been removed again and the default Valitron error message language files inside the lang folder have been removed and have been replaced by translatable ProcessWire language strings by adding a new file (errormessages.php) to the valitron directory. 
 Now nothing has to be taken into account get the correct user language for the messages on the frontend.
+
+## [2.1.15] - 2023-02-26
+Correct problems by validation of files and error messages of custom validators only beeing displayed in the default language (independent of language settings on the frontend)
