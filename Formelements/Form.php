@@ -27,7 +27,7 @@ use function ProcessWire\wire as wire;
 use function ProcessWire\wirePopulateStringTags;
 use function ProcessWire\_n;
 
-class Form extends Tag
+class Form extends CustomRules
 {
 
     /* constants */
@@ -74,9 +74,6 @@ class Form extends Tag
     public function __construct(string $id)
     {
         parent::__construct();
-
-        // include the custom validators
-        include_once($this->wire('config')->paths->siteModules.'FrontendForms/valitron/customValidators.php');
 
         // set path to the template folder for the email templates
         $this->emailTemplatesDirPath = $this->wire('config')->paths->siteModules . 'FrontendForms/email_templates/';
