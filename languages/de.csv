@@ -3,80 +3,72 @@ en,de,description,file,hash
 "Reload image","Bild neu laden",,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,7c89feb583d9e778c3533017b111263d
 Captcha,=,,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,45d048c35e3cfd449dc0a1b503cd103a
 en,de,description,file,hash
-"Please select what you see in the image above.","Bitte wählen Sie aus, was Sie in dem Bild sehen.",,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,118f3464042a036c52a1087e923a307e
-en,de,description,file,hash
 "This file is not a TrueType font file.","Diese Datei ist keine TrueType Schriftart Datei.",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,ad1ca00ca558c196b2ffa224309706e4
 "This file does not exist under the specified path","Diese Datei existiert nicht unter dem angegebenen Pfad",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,d472945618bae0b84ca5082c7d916966
 en,de,description,file,hash
 Send,Senden,,site/modules/FrontendForms/Formelements/Miscellaneous/Button.php,94966d90747b97d1f0f206c98a8b1ac3
 en,de,description,file,hash
-"A new message via contact form","Eine neue Nachricht über das Kontaktformular","this is a new property from this module",site/modules/FrontendForms/Examples/contactform.php,4758f7b6eca42e3f45ef7fde662fc3a0
-Sender,Absender,,site/modules/FrontendForms/Examples/contactform.php,8aace3ec18d83874d22850b7eee93c7d
-Mail,E-Mail,,site/modules/FrontendForms/Examples/contactform.php,4dfbb099eafd3c82e033bf92946d3ce6
-Subject,Betreff,,site/modules/FrontendForms/Examples/contactform.php,c7892ebbb139886662c6f2fc8c450710
-Message,Nachricht,,site/modules/FrontendForms/Examples/contactform.php,4c2a8fe7eaf24721cc7a9f0175115bd4
-en,de,description,file,hash
-"must be unique. This username is already in use. Please choose another username","wird bereits verwendet, daher wählen Sie bitte einen anderen Benutzernamen aus",,site/modules/FrontendForms/valitron/customValidators.php,5dd80c9d209051243e4959d64001d57a
-"and username do not match","und Benutzername passen nicht zusammen",,site/modules/FrontendForms/valitron/customValidators.php,3229770810a6a1a1718b75115246b5ff
-"does not meet the conditions.","erfüllt nicht die Bedingungen",,site/modules/FrontendForms/valitron/customValidators.php,a19a1f724a26244cf7542e78fce6082d
-"contains not allowed characters. Please use only lowercase digits, numbers, underscore, periods and hyphen (no whitespaces).","enthält nicht erlaubte Zeichen (bitte verwenden Sie nur Kleinbuchstaben, Zahlen, Unterstrich, Punkte und Bindestriche und keine Leerzeichen)",,site/modules/FrontendForms/valitron/customValidators.php,76e8868bf761df8ac58a00d815a79c31
-"must be unique. This email is already in use. Please use another email address.","wird bereits verwendet, daher wählen Sie bitte eine andere E-Mail Adresse aus",,site/modules/FrontendForms/valitron/customValidators.php,b413595e71b40c70836a66e8f056896d
-"entered is not the same password as the one, that is stored in the database.",", welches eingegeben wurde ist nicht das Gleiche, welches in der Datenbank gespeichert ist",,site/modules/FrontendForms/valitron/customValidators.php,8233c64b0291b99ef0d07c47db79105a
-"and email do not match","und E-Mail passen nicht zusammen",,site/modules/FrontendForms/valitron/customValidators.php,90c16357ff18d8fcc293125326b677b3
-"is not Boolean true","ist nicht Boolean true",,site/modules/FrontendForms/valitron/customValidators.php,abf3b0cec80ccb2d4566a6261246e663
-"is not Boolean false","ist nicht Boolean false",,site/modules/FrontendForms/valitron/customValidators.php,82e64791d4a2fc245441b452d8c01206
-"does not have the expected value","entspricht nicht den vorgegebenen Wert",,site/modules/FrontendForms/valitron/customValidators.php,128d6324f673627af8028138001238d9
-"is not correct","ist nicht korrekt",,site/modules/FrontendForms/valitron/customValidators.php,171f609c4663182c03be73b1e40fa35e
-"entered must be different than the value specified.",", welches eingegeben wurde, muss einen anderen als den vorgegebenen Wert haben",,site/modules/FrontendForms/valitron/customValidators.php,d5aa7f638be76a8922285c2a5fffe4c7
-"entered must be different from the old password.","muss unterschiedlich gegenüber dem alten Passwort sein",,site/modules/FrontendForms/valitron/customValidators.php,9dc911237765edb7f22808f0b2102b63
-"value entered is not correct.","Wert, welcher eingegebene wurde, ist nicht korrekt.",,site/modules/FrontendForms/valitron/customValidators.php,4d9ecb529945a9c05dc622c41cb7ab08
-"value is in the list of the most popular passwords and therefore not save. Please select another one.","Wert, welcher eingegebene wurde, ist in der Liste der aus Sicherheitsgründen verbotenen Passwörter. Bitte wählen Sie ein anderes Passwort aus.",,site/modules/FrontendForms/valitron/customValidators.php,5da3ffa343c2825257dc7f7b35b1ff21
-"is larger than the allowed filesize of %s.","ist größer als die zulässige Dateigröße von %s.",,site/modules/FrontendForms/valitron/customValidators.php,146cfc8e33a5772b551e2f8a6266198f
-"caused an error during the upload.","verursachte einen Fehler beim Hochladen",,site/modules/FrontendForms/valitron/customValidators.php,e73de70795c028bc6fabdaf499a9e38f
-"does not belong to the allowed file types: %s","gehört nicht zu den erlaubten Dateitypen: %s",,site/modules/FrontendForms/valitron/customValidators.php,4a09cad0a6463f0227fda258317e7e2e
-"is larger than the max. allowed filesize.","ist größer als die max. zulässige Dateigröße.",,site/modules/FrontendForms/valitron/customValidators.php,2588b342e65a171fe8e5433b310a9223
-"is of one of the forbidden file types: %s","gehört zu den verbotenen Dateitypen: %s",,site/modules/FrontendForms/valitron/customValidators.php,e3a7b9c3bec2447724da4e07b7f53b44
-"is not a valid time.","ist keine gültige Zeit.",,site/modules/FrontendForms/valitron/customValidators.php,18b8a49ca3ffc7d1fbeb2490e09155ae
+"must be unique. This username is already in use. Please choose another username.","muss eindeutig sein. Dieser Benutzername wird bereits verwendet. Bitte wählen Sie einen anderen aus.",,site/modules/FrontendForms/Formelements/CustomRules.php,5f20144817f8a8a10c0c3e42aaacb234
+"and username do not match.","und Benutzername stimmen nicht überein.",,site/modules/FrontendForms/Formelements/CustomRules.php,0692f1d96297b3d3ebb476ecb909b71f
+"does not meet the conditions.","erfüllt nicht die Bedingungen.",,site/modules/FrontendForms/Formelements/CustomRules.php,a19a1f724a26244cf7542e78fce6082d
+"contains not allowed characters. Please use only lowercase digits, numbers, underscore, periods and hyphen (no whitespaces).","enthält unzulässige Zeichen. Bitte verwenden Sie nur Kleinbuchstaben, Ziffern, Unterstriche, Punkte und Bindestriche (keine Leerzeichen).",,site/modules/FrontendForms/Formelements/CustomRules.php,76e8868bf761df8ac58a00d815a79c31
+"must be unique. This email is already in use. Please use another email address.","muss einzigartig sein. Diese E-Mail-Adresse wird schon verwendet. Bitte verwenden Sie eine andere E-Mail-Adresse.",,site/modules/FrontendForms/Formelements/CustomRules.php,b413595e71b40c70836a66e8f056896d
+"entered is not the same password as the one, that is stored in the database.","ist nicht das gleiche Passwort wie jenes, welches in der Datenbank gespeichert ist.",,site/modules/FrontendForms/Formelements/CustomRules.php,8233c64b0291b99ef0d07c47db79105a
+"and email do not match.","und E-Mail stimmen nicht überein.",,site/modules/FrontendForms/Formelements/CustomRules.php,c557836813d5c70d5972372d2a7a9ed4
+"is not Boolean true.","ist nicht boolesch wahr.",,site/modules/FrontendForms/Formelements/CustomRules.php,d31207aca9f42e43d83c917e59838466
+"is not Boolean false.","ist nicht boolesch falsch.",,site/modules/FrontendForms/Formelements/CustomRules.php,42debde15fa968c06bc0d5b38d569ee1
+"does not have the expected value.","hat nicht den erwarteten Wert.",,site/modules/FrontendForms/Formelements/CustomRules.php,3bfd649d64d7881e876082ba4296ea72
+"is not correct.","ist nicht richtig.",,site/modules/FrontendForms/Formelements/CustomRules.php,2f7e4c69803bcbdc44e9404b3e3ac19b
+"entered must be different than the value specified.","muss sich von dem angegebenen Wert unterscheiden.",,site/modules/FrontendForms/Formelements/CustomRules.php,d5aa7f638be76a8922285c2a5fffe4c7
+"entered must be different from the old password.","muss sich vom alten Passwort unterscheiden.",,site/modules/FrontendForms/Formelements/CustomRules.php,9dc911237765edb7f22808f0b2102b63
+"value entered is not correct.","Wert ist nicht korrekt.",,site/modules/FrontendForms/Formelements/CustomRules.php,4d9ecb529945a9c05dc622c41cb7ab08
+"value is in the list of the most popular passwords and therefore not save. Please select another one.","ist in der Liste der beliebtesten Passwörter und wird daher nicht gespeichert. Bitte wählen Sie ein anderes aus.",,site/modules/FrontendForms/Formelements/CustomRules.php,5da3ffa343c2825257dc7f7b35b1ff21
+"is larger than the allowed filesize of %s.","ist größer als die zulässige Dateigröße von %s.",,site/modules/FrontendForms/Formelements/CustomRules.php,146cfc8e33a5772b551e2f8a6266198f
+"caused an error during the upload.","verursachte einen Fehler beim Hochladen.",,site/modules/FrontendForms/Formelements/CustomRules.php,e73de70795c028bc6fabdaf499a9e38f
+"does not belong to the allowed file types: %s.","ist nicht vom Typ der  erlaubten Dateitypen: %s.",,site/modules/FrontendForms/Formelements/CustomRules.php,e9104007e1d2a05266de336a3d10a55b
+"is larger than the max. allowed filesize.","ist größer als die max. zulässige Dateigröße.",,site/modules/FrontendForms/Formelements/CustomRules.php,2588b342e65a171fe8e5433b310a9223
+"is of one of the forbidden file types: %s.","ist vom Typ der verbotenen Dateitypen: %s.",,site/modules/FrontendForms/Formelements/CustomRules.php,7d0b6ffe466c0b12216be0168d5c2136
+"is not a valid time.","ist keine gültige Zeit.",,site/modules/FrontendForms/Formelements/CustomRules.php,18b8a49ca3ffc7d1fbeb2490e09155ae
 en,de,description,file,hash
 "Random string captcha","Zufallstext Captcha",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultTextCaptcha.php,7c62e8d4b13ecc03f28bb44905a5ec51
 "Enter the text from the image in the input field.","Geben Sie den Text aus dem Bild in das Eingabefeld ein.",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultTextCaptcha.php,3c6c9439c3e38d0da29b7629a300c3c5
 en,de,description,file,hash
 Email,E-Mail,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Email.php,ce8ae9da5b7cd6c3df2929543a9af92d
 en,de,description,file,hash
-"is required","ist erforderlich",,site/modules/FrontendForms/valitron/errormessages.php,0a5fa53f3f20f67f98bd6c3b16df059d
-"must be the same as %s","muss identisch mit '%s' sein",,site/modules/FrontendForms/valitron/errormessages.php,6b745c6821207657445e7dfc3b8c80b5
-"must be different than %s","muss sich von '%s' unterscheiden",,site/modules/FrontendForms/valitron/errormessages.php,74168686ae2b3c1d2cfa7e40da98b746
-"must be accepted","muss markiert sein",,site/modules/FrontendForms/valitron/errormessages.php,df34b78c024b49b0d46ace50a9529a31
-"must be numeric","muss eine Zahl sein",,site/modules/FrontendForms/valitron/errormessages.php,50b1380adf8607e173bb82cfebe3e6fe
-"must be an integer","muss eine ganze Zahl sein",,site/modules/FrontendForms/valitron/errormessages.php,e9b3b28bb29b162e2f0f464a923e0e7f
-"must be %s characters long","muss %s Zeichen lang sein",,site/modules/FrontendForms/valitron/errormessages.php,6b7658f957e3324e9b5dd6ebb541c755
-"must be at least %s","muss größer als %s sein",,site/modules/FrontendForms/valitron/errormessages.php,bcf01e3311c04bb38b76a9372cf954a2
-"must be no more than %s","darf nicht größer als %s  sein",,site/modules/FrontendForms/valitron/errormessages.php,081494c772eaf9d024939580e3430b6d
-"contains invalid value","enthält einen ungültigen Wert",,site/modules/FrontendForms/valitron/errormessages.php,b10f575b64e08ecba5ef751ff23425b1
-"is not a valid IP address","ist keine gültige IP Adresse",,site/modules/FrontendForms/valitron/errormessages.php,395577dbcd36e329d95513ca921f123d
-"is not a valid IPv4 address","ist keine gültige IPv4 Adresse",,site/modules/FrontendForms/valitron/errormessages.php,cd06d89cccef367faee3a46b54b1cb10
-"is not a valid IPv6 address","ist keine gültige IPv6 Adresse",,site/modules/FrontendForms/valitron/errormessages.php,297316b1a8112fd6a31ec3ae6953a300
-"is not a valid email address","ist keine gültige E-Mail Adresse",,site/modules/FrontendForms/valitron/errormessages.php,22e14444e26bb79a2eee83e0f6ac3fad
-"is not a valid URL","ist keine gültige URL",,site/modules/FrontendForms/valitron/errormessages.php,49a4702fcdd59d414613f0328df33974
-"must be an active domain","muss eine aktive Domain sein",,site/modules/FrontendForms/valitron/errormessages.php,c57832881d711e5d333137fa65a568cc
-"must contain only letters a-z","darf nur Buchstaben enthalten",,site/modules/FrontendForms/valitron/errormessages.php,3a4245daa71d9647dd4c32d051c952ec
-"must contain only letters a-z and/or numbers 0-9","darf nur Buchstaben und/oder Ganzzahlen enthalten",,site/modules/FrontendForms/valitron/errormessages.php,09d2ae27fa1ac3bd7cd1316eede4fd43
-"must contain only letters a-z, numbers 0-9, dashes and underscores","darf nur Buchstaben, Ganzzahlen, Schrägstriche und Grundstriche enthalten",,site/modules/FrontendForms/valitron/errormessages.php,91e80cd0d1771541b1d4f6b208644ef3
-"contains invalid characters","enthält ungültige Zeichen",,site/modules/FrontendForms/valitron/errormessages.php,ffc5487c29d4e4931f69e9eff252aa3f
-"is not a valid date","ist kein gültiges Datum",,site/modules/FrontendForms/valitron/errormessages.php,df81591c18caa2a21a45cf205ef582e6
-"must be date with format %s","muss ein Datum im Format %s sein",,site/modules/FrontendForms/valitron/errormessages.php,712493b736557765ff7551b6ede5c656
-"must be date before %s","muss ein Datum vor %s sein",,site/modules/FrontendForms/valitron/errormessages.php,99f97073ba9331de29b6939a2d9c1c50
-"must be date after %s","muss ein Datum nach %s sein",,site/modules/FrontendForms/valitron/errormessages.php,d89125cad865a1a9720b18861269deb1
-"must contain %s","muss %s enthalten",,site/modules/FrontendForms/valitron/errormessages.php,eeb15fe646f4181d9dd45b5eac34a241
-"must be a boolean","muss ein Wahrheitswert sein",,site/modules/FrontendForms/valitron/errormessages.php,ac825b779307863c89193c32e862efdc
-"must be between %s and %s characters","muss zwischen %s und %s Zeichen lang sein",,site/modules/FrontendForms/valitron/errormessages.php,210f857748b94417f125bf0a9ce679b9
-"must be a valid credit card number","muss eine gültige Kreditkartennumber sein",,site/modules/FrontendForms/valitron/errormessages.php,5b217dd9e0aea92ea3c28977100513e5
-"must be at least %s characters long","muss mindestens %s Zeichen lang sein",,site/modules/FrontendForms/valitron/errormessages.php,858c628553ffc6713bb2ddee6dd83903
-"must not exceed %s characters","darf die Anzahl von %s Zeichen nicht überschreiten",,site/modules/FrontendForms/valitron/errormessages.php,238da3a8c619770a668de173d74c0330
-"must be an instance of %s","muss eine Instanz von %s sein",,site/modules/FrontendForms/valitron/errormessages.php,59085bdf2aba2a42578ce10a2cdcd048
-"must contain unique elements only","darf nur eindeutige Elemente enthalten",,site/modules/FrontendForms/valitron/errormessages.php,d4b291f913c2cb80a9fcde5dd15eda84
-"contains an item that is not in the list","enthält ein Element, das nicht in der Liste enthalten ist",,site/modules/FrontendForms/valitron/errormessages.php,69b8c93f1d18e09c519a83abbf791c5b
-"does not contain all required keys","enthält nicht alle erforderlichen Schlüssel",,site/modules/FrontendForms/valitron/errormessages.php,5d908c0847689f6855ecc328427fc0a4
+"is required.","ist erforderlich.",,site/modules/FrontendForms/valitron/errormessages.php,ee66f9c9930cb33d2a5dde9b240d3f7e
+"must be the same as %s.","muss mit %s identisch sein.",,site/modules/FrontendForms/valitron/errormessages.php,c3e99e59b3b51e343792bdf6ce436df9
+"must be different than %s.","muss sich von %s unterscheiden.",,site/modules/FrontendForms/valitron/errormessages.php,61cfe2e511129ea95796b676de390540
+"must be accepted.","muss akzeptiert werden.",,site/modules/FrontendForms/valitron/errormessages.php,5ff975f896afc1a3d44f7e5cf2523562
+"must be numeric.","muss numerisch sein.",,site/modules/FrontendForms/valitron/errormessages.php,75872da653850e5b56523af104ac02ad
+"must be an integer.","muss eine Ganzzahl sein.",,site/modules/FrontendForms/valitron/errormessages.php,81495f3842f92cd64795702e235405e6
+"must be %s characters long.","muss %s Zeichen lang sein.",,site/modules/FrontendForms/valitron/errormessages.php,f87f5f2581a89c78c83ac7f3aed4f44d
+"must be at least %s.","muss größer als %s sein.",,site/modules/FrontendForms/valitron/errormessages.php,b51bf268215336cb80ace35cff438844
+"must be no more than %s.","muss kleiner als %s sein.",,site/modules/FrontendForms/valitron/errormessages.php,0691a08af1a152688286eb8add501c7a
+"contains invalid value.","enthält einen ungültigen Wert.",,site/modules/FrontendForms/valitron/errormessages.php,803beb393544dd8a3ab29e2691b80f30
+"is not a valid IP address.","ist keine gültige IP-Adresse.",,site/modules/FrontendForms/valitron/errormessages.php,f67e06439cbd618893452c020dbc1f84
+"is not a valid IPv4 address.","ist keine gültige IPv4-Adresse.",,site/modules/FrontendForms/valitron/errormessages.php,1217bb805238358651e226239f031863
+"is not a valid IPv6 address.","ist keine gültige IPv6-Adresse.",,site/modules/FrontendForms/valitron/errormessages.php,58f0671d229a1a23c95be8cc20636dc9
+"is not a valid email address.","ist keine gültige E-Mail-Adresse.",,site/modules/FrontendForms/valitron/errormessages.php,89d61ec4bae366d43110c39f661a67e7
+"is not a valid URL.","ist keine gültige URL.",,site/modules/FrontendForms/valitron/errormessages.php,9c5e4caaddc4981285aef0c974929410
+"must be an active domain.","muss eine aktive Domäne sein.",,site/modules/FrontendForms/valitron/errormessages.php,405af4194051a23541c1e05ee21d5fde
+"must contain only letters a-z.","darf nur Buchstaben enthalten.",,site/modules/FrontendForms/valitron/errormessages.php,6fa45c5bcf153f480b9281dd1869a75c
+"must contain only letters a-z and/or numbers 0-9.","darf nur Buchstaben und/oder die Ziffern 0-9 enthalten.",,site/modules/FrontendForms/valitron/errormessages.php,4c2a73271ed51ceba27bb5d6a19bad5e
+"must contain only letters a-z, numbers 0-9, dashes and underscores.","darf nur die Buchstaben, Ziffern von 0-9, Bindestriche und Unterstriche enthalten.",,site/modules/FrontendForms/valitron/errormessages.php,8f4e0f444527dd742530675c121c03d5
+"contains invalid characters.","enthält ungültige Zeichen.",,site/modules/FrontendForms/valitron/errormessages.php,e58b6d2840b3789206a02fbde99a0b8e
+"is not a valid date.","ist kein gültiges Datum.",,site/modules/FrontendForms/valitron/errormessages.php,38ec50423094dafeb375e91cdd2465db
+"must be date with format %s.","muss ein Datum im Format %s sein.",,site/modules/FrontendForms/valitron/errormessages.php,bd9fe50041c3a9ef878dd6aecdf20362
+"must be date before %s.","muss ein Datum vor dem %s sein.",,site/modules/FrontendForms/valitron/errormessages.php,39facac35f6b5c939e0a5a4805c953ad
+"must be date after %s.","muss ein Datum nach dem %s sein.",,site/modules/FrontendForms/valitron/errormessages.php,927c0d011e58f3db8bf15a271e37d0b3
+"must contain %s.","muss %s enthalten.",,site/modules/FrontendForms/valitron/errormessages.php,ca2cf8d958faf269597e9ed8a17f2e8a
+"must be a boolean.","muss ein Wahrheitswert sein.",,site/modules/FrontendForms/valitron/errormessages.php,4776fea62d0eb6aad4b7b407f94577f7
+"must be between %s and %s characters.","muss zwischen %s und %s Zeichen lang sein.",,site/modules/FrontendForms/valitron/errormessages.php,496a6f57f86df1a3dca456809557ce2d
+"must be a valid credit card number.","muss eine gültige Kreditkartennummer sein.",,site/modules/FrontendForms/valitron/errormessages.php,da8c3186551908c612175e3fd131008c
+"must be at least %s characters long.","muss mindestens %s Zeichen lang sein.",,site/modules/FrontendForms/valitron/errormessages.php,e182229cb2673058e47817337b731535
+"must not exceed %s characters.","darf %s Zeichen nicht überschreiten.",,site/modules/FrontendForms/valitron/errormessages.php,0469824161acd62b71bbb34072cb7bcb
+"must be an instance of %s.","muss eine Instanz von %s sein.",,site/modules/FrontendForms/valitron/errormessages.php,f5af264fb5c442dc9766f1984f2d8692
+"must contain unique elements only.","darf nur einzigartige Elemente enthalten.",,site/modules/FrontendForms/valitron/errormessages.php,76117bca0e24c5caf8645279712c42a6
+"contains an item that is not in the list.","enthält ein Element, welches nicht in der Liste enthalten ist.",,site/modules/FrontendForms/valitron/errormessages.php,3fb8919799ddfdba930fbb44f484fbd1
+"does not contain all required keys.","enthält nicht alle erforderlichen Schlüssel.",,site/modules/FrontendForms/valitron/errormessages.php,3f27bc263791779a69e946f06e55bf8d
 en,de,description,file,hash
 "Even string captcha","Jedes zweite Zeichen Captcha",,site/modules/FrontendForms/Formelements/Captcha/variants/EvenCharacterTextCaptcha.php,07919a26035f7d7aaec32087cc2c0b4d
 "Enter every second character of the text from the image in the input field.","Geben Sie jedes zweite Zeichen vom Text aus dem Bild in das Eingabefeld ein.",,site/modules/FrontendForms/Formelements/Captcha/variants/EvenCharacterTextCaptcha.php,923fb30f185465aa974330e30a9a97c7
