@@ -144,7 +144,7 @@ class CustomRules extends Tag
         * 7) Check if email and password match
         */
         V::addRule('matchEmail', function ($field, $value, array $params) {
-            $fieldName = getFieldName($params[0]); // get field name including form id prefix
+            $fieldName = $this->getFieldName($params[0]); // get field name including form id prefix
             $email = $this->wire('input')->$fieldName;
             $u = $this->wire('users')->get('email=' . $email);
             if (($u->id != 0) && ($u->pass->matches($value))) {
