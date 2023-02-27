@@ -363,7 +363,7 @@ class Form extends CustomRules
     }
 
     /**
-     * Render the mail template: replace placeholders and use templates (body and/or email template)
+     * Render the mail template: replace placeholders and use HTML email template if set
      * @throws WireException
      */
     public function renderTemplate(HookEvent $event): WireMail
