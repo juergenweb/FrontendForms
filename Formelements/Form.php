@@ -364,7 +364,6 @@ class Form extends CustomRules
 
     /**
      * Render the mail template: replace placeholders and use templates (body and/or email template)
-     * Add the sendAttachments() method too to send files via mail
      * @throws WireException
      */
     public function renderTemplate(HookEvent $event): WireMail
