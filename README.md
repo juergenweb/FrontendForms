@@ -1499,15 +1499,3 @@ The title method adds a title attribute to the HTML template which will be displ
 $mail = new WireMail();
 $mail->title('This is my title');
 ```
-
-#### Add and output a custom placeholder inside your email template with addPlaceholder() method
-
-With this method you can add your placeholders directly to the WireMail object instead of to the form object, but the functionality is the same as the [setPlaceholder()](#adding-custom-placeholders-for-usage-in-templates) method.
-The addPlaceholder() method consists of 2 parameters: placeholder name and placeholder value.
-
-```php
-$mail = new WireMail();
-$mail->addPlaceholder('date', '01.01.2022');
-```
-The placeholder is always the name in uppercase letters and inside brackets: [[DATE]]
-With the example above you can use the placeholder [[DATE]] inside your mail template to output '01.01.2022' inside the template (in this case).
