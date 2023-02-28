@@ -4,7 +4,7 @@
 
 A module for ProcessWire to create and validate forms on the frontend easily using the [Valitron](https://github.com/vlucas/valitron) library.
 
-> ⚠️ Alpha state: This module was created over 1 year ago and works on my installations, but needs to be tested carefully by a larger community, before using it on live sites.
+> ⚠️ Beta state: This module was created over 1 year ago and works on my installations, but needs to be tested carefully by a larger community, before using it on live sites.
 
 ## Highlights
 1. Simple form creation
