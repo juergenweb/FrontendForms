@@ -56,7 +56,7 @@ class CustomRules extends Tag
          * 2) Check if username and password match
          */
         V::addRule('matchUsername', function ($field, $value, array $params) {
-            $fieldName = getFieldName($params[0]); // get field name including form id prefix
+            $fieldName = $this->getFieldName($params[0]); // get field name including form id prefix
 
             $username = $this->wire('input')->$fieldName;
             $username = $this->wire('sanitizer')->pageName($username); // important
@@ -149,6 +149,21 @@ class CustomRules extends Tag
             $u = $this->wire('users')->get('email=' . $email);
             if (($u->id != 0) && ($u->pass->matches($value))) {
                 return true;
+            }
+            // set email and password entered inside a session to can be used later if needed
+            // can be reached via $this->wire('session')->get('name of the email or username field');
+            // returns a multidimensional array containing the entered username/email => password combination
+            // can be used later on to check if multiple attempts with same username/email and different password
+            // combinations were taken, to fe lock the user account due to security.
+            if($this->wire('session')->get($fieldName)){
+                // session exists so get the value
+                $session_value = $this->wire('session')->get($fieldName);
+                // add new value to the session variable
+                $session_value[] =  [$email => $value];
+                // set it back to the session variable
+                $this->wire('session')->set($fieldName, $session_value);
+            } else {
+                $this->wire('session')->set($fieldName, [[$email => $value]]);
             }
             return false;
         }, $this->_('and email do not match.'));
