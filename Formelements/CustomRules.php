@@ -64,6 +64,12 @@ class CustomRules extends Tag
             if ($u->id && $u->pass->matches($value)) {
                 return true;
             }
+            // set username and password entered inside a session that can be used later if needed
+            // can be reached via $this->wire('session')->get('name of the username field');
+            // returns a multidimensional array containing the entered username => password combinations
+            // can be used later on to check if multiple attempts with same username and different password
+            // combinations were taken, to fe lock the user account due to security reasons.
+            $this->createSessionForLoginAttempts($fieldName, $username, $value);
             return false;
         }, $this->_('and username do not match.'));
 
@@ -81,7 +87,7 @@ class CustomRules extends Tag
             $passwordField = $this->wire('fields')->get($fieldName);
             // set requirements of field to InputfieldPassword
             if (!$passwordField->requirements) {
-            // if no requirements are stored in the database, take the default data from the inputfield default configuration
+                // if no requirements are stored in the database, take the default data from the inputfield default configuration
                 $requirements = $this->wire('modules')->get('InputfieldPassword')->requirements;
             } else {
                 $requirements = $passwordField->requirements;
@@ -94,15 +100,16 @@ class CustomRules extends Tag
 
 
         /**
-        * 4) Check if username contains only the following characters: a-z0-9-_
-        */
+         * 4) Check if username contains only the following characters: a-z0-9-_
+         */
         V::addRule('usernameSyntax', function ($field, $value) {
             $regex = '/[a-z\d\-_.]$/';
             if (preg_match($regex, $value)) {
                 return true;
             }
             return false;
-        }, $this->_('contains not allowed characters. Please use only lowercase digits, numbers, underscore, periods and hyphen (no whitespaces).'));
+        },
+            $this->_('contains not allowed characters. Please use only lowercase digits, numbers, underscore, periods and hyphen (no whitespaces).'));
 
 
         /**
@@ -141,8 +148,8 @@ class CustomRules extends Tag
 
 
         /**
-        * 7) Check if email and password match
-        */
+         * 7) Check if email and password match
+         */
         V::addRule('matchEmail', function ($field, $value, array $params) {
             $fieldName = $this->getFieldName($params[0]); // get field name including form id prefix
             $email = $this->wire('input')->$fieldName;
@@ -155,23 +162,14 @@ class CustomRules extends Tag
             // returns a multidimensional array containing the entered username/email => password combination
             // can be used later on to check if multiple attempts with same username/email and different password
             // combinations were taken, to fe lock the user account due to security.
-            if($this->wire('session')->get($fieldName)){
-                // session exists so get the value
-                $session_value = $this->wire('session')->get($fieldName);
-                // add new value to the session variable
-                $session_value[] =  [$email => $value];
-                // set it back to the session variable
-                $this->wire('session')->set($fieldName, $session_value);
-            } else {
-                $this->wire('session')->set($fieldName, [[$email => $value]]);
-            }
+            $this->createSessionForLoginAttempts($fieldName, $email, $value);
             return false;
         }, $this->_('and email do not match.'));
 
 
         /**
-        * 8) Check if value is boolean true
-        */
+         * 8) Check if value is boolean true
+         */
         V::addRule('isBooleanAndTrue', function ($field, $value) {
             if (is_bool($value)) {
                 if ($value) {
@@ -184,16 +182,16 @@ class CustomRules extends Tag
 
 
         /**
-        * 9) Check if value is boolean false
-        */
+         * 9) Check if value is boolean false
+         */
         V::addRule('isBooleanAndFalse', function ($field, $value) {
             return !(is_bool($value) && $value);
         }, $this->_('is not Boolean false.'));
 
 
         /**
-        * 10) Check if the value is exact the same value as entered as param
-        */
+         * 10) Check if the value is exact the same value as entered as param
+         */
         V::addRule('exactValue', function ($field, $value, array $params) {
             return ($value === $params[0]);
         }, $this->_('does not have the expected value.'));
@@ -427,6 +425,31 @@ class CustomRules extends Tag
             $field_name = $form_id . '-' . $field_name;
         }
         return $field_name;
+    }
+
+    /**
+     * Set a session variable which contains the email/username and the value of the password entered
+     * @param string $fieldName -> the name of the username or email field
+     * @param string $logintype -> could be either username or email
+     * @param string $value -> the field value
+     * @return void
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function createSessionForLoginAttempts(string $fieldName, string $logintype, string $value):void
+    {
+        // combinations were taken, to fe lock the user account due to security.
+        if ($this->wire('session')->get($fieldName)) {
+            // session exists so get the value
+            $session_value = $this->wire('session')->get($fieldName);
+            // add new value to the session variable
+            $session_value[] = [$logintype => $value];
+            // set it back to the session variable
+            $this->wire('session')->set($fieldName, $session_value);
+            bd($session_value);
+        } else {
+            $this->wire('session')->set($fieldName, [[$logintype => $value]]);
+        }
     }
 
 
