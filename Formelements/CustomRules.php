@@ -446,7 +446,6 @@ class CustomRules extends Tag
             $session_value[] = [$logintype => $value];
             // set it back to the session variable
             $this->wire('session')->set($fieldName, $session_value);
-            bd($session_value);
         } else {
             $this->wire('session')->set($fieldName, [[$logintype => $value]]);
         }
