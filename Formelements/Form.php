@@ -373,12 +373,15 @@ class Form extends CustomRules
         // set the placeholder for the title if present
         $this->setMailPlaceholder('title', $mail->title);
 
+
         // set the placeholder for the body
         if (($mail->bodyHTML) || ($mail->body)) {
 
             // set $mail->bodyHTML as prefered value
             $content = $mail->bodyHTML ?: $mail->body;
+
             if ($content) {
+
                 $body = wirePopulateStringTags($content, $this->getMailPlaceholders(),
                     ['tagOpen' => '[[', 'tagClose' => ']]']);
                 $this->setMailPlaceholder('body', $body);
@@ -1320,6 +1323,16 @@ class Form extends CustomRules
                                 $this->showForm = false;
                                 // check if files were uploaded and store them inside the chosen folder
                                 $this->uploaded_files = $this->storeUploadedFiles($formElements);
+
+                                // remove session added by matchUser or matchEmail if set
+                                foreach($this->formElements as $field){
+                                    if(($field instanceof Password) || (is_subclass_of($field, 'Password'))){
+                                        $session_name = $this->getAttribute('id').'-'.$this->input_selectlogin;
+                                        if($this->wire('session')->get($session_name)){
+                                            $this->wire('session')->remove($session_name);
+                                        }
+                                    }
+                                }
                                 return true;
                             } else {
                                 // set error alert
