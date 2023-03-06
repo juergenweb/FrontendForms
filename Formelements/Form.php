@@ -247,7 +247,7 @@ class Form extends CustomRules
      * @return array
      * @throws WireException
      */
-    private function generalPlaceholders(): array
+    public function generalPlaceholders(): array
     {
         return [
             'domainlabel' => $this->_('Domain'),
