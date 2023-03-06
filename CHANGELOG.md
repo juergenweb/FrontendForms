@@ -216,3 +216,7 @@ Now nothing has to be taken into account get the correct user language for the m
 
 ## [2.1.15] - 2023-02-26
 Correct problems by validation of files and error messages of custom validators only beeing displayed in the default language (independent of language settings on the frontend)
+
+## [2.1.16] - 2023-03-06
+Added some minor fixes and a new default inputfield: Language.
+Language is a new default pre-defined input field, which renders a select input field containing all languages installed on the site. This can be used to offer users to select a language.
