@@ -3,6 +3,8 @@ en,de,description,file,hash
 "Reload image","Bild neu laden",,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,7c89feb583d9e778c3533017b111263d
 Captcha,=,,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,45d048c35e3cfd449dc0a1b503cd103a
 en,de,description,file,hash
+"Please select what you see in the image above.","Bitte wählen Sie aus, was sie im Bild oberhalb sehen.",,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,118f3464042a036c52a1087e923a307e
+en,de,description,file,hash
 "This file is not a TrueType font file.","Diese Datei ist keine TrueType Schriftart Datei.",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,ad1ca00ca558c196b2ffa224309706e4
 "This file does not exist under the specified path","Diese Datei existiert nicht unter dem angegebenen Pfad",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,d472945618bae0b84ca5082c7d916966
 en,de,description,file,hash
@@ -383,6 +385,8 @@ en,de,description,file,hash
 "Show password","Passwort anzeigen",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,a1cc7ba89ca3016cf59d7c31506a9681
 "The password must be at least %s characters and must contain characters of the following categories: %s.","Das Passwort muss mindestes %s Zeichen lang sein und folgende Zeichen enthalten: %s.",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,8bc6641f570b88866300ca703223bf6b
 "The password must be at least %s characters.","Das Passwort muss mindestes %s Zeichen lang sein.",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,3d55c273179acb11e30d1a53f8d8625e
+en,de,description,file,hash
+Language,Sprache,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Language.php,4994a8ffeba4ac3140beb89e8d41f174
 en,de,description,file,hash
 "To the page","Zur Seite",,site/modules/FrontendForms/Formelements/Textelements/Link.php,bea7931fd2f2e37616d0be40dd825860
 en,de,description,file,hash
