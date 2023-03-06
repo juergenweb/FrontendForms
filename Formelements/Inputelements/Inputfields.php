@@ -495,13 +495,15 @@ abstract class Inputfields extends Element
      * Set (a) default value(s) for an input field on first page load
      * Enter values as a string: Each value has to be separated by a comma ('default value1', 'default value2')
      * Enter values as an array: ['default value1', 'default value2']
-     * @param string|array|null $default
+     * @param int|string|array|null $default
      * @return $this
      */
-    public function setDefaultValue(string|array|null $default = null): self
+    public function setDefaultValue(int|string|array|null $default = null): self
     {
         if (!$this->isSubmitted()) { // set default value(s) only before form is submitted
             if (!is_null($default)) {
+                if(is_int($default))
+                    $default = (string)($default); // convert int to string
                 if (is_string($default)) {
                     //create array out of string
                     $default = func_get_args();
