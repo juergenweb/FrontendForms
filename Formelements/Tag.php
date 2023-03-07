@@ -410,25 +410,28 @@ abstract class Tag extends Wire
         $key = $this->sanitizeAttributeName($attributeName);
         if ($attributeValue) {
             $value = trim($attributeValue);
-            // remove values form assoc. arrays like style attribute
-            if ($this->isAssoc($this->getAttributes()[$key])) {
-                if (array_key_exists($attributeValue, $this->attributes[$key])) {
-                    if (in_array($key, self::MULTIVALUEATTR)) {
-                        unset($this->attributes[$key][$value]);
-                    }
-                }
-            } else {
-                // remove values from non assoc. arrays like class, rel, id,...
-                if (array_key_exists($key, $this->getAttributes())) {
-                    if (in_array($value, $this->attributes[$key])) {
+            // check if the attribute exists in the attributes array
+            if(isset($this->getAttributes()[$key])){
+                // remove values form assoc. arrays like style attribute
+                if ($this->isAssoc($this->getAttributes()[$key])) {
+                    if (array_key_exists($attributeValue, $this->attributes[$key])) {
                         if (in_array($key, self::MULTIVALUEATTR)) {
-                            if (count($this->attributes[$key]) > 1) {
-                                $this->attributes[$key] = array_diff($this->attributes[$key], [$value]);
+                            unset($this->attributes[$key][$value]);
+                        }
+                    }
+                } else {
+                    // remove values from non assoc. arrays like class, rel, id,...
+                    if (array_key_exists($key, $this->getAttributes())) {
+                        if (in_array($value, $this->attributes[$key])) {
+                            if (in_array($key, self::MULTIVALUEATTR)) {
+                                if (count($this->attributes[$key]) > 1) {
+                                    $this->attributes[$key] = array_diff($this->attributes[$key], [$value]);
+                                } else {
+                                    unset($this->attributes[$key]);
+                                }
                             } else {
                                 unset($this->attributes[$key]);
                             }
-                        } else {
-                            unset($this->attributes[$key]);
                         }
                     }
                 }
