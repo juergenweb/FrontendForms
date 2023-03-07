@@ -299,7 +299,9 @@ abstract class Tag extends Wire
     public function removeAttribute(string $attributeName): self
     {
         $name = $this->sanitizeAttributeName($attributeName);
-        unset($this->getAttributes()[$name]);
+        $attributes = $this->getAttributes();
+        unset($attributes[$name]);
+        $this->attributes = $attributes;
         return $this;
     }
 
