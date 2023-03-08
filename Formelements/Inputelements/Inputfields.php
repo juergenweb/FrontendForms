@@ -731,6 +731,8 @@ abstract class Inputfields extends Element
     protected function addHTML5alpha():void
     {
         $this->setAttribute('pattern', '[a-zA-Z]+');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should only contain letters'), $label));
     }
 
     /**
@@ -753,6 +755,8 @@ abstract class Inputfields extends Element
     protected function addHTML5alphaNum():void
     {
         $this->setAttribute('pattern', '[a-zA-Z0-9]+');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should only contain letters and numbers.'), $label));
     }
 
     /**
@@ -799,6 +803,9 @@ abstract class Inputfields extends Element
     protected function addHTML5ascii():void
     {
         $this->setAttribute('pattern ', '[\x00-\x7F]+');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should only contain ascii characters'), $label));
+
     }
 
     /**
@@ -821,6 +828,8 @@ abstract class Inputfields extends Element
     protected function addHTML5slug():void
     {
         $this->setAttribute('pattern ', '[-a-z0-9_-]+');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should only contain letters, numbers, underscores or hyphens.'), $label));
     }
 
     /**
@@ -842,6 +851,8 @@ abstract class Inputfields extends Element
     protected function addHTML5url():void
     {
         $this->setAttribute('pattern ', 'https?://.+');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should be a valid URL starting with http:// or https://.'), $label));
     }
 
     /**
@@ -864,6 +875,8 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ',
             '^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should be a valid email address.'), $label));
     }
 
     /**
@@ -885,6 +898,8 @@ abstract class Inputfields extends Element
     protected function addHTML5numeric():void
     {
         $this->setAttribute('pattern ', '[-+]?[0-9]*[.,]?[0-9]+');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should only numbers (integers or floats).'), $label));
     }
 
     /**
@@ -906,6 +921,8 @@ abstract class Inputfields extends Element
     protected function addHTML5integer():void
     {
         $this->setAttribute('pattern ', '[0-9]+');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should only contain integers.'), $label));
     }
 
     /**
@@ -928,6 +945,8 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ',
             '(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*){3}');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IP address in the format x.x.x.x.'), $label));
     }
 
     /**
@@ -949,6 +968,8 @@ abstract class Inputfields extends Element
     protected function addHTML5ipv4():void
     {
         $this->setAttribute('pattern ', '((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IPv4 address in the format x.x.x.x.'), $label));
     }
 
     /**
@@ -970,6 +991,8 @@ abstract class Inputfields extends Element
     protected function addHTML5ipv6():void
     {
         $this->setAttribute('pattern ', '((^|:)([0-9a-fA-F]{0,4})){1,8}$');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IPv6 address in the format x:x:x:x:x:x:x:x.'), $label));
     }
 
     /**
@@ -991,7 +1014,9 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5usernameSyntax():void
     {
-        $this->setAttribute('pattern ', '^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$');
+        $this->setAttribute('pattern ', '^[a-zA-Z][a-zA-Z0-9-_\.@]{1,50}$');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s contains not allowed characters. Please use only letters, numbers, underscores, periods, hyphens and @signs (no whitespaces).'), $label));
     }
 
     /**
@@ -1022,6 +1047,8 @@ abstract class Inputfields extends Element
         ];
         if(array_key_exists($format, $dateformats)){
             $this->setAttribute('pattern ', $dateformats[$format]);
+            $label = $this->getLabel()->getText();
+            $this->setAttribute('title', sprintf($this->_('%s should only contain a valid date in the format %s.'), $label, $format));
         }
 
     }
@@ -1050,6 +1077,8 @@ abstract class Inputfields extends Element
         $pattern = str_replace('/', '', $pattern); // remove /
 
         $this->setAttribute('pattern ', $pattern);
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s contains an invalid value.'), $label));
     }
 
     /**
@@ -1072,6 +1101,8 @@ abstract class Inputfields extends Element
     protected function addHTML5exactValue(array $value):void
     {
         $this->setAttribute('pattern ', $value[0]);
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should contain the exact value %s.'), $label, $value[0]));
     }
 
     /**
@@ -1096,6 +1127,8 @@ abstract class Inputfields extends Element
     {
         // TODO funktioniert nicht
         $this->setAttribute('pattern!', $value[0]);
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should not contain the value %s.'), $label, $value[0]));
     }
 
     /**
@@ -1117,15 +1150,13 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5allowedFileExt(array $value):void
     {
-        $extensions = [];
+        $accept_extensions = [];
         // add dot in front of file extensions
         foreach ($value[0] as $ext) {
-            $extensions[] = '.' . $ext;
+            $accept_extensions[] = '.' . $ext;
         }
-        $extensions = implode(',', $extensions);
-
-        $this->setAttribute('accept', $extensions);
-
+        $accept_extensions = implode(',', $accept_extensions);
+        $this->setAttribute('accept', $accept_extensions); // this is not for the validation - it shows only allowed files in the dialog window!!
     }
 
     /**
