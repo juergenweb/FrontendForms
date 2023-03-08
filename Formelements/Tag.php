@@ -421,7 +421,6 @@ abstract class Tag extends Wire
                     }
                 } else {
                     // remove values from non assoc. arrays like class, rel, id,...
-                    bd($this->attributes[$key]);
                     if (array_key_exists($key, $this->getAttributes())) {
                         //if (in_array($value, $this->getAttributes())) {
                             if (in_array($key, self::MULTIVALUEATTR)) {
