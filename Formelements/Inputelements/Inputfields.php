@@ -66,7 +66,7 @@ abstract class Inputfields extends Element
      * @param bool $useInputWrapper
      * @return void
      */
-    public function useInputWrapper(bool $useInputWrapper): void
+    public function useInputWrapper(bool $useInputWrapper):void
     {
         $this->useInputWrapper = $useInputWrapper;
     }
@@ -76,7 +76,7 @@ abstract class Inputfields extends Element
      * @param bool $useFieldWrapper
      * @return void
      */
-    public function useFieldWrapper(bool $useFieldWrapper): void
+    public function useFieldWrapper(bool $useFieldWrapper):void
     {
         $this->useFieldWrapper = $useFieldWrapper;
     }
@@ -86,7 +86,7 @@ abstract class Inputfields extends Element
      * Use this method if you want to add custom attributes or remove attributes to and from the input field wrapper
      * @return InputWrapper
      */
-    public function getInputWrapper(): InputWrapper
+    public function getInputWrapper():InputWrapper
     {
         return $this->inputWrapper;
     }
@@ -96,7 +96,7 @@ abstract class Inputfields extends Element
      * Use this method if you want to add custom attributes or remove attributes to and from the field wrapper
      * @return FieldWrapper
      */
-    public function getFieldWrapper(): FieldWrapper
+    public function getFieldWrapper():FieldWrapper
     {
         return $this->fieldWrapper;
     }
@@ -110,7 +110,7 @@ abstract class Inputfields extends Element
      * array: $sanitizers - fe ['text', 'number'] - can be one or multiple sanitizers
      * @return void
      */
-    public function removeSanitizers(array|string $sanitizer = null): void
+    public function removeSanitizers(array|string $sanitizer = null):void
     {
         $sanitizers = $this->sanitizer;
         switch ($sanitizer) {
@@ -136,7 +136,7 @@ abstract class Inputfields extends Element
      * @param string|int|float $size
      * @return string
      */
-    protected function convertToReadableSize(string|int|float $size): string
+    protected function convertToReadableSize(string|int|float $size):string
     {
         $base = log((float)$size) / log(1024);
         $suffix = array("", "KB", "MB", "GB", "TB");
@@ -151,7 +151,7 @@ abstract class Inputfields extends Element
      * @param string $validator - the name of the validator
      * @return $this
      */
-    public function setRule($validator): self
+    public function setRule($validator):self
     {
 
         $args = func_get_args(); // get all parameter inside the parenthesis
@@ -183,10 +183,10 @@ abstract class Inputfields extends Element
 
         // inform about allowed extensions
         if ($validator == 'allowedFileExt') {
-            if(isset($variables[0])){
-            $this->notes_array['allowedFileExt']['text'] = sprintf($this->_('Allowed file types: %s.'),
-                implode(', ', $variables[0]));
-            $this->notes_array['allowedFileExt']['value'] = implode(', ', $variables[0]);
+            if (isset($variables[0])) {
+                $this->notes_array['allowedFileExt']['text'] = sprintf($this->_('Allowed file types: %s.'),
+                    implode(', ', $variables[0]));
+                $this->notes_array['allowedFileExt']['value'] = implode(', ', $variables[0]);
             }
         }
 
@@ -198,6 +198,12 @@ abstract class Inputfields extends Element
             $this->notes_array['phpIniFilesize']['value'] = $max_file_size;
         }
 
+        // add HTML5 validation attribute if present
+        $method_name = 'addHTML5' . $validator;
+        if (method_exists($this, $method_name)) {
+            $this->$method_name($variables);
+        }
+
         return $this;
     }
 
@@ -206,11 +212,17 @@ abstract class Inputfields extends Element
      * @param string $rule ;
      * @return $this;
      */
-    public function removeRule(string $rule): self
+    public function removeRule(string $rule):self
     {
         $rules = $this->validatonRules;
         unset($rules[$rule]);
         $this->validatonRules = $rules;
+
+        // remove HTML5 validation attribute if present
+        $method_name = 'removeHTML5' . $rule;
+        if (method_exists($this, $method_name)) {
+            $this->$method_name();
+        }
         return $this;
     }
 
@@ -220,7 +232,7 @@ abstract class Inputfields extends Element
      * @param string $msg - your custom error message text (fe {field} needs to be filled out)
      * @return $this
      */
-    public function setCustomMessage(string $msg): self
+    public function setCustomMessage(string $msg):self
     {
         $this->api->setCustomMessage($msg);
         $old = $this->validatonRules[$this->api->getValidator()];
@@ -237,7 +249,7 @@ abstract class Inputfields extends Element
      * @param string $fieldname
      * @return $this
      */
-    public function setCustomFieldname(string $fieldname): self
+    public function setCustomFieldname(string $fieldname):self
     {
         $this->api->setCustomFieldName($fieldname);
         $old = $this->validatonRules[$this->api->getValidator()];
@@ -250,7 +262,7 @@ abstract class Inputfields extends Element
     /**
      * @return string
      */
-    public function __toString(): string
+    public function __toString():string
     {
         return $this->___render();
     }
@@ -259,8 +271,9 @@ abstract class Inputfields extends Element
      * Render the input field including wrappers, notes, description, prepend markup, append markup and error message
      * @return string
      */
-    public function ___render(): string
+    public function ___render():string
     {
+
         if ($this->hasRule('required')) {
             $this->label->setRequired();
             $this->setAttribute('required')->setCustomFieldName($this->getLabel()->getText());// set label as field name by default
@@ -373,7 +386,7 @@ abstract class Inputfields extends Element
      * @param string $ruleName ->fe required
      * @return boolean
      */
-    public function hasRule(string $ruleName): bool
+    public function hasRule(string $ruleName):bool
     {
         if (array_key_exists(trim($ruleName), $this->getRules())) {
             return true;
@@ -385,7 +398,7 @@ abstract class Inputfields extends Element
      * Get all validation rules for an input field
      * @return array
      */
-    public function getRules(): array
+    public function getRules():array
     {
         return $this->validatonRules;
     }
@@ -394,7 +407,7 @@ abstract class Inputfields extends Element
      * Method to clear all validation rules of an element
      * @return void
      */
-    protected function removeAllRules(): void
+    protected function removeAllRules():void
     {
         $this->validatonRules = [];
     }
@@ -403,7 +416,7 @@ abstract class Inputfields extends Element
      * Get the label object (if present)
      * @return Label
      */
-    protected function getLabel(): Label
+    protected function getLabel():Label
     {
         return $this->label;
     }
@@ -413,7 +426,7 @@ abstract class Inputfields extends Element
      * @param string $label
      * @return Label
      */
-    public function setLabel(string $label): Label
+    public function setLabel(string $label):Label
     {
         $this->label->setText($label);
         return $this->label;
@@ -425,7 +438,7 @@ abstract class Inputfields extends Element
      * Example $field->getErrorMessage()->setAttribute('class', 'myErrorClass');
      * @return Errormessage
      */
-    public function getErrorMessage(): Errormessage
+    public function getErrorMessage():Errormessage
     {
         return $this->errormessage;
     }
@@ -436,7 +449,7 @@ abstract class Inputfields extends Element
      * @param string $errorMessage
      * @return Errormessage
      */
-    protected function setErrorMessage(string $errorMessage): Errormessage
+    protected function setErrorMessage(string $errorMessage):Errormessage
     {
         $this->errormessage->setText($errorMessage);
         return $this->errormessage;
@@ -446,7 +459,7 @@ abstract class Inputfields extends Element
      * Get the Description object
      * @return Description
      */
-    protected function getDescription(): Description
+    protected function getDescription():Description
     {
         return $this->description;
     }
@@ -456,7 +469,7 @@ abstract class Inputfields extends Element
      * @param string $description
      * @return Description
      */
-    public function setDescription(string $description): Description
+    public function setDescription(string $description):Description
     {
         $this->description->setText($description);
         return $this->description;
@@ -466,7 +479,7 @@ abstract class Inputfields extends Element
      * Get the Notes object
      * @return Notes
      */
-    protected function getNotes(): Notes
+    protected function getNotes():Notes
     {
         return $this->notes;
     }
@@ -476,7 +489,7 @@ abstract class Inputfields extends Element
      * @param string $notes
      * @return Notes
      */
-    public function setNotes(string $notes): Notes
+    public function setNotes(string $notes):Notes
     {
         $this->notes->setText($notes);
         return $this->notes;
@@ -486,7 +499,7 @@ abstract class Inputfields extends Element
      * Return the default value
      * @return string|array|null
      */
-    protected function getDefaultValue(): string|array|null
+    protected function getDefaultValue():string|array|null
     {
         return $this->defaultValue;
     }
@@ -498,12 +511,13 @@ abstract class Inputfields extends Element
      * @param int|string|array|null $default
      * @return $this
      */
-    public function setDefaultValue(int|string|array|null $default = null): self
+    public function setDefaultValue(int|string|array|null $default = null):self
     {
         if (!$this->isSubmitted()) { // set default value(s) only before form is submitted
             if (!is_null($default)) {
-                if(is_int($default))
-                    $default = (string)($default); // convert int to string
+                if (is_int($default)) {
+                    $default = (string)($default);
+                } // convert int to string
                 if (is_string($default)) {
                     //create array out of string
                     $default = func_get_args();
@@ -533,7 +547,7 @@ abstract class Inputfields extends Element
      * Return all names of the sanitizer methods
      * @return array
      */
-    protected function getSanitizer(): array
+    protected function getSanitizer():array
     {
         return $this->sanitizer;
     }
@@ -560,7 +574,7 @@ abstract class Inputfields extends Element
      * Get all sanitizer that were set to a field
      * @return array
      */
-    public function getSanitizers(): array
+    public function getSanitizers():array
     {
         return $this->sanitizer;
     }
@@ -571,7 +585,7 @@ abstract class Inputfields extends Element
      * @param string $sanitizer
      * @return bool
      */
-    public function hasSanitizer(string $sanitizer): bool
+    public function hasSanitizer(string $sanitizer):bool
     {
         $sanitizer = trim(strtolower($sanitizer));
         return in_array($sanitizer, $this->sanitizer);
@@ -581,7 +595,7 @@ abstract class Inputfields extends Element
      * Get the error class for input fields
      * @return string|null
      */
-    protected function getinputErrorClass(): ?string
+    protected function getinputErrorClass():?string
     {
         return $this->getCSSClass('input_errorClass');
     }
@@ -590,7 +604,7 @@ abstract class Inputfields extends Element
      * Get the post value of the input field if it is present
      * @return mixed
      */
-    protected function getPostValue(): mixed
+    protected function getPostValue():mixed
     {
         if ($this->hasPostValue()) {
             $name = str_replace('[]', '', $this->getAttribute('name'));
@@ -604,7 +618,7 @@ abstract class Inputfields extends Element
      * Check if post value of the input field is present
      * @return bool -> true: the post value is present, false: post value is not there
      */
-    protected function hasPostValue(): bool
+    protected function hasPostValue():bool
     {
         $name = str_replace('[]', '', $this->getAttribute('name'));
         // remove brackets from attribute name of multi-value input fields
@@ -613,4 +627,596 @@ abstract class Inputfields extends Element
         }
         return false;
     }
+
+    /**
+     * Various add and remove methods for adding HTML5 Browser validation attributes
+     * Will be added or removed via setRule and removeRule method for field validation
+     */
+
+    /**
+     * Check if the given field is of the type provided as parameter (fe text, email,..)
+     * @param array $types
+     * @param array|null $tags
+     * @return bool
+     */
+    protected function checkInputfieldType(array $types, array $tags = null):bool
+    {
+        if ($this->getAttribute('type')) {
+            // check for type attribute first
+            return (in_array($this->getAttribute('type'), $types));
+        } else {
+            // check for tags
+            if (!is_null($tags)) {
+                return (in_array($this->getTag(), $tags));
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Get all types of inputfields
+     * @return string[]
+     */
+    protected static function getInputfieldTypes():array
+    {
+        return [
+            'text',
+            'color',
+            'date',
+            'datetime',
+            'email',
+            'hidden',
+            'month',
+            'number',
+            'password',
+            'range',
+            'url',
+            'search',
+            'tel'
+        ];
+    }
+
+    /**
+     * Add HTML5 attribute min to the input tag
+     * Validator rule: min
+     * Supported input types: text, number
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5min(array $value):void
+    {
+        if ($this->checkInputfieldType(['text', 'number'])) {
+            $this->setAttribute('min', $value[0]);
+        }
+    }
+
+    /**
+     * Remove HTML5 min attribute from the input tag
+     * Validator rule: min
+     * @return void
+     */
+    protected function removeHTML5min():void
+    {
+        $this->removeAttribute('min');
+    }
+
+    /**
+     * Add HTML5 attribute max to the input tag
+     * Validator rule: max
+     * Supported input types: text, number
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5max(array $value):void
+    {
+        if ($this->checkInputfieldType(['text', 'number'])) {
+            $this->setAttribute('max', $value[0]);
+        }
+    }
+
+    /**
+     * Remove HTML5 max attribute from the input tag
+     * Validator rule: max
+     * @return void
+     */
+    protected function removeHTML5max():void
+    {
+        $this->removeAttribute('max');
+    }
+
+    /**
+     * Add HTML5 attribute minlength to the input tag
+     * Validator rule: lengthMin
+     * Supported input types: all input types, textarea
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5lengthMin(array $value):void
+    {
+        if ($this->checkInputfieldType(self::getInputfieldTypes(), ['textarea'])) {
+            $this->setAttribute('minlength', $value[0]);
+        }
+    }
+
+    /**
+     * Remove HTML5 minlength attribute from the input tag
+     * Validator rule: lengthMin
+     * @return void
+     */
+    protected function removeHTML5lengthMin():void
+    {
+        $this->removeAttribute('minlength');
+    }
+
+    /**
+     * Add HTML5 attribute maxlength to the input tag
+     * Validator rule: lengthMax
+     * Supported input types: all input types, textarea
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5lengthMax(array $value):void
+    {
+        if ($this->checkInputfieldType(self::getInputfieldTypes(), ['textarea'])) {
+            $this->setAttribute('maxlength', $value[0]);
+        }
+    }
+
+    /**
+     * Remove HTML5 maxlength attribute from the input tag
+     * Validator rule: lengthMax
+     * @return void
+     */
+    protected function removeHTML5lengthMax():void
+    {
+        $this->removeAttribute('maxlength');
+    }
+
+    /**
+     * Add HTML5 attribute pattern for alphabetical letters only to the input tag
+     * Validator rule: alpha
+     * Supported input types: no restriction
+     * @return void
+     */
+    protected function addHTML5alpha():void
+    {
+            $this->setAttribute('pattern', '[a-zA-Z]+');
+    }
+
+    /**
+     * Remove attribute pattern for alphabetical letters only from the input tag
+     * Validator rule: alpha
+     * Can be used on input type text and textarea
+     * @return void
+     */
+    protected function removeHTML5alpha():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute pattern for alphanumerical letters only to the input tag
+     * Validator rule: alphaNum
+     * Supported input types: no restriction
+     * @return void
+     */
+    protected function addHTML5alphaNum():void
+    {
+        $this->setAttribute('pattern', '[a-zA-Z0-9]+');
+    }
+
+    /**
+     * Remove attribute pattern for alphanumeric letters only from the input tag
+     * Validator rule: alphaNum
+     * @return void
+     */
+    protected function removeHTML5alphaNum():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute minlength and maxlength to the input tag
+     * Validator rule: lengthBetween
+     * Supported input types: all inputs, textarea
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5lengthBetween(array $value):void
+    {
+        if ($this->checkInputfieldType(self::getInputfieldTypes(), ['textarea'])) {
+            $this->setAttribute('minlength ', $value[0]);
+            $this->setAttribute('maxlength ', $value[1]);
+        }
+    }
+
+    /**
+     * Remove attribute minlength and maxlength from the input tag
+     * Validator rule: lengthBetween
+     * @return void
+     */
+    protected function removeHTML5lengthBetween():void
+    {
+        $this->removeAttribute('minlength');
+        $this->removeAttribute('maxlength');
+    }
+
+
+    /**
+     * Add HTML5 attribute pattern for ascii characters to the input tag
+     * Validator rule: ascii
+     * Supported input types: text, textarea
+     * @return void
+     */
+    protected function addHTML5ascii():void
+    {
+        if ($this->checkInputfieldType(['text'], ['textarea'])) {
+            $this->setAttribute('pattern ', '[\x00-\x7F]+');
+        }
+    }
+
+    /**
+     * Remove attribute pattern for ascii characters from the input tag
+     * Validator rule: ascii
+     * @return void
+     */
+    protected function removeHTML5ascii():void
+    {
+        //$this->removeAttributeValue('class', $class);
+        $this->removeAttribute('pattern');
+    }
+
+
+    /**
+     * Add HTML5 attribute pattern for a slug to the input tag
+     * Validator rule: slug
+     * Supported input types: text, textarea
+     * @return void
+     */
+    protected function addHTML5slug():void
+    {
+        if ($this->checkInputfieldType(['text'], ['textarea'])) {
+            $this->setAttribute('pattern ', '[-a-z0-9_-]+');
+        }
+    }
+
+    /**
+     * Remove attribute pattern for a slug from the input tag
+     * Validator rule: slug
+     * @return void
+     */
+    protected function removeHTML5slug():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute pattern for an url to the input tag
+     * Validator rule: url
+     * Supported input types: text, textarea
+     * @return void
+     */
+    protected function addHTML5url():void
+    {
+        if ($this->checkInputfieldType(['text'], ['textarea'])) {
+            $this->setAttribute('pattern ', 'https?://.+');
+        }
+    }
+
+    /**
+     * Remove attribute pattern for an url from the input tag
+     * Validator rule: url
+     * @return void
+     */
+    protected function removeHTML5url():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute pattern for an email address to the input tag
+     * Validator rule: email
+     * Supported input types: text, textarea
+     * @return void
+     */
+    protected function addHTML5email():void
+    {
+        if ($this->checkInputfieldType(['text'], ['textarea'])) {
+            $this->setAttribute('pattern ',
+                '^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$');
+        }
+    }
+
+    /**
+     * Remove attribute pattern for an email from the input tag
+     * Validator rule: email
+     * @return void
+     */
+    protected function removeHTML5email():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute pattern for a numeric string to the input tag
+     * Validator rule: numeric
+     * Supported input types: text, textarea
+     * @return void
+     */
+    protected function addHTML5numeric():void
+    {
+        if ($this->checkInputfieldType(['text'], ['textarea'])) {
+            $this->setAttribute('pattern ', '[-+]?[0-9]*[.,]?[0-9]+');
+        }
+    }
+
+    /**
+     * Remove attribute pattern for a numeric string from the input tag
+     * Validator rule: numeric
+     * @return void
+     */
+    protected function removeHTML5numeric():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute pattern for an integer to the input tag
+     * Validator rule: integer
+     * Supported input types: text, textarea
+     * @return void
+     */
+    protected function addHTML5integer():void
+    {
+        if ($this->checkInputfieldType(['text'], ['textarea'])) {
+            $this->setAttribute('pattern ', '[0-9]+');
+        }
+    }
+
+    /**
+     * Remove attribute pattern for an integer from the input tag
+     * Validator rule: integer
+     * @return void
+     */
+    protected function removeHTML5integer():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute pattern for an IP address to the input tag
+     * Validator rule: ip
+     * Supported input types: text, textarea
+     * @return void
+     */
+    protected function addHTML5ip():void
+    {
+        if ($this->checkInputfieldType(['text'], ['textarea'])) {
+            $this->setAttribute('pattern ',
+                '(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*){3}');
+        }
+    }
+
+    /**
+     * Remove attribute pattern for an IP address from the input tag
+     * Validator rule: ip
+     * @return void
+     */
+    protected function removeHTML5ip():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute pattern for an IP4 address to the input tag
+     * Validator rule: ipv4
+     * Supported input types: text, textarea
+     * @return void
+     */
+    protected function addHTML5ipv4():void
+    {
+        if ($this->checkInputfieldType(['text'], ['textarea'])) {
+            $this->setAttribute('pattern ', '((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$');
+        }
+    }
+
+    /**
+     * Remove attribute pattern for an IP4 address from the input tag
+     * Validator rule: ipv4
+     * @return void
+     */
+    protected function removeHTML5ipv4():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute pattern for an IP6 address to the input tag
+     * Validator rule: ipv6
+     * Supported input types: text, textarea
+     * @return void
+     */
+    protected function addHTML5ipv6():void
+    {
+        if ($this->checkInputfieldType(['text'], ['textarea'])) {
+            $this->setAttribute('pattern ', '((^|:)([0-9a-fA-F]{0,4})){1,8}$');
+        }
+    }
+
+    /**
+     * Remove attribute pattern for an IP6 address from the input tag
+     * Validator rule: ipv6
+     * @return void
+     */
+    protected function removeHTML5ipv6():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+
+    /**
+     * Add HTML5 attribute pattern for a username to the input tag
+     * Validator rule: usernameSyntax
+     * Supported input types: text
+     * @return void
+     */
+    protected function addHTML5usernameSyntax():void
+    {
+        if ($this->checkInputfieldType(['text'])) {
+            $this->setAttribute('pattern ', '^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$');
+        }
+    }
+
+    /**
+     * Remove attribute pattern for a username from the input tag
+     * Validator rule: usernameSyntax
+     * @return void
+     */
+    protected function removeHTML5usernameSyntax():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute pattern for a date in the given format to the input tag
+     * Validator rule: dateformat
+     * Supported input types: text
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5dateFormat(array $value):void
+    {
+        $format = strtolower($value[0]);
+
+        $dateformats = [
+            'dd.mm.yyyy' => '(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}',
+            'yyyy.mm.dd' => '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])',
+            'mm/dd/yyyy' => '(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d'
+        ];
+
+        if (($this->checkInputfieldType(['text'])) && (array_key_exists($format, $dateformats))) {
+            $this->setAttribute('pattern ', $dateformats[$format]);
+        }
+    }
+
+    /**
+     * Remove attribute pattern for a date in the given format from the input tag
+     * Validator rule: dateFormat
+     * @return void
+     */
+    protected function removeHTML5dateFormat():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute pattern for a regex to the input tag
+     * Validator rule: regex
+     * Supported input types: text
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5regex(array $value):void
+    {
+        $pattern = str_replace('$', '', $value[0]); // remove $
+        $pattern = str_replace('i', '', $pattern); // remove i
+        $pattern = str_replace('/', '', $pattern); // remove /
+
+        if ($this->checkInputfieldType(['text'], ['textarea'])) {
+            $this->setAttribute('pattern ', $pattern);
+        }
+    }
+
+    /**
+     * Remove attribute pattern regex from the input tag
+     * Validator rule: regex
+     * @return void
+     */
+    protected function removeHTML5regex():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute pattern for exact equal string to the input tag
+     * Validator rule: exactValue
+     * Supported input types: text, textarea
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5exactValue(array $value):void
+    {
+        if ($this->checkInputfieldType(['text'], ['textarea'])) {
+            $this->setAttribute('pattern ', $value[0]);
+        }
+    }
+
+    /**
+     * Remove attribute pattern exact equal string from the input tag
+     * Validator rule: exactValue
+     * @return void
+     */
+    protected function removeHTML5exactValue():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+
+    /**
+     * Add HTML5 attribute pattern for different string to the input tag
+     * Validator rule: differentValue
+     * Supported input types: text, textarea
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5differentValue(array $value):void
+    {
+        if ($this->checkInputfieldType(['text'], ['textarea'])) {
+            // TODO funktioniert nicht
+            $this->setAttribute('pattern!', $value[0]);
+        }
+    }
+
+    /**
+     * Remove attribute pattern different string from the input tag
+     * Validator rule: differentValue
+     * @return void
+     */
+    protected function removeHTML5differentValue():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute pattern for different file extensions to the input tag
+     * Validator rule: allowedFileExt
+     * Supported input types: file
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5allowedFileExt(array $value):void
+    {
+       $extensions = [];
+        // add dot in front of file extensions
+        foreach($value[0] as $ext){
+            $extensions[] = '.'.$ext;
+        }
+        $extensions = implode(',', $extensions);
+
+        if ($this->checkInputfieldType(['file'])) {
+
+            $this->setAttribute('accept', $extensions);
+        }
+    }
+
+    /**
+     * Remove attribute pattern different string from the input tag
+     * Validator rule: allowedFileExt
+     * @return void
+     */
+    protected function removeHTML5allowedFileExt():void
+    {
+        $this->removeAttribute('accept');
+    }
+
 }
