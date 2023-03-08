@@ -629,52 +629,10 @@ abstract class Inputfields extends Element
     }
 
     /**
-     * Various add and remove methods for adding HTML5 Browser validation attributes
+     * Various add and remove methods for adding HTML5 Browser validation attributes depending on validators set
      * Will be added or removed via setRule and removeRule method for field validation
      */
 
-    /**
-     * Check if the given field is of the type provided as parameter (fe text, email,..)
-     * @param array $types
-     * @param array|null $tags
-     * @return bool
-     */
-    protected function checkInputfieldType(array $types, array $tags = null):bool
-    {
-        if ($this->getAttribute('type')) {
-            // check for type attribute first
-            return (in_array($this->getAttribute('type'), $types));
-        } else {
-            // check for tags
-            if (!is_null($tags)) {
-                return (in_array($this->getTag(), $tags));
-            }
-            return false;
-        }
-    }
-
-    /**
-     * Get all types of inputfields
-     * @return string[]
-     */
-    protected static function getInputfieldTypes():array
-    {
-        return [
-            'text',
-            'color',
-            'date',
-            'datetime',
-            'email',
-            'hidden',
-            'month',
-            'number',
-            'password',
-            'range',
-            'url',
-            'search',
-            'tel'
-        ];
-    }
 
     /**
      * Add HTML5 attribute min to the input tag
@@ -685,9 +643,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5min(array $value):void
     {
-        if ($this->checkInputfieldType(['text', 'number'])) {
-            $this->setAttribute('min', $value[0]);
-        }
+        $this->setAttribute('min', $value[0]);
     }
 
     /**
@@ -709,9 +665,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5max(array $value):void
     {
-        if ($this->checkInputfieldType(['text', 'number'])) {
-            $this->setAttribute('max', $value[0]);
-        }
+        $this->setAttribute('max', $value[0]);
     }
 
     /**
@@ -733,9 +687,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5lengthMin(array $value):void
     {
-        if ($this->checkInputfieldType(self::getInputfieldTypes(), ['textarea'])) {
-            $this->setAttribute('minlength', $value[0]);
-        }
+        $this->setAttribute('minlength', $value[0]);
     }
 
     /**
@@ -757,9 +709,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5lengthMax(array $value):void
     {
-        if ($this->checkInputfieldType(self::getInputfieldTypes(), ['textarea'])) {
-            $this->setAttribute('maxlength', $value[0]);
-        }
+        $this->setAttribute('maxlength', $value[0]);
     }
 
     /**
@@ -780,7 +730,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5alpha():void
     {
-            $this->setAttribute('pattern', '[a-zA-Z]+');
+        $this->setAttribute('pattern', '[a-zA-Z]+');
     }
 
     /**
@@ -824,10 +774,8 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5lengthBetween(array $value):void
     {
-        if ($this->checkInputfieldType(self::getInputfieldTypes(), ['textarea'])) {
-            $this->setAttribute('minlength ', $value[0]);
-            $this->setAttribute('maxlength ', $value[1]);
-        }
+        $this->setAttribute('minlength ', $value[0]);
+        $this->setAttribute('maxlength ', $value[1]);
     }
 
     /**
@@ -850,9 +798,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5ascii():void
     {
-        if ($this->checkInputfieldType(['text'], ['textarea'])) {
-            $this->setAttribute('pattern ', '[\x00-\x7F]+');
-        }
+        $this->setAttribute('pattern ', '[\x00-\x7F]+');
     }
 
     /**
@@ -862,8 +808,9 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5ascii():void
     {
-        //$this->removeAttributeValue('class', $class);
-        $this->removeAttribute('pattern');
+        //TODO check removeAttributeValue for all pattern
+        $this->removeAttributeValue('pattern', '[\x00-\x7F]+');
+        //$this->removeAttribute('pattern');
     }
 
 
@@ -875,9 +822,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5slug():void
     {
-        if ($this->checkInputfieldType(['text'], ['textarea'])) {
-            $this->setAttribute('pattern ', '[-a-z0-9_-]+');
-        }
+        $this->setAttribute('pattern ', '[-a-z0-9_-]+');
     }
 
     /**
@@ -898,9 +843,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5url():void
     {
-        if ($this->checkInputfieldType(['text'], ['textarea'])) {
-            $this->setAttribute('pattern ', 'https?://.+');
-        }
+        $this->setAttribute('pattern ', 'https?://.+');
     }
 
     /**
@@ -921,10 +864,8 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5email():void
     {
-        if ($this->checkInputfieldType(['text'], ['textarea'])) {
-            $this->setAttribute('pattern ',
-                '^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$');
-        }
+        $this->setAttribute('pattern ',
+            '^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$');
     }
 
     /**
@@ -945,9 +886,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5numeric():void
     {
-        if ($this->checkInputfieldType(['text'], ['textarea'])) {
-            $this->setAttribute('pattern ', '[-+]?[0-9]*[.,]?[0-9]+');
-        }
+        $this->setAttribute('pattern ', '[-+]?[0-9]*[.,]?[0-9]+');
     }
 
     /**
@@ -968,9 +907,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5integer():void
     {
-        if ($this->checkInputfieldType(['text'], ['textarea'])) {
-            $this->setAttribute('pattern ', '[0-9]+');
-        }
+        $this->setAttribute('pattern ', '[0-9]+');
     }
 
     /**
@@ -991,10 +928,8 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5ip():void
     {
-        if ($this->checkInputfieldType(['text'], ['textarea'])) {
-            $this->setAttribute('pattern ',
-                '(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*){3}');
-        }
+        $this->setAttribute('pattern ',
+            '(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*){3}');
     }
 
     /**
@@ -1015,9 +950,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5ipv4():void
     {
-        if ($this->checkInputfieldType(['text'], ['textarea'])) {
-            $this->setAttribute('pattern ', '((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$');
-        }
+        $this->setAttribute('pattern ', '((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$');
     }
 
     /**
@@ -1038,9 +971,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5ipv6():void
     {
-        if ($this->checkInputfieldType(['text'], ['textarea'])) {
-            $this->setAttribute('pattern ', '((^|:)([0-9a-fA-F]{0,4})){1,8}$');
-        }
+        $this->setAttribute('pattern ', '((^|:)([0-9a-fA-F]{0,4})){1,8}$');
     }
 
     /**
@@ -1062,9 +993,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5usernameSyntax():void
     {
-        if ($this->checkInputfieldType(['text'])) {
-            $this->setAttribute('pattern ', '^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$');
-        }
+        $this->setAttribute('pattern ', '^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$');
     }
 
     /**
@@ -1093,10 +1022,10 @@ abstract class Inputfields extends Element
             'yyyy.mm.dd' => '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])',
             'mm/dd/yyyy' => '(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d'
         ];
-
-        if (($this->checkInputfieldType(['text'])) && (array_key_exists($format, $dateformats))) {
+        if(array_key_exists($format, $dateformats)){
             $this->setAttribute('pattern ', $dateformats[$format]);
         }
+
     }
 
     /**
@@ -1122,9 +1051,7 @@ abstract class Inputfields extends Element
         $pattern = str_replace('i', '', $pattern); // remove i
         $pattern = str_replace('/', '', $pattern); // remove /
 
-        if ($this->checkInputfieldType(['text'], ['textarea'])) {
-            $this->setAttribute('pattern ', $pattern);
-        }
+        $this->setAttribute('pattern ', $pattern);
     }
 
     /**
@@ -1146,9 +1073,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5exactValue(array $value):void
     {
-        if ($this->checkInputfieldType(['text'], ['textarea'])) {
-            $this->setAttribute('pattern ', $value[0]);
-        }
+        $this->setAttribute('pattern ', $value[0]);
     }
 
     /**
@@ -1171,10 +1096,8 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5differentValue(array $value):void
     {
-        if ($this->checkInputfieldType(['text'], ['textarea'])) {
-            // TODO funktioniert nicht
-            $this->setAttribute('pattern!', $value[0]);
-        }
+        // TODO funktioniert nicht
+        $this->setAttribute('pattern!', $value[0]);
     }
 
     /**
@@ -1196,17 +1119,15 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5allowedFileExt(array $value):void
     {
-       $extensions = [];
+        $extensions = [];
         // add dot in front of file extensions
-        foreach($value[0] as $ext){
-            $extensions[] = '.'.$ext;
+        foreach ($value[0] as $ext) {
+            $extensions[] = '.' . $ext;
         }
         $extensions = implode(',', $extensions);
 
-        if ($this->checkInputfieldType(['file'])) {
+        $this->setAttribute('accept', $extensions);
 
-            $this->setAttribute('accept', $extensions);
-        }
     }
 
     /**
@@ -1228,9 +1149,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5dateBefore(array $value):void
     {
-        if ($this->checkInputfieldType(['text, date'])) {
-            $this->setAttribute('max', $value[0]);
-        }
+        $this->setAttribute('max', $value[0]);
     }
 
     /**
@@ -1252,9 +1171,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5dateAfter(array $value):void
     {
-        if ($this->checkInputfieldType(['text, date'])) {
-            $this->setAttribute('min', $value[0]);
-        }
+        $this->setAttribute('min', $value[0]);
     }
 
     /**
