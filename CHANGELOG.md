@@ -220,3 +220,13 @@ Correct problems by validation of files and error messages of custom validators 
 ## [2.1.16] - 2023-03-06
 Added some minor fixes and a new default inputfield: Language.
 Language is a new default pre-defined input field, which renders a select input field containing all languages installed on the site. This can be used to offer users to select a language.
+
+## [2.1.17] - 2023-03-08
+Some minor bugs inside the Tag class fixed.
+
+A lot of new HTML input pattern for browser validation added, including custom error messages on failure.
+
+Language file de.csv updated with new translations.
+
+New example file for field validation added to the examples folder (field-validation.php). It is a test page and for
+developers to look how to write specific field validation rules.
