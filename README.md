@@ -4,7 +4,6 @@
 
 A module for ProcessWire to create and validate forms on the frontend easily using the [Valitron](https://github.com/vlucas/valitron) library.
 
-> ⚠️ Beta state: This module was created over 1 year ago and works on my installations, but needs to be tested carefully by a larger community, before using it on live sites.
 
 ## Highlights
 1. Simple form creation
@@ -259,11 +258,41 @@ So you do not have to take care about it and the list will be always up-to-date.
 ### Measure 7: HTML 5 browser validation
 If you want to make a frontend validation before the the server-side validation, you can enable HTML 5 browser validation in the module configuration. 
 This will take HTML 5 attributes (fe. min or required attribute) and validates it by the browser before the form will be submitted to the server.
+The browser attributes will be added/removed automatically by adding/removing a validation rule to a field.
+
+Example:
+
+You add the validation rule for checking that the user enters only alphanumeric values inside a text input:
+
+```php
+$alphanum = new \FrontendForms\InputText('alphanum');
+$alphanum->setLabel('Validator alphaNum');
+$alphanum->setRule('alphanum'); // this is the validation rule
+$alphanum->setDescription('Validator to check if string contains only alphabetical and numeric characters');
+$alphanum->setNotes('Valid value: abc123, invalid value: abc123$');
+$form->add($alphanum);
+```
+
+As you can see, the validation rules *setRule('alphanum')* was added to the field.
+
+Now let us take a look a the source code of the field created:
+
+```php
+<input id="validators-alphanum" name="validators-alphanum" type="text" class="input" pattern="[a-zA-Z0-9]+" title="Validator alphaNum should only contain letters and numbers">
+```
+
+As you can see, a pattern with a regex to match only letters and numbers an a custom error message via title attribute will be added automatically only by adding this validation rule.
+
+On the opposite, if you remove a validation rule with *removeRule('alphanum')*, the additional attributes will be removed too.
+
+I have not added a browser validation pattern to every validation rule, because this is not possible, but on approx. 80%.
+
+It is always recommended to take a look a look at the source code of a field to see, what attributes were added. If you are missing one, you can always add it manually to each field.
+
+If you have an idea for an additional regex, let me know :-)
+
 Only to mention: not all browsers support each attribute and the design of the validation messages can differ from browser to browser.
 
-**Good to know**
-
-If you are setting validation rules to a form field, the appropriate HTML5 attribute will be added automatically, but you can add them manually too.This works not for all HTML5 attributes, but for the most.
 
 ## Prevent double form submission
 There is also a session active which prevents double form submission after successful validation.
