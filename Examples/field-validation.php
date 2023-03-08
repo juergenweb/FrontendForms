@@ -18,6 +18,11 @@ $content .=  '<p>This is a test page for testing validation rules and to show ho
 
 $form = new \FrontendForms\Form('validators');
 
+$required = new \FrontendForms\InputText('required');
+$required->setLabel('Validator required');
+$required->setRule('required');
+$required->setDescription('Validator to check field is not empty');
+$form->add($required);
 
 $min = new \FrontendForms\InputNumber('min');
 $min->setLabel('Validator min');
