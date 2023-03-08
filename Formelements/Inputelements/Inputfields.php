@@ -741,7 +741,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5alpha():void
     {
-        $this->removeAttribute('pattern');
+        $this->removeAttributeValue('pattern', '[a-zA-Z]+');
     }
 
     /**
@@ -762,7 +762,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5alphaNum():void
     {
-        $this->removeAttribute('pattern');
+        $this->removeAttributeValue('pattern', '[a-zA-Z0-9]+');
     }
 
     /**
@@ -808,9 +808,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5ascii():void
     {
-        //TODO check removeAttributeValue for all pattern
         $this->removeAttributeValue('pattern', '[\x00-\x7F]+');
-        //$this->removeAttribute('pattern');
     }
 
 
@@ -832,7 +830,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5slug():void
     {
-        $this->removeAttribute('pattern');
+        $this->removeAttributeValue('pattern', '[-a-z0-9_-]+');
     }
 
     /**
@@ -853,7 +851,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5url():void
     {
-        $this->removeAttribute('pattern');
+        $this->removeAttributeValue('pattern', 'https?://.+');
     }
 
     /**
@@ -876,6 +874,7 @@ abstract class Inputfields extends Element
     protected function removeHTML5email():void
     {
         $this->removeAttribute('pattern');
+        $this->removeAttributeValue('pattern', '^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$');
     }
 
     /**
@@ -896,7 +895,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5numeric():void
     {
-        $this->removeAttribute('pattern');
+        $this->removeAttributeValue('pattern', '[-+]?[0-9]*[.,]?[0-9]+');
     }
 
     /**
@@ -917,7 +916,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5integer():void
     {
-        $this->removeAttribute('pattern');
+        $this->removeAttributeValue('pattern', '[0-9]+');
     }
 
     /**
@@ -939,7 +938,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5ip():void
     {
-        $this->removeAttribute('pattern');
+        $this->removeAttributeValue('pattern', '(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*){3}');
     }
 
     /**
@@ -960,7 +959,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5ipv4():void
     {
-        $this->removeAttribute('pattern');
+        $this->removeAttributeValue('pattern', '((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$');
     }
 
     /**
@@ -981,7 +980,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5ipv6():void
     {
-        $this->removeAttribute('pattern');
+        $this->removeAttributeValue('pattern', '((^|:)([0-9a-fA-F]{0,4})){1,8}$');
     }
 
 
@@ -1003,7 +1002,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5usernameSyntax():void
     {
-        $this->removeAttribute('pattern');
+        $this->removeAttributeValue('pattern', '^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$');
     }
 
     /**
@@ -1035,6 +1034,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5dateFormat():void
     {
+        // TODO change to removeAttributeValue if possible
         $this->removeAttribute('pattern');
     }
 
@@ -1061,6 +1061,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5regex():void
     {
+        // TODO change to removeAttributeValue if possible
         $this->removeAttribute('pattern');
     }
 
