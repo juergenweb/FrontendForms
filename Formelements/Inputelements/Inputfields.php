@@ -176,7 +176,7 @@ abstract class Inputfields extends Element
 
         // inform about max filesize
         if ($validator == 'allowedFileSize') {
-            $this->notes_array['allowedFileSize']['text'] = sprintf($this->_('Please do not upload files larger than %s.'),
+            $this->notes_array['allowedFileSize']['text'] = sprintf($this->_('Please do not upload files larger than %s'),
                 $this->convertToReadableSize($variables[0]));
             $this->notes_array['allowedFileSize']['value'] = $variables[0];
         }
@@ -184,7 +184,7 @@ abstract class Inputfields extends Element
         // inform about allowed extensions
         if ($validator == 'allowedFileExt') {
             if (isset($variables[0])) {
-                $this->notes_array['allowedFileExt']['text'] = sprintf($this->_('Allowed file types: %s.'),
+                $this->notes_array['allowedFileExt']['text'] = sprintf($this->_('Allowed file types: %s'),
                     implode(', ', $variables[0]));
                 $this->notes_array['allowedFileExt']['value'] = implode(', ', $variables[0]);
             }
@@ -193,7 +193,7 @@ abstract class Inputfields extends Element
         // inform about max filesize according to php.ini value
         if ($validator == 'phpIniFilesize') {
             $max_file_size = (int)ini_get("upload_max_filesize") * 1024;
-            $this->notes_array['phpIniFilesize']['text'] = sprintf($this->_('Please do not upload files larger than %s.'),
+            $this->notes_array['phpIniFilesize']['text'] = sprintf($this->_('Please do not upload files larger than %s'),
                 $this->convertToReadableSize($max_file_size));
             $this->notes_array['phpIniFilesize']['value'] = $max_file_size;
         }
@@ -566,7 +566,7 @@ abstract class Inputfields extends Element
         if (method_exists($this->wire('sanitizer'), $sanitizer)) {
             $this->sanitizer = array_merge($this->sanitizer, [$sanitizer]);
         } else {
-            throw new Exception('This sanitizer method does not exist in ProcessWire.');
+            throw new Exception('This sanitizer method does not exist in ProcessWire');
         }
     }
 
@@ -756,7 +756,7 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern', '[a-zA-Z0-9]+');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain letters and numbers.'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should only contain letters and numbers'), $label));
     }
 
     /**
@@ -829,7 +829,7 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ', '[-a-z0-9_-]+');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain letters, numbers, underscores or hyphens.'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should only contain letters, numbers, underscores or hyphens'), $label));
     }
 
     /**
@@ -852,7 +852,7 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ', 'https?://.+');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should be a valid URL starting with http:// or https://.'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should be a valid URL starting with http:// or https://'), $label));
     }
 
     /**
@@ -876,7 +876,7 @@ abstract class Inputfields extends Element
         $this->setAttribute('pattern ',
             '^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should be a valid email address.'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should be a valid email address'), $label));
     }
 
     /**
@@ -899,7 +899,7 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ', '[-+]?[0-9]*[.,]?[0-9]+');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only numbers (integers or floats).'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should only numbers (integers or floats)'), $label));
     }
 
     /**
@@ -922,7 +922,7 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ', '[0-9]+');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain integers.'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should only contain integers'), $label));
     }
 
     /**
@@ -946,7 +946,7 @@ abstract class Inputfields extends Element
         $this->setAttribute('pattern ',
             '(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*){3}');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IP address in the format x.x.x.x.'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IP address in the format x.x.x.x'), $label));
     }
 
     /**
@@ -969,7 +969,7 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ', '((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IPv4 address in the format x.x.x.x.'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IPv4 address in the format x.x.x.x'), $label));
     }
 
     /**
@@ -992,7 +992,7 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ', '((^|:)([0-9a-fA-F]{0,4})){1,8}$');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IPv6 address in the format x:x:x:x:x:x:x:x.'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IPv6 address in the format x:x:x:x:x:x:x:x'), $label));
     }
 
     /**
@@ -1016,7 +1016,7 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ', '^[a-zA-Z][a-zA-Z0-9-_\.@]{1,50}$');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s contains not allowed characters. Please use only letters, numbers, underscores, periods, hyphens and @signs (no whitespaces).'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s contains not allowed characters. Please use only letters, numbers, underscores, periods, hyphens and @signs (no whitespaces)'), $label));
     }
 
     /**
@@ -1048,7 +1048,7 @@ abstract class Inputfields extends Element
         if(array_key_exists($format, $dateformats)){
             $this->setAttribute('pattern ', $dateformats[$format]);
             $label = $this->getLabel()->getText();
-            $this->setAttribute('title', sprintf($this->_('%s should only contain a valid date in the format %s.'), $label, $format));
+            $this->setAttribute('title', sprintf($this->_('%s should only contain a valid date in the format %s'), $label, $format));
         }
 
     }
@@ -1078,7 +1078,7 @@ abstract class Inputfields extends Element
 
         $this->setAttribute('pattern ', $pattern);
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s contains an invalid value.'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s contains an invalid value'), $label));
     }
 
     /**
@@ -1102,7 +1102,7 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ', $value[0]);
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should contain the exact value %s.'), $label, $value[0]));
+        $this->setAttribute('title', sprintf($this->_('%s should contain the exact value %s'), $label, $value[0]));
     }
 
     /**
@@ -1125,10 +1125,9 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5differentValue(array $value):void
     {
-        // TODO funktioniert nicht
-        $this->setAttribute('pattern!', $value[0]);
+        $this->setAttribute('pattern', '((?!'.$value[0].').)*');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should not contain the value %s.'), $label, $value[0]));
+        $this->setAttribute('title', sprintf($this->_('%s should not contain the value %s'), $label, $value[0]));
     }
 
     /**
