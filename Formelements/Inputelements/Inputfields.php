@@ -276,7 +276,6 @@ abstract class Inputfields extends Element
 
         if ($this->hasRule('required')) {
             $this->label->setRequired();
-            $this->setAttribute('required')->setCustomFieldName($this->getLabel()->getText());// set label as field name by default
         }
 
         if ($this->notes->getContent() && $this->notes_array) {
@@ -633,11 +632,31 @@ abstract class Inputfields extends Element
      * Will be added or removed via setRule and removeRule method for field validation
      */
 
+    /**
+     * Add HTML5 attribute required to the input tag
+     * Validator rule: required
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5required():void
+    {
+        $this->setAttribute('required');
+    }
+
+    /**
+     * Remove HTML5 required attribute from the input tag
+     * Validator rule: required
+     * @return void
+     */
+    protected function removeHTML5required():void
+    {
+        $this->removeAttribute('required');
+    }
+
 
     /**
      * Add HTML5 attribute min to the input tag
      * Validator rule: min
-     * Supported input types: text, number
      * @param array $value
      * @return void
      */
@@ -659,7 +678,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute max to the input tag
      * Validator rule: max
-     * Supported input types: text, number
      * @param array $value
      * @return void
      */
@@ -681,7 +699,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute minlength to the input tag
      * Validator rule: lengthMin
-     * Supported input types: all input types, textarea
      * @param array $value
      * @return void
      */
@@ -703,7 +720,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute maxlength to the input tag
      * Validator rule: lengthMax
-     * Supported input types: all input types, textarea
      * @param array $value
      * @return void
      */
@@ -725,7 +741,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for alphabetical letters only to the input tag
      * Validator rule: alpha
-     * Supported input types: no restriction
      * @return void
      */
     protected function addHTML5alpha():void
@@ -749,7 +764,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for alphanumerical letters only to the input tag
      * Validator rule: alphaNum
-     * Supported input types: no restriction
      * @return void
      */
     protected function addHTML5alphaNum():void
@@ -772,7 +786,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute minlength and maxlength to the input tag
      * Validator rule: lengthBetween
-     * Supported input types: all inputs, textarea
      * @param array $value
      * @return void
      */
@@ -797,7 +810,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for ascii characters to the input tag
      * Validator rule: ascii
-     * Supported input types: text, textarea
      * @return void
      */
     protected function addHTML5ascii():void
@@ -822,7 +834,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for a slug to the input tag
      * Validator rule: slug
-     * Supported input types: text, textarea
      * @return void
      */
     protected function addHTML5slug():void
@@ -845,7 +856,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for an url to the input tag
      * Validator rule: url
-     * Supported input types: text, textarea
      * @return void
      */
     protected function addHTML5url():void
@@ -868,7 +878,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for an email address to the input tag
      * Validator rule: email
-     * Supported input types: text, textarea
      * @return void
      */
     protected function addHTML5email():void
@@ -892,7 +901,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for a numeric string to the input tag
      * Validator rule: numeric
-     * Supported input types: text, textarea
      * @return void
      */
     protected function addHTML5numeric():void
@@ -915,7 +923,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for an integer to the input tag
      * Validator rule: integer
-     * Supported input types: text, textarea
      * @return void
      */
     protected function addHTML5integer():void
@@ -938,7 +945,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for an IP address to the input tag
      * Validator rule: ip
-     * Supported input types: text, textarea
      * @return void
      */
     protected function addHTML5ip():void
@@ -962,7 +968,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for an IP4 address to the input tag
      * Validator rule: ipv4
-     * Supported input types: text, textarea
      * @return void
      */
     protected function addHTML5ipv4():void
@@ -985,7 +990,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for an IP6 address to the input tag
      * Validator rule: ipv6
-     * Supported input types: text, textarea
      * @return void
      */
     protected function addHTML5ipv6():void
@@ -1009,7 +1013,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for a username to the input tag
      * Validator rule: usernameSyntax
-     * Supported input types: text
      * @return void
      */
     protected function addHTML5usernameSyntax():void
@@ -1032,7 +1035,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for a date in the given format to the input tag
      * Validator rule: dateformat
-     * Supported input types: text
      * @param array $value
      * @return void
      */
@@ -1066,7 +1068,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for a regex to the input tag
      * Validator rule: regex
-     * Supported input types: text
      * @param array $value
      * @return void
      */
@@ -1094,7 +1095,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for exact equal string to the input tag
      * Validator rule: exactValue
-     * Supported input types: text, textarea
      * @param array $value
      * @return void
      */
@@ -1119,7 +1119,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for different string to the input tag
      * Validator rule: differentValue
-     * Supported input types: text, textarea
      * @param array $value
      * @return void
      */
@@ -1143,7 +1142,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute pattern for different file extensions to the input tag
      * Validator rule: allowedFileExt
-     * Supported input types: file
      * @param array $value
      * @return void
      */
@@ -1171,7 +1169,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute max to the input tag
      * Validator rule: dateBefore
-     * Supported input types: text, date
      * @param array $value
      * @return void
      */
@@ -1193,7 +1190,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute min to the input tag
      * Validator rule: dateAfter
-     * Supported input types: text, date
      * @param array $value
      * @return void
      */
