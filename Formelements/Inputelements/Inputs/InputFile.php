@@ -109,16 +109,13 @@ class InputFile extends Input
                 unset($this->notes_array['allowedFileSize']); // remove allowedFileSize from the array
             }
         }
+        
         // create HTML5 max-size attribute depending on validator settings
         if((array_key_exists('phpIniFilesize',$this->notes_array)) || (array_key_exists('allowedFileSize',$this->notes_array))){
             $file_size = $this->notes_array['phpIniFilesize']['value'] ?? $this->notes_array['allowedFileSize']['value'];
             $this->setAttribute('max-size', (string)$file_size);
         }
 
-        // create HTML5 accept attribute depending on validator settings
-        if(array_key_exists('allowedFileExt',$this->notes_array)){
-            $this->setAttribute('accept', $this->notes_array['allowedFileExt']['value']);
-        }
         return parent::___render();
     }
 
