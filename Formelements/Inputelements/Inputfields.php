@@ -1219,4 +1219,53 @@ abstract class Inputfields extends Element
         $this->removeAttribute('accept');
     }
 
+    /**
+     * Add HTML5 attribute max to the input tag
+     * Validator rule: dateBefore
+     * Supported input types: text, date
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5dateBefore(array $value):void
+    {
+        if ($this->checkInputfieldType(['text, date'])) {
+            $this->setAttribute('max', $value[0]);
+        }
+    }
+
+    /**
+     * Remove attribute max from the input tag
+     * Validator rule: dateBefore
+     * @return void
+     */
+    protected function removeHTML5dateBefore():void
+    {
+        $this->removeAttribute('max');
+    }
+
+    /**
+     * Add HTML5 attribute min to the input tag
+     * Validator rule: dateAfter
+     * Supported input types: text, date
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5dateAfter(array $value):void
+    {
+        if ($this->checkInputfieldType(['text, date'])) {
+            $this->setAttribute('min', $value[0]);
+        }
+    }
+
+    /**
+     * Remove attribute max from the input tag
+     * Validator rule: dateBefore
+     * @return void
+     */
+    protected function removeHTML5dateAfter():void
+    {
+        $this->removeAttribute('min');
+    }
+
+
 }
