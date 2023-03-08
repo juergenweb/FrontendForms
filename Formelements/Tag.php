@@ -413,7 +413,7 @@ abstract class Tag extends Wire
             // check if the attribute exists in the attributes array
             if(isset($this->getAttributes()[$key])){
                 // remove values form assoc. arrays like style attribute
-                if ($this->isAssoc($this->getAttributes()[$key])) {
+                if (is_array($this->getAttributes()[$key]) && ($this->isAssoc($this->getAttributes()[$key]))) {
                     if (array_key_exists($attributeValue, $this->attributes[$key])) {
                         if (in_array($key, self::MULTIVALUEATTR)) {
                             unset($this->attributes[$key][$value]);
@@ -421,8 +421,9 @@ abstract class Tag extends Wire
                     }
                 } else {
                     // remove values from non assoc. arrays like class, rel, id,...
+                    bd($this->attributes[$key]);
                     if (array_key_exists($key, $this->getAttributes())) {
-                        if (in_array($value, $this->attributes[$key])) {
+                        //if (in_array($value, $this->getAttributes())) {
                             if (in_array($key, self::MULTIVALUEATTR)) {
                                 if (count($this->attributes[$key]) > 1) {
                                     $this->attributes[$key] = array_diff($this->attributes[$key], [$value]);
@@ -432,7 +433,7 @@ abstract class Tag extends Wire
                             } else {
                                 unset($this->attributes[$key]);
                             }
-                        }
+                        //}
                     }
                 }
             }
