@@ -100,16 +100,16 @@ class CustomRules extends Tag
 
 
         /**
-         * 4) Check if username contains only the following characters: a-z0-9-_
+         * 4) Check if username contains only the following characters: a-zA-Z0-9-_.@
          */
         V::addRule('usernameSyntax', function ($field, $value) {
-            $regex = '/[a-z\d\-_.]$/';
+            $regex = '/[a-z\d\-_.@]$/';
             if (preg_match($regex, $value)) {
                 return true;
             }
             return false;
         },
-            $this->_('contains not allowed characters. Please use only lowercase digits, numbers, underscore, periods and hyphen (no whitespaces).'));
+            $this->_('contains not allowed characters. Please use only letters, numbers, underscores, periods, hyphens and @signs (no whitespaces).'));
 
 
         /**
