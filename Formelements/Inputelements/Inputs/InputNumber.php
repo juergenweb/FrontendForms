@@ -35,16 +35,6 @@ class InputNumber extends Input
      */
     public function ___renderInputNumber(): string
     {
-        // create HTML5 min attribute depending on validator settings
-        if(array_key_exists('min',$this->notes_array)){
-            $this->setAttribute('min', (string)$this->notes_array['min']);
-        }
-
-        // create HTML5 max attribute depending on validator settings
-        if(array_key_exists('max',$this->notes_array)){
-            $this->setAttribute('max', (string)$this->notes_array['max']);
-        }
-
         return $this->renderInput();
     }
 
