@@ -34,6 +34,8 @@ class InputCheckboxMultiple extends Input
         $this->setAttribute('type', 'checkbox');
         $this->removeAttribute('class');
         $this->setCSSClass('checkboxClass');
+        $this->removeSanitizers('text');
+        $this->setSanitizer('arrayVal');
         $this->multipleWrapper = new Wrapper();
         $this->topLabel = new TextElements();
         $this->topLabel->setTag('div');
