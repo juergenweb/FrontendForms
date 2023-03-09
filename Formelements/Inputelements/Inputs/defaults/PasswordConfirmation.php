@@ -23,15 +23,16 @@ class PasswordConfirmation extends InputPassword
 {
 
     /**
-     * @param string $passwordfieldName
-     * @param string $id
-     * @throws Exception
+     * @param string $id -> the id of the password confirmation field
+     * @param string $passwordfieldName -> the name of the password field to check against
+     * @throws WireException
+     * @throws WirePermissionException
      */
-    public function __construct(string $passwordfieldName, string $id)
+    public function __construct(string $id, string $passwordfieldName)
     {
         parent::__construct($id);
         $this->setLabel($this->_('Password Confirmation')); // set default label
-        $this->setRule('required');
+        $this->setRule('required'); // a confirmation field is required by default
         $this->setRule('equals', $passwordfieldName);
     }
 
