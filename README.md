@@ -162,7 +162,7 @@ In the table afterwards you will find information about the sanitizers and valid
 | InputMonth  | text  | -  |
 | InputNumber  | text  | numeric  |
 | InputPassword  | text  | meetsPasswordConditions  |
-| InputRange  | text  | -  |
+| InputRange  | text  | numeric  |
 | InputSearch  | text  | -  |
 | InputTel  | text  | -  |
 | InputTime  | text  | time  |
