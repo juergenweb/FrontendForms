@@ -116,13 +116,17 @@ abstract class Inputfields extends Element
         switch ($sanitizer) {
             case(is_string($sanitizer)):
                 if (!empty($sanitizer)) {
-                    unset($sanitizers[trim($sanitizer)]);
+                    if (($key = array_search($sanitizer, $sanitizers)) !== false) {
+                        unset($sanitizers[$key]);
+                    }
                     $this->sanitizer = $sanitizers;
                 }
                 break;
             case(is_array($sanitizer)):
                 foreach ($sanitizer as $item) {
-                    unset($sanitizers[trim($item)]);
+                    if (($key = array_search($item, $sanitizers)) !== false) {
+                        unset($sanitizers[$key]);
+                    }
                 }
                 $this->sanitizer = $sanitizers;
                 break;
