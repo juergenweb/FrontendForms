@@ -31,7 +31,7 @@ class PasswordConfirmation extends InputPassword
     {
         parent::__construct($id);
         $this->setLabel($this->_('Password Confirmation')); // set default label
-        $this->setRule('requiredWith', $passwordfieldName);
+        $this->setRule('required');
         $this->setRule('equals', $passwordfieldName);
     }
 
