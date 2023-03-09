@@ -27,6 +27,8 @@ class SelectMultiple extends Select
     {
         parent::__construct($id);
         $this->setAttribute('multiple');
+        $this->removeSanitizers('text');
+        $this->setSanitizer('arrayVal');
     }
 
     /**
