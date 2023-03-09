@@ -150,23 +150,23 @@ In the table afterwards you will find information about which sanitizers and val
 
 
 
-| Name (Class)  | Sanitizer added by default | Validation rules added by default |
+| Name (Class)  | Sanitizers added by default | Validation rules added by default |
 | ------------- | ------------- | ------------- |
 | InputText  | text  | -  |
 | InputColor  | text  | -  |
-| InputDate  | text  | -  |
+| InputDate  | text  | date  |
 | InputDateTime  | text  | -  |
-| InputEmail  | text  | -  |
-| InputFile  | text  | -  |
+| InputEmail  | text  | email, emailDNS  |
+| InputFile  | text  | noErrorOnUpload, phpIniFilesize  |
 | InputHidden  | text  | -  |
 | InputMonth  | text  | -  |
-| InputNumber  | text  | -  |
-| InputPassword  | text  | -  |
+| InputNumber  | text  | numeric  |
+| InputPassword  | text  | meetsPasswordConditions  |
 | InputRange  | text  | -  |
 | InputSearch  | text  | -  |
 | InputTel  | text  | -  |
-| InputTime  | text  | -  |
-| InputUrl  | text  | -  |
+| InputTime  | text  | time  |
+| InputUrl  | text  | url, urlActive  |
 | InputWeek  | text  | -  |
 | InputRadio  | text  | -  |
 | InputRadioMultiple  | text  | -  |
