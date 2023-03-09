@@ -25,6 +25,7 @@ class InputWeek extends InputText
     {
         parent::__construct($id);
         $this->setAttribute('type', 'week');
+        $this->setRule('week');
     }
 
     /**
