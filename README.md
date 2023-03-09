@@ -159,7 +159,7 @@ In the table afterwards you will find information about the sanitizers and valid
 | InputEmail  | text  | email, emailDNS  |
 | InputFile  | arrayVal  | noErrorOnUpload, phpIniFilesize  |
 | InputHidden  | text  | -  |
-| InputMonth  | text  | -  |
+| InputMonth  | text  | month  |
 | InputNumber  | text  | numeric  |
 | InputPassword  | text  | meetsPasswordConditions  |
 | InputRange  | text  | numeric  |
@@ -167,7 +167,7 @@ In the table afterwards you will find information about the sanitizers and valid
 | InputTel  | text  | -  |
 | InputTime  | text  | time  |
 | InputUrl  | text  | url, urlActive  |
-| InputWeek  | text  | -  |
+| InputWeek  | text  | week  |
 | InputRadio  | text  | -  |
 | InputRadioMultiple  | text  | -  |
 | InputCheckbox  | text  | -  |
