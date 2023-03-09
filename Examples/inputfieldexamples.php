@@ -29,7 +29,7 @@ $form->add($file1);
 
 $file2 = new \FrontendForms\InputFile('fileupload2');
 $file2->setLabel('Single file upload');
-$file2->setRule('allowedFileExt');
+$file2->setRule('allowedFileExt', ['jpg']);
 $form->add($file2);
 
 $datalist = new \FrontendForms\Datalist('datalist');
