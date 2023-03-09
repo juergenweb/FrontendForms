@@ -157,7 +157,7 @@ In the table afterwards you will find information about which sanitizers and val
 | InputDate  | text  | date  |
 | InputDateTime  | text  | date  |
 | InputEmail  | text  | email, emailDNS  |
-| InputFile  | text  | noErrorOnUpload, phpIniFilesize  |
+| InputFile  | arrayVal  | noErrorOnUpload, phpIniFilesize  |
 | InputHidden  | text  | -  |
 | InputMonth  | text  | -  |
 | InputNumber  | text  | numeric  |
