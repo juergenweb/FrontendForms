@@ -33,6 +33,8 @@ class InputFile extends Input
         $this->setCSSClass('input_fileClass');
         $this->setMultiple(); // allow multiple file upload by default
         $this->setLabel($this->_('File upload'));
+        $this->removeSanitizers('text'); // no need because $_FILES is always an array
+        $this->setSanitizer('arrayVal'); // sanitize array
         // set this validation rules as default on file upload field
         $this->setRule('noErrorOnUpload'); // check for upload errors on default
         $this->setRule('phpIniFilesize'); // add the max file size of php.ini as absolute limit of file size by default
