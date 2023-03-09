@@ -25,6 +25,7 @@ class InputMonth extends InputText
     {
         parent::__construct($id);
         $this->setAttribute('type', 'month');
+        $this->setRule('month');
     }
 
     /**
