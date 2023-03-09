@@ -378,8 +378,37 @@ class CustomRules extends Tag
             }
             return true;
 
-        }, $this->_('is not a valid time.'));
+        }, $this->_('is not a valid time. You have to enter the time in this format: HH:MM:SS (fe. 19:00:00)'));
 
+
+        /**
+         * 22) Check if entered string is a valid month string
+         * Format: YYYY-MM fe 2023-03
+         */
+        V::addRule('month', function ($field, $value) {
+
+            if ($value) {
+                $month_regex = '#^\d{4}-(0[1-9]|1[012])$#'; //regex month format
+                return (preg_match($month_regex, $value));
+            }
+            return true;
+
+        }, $this->_('is not a valid month. You have to enter the month in this format including the year: YYYY-MM (fe. 2023-06)'));
+
+
+        /**
+         * 23) Check if entered string is a valid week string
+         * Format: YYYY-WXX fe 2023-W25
+         */
+        V::addRule('week', function ($field, $value) {
+
+            if ($value) {
+                $week_regex = '#^\d{4}-W(0[1-9]|1[053])$#'; //regex for week format
+                return (preg_match($week_regex, $value));
+            }
+            return true;
+
+        }, $this->_('is not a valid week. You have to enter the week in this format including the year: YYYY-WXX (fe. 2023-W06)'));
 
     }
 
