@@ -28,6 +28,7 @@ class InputDateTime extends InputDate
     {
         parent::__construct($id);
         $this->setAttribute('type', 'datetime-local');
+        $this->setRule('date');
     }
 
     /**
