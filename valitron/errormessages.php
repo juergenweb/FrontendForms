@@ -50,7 +50,7 @@ return [
     'lengthMax'      => __('must not exceed %s characters.'),
     'instanceOf'     => __('must be an instance of %s.'),
     'containsunique' => __('must contain unique elements only.'),
-    'requiredwith'   => __('is required.'),
+    'requiredWith'   => __('is required.'),
     'requiredwithout'=> __('is required.'),
     'subset'         => __('contains an item that is not in the list.'),
     'arrayhaskeys'   => __('does not contain all required keys.'),
