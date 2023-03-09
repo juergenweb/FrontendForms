@@ -146,7 +146,7 @@ You can find examples of all supported input types inside the 'examples' folder 
 * Textarea
 * Datalist
 
-In the table afterwards you will find information about which sanitizers and validation rules are added by default to each input field. If you create a new instance of an input field, please note that these validators and validation rules are added by default, but you have always the possibility to add or remove sanitizers and valdiation rules depending on your preferences.
+In the table afterwards you will find information about the sanitizers and validation rules used on each input field. If you create a new instance of an input field, please note that these validators and validation rules are added by default, but you have always the possibility to add or remove sanitizers and valdiation rules depending on your preferences.
 
 
 
@@ -171,9 +171,9 @@ In the table afterwards you will find information about which sanitizers and val
 | InputRadio  | text  | -  |
 | InputRadioMultiple  | text  | -  |
 | InputCheckbox  | text  | -  |
-| InputCheckboxMultiple  | text  | -  |
+| InputCheckboxMultiple  | arrayVal  | -  |
 | InputSelect  | text  | -  |
-| InputSelectMultiple  | text  | -  |
+| InputSelectMultiple  | arrayVal  | -  |
 | Textarea  | textarea  | -  |
 | Datalist  | text  | -  |
 
