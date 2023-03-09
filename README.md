@@ -146,6 +146,36 @@ You can find examples of all supported input types inside the 'examples' folder 
 * Textarea
 * Datalist
 
+In the table afterwards you will find information about which sanitizers and validation rules are added by default to each input field. If you create a new instance of an input field, please note that these validators and validation rules are added by default, but you have always the possibility to add or remove sanitizers and valdiation rules depending on your preferences.
+
+
+
+| Name (Class)  | Sanitizer added by default | Validation rules added by default |
+| ------------- | ------------- | ------------- |
+| InputText  | text  | -  |
+| InputColor  | text  | -  |
+| InputDate  | text  | -  |
+| InputDateTime  | text  | -  |
+| InputEmail  | text  | -  |
+| InputFile  | text  | -  |
+| InputHidden  | text  | -  |
+| InputMonth  | text  | -  |
+| InputNumber  | text  | -  |
+| InputPassword  | text  | -  |
+| InputRange  | text  | -  |
+| InputSearch  | text  | -  |
+| InputTel  | text  | -  |
+| InputTime  | text  | -  |
+| InputUrl  | text  | -  |
+| InputWeek  | text  | -  |
+| InputRadio  | text  | -  |
+| InputRadioMultiple  | text  | -  |
+| InputCheckbox  | text  | -  |
+| InputCheckboxMultiple  | text  | -  |
+| InputSelect  | text  | -  |
+| InputSelectMultiple  | text  | -  |
+| Textarea  | textarea  | -  |
+| Datalist  | text  | -  |
 
 ## SPAM protection and security features
 
