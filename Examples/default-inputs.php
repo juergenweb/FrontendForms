@@ -65,7 +65,10 @@ $form->add($uploadmultiple);
 $password = new \FrontendForms\password('password');
 $form->add($password);
 
-$passwordconfirm = new \FrontendForms\password('passwordconfirm');
+// IMPORTANT: A password confirmation field must have always 2 parameters
+// 1) the id of the password confirmation field itself (like any other field) +
+// 2) the id of the password field including the id of the form as prefix (in this case contact-password)
+$passwordconfirm = new \FrontendForms\password('passwordconfirm', 'contact-password');
 $form->add($passwordconfirm);
 
 // add the privacy field
