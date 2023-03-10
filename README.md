@@ -1314,6 +1314,13 @@ For each validator rule exists an error message as a translatable string. This i
 sometimes you need to show another error message than the translated one. For these cases you can customize your error
 messages with 2 methods.
 
+
+| Method name  | Use case | 
+| ------------- | ------------- |
+| [setCustomFieldName()](#setcustomfieldname)  | replace the label of the input field with a custom text in the error message  |
+| [setCustomMessage()](#setcustommessage)  | overwrite the default error message completely  |
+
+
 Default error message:
 
 By default the error message uses the label of the input field and prepends it before the error message.
