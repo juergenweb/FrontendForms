@@ -1239,7 +1239,8 @@ abstract class Inputfields extends Element
         if (($this->className() != 'InputWeek') || (is_subclass_of($this, 'InputWeek'))) {
             $this->setAttribute('pattern', '^\d{1,4}-[W](\d|[0-4]\d|5[0123])$');
         }
-        $this->setAttribute('title', sprintf($this->_('%s should contain the week in the format YYYY-Www (fe 2023-W09)'), $label));
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should contain the week in the format YYYY-Www'), $label));
     }
 
     /**
@@ -1264,7 +1265,10 @@ abstract class Inputfields extends Element
         if (($this->className() != 'InputMonth') || (is_subclass_of($this, 'InputMonth'))) {
             $this->setAttribute('pattern', '^\d{4}-(0[1-9]|1[012])$');
         }
-        $this->setAttribute('title', sprintf($this->_('%s should contain the month in the format YYYY-MM (fe 2023-09)'), $label));
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title',
+            sprintf($this->_('%s should contain the month in the format YYYY-MM'), $label));
+
     }
 
     /**
