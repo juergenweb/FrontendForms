@@ -1283,4 +1283,27 @@ abstract class Inputfields extends Element
         }
     }
 
+    /**
+     * Add HTML5 attribute pattern for HEX code to the input tag
+     * Validator rule: checkHex
+     * @return void
+     */
+    protected function addHTML5checkHex():void
+    {
+        $this->setAttribute('pattern', '#([a-fA-F0-9]{3}){1,2}\b');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title',
+            sprintf($this->_('%s should be a valid HEX code in the format #XXX or #XXXXXX'), $label));
+    }
+
+    /**
+     * Remove attribute pattern for HEX code validation from the input tag
+     * Validator rule: checkHex
+     * @return void
+     */
+    protected function removeHTML5checkHex():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
 }
