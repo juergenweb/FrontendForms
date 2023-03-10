@@ -1240,7 +1240,8 @@ abstract class Inputfields extends Element
             $this->setAttribute('pattern', '^\d{1,4}-[W](\d|[0-4]\d|5[0123])$');
         }
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should contain the week in the format YYYY-Www'), $label));
+        $this->setAttribute('title',
+            sprintf($this->_('%s should only contain a valid week in the format YYYY-Www'), $label));
     }
 
     /**
@@ -1267,8 +1268,7 @@ abstract class Inputfields extends Element
         }
         $label = $this->getLabel()->getText();
         $this->setAttribute('title',
-            sprintf($this->_('%s should contain the month in the format YYYY-MM'), $label));
-
+            sprintf($this->_('%s should only contain a valid month in the format YYYY-MM'), $label));
     }
 
     /**
