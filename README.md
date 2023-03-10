@@ -335,10 +335,14 @@ The double-submission check can be set manually (enable/disable) if necessary by
 ## General methods
 General methods are methods that can be used on each object: form, input field, label, description, notes, wrappers, fieldset,...
 
-| Method name  | usage | 
+| Method name  | Use case | 
 | ------------- | ------------- |
 | [setAttribute()](#setattribute---add-a-single-attribute-to-a-tag)  | add a single attribute to a tag  |
 | [setAttributes()](#setattributes---add-multiple-attributes-to-a-tag)  | add multiple attributes to a tag  |
+| [removeAttribute()](#removeattribute---remove-a-single-attribute)  | remove a single attribute  |
+| [removeAttributeValue()](#removeattributevalue---remove-specific-value-of-an-attribute)  | remove specific value of an attribute  |
+| [prepend(), append()](#prepend-append---prepend-or-append-a-string-to-an-object-field-form-button)  | prepend or append a string to an object (field, form, button,..)  |
+| [removeAttributeValue()](#removeattributevalue---remove-specific-value-of-an-attribute)  | remove specific value of an attribute  |
 
 
 ### setAttribute() - add a single attribute to a tag
@@ -413,6 +417,37 @@ The form object holds all the input fields, fieldsets, additional markup,...
   // instantiating a new form object
   $form = new Form('myForm');
 ```
+
+| Method name  | Use case | 
+| ------------- | ------------- |
+| [useFieldWrapper()](#usefieldwrapper---addremove-of-the-most-outer-container-tofrom-all-formfields)  | add/remove of the most outer container to/from all formfields  |
+| [useInputWrapper()](#useinputwrapper---addremove-of-input-container-tofrom-all-formfields)  | add/remove of input container to/from all formfields  |
+| [useHoneypot()](#usehoneypot---enabledisable-honeypot-field)  | enable/disable honeypot field  |
+| [useDoubleFormSubmissionCheck()](#usedoubleformsubmissioncheck---enabledisable-double-form-submission-check)  | enable/disable double form submission check  |
+| [disableCaptcha()](#disablecaptcha---remove-the-captcha-on-per-form-base)  | remove the CAPTCHA on per form base  |
+| [setRequiredText()](#setrequiredtext---customize-text-for-required-fields)  | customize text for required fields  |
+| [setRequiredTextPosition()](#setrequiredtextposition---change-required-text-position)  | change required text position  |
+| [setMethod()](#setmethod---change-the-form-sending-method)  | change the form sending method (GET or POST)  |
+| [setMinTime(), setMaxTime()](#setmintime-setmaxtime---change-minmax-time-for-submitting-a-form)  | change min/max time for submitting a form  |
+| [setMaxAttempts(), setMaxTime()](#setmaxattempts---change-max-number-of-invalid-submission-attempts)  | change max number of invalid submission attempts  |
+| [getValues(), setMaxTime()](#getvalues---get-all-_post-values-after-successfull-form-submission-as-array)  | get all $_POST values after successfull form submission as array  |
+| [getValuesAsString()](#getvaluesasstring---get-all-_post-values-after-successfull-form-submission-as-a-string)  | get all $_POST values after successfull form submission as a string  |
+| [getValue()](#getvalue---get-a-single-_post-value-by-its-name)  | get a single $_POST value by its name  |
+| [add()](#add---add-a-field-to-the-form-object)  | add a field to the form object  |
+| [getFormelementByName()](#getformelementbyname---get-a-specific-form-field-by-is-name)  | get a specific form field by is name  |
+| [setErrorMsg()](#seterrormsg---overwrite-the-default-error-message-after-form-submission)  | overwrite the default error message after form submission  |
+| [setSuccessMsg()](#setsuccessmsg---overwrite-the-default-success-message-after-form-submission)  | overwrite the default success message after form submission  |
+| [useFormElementsWrapper()](#useformelementswrapper---addrmove-an-additional-div-container-wrapper-over-all-form-fields)  | add/rmove an additional div container (wrapper) over all form fields  |
+| [getFormElementsWrapper()](#getformelementswrapper---get-the-form-elements-wrapper-object)  | get the form elements wrapper object  |
+| [appendLabelOnCheckboxes(), appendLabelOnRadios()](#appendlabeloncheckboxes-and-appendlabelonradios-for-checkboxes-and-radio-buttons)  | for checkboxes and radio buttons  |
+| [setUploadPath()](#setuploadpath---change-the-default-storage-location-for-uploaded-files)  | change the default storage location for uploaded files  |
+| [useIPBan()](#useipban---enabledisable-checking-of-forbidden-ip-address)  | enable/disable checking of forbidden IP address  |
+| [testIPBan()](#testipban---test-method-to-check-if-ip-ban-works-only-for-dev-purpose)  | This is only a testing method to check if IP banning works  |
+| [logFailedAttempts()](#logfailedattempts---enabledisable-logging-of-ip-addresses-after-the-number-of-max-failed-attempts)  | enable/disable logging of IP addresses after the number of max failed attempts  |
+| [isValid()](#isvalid---main-method-to-validate-the-form)  | main method to validate the form  |
+| [isBlocked()](#isblocked---check-whether-a-visitor-is-blocked-or-not)  | check whether a visitor is blocked or not  |
+| [render()](#render---output-the-markup-of-the-form)  | output the markup of the form  |
+
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
