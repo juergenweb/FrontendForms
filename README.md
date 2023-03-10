@@ -731,7 +731,7 @@ Method to add a sanitizer to the form field. Returns a sanitizer object. You can
 
 **Please note:**
 
-For security reasons, the text sanitizer will be applied to each input field automatically, so you do not have to add it manually. The only exception is input textarea, where a textarea sanitizer will be applied by default instead.
+For security reasons, 1 sanitizer will be applied to each input field automatically, so you do not have to add it manually. You can see the list which sanitizer will be added to a input field in the [table at the supported input types](#which-input-types-are-supported).
 
 ```php
 $field->setSanitizer('text');
