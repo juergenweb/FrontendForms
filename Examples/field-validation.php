@@ -6,7 +6,7 @@ namespace ProcessWire;
  *
  * Created by Jürgen K.
  * https://github.com/juergenweb
- * File name: field-validation.php
+ * File name: validator-page.php
  * Created: 07.03.2023
  */
 
@@ -21,9 +21,16 @@ $form = new \FrontendForms\Form('validators');
 $required = new \FrontendForms\InputText('required');
 $required->setLabel('Validator required');
 $required->setRule('required');
-$required->removeRule('required');
 $required->setDescription('Validator to check field is not empty');
 $form->add($required);
+
+$hex = new \FrontendForms\InputText('hex');
+$hex->setLabel('Validator checkHex');
+$hex->setRule('checkHex');
+$hex->setDescription('Validator to check field contains a valid HEX color code');
+$hex->setNotes('Valid value: #666 or #666666, invalid value: #1548');
+$form->add($hex);
+
 
 $min = new \FrontendForms\InputNumber('min');
 $min->setLabel('Validator min');
