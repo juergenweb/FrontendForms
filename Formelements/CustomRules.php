@@ -393,12 +393,13 @@ class CustomRules extends Tag
             }
             return true;
 
-        }, $this->_('is not a valid month. You have to enter the month in this format including the year: YYYY-MM (fe. 2023-06)'));
+        },
+            $this->_('is not a valid month. You have to enter the month in this format including the year: YYYY-MM (fe. 2023-06)'));
 
 
         /**
          * 23) Check if entered string is a valid week string
-         * Format: YYYY-WXX fe 2023-W25
+         * Format: YYYY-Www fe 2023-W25
          */
         V::addRule('week', function ($field, $value) {
 
@@ -408,7 +409,8 @@ class CustomRules extends Tag
             }
             return true;
 
-        }, $this->_('is not a valid week. You have to enter the week in this format including the year: YYYY-WXX (fe. 2023-W06)'));
+        },
+            $this->_('is not a valid week. You have to enter the week in this format including the year: YYYY-Www (fe. 2023-W06)'));
 
     }
 
