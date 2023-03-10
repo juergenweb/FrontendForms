@@ -1185,6 +1185,16 @@ Parameter: validation name
 $field->setRule('month');
 ```
 
+* **checkHex**\
+  This validation checks if the entered value is a valid HEX color code.
+ The syntax should be #XXX or #XXXXXX. Returns true if the HEX code is in the correct syntax, otherwise false.
+
+Parameter: validation name
+
+```php
+$field->setRule('checkHex');
+```
+
 Maybe other custom validation rules will be added in the future. If you have an idea for an useful validator, please let me know.
 
 Inside the folder 'examples' you will find examples of the usage of validation rules inside the validationTypes.php.
