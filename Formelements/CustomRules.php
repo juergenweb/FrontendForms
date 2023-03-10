@@ -413,7 +413,7 @@ class CustomRules extends Tag
             $this->_('is not a valid week. You have to enter the week in this format including the year: YYYY-Www (fe. 2023-W06)'));
 
         /**
-         * 23) Check if entered string is a valid hexadecimal color code
+         * 24) Check if entered string is a valid hexadecimal color code
          * Format: #666 or #666666
          */
         V::addRule('checkHex', function ($field, $value) {
