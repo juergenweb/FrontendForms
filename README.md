@@ -335,6 +335,12 @@ The double-submission check can be set manually (enable/disable) if necessary by
 ## General methods
 General methods are methods that can be used on each object: form, input field, label, description, notes, wrappers, fieldset,...
 
+| Method name  | usage | 
+| ------------- | ------------- |
+| [setAttribute()](#setattribute---add-a-single-attribute-to-a-tag)  | add a single attribute to a tag  |
+| [setAttributes()](#setattributes---add-multiple-attributes-to-a-tag)  | add multiple attributes to a tag  |
+
+
 ### setAttribute() - add a single attribute to a tag
 You can add every attribute to an object by adding the attribute name and the value inside the parenthesis separated by a comma.
 
@@ -1011,7 +1017,7 @@ For more detailed explanation on each validation rule click the link at the vali
 
 
 
-Afterwards, I will give you an overview about all custom rule and their usage:
+Afterwards, you will find a more detailed description of all custom rules and their usage:
 
 ### uniqueUsername
   Checks if a username is used by another user or not - useful for user registration form. Returns false if username is in use, otherwise false.
