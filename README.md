@@ -978,12 +978,37 @@ more than 60 validators available out of the box.
 
 In addition, some of the validation rules add HTML 5 attributes to the input tag, which will be used for browser validation, if enabled.
 
-Table of all custom validation rules
+Table of all custom validation rules for better overview:
+
+For more detailed explanation on each validation rule click the link at the validation rule name
 
 
 | Validation rule name  | Explanation |
 | ------------- | ------------- |
-| [uniqueUsername]()  | Checks if a username is used by another user or not  |
+| [uniqueUsername](#uniqueusername)  | Checks if a username is used by another user or not  |
+| [matchUsername](#matchUsername)  | Checks if a username and password match (for login)  |
+| [meetsPasswordConditions](#meetsPasswordConditions)  | Checks if password meets the required conditions set in the backend  |
+| [usernameSyntax](#usernameSyntax)  | Checks if the entered username contains the allowed characters  |
+| [uniqueEmail](#uniqueEmail)  | Checks if an email address is used by another user or not  |
+| [checkPasswordOfUser](#checkPasswordOfUser)  | This validation rule is for logged-in users only. Checks if entered password is the same as stored in the DB  |
+| [matchEmail](#matchEmail)  | Checks if a email and password match (for login)  |
+| [isBooleanAndTrue](#isBooleanAndTruel)  | Check if a value is from type boolean and true (no really applicable for form values)  |
+| [isBooleanAndFalse](#isBooleanAndFalse)  | Check if a value is from type boolean and false (no really applicable for form values)  |
+| [isBooleanAndFalse](#isBooleanAndFalse)  | Check if a value is from type boolean and false (no really applicable for form values)  |
+| [exactValue](#exactValue)  | Check if a value entered is exact the same value given as second parameter  |
+| [differentValue](#differentValue)  | Check if a value entered different than the value given as second parameter  |
+| [checkTfaCode](#checkTfaCode)  | Check if a value entered is the correct Tfa-Code sent by the TfaEmail module (only for internal usage)   |
+| [differentPassword](#differentPassword)  | Checks if the password entered is different from the old password stored inside the database   |
+| [safePassword](#safePassword)  | Checks if a password entered against the blacklist of forbidden passwords   |
+| [allowedFileSize](#safePassword)  | Checks if an uploaded file is not larger than the allowed filesize   |
+| [noErrorOnUpload](#noErrorOnUpload)  | Checks if an error occurs during the upload of a file   |
+| [allowedFileExt](#allowedFileExt)  | Checks if an uploaded file is of one of the allowed extensions   |
+| [forbiddenFileExt](#forbiddenFileExt)  | Checks if an uploaded file is of one of the forbidden extensions   |
+| [phpIniFilesize](#phpIniFilesize)  | Checks if an uploaded file is not larger than the allowed filesize as declared in the php.ini file   |
+| [week](#week)  |  Checks if the entered value is in the correct format of a week. The syntax should be YYYY-Www (fe 2023-W09)    |
+| [month](#month)  |  Checks if the entered value is in the correct format of a month. The syntax should be YYYY-MM (fe 2023-09)    |
+| [checkHex](#checkHex)  |  Checks if the entered value is a valid HEX color code    |
+
 
 
 Afterwards, I will give you an overview about all custom rule and their usage:
@@ -1018,7 +1043,7 @@ $field->setRule('meetsPasswordConditions');
 ```
 
 ### usernameSyntax
-  Checks if the entered username only contains a-z0-9-_. characters - useful for registration or profile form. Returns true if username contains only allowed characters, otherwise false.
+  Checks if the entered username only contains a-z0-9-_.@ characters - useful for registration or profile form. Returns true if username contains only allowed characters, otherwise false.
 
 Parameter: validation name
 
