@@ -3,6 +3,8 @@ en,de,description,file,hash
 "Reload image","Bild neu laden",,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,7c89feb583d9e778c3533017b111263d
 Captcha,=,,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,45d048c35e3cfd449dc0a1b503cd103a
 en,de,description,file,hash
+"Please select what you see in the image above.","Bitte wählen Sie aus, was sie im Bild oberhalb sehen.",,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,118f3464042a036c52a1087e923a307e
+en,de,description,file,hash
 "This file is not a TrueType font file.","Diese Datei ist keine TrueType Schriftart Datei.",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,ad1ca00ca558c196b2ffa224309706e4
 "This file does not exist under the specified path","Diese Datei existiert nicht unter dem angegebenen Pfad",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,d472945618bae0b84ca5082c7d916966
 en,de,description,file,hash
@@ -28,7 +30,9 @@ en,de,description,file,hash
 "does not belong to the allowed file types: %s.","ist nicht vom Typ der  erlaubten Dateitypen: %s.",,site/modules/FrontendForms/Formelements/CustomRules.php,e9104007e1d2a05266de336a3d10a55b
 "is larger than the max. allowed filesize.","ist größer als die max. zulässige Dateigröße.",,site/modules/FrontendForms/Formelements/CustomRules.php,2588b342e65a171fe8e5433b310a9223
 "is of one of the forbidden file types: %s.","ist vom Typ der verbotenen Dateitypen: %s.",,site/modules/FrontendForms/Formelements/CustomRules.php,7d0b6ffe466c0b12216be0168d5c2136
-"is not a valid time.","ist keine gültige Zeit.",,site/modules/FrontendForms/Formelements/CustomRules.php,18b8a49ca3ffc7d1fbeb2490e09155ae
+"is not a valid time. You have to enter the time in this format: HH:MM:SS (fe. 19:00:00)","ist keine gültige Zeitangabe. Sie müssen die Zeit im Format HH:MM:SS (z.B. 19:00:00) eingeben",,site/modules/FrontendForms/Formelements/CustomRules.php,f0c45ecb171ec186a5dbc0ce9957c073
+"is not a valid month. You have to enter the month in this format including the year: YYYY-MM (fe. 2023-06)","ist keine gültige Monatsangabe. Sie müssen das Monat (inklusive Jahr) im Format YYYY-MM (z.B 2023-06) eingeben",,site/modules/FrontendForms/Formelements/CustomRules.php,cba20ded2eec02144db964c8fab90000
+"is not a valid week. You have to enter the week in this format including the year: YYYY-Www (fe. 2023-W06)","ist keine gültige Wochenangabe. Sie müssen die Woche (inklusive Jahr) im Format YYYY-Www (z.B 2023-W06) eingeben",,site/modules/FrontendForms/Formelements/CustomRules.php,fb6eb0f6821ca0cfffc7fb19fc2b1dde
 en,de,description,file,hash
 "Random string captcha","Zufallstext Captcha",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultTextCaptcha.php,7c62e8d4b13ecc03f28bb44905a5ec51
 "Enter the text from the image in the input field.","Geben Sie den Text aus dem Bild in das Eingabefeld ein.",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultTextCaptcha.php,3c6c9439c3e38d0da29b7629a300c3c5
@@ -376,8 +380,8 @@ Mister,Herr,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaul
 Miss,Frau,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,e7ddb7cd777b59610b220bcfa80bd95f
 Diverse,Divers,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,e67561dfc51195ce1ac515406291900e
 en,de,description,file,hash
-"Please do not upload files larger than %s.","Bitte laden Sie keine Dateien hoch, die größer als %s sind.",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,b1cad8a026ae8d8a2c55bb0e613918b5
-"Allowed file types: %s.","Erlaubte Dateitypen: %s.",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,5d931d7c5f0fb5cf520e960dda6e4d7b
+"Please do not upload files larger than %s","Bitte laden Sie keine Dateien hoch, die größer als %s sind",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,d8b0ef2b22e79194c0cb1e79340e6767
+"Allowed file types: %s","Erlaubte Dateitypen: %s",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,a0072ad6390e4bf1839ad0ede52c2e69
 "%s should only contain letters","%s darf nur Buchstaben enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,1200911cc09227463a876a1e56e34536
 "%s should only contain letters and numbers","%s darf nur Buchstaben und Zahlen enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,4083de02c277bb0425f3aa9bad2332d0
 "%s should only contain ascii characters","%s darf nur ASCII-Zeichen enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,9dde428a87d3efada8d9a0c198ac0edd
@@ -401,6 +405,8 @@ en,de,description,file,hash
 "Show password","Passwort anzeigen",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,a1cc7ba89ca3016cf59d7c31506a9681
 "The password must be at least %s characters and must contain characters of the following categories: %s.","Das Passwort muss mindestes %s Zeichen lang sein und folgende Zeichen enthalten: %s.",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,8bc6641f570b88866300ca703223bf6b
 "The password must be at least %s characters.","Das Passwort muss mindestes %s Zeichen lang sein.",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,3d55c273179acb11e30d1a53f8d8625e
+en,de,description,file,hash
+Language,Sprache,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Language.php,4994a8ffeba4ac3140beb89e8d41f174
 en,de,description,file,hash
 "To the page","Zur Seite",,site/modules/FrontendForms/Formelements/Textelements/Link.php,bea7931fd2f2e37616d0be40dd825860
 en,de,description,file,hash
