@@ -398,8 +398,8 @@ en,de,description,file,hash
 "%s contains an invalid value","%s enthält einen ungültigen Wert",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,bb4345694f2874fabb71ab8e01c48df6
 "%s should contain the exact value %s","%s muss genau den Wert %s enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,5023212f0c2560a1dfd4a1547f2e738c
 "%s should not contain the value %s","%s darf nicht den Wert %s enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,5bf4df175a2c543ba607e1f8e8ffcd65
-"%s should contain a valid week in the format YYYY-Www","muss die Woche im Format YYYY-Www enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,c6e07582e39f31016850b457b5adea14
-"%s should contain a valid month in the format YYYY-MM","muss ein Monat im Format YYYY-MM enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,27fe1dad162ac5fe6aa7b0750b7af1c6
+"%s should only contain a valid week in the format YYYY-Www","%s muss eine gültige Woche im Format YYYY-Www enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,b5636cc5ae7dc2e4495ac2dd2adada93
+"%s should only contain a valid month in the format YYYY-MM","muss ein gültiges Monat im Format YYYY-MM enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,e1c152c6ff80439f69e2db72bb3ade3b
 en,de,description,file,hash
 "File upload","Datei Upload",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,c4265549c1f4d79aea1e279149a6a084
 "Select files","Wählen Sie die Dateien aus",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,1afe200fa26ba361f59b603b22ad6392
