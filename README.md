@@ -726,6 +726,26 @@ These elements do not need a more detailed explanation. Only to mention here: yo
 ### General Methods for all input fields
 These methods can be used on each input field independent of the input type.
 
+| Method name  | Use case | 
+| ------------- | ------------- |
+| [getFieldWrapper()](#getfieldwrapper---get-the-most-outer-container-of-a-formfield-object)  | get the most outer container of a formfield object  |
+| [getInputWrapper()](#getinputwrapper---get-the-container-element-surrounding-the-input-field)  | get the container element surrounding the input field  |
+| [setLabel()](#setlabel---add-the-label-text)  |  add the label text  |
+| [setNotes()](#setnotes---add-text-for-notes-under-the-input-field)  |  add text for notes under the input field  |
+| [setDescription()](#setdescription---add-a-description-text-to-an-input-field)  |  add a description text to an input field  |
+| [setSanitizer()](#setsanitizer---set-a-processwire-sanitizer)  |   set a ProcessWire sanitizer  |
+| [hasSanitizer()](#hassanitizer---check-if-a-special-sanitizer-was-set-to-the-field)  |   check if a special sanitizer was set to the field  |
+| [getSanitizers()](#getsanitizers---get-all-sanitizers-set-to-a-the-field)  |   get all sanitizers set to a the field  |
+| [removeSanitizers()](#removesanitizers---remove-all-previously-set-sanitizers)  |   remove one or more sanitizers  |
+| [setRule()](#setrule---set-a-validation-rule-to-a-field)  |    add a validation rule to a field  |
+| [getRules()](#getrules---get-all-previously-set-validation-rules-of-a-field)  |    get all previously set validation rules of a field  |
+| [removeRule()](#removerule---remove-all-previously-set-validation-rules-from-a-field)  |     remove all previously set validation rules from a field  |
+| [hasRule()](#hasrule---check-if-a-field-has-a-specific-validation-rule-set)  |     check if a field has a specific validation rule set  |
+| [getErrorMessage()](#geterrormessage---get-the-error-message-object-of-a-field-for-further-manipulations)  |     get the error message object set by the validator  |
+| [setDefaultValue()](#setdefaultvalue---set-a-default-value-for-an-input-field-on-page-load)  |     set a default value for an input field on page load  |
+| [setChecked()](#setchecked---set-default-value-for-single-checkboxes-without-values)  |     set default value for single checkboxes without values  |
+| [render() ](#render---output-the-markup-of-an-input-field)  |     output the markup of an input field  |
+
 ### getFieldWrapper() - get the most outer container of a formfield object
 Get the fieldwrapper object for form fields for further manipulations
 The getFieldWrapper() method returns the Field wrapper object, so you can manipulate it, if you need.
@@ -902,6 +922,20 @@ echo $field->render();
 
 ### Special Methods for special input fields
 These methods can only be used on certain input fields and not at all.
+
+| Method name  | Use case | 
+| ------------- | ------------- |
+| [alignVertical()](#alignvertical---set-the-alignment-for-checkboxes-and-radio-buttons)  | set the alignment for checkboxes and radio buttons  |
+| [addOption() ](#addoption---add-option-tags-for-checkboxes-radio-buttons-select-and-datalist)  | add option tags for checkboxes, radio buttons, select and datalist  |
+| [addEmptyOption()](#addemptyoption---add-an-empty-option-at-the-top-for-select-and-select-multiple)  | add an empty option at the top for select and select multiple  |
+| [setOptionsFromField()](#setoptionsfromfield---use-options-from-a-processwire-field-for-select-multiple-radio-multiple-checkbox-multiple-and-datalist-input-fields)  | use options from a ProcessWire field for select multiple, radio multiple, checkbox multiple and datalist input fields  |
+| [showPasswordRequirements()](#showpasswordrequirements---show-the-password-requirements-under-a-password-field)  | show the password requirements under a password field  |
+| [showPasswordToggle()](#showpasswordtoggle---show-a-checkbox-to-make-the-password-value-visible-next-to-a-password-field)  | show a checkbox to make the password value visible next to a password field  |
+| [sendAttachment()](#sendattachment---send-files-via-the-wiremail-class)  | send files via the WireMail class  |
+| [allowMultiple()](#allowmultiple-for-file-input-fields)  | add support for multiple file uploads on input type file  |
+| [mailTemplate()](#mailtemplate---changedisable-the-usage-of-an-email-template-manually)  | change/disable the usage of an email template manually  |
+
+
 
 #### alignVertical() - set the alignment for checkboxes and radio buttons
 This is only a method for multiple checkboxes and radio buttons to align them vertical instead of horizontal (default).
