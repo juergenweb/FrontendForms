@@ -639,7 +639,6 @@ abstract class Inputfields extends Element
     /**
      * Add HTML5 attribute required to the input tag
      * Validator rule: required
-     * @param array $value
      * @return void
      */
     protected function addHTML5required():void
@@ -844,7 +843,8 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ', '[-a-z0-9_-]+');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain letters, numbers, underscores or hyphens'), $label));
+        $this->setAttribute('title',
+            sprintf($this->_('%s should only contain letters, numbers, underscores or hyphens'), $label));
     }
 
     /**
@@ -864,9 +864,12 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5url():void
     {
-        $this->setAttribute('pattern ', 'https?://.+');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should be a valid URL starting with http:// or https://'), $label));
+        if (($this->className() != 'InputUrl') || (is_subclass_of($this, 'InputUrl'))) {
+            $this->setAttribute('pattern ', 'https?://.+');
+            $label = $this->getLabel()->getText();
+            $this->setAttribute('title',
+                sprintf($this->_('%s should be a valid URL starting with http:// or https://'), $label));
+        }
     }
 
     /**
@@ -876,7 +879,9 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5url():void
     {
-        $this->removeAttribute('pattern');
+        if (($this->className() != 'InputUrl') || (is_subclass_of($this, 'InputUrl'))) {
+            $this->removeAttribute('pattern');
+        }
     }
 
     /**
@@ -886,10 +891,12 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5email():void
     {
-        $this->setAttribute('pattern ',
-            '^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should be a valid email address'), $label));
+        if (($this->className() != 'InputEamil') || (is_subclass_of($this, 'InputEmail'))) {
+            $this->setAttribute('pattern ',
+                '^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$');
+            $label = $this->getLabel()->getText();
+            $this->setAttribute('title', sprintf($this->_('%s should be a valid email address'), $label));
+        }
     }
 
     /**
@@ -899,7 +906,9 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5email():void
     {
-        $this->removeAttribute('pattern');
+        if (($this->className() != 'InputEamil') || (is_subclass_of($this, 'InputEmail'))) {
+            $this->removeAttribute('pattern');
+        }
     }
 
     /**
@@ -956,7 +965,8 @@ abstract class Inputfields extends Element
         $this->setAttribute('pattern ',
             '(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*){3}');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IP address in the format x.x.x.x'), $label));
+        $this->setAttribute('title',
+            sprintf($this->_('%s should only contain a valid IP address in the format x.x.x.x'), $label));
     }
 
     /**
@@ -978,7 +988,8 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ', '((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IPv4 address in the format x.x.x.x'), $label));
+        $this->setAttribute('title',
+            sprintf($this->_('%s should only contain a valid IPv4 address in the format x.x.x.x'), $label));
     }
 
     /**
@@ -1000,7 +1011,8 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ', '((^|:)([0-9a-fA-F]{0,4})){1,8}$');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IPv6 address in the format x:x:x:x:x:x:x:x'), $label));
+        $this->setAttribute('title',
+            sprintf($this->_('%s should only contain a valid IPv6 address in the format x:x:x:x:x:x:x:x'), $label));
     }
 
     /**
@@ -1023,7 +1035,9 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern ', '^[a-zA-Z][a-zA-Z0-9-_\.@]{1,50}$');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s contains not allowed characters. Please use only letters, numbers, underscores, periods, hyphens and @signs (no whitespaces)'), $label));
+        $this->setAttribute('title',
+            sprintf($this->_('%s contains not allowed characters. Please use only letters, numbers, underscores, periods, hyphens and @signs (no whitespaces)'),
+                $label));
     }
 
     /**
@@ -1051,10 +1065,11 @@ abstract class Inputfields extends Element
             'yyyy.mm.dd' => '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])',
             'mm/dd/yyyy' => '(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d'
         ];
-        if(array_key_exists($format, $dateformats)){
+        if (array_key_exists($format, $dateformats)) {
             $this->setAttribute('pattern ', $dateformats[$format]);
             $label = $this->getLabel()->getText();
-            $this->setAttribute('title', sprintf($this->_('%s should only contain a valid date in the format %s'), $label, $format));
+            $this->setAttribute('title',
+                sprintf($this->_('%s should only contain a valid date in the format %s'), $label, $format));
         }
 
     }
@@ -1128,7 +1143,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5differentValue(array $value):void
     {
-        $this->setAttribute('pattern', '((?!'.$value[0].').)*');
+        $this->setAttribute('pattern', '((?!' . $value[0] . ').)*');
         $label = $this->getLabel()->getText();
         $this->setAttribute('title', sprintf($this->_('%s should not contain the value %s'), $label, $value[0]));
     }
@@ -1157,7 +1172,8 @@ abstract class Inputfields extends Element
             $accept_extensions[] = '.' . $ext;
         }
         $accept_extensions = implode(',', $accept_extensions);
-        $this->setAttribute('accept', $accept_extensions); // this is not for the validation - it shows only allowed files in the dialog window!!
+        $this->setAttribute('accept',
+            $accept_extensions); // this is not for the validation - it shows only allowed files in the dialog window!!
     }
 
     /**
@@ -1212,5 +1228,53 @@ abstract class Inputfields extends Element
         $this->removeAttribute('min');
     }
 
+    /**
+     * Add HTML5 attribute pattern to the input tag
+     * Validator rule: week
+     * @return void
+     */
+    protected function addHTML5week():void
+    {
+        // add pattern only if input type is not of week (fe. InputText)
+        if (($this->className() != 'InputWeek') || (is_subclass_of($this, 'InputWeek'))) {
+            $this->setAttribute('pattern', '^\d{1,4}-[W](\d|[0-4]\d|5[0123])$');
+        }
+    }
+
+    /**
+     * Remove attribute pattern from the input tag
+     * Validator rule: week
+     * @return void
+     */
+    protected function removeHTML5week():void
+    {
+        if (($this->className() != 'InputWeek') || (is_subclass_of($this, 'InputWeek'))) {
+            $this->removeAttribute('pattern');
+        }
+    }
+
+    /**
+     * Add HTML5 attribute pattern to the input tag
+     * Validator rule: month
+     * @return void
+     */
+    protected function addHTML5month():void
+    {
+        if (($this->className() != 'InputMonth') || (is_subclass_of($this, 'InputMonth'))) {
+            $this->setAttribute('pattern', '^\d{4}-(0[1-9]|1[012])$');
+        }
+    }
+
+    /**
+     * Remove attribute pattern from the input tag
+     * Validator rule: month
+     * @return void
+     */
+    protected function removeHTML5month():void
+    {
+        if (($this->className() != 'InputMonth') || (is_subclass_of($this, 'InputMonth'))) {
+            $this->removeAttribute('pattern');
+        }
+    }
 
 }
