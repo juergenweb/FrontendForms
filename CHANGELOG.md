@@ -230,3 +230,11 @@ Language file de.csv updated with new translations.
 
 New example file for field validation added to the examples folder (field-validation.php). It is a test page and for
 developers to look how to write specific field validation rules.
+
+## [2.1.18] - 2023-03-10
+2 new validation rules added:
+
+1) week: validates a week in the format YYYY-Www (fe 2023-W12)
+2) month: validates a month in the format YYYY-MM (fe 2023-09)
+
+Readme was updated too and some minor fixes were taken.
