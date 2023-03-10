@@ -1165,6 +1165,26 @@ Parameter: validation name
 $field->setRule('phpIniFilesize');
 ```
 
+* **week**\
+  This validation checks if the entered value is in the correct format of a week.
+ The syntax should be YYYY-Www. The first 4 digits are the year followed by a hyphen an a W and the week of the number. The 12th week in 2023 should be written as followed: 2023-W12. Returns true if the week is written in the correct syntax, otherwise false.
+
+Parameter: validation name
+
+```php
+$field->setRule('week');
+```
+
+* **month**\
+  This validation checks if the entered value is in the correct format of a month.
+ The syntax should be YYYY-MM. The first 4 digits are the year followed by a hyphen and the week of the number. The 12th month in 2023 should be written as followed: 2023-12. Returns true if the month is written in the correct syntax, otherwise false.
+
+Parameter: validation name
+
+```php
+$field->setRule('month');
+```
+
 Maybe other custom validation rules will be added in the future. If you have an idea for an useful validator, please let me know.
 
 Inside the folder 'examples' you will find examples of the usage of validation rules inside the validationTypes.php.
