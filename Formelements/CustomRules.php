@@ -419,7 +419,8 @@ class CustomRules extends Tag
         V::addRule('checkHex', function ($field, $value) {
 
             if ($value) {
-                $hex_regex = '#([a-fA-F0-9]{3}){1,2}\b'; //regex for week format
+                bd('hex code');
+                $hex_regex = '/#([a-fA-F0-9]{3}){1,2}\b/'; //regex for week format
                 return (preg_match($hex_regex, $value));
             }
             return true;
