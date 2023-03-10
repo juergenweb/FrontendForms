@@ -238,3 +238,6 @@ developers to look how to write specific field validation rules.
 2) month: validates a month in the format YYYY-MM (fe 2023-09)
 
 Readme was updated too and some minor fixes were taken.
+
+## 2023-03-10
+New validation rule "checkHex" for validating HEX color codes added.
