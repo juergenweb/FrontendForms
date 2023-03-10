@@ -6,21 +6,22 @@ namespace ProcessWire;
  *
  * Created by Jürgen K.
  * https://github.com/juergenweb
- * File name: validator-page.php
+ * File name: field-validation.php
  * Created: 07.03.2023
  */
 
 
 use FrontendForms\TextElements;
 
-$content =  '<h2>A form for using a lot (but not all) available validators</h2>';
-$content .=  '<p>This is a test page for testing validation rules and to show how the validation rules should be used (written).</p>';
+$content =  '<h2>A form for using a lot (not all) validators</h2>';
+$content .=  '<p>This is a test page for testing validation rules and to show how the validation rules should be used.</p>';
 
 $form = new \FrontendForms\Form('validators');
 
 $required = new \FrontendForms\InputText('required');
 $required->setLabel('Validator required');
 $required->setRule('required');
+$required->removeRule('required');
 $required->setDescription('Validator to check field is not empty');
 $form->add($required);
 
@@ -174,6 +175,30 @@ $listcontains->setRule('listcontains', 'word1');
 $listcontains->setDescription('Validator to check if the array value contains a value word1');
 $listcontains->setNotes('Valid value: word1, invalid value: word2');
 $form->add($listcontains);
+
+
+$time = new \FrontendForms\InputText('time');
+$time->setLabel('Validator time');
+$time->setRule('time');
+$time->setDescription('Validator to check if the value is a valid time string');
+$time->setNotes('Valid value: 12:45, invalid value: 25:10');
+$form->add($time);
+
+$month = new \FrontendForms\InputText('month');
+$month->setLabel('Validator month');
+$month->setRule('month');
+$month->setAttribute('placeholder', 'YYYY-MM');
+$month->setDescription('Validator to check if the value is a valid month string');
+$month->setNotes('Valid value: 2023-01, invalid value: 574-10');
+$form->add($month);
+
+$week = new \FrontendForms\InputText('week');
+$week->setLabel('Validator week');
+$week->setRule('week');
+$week->setAttribute('placeholder', 'YYYY-Www');
+$week->setDescription('Validator to check if the value is a valid week string');
+$week->setNotes('Valid value: 2023-W27, invalid value: 2023-12');
+$form->add($week);
 
 $date = new \FrontendForms\InputText('date');
 $date->setLabel('Validator date');
