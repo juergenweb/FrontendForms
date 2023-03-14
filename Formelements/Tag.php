@@ -13,14 +13,11 @@ namespace FrontendForms;
  * Created: 03.07.2022
  */
 
-// include Functions.php
-
-use AllowDynamicProperties;
 use ProcessWire\Wire as Wire;
 use ProcessWire\WireException;
 use ProcessWire\WirePermissionException;
 
-#[AllowDynamicProperties] abstract class Tag extends Wire
+abstract class Tag extends Wire
 {
     const MULTIVALUEATTR = ['class', 'rel', 'style']; // array of all attributes that can have more than 1 value
     const BOOLEANATTR = [   // array of all boolean attributes
@@ -65,31 +62,12 @@ use ProcessWire\WirePermissionException;
     protected object $classes; // all pre-defined css-classes as stdClass object
     protected string $prepend = ''; // markup before the tag
     protected string $append = ''; // markup after the tag
-
-    /* Properties of module configuration - make them all protected */
-    /* Input type is the same as they are stored in the db */
-    /* These properties are reachable in all descending classes */
-    protected int|string $input_showasterisk = 0;
-    protected string $input_requiredHintPosition = '';
-    protected string $input_requiredText = '';
-    protected string $input_alertSuccessText = '';
-    protected string $input_alertErrorText = '';
-    protected array|null $input_wrappers = [];
-    protected int|string $input_wrapperFormElements = 0;
-    protected string $input_wrapperFormElementsCSSClass = '';
-    protected int|string $input_removeJS = 0;
-    protected int|string $input_removeCSS = 0;
-    protected string $input_framework = 'none.json';
-    protected array $input_appendLabel = [];
-    protected string $input_emailTemplate = '';
-    protected string $input_privacy = '';
-    protected int $input_maxAttempts = 0;
-    protected int $input_minTime = 0;
-    protected int $input_maxTime = 0;
-    protected int|string $input_logFailedAttempts = 0;
-    protected int|string $input_honeypot = 0;
-    protected string $input_preventIPs = '';
-    protected string $input_uploadPath = '';
+    protected bool $useInputWrapper = true; // whether the input wrapper should be user or not
+    protected bool $useFieldWrapper = true;// whether the field wrapper should be user or not
+    protected bool $appendcheckbox = false; // whether the checkbox should be appended after the label or not
+    protected bool $appendradio = false;  // whether the radio should be appended after the label or not
+    protected string $uploadPath = '';
+    protected array $frontendforms = []; // array that hold all module configuration values of this module
 
     /**
      * @throws WireException
@@ -98,21 +76,25 @@ use ProcessWire\WirePermissionException;
     public function __construct()
     {
         parent::__construct();
+
         //  set the property values from the configuration settings from DB and sanitize it
         foreach ($this->wire('modules')->getConfig('FrontendForms') as $key => $value) {
+            $this->frontendforms[$key] = $value;
+            // TODO löschen nach Update
             if ($value != null) {
                 $this->$key = $value;
             }
         }
-        $this->input_uploadPath = $this->wire('config')->paths->siteModules . 'FrontendForms/temp_uploads/';
+
+        $this->uploadPath = $this->wire('config')->paths->siteModules . 'FrontendForms/temp_uploads/';
         // Extract values from configuration arrays to single properties of type bool
-        $this->useInputWrapper = in_array('inputwrapper', $this->input_wrappers);
-        $this->useFieldWrapper = in_array('fieldwrapper', $this->input_wrappers);
-        $this->appendcheckbox = in_array('appendcheckbox', $this->input_appendLabel);
-        $this->appendradio = in_array('appendradio', $this->input_appendLabel);
+        $this->useInputWrapper = in_array('inputwrapper', $this->frontendforms['input_wrappers']);
+        $this->useFieldWrapper = in_array('fieldwrapper', $this->frontendforms['input_wrappers']);
+        $this->appendcheckbox = in_array('appendcheckbox', $this->frontendforms['input_appendLabel']);
+        $this->appendradio = in_array('appendradio', $this->frontendforms['input_appendLabel']);
 
         // load the json file from CSSClass directory
-        $this->classes = json_decode(file_get_contents($this->wire('config')->paths->FrontendForms . 'CSSClasses' . DIRECTORY_SEPARATOR . $this->input_framework));
+        $this->classes = json_decode(file_get_contents($this->wire('config')->paths->FrontendForms . 'CSSClasses' . DIRECTORY_SEPARATOR . $this->frontendforms['input_framework']));
     }
 
     /**
@@ -157,15 +139,6 @@ use ProcessWire\WirePermissionException;
         } else {
             return false;
         }
-    }
-
-    /**
-     * Check if form was submitted or not
-     * @return bool -> true: the form was not submitted, false: the form was submitted
-     */
-    protected function notSubmitted(): bool
-    {
-        return (!$this->isSubmitted());
     }
 
     /**
