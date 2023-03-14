@@ -42,41 +42,20 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
     }
 
     /**
-     * Set the type of the background color (custom or random)
-     * @param string $type
-     * @return $this
-     */
-    protected function setBackgroundType(string $type): self
-    {
-        $this->input_bgcolorchooser = $type;
-        return $this;
-    }
-
-    /**
      * Get the type of the background color (custom or random)
      * @return string
      * @throws WireException
      */
     protected function getBackgroundType(): string
     {
-        if (in_array($this->input_bgcolorchooser, ['random', 'custom'])) {
-            return $this->input_bgcolorchooser;
+        if (in_array($this->frontendforms['input_bgcolorchooser'], ['random', 'custom'])) {
+            return $this->frontendforms['input_bgcolorchooser'];
         } else {
             // return default value from module configuration instead
             return $this->wire('modules')->getModuleConfigData('FrontendForms')['input_bgcolorchooser'];
         }
     }
 
-    /**
-     * Set the color of the background color
-     * @param string|array $backgroundColor
-     * @return $this
-     */
-    protected function setBackgroundColor(string|array $backgroundColor): self
-    {
-        $this->input_bgCustomColors = $backgroundColor;
-        return $this;
-    }
 
     /**
      * Get the colors of the background as an array
@@ -86,7 +65,7 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
      */
     protected function getBackgroundColor(): array
     {
-        return AbstractCaptcha::linebreaksValuesToArray($this->input_bgCustomColors, '#ddd');
+        return AbstractCaptcha::linebreaksValuesToArray($this->frontendforms['input_bgCustomColors'], '#ddd');
     }
 
     /**
@@ -97,7 +76,7 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
      */
     protected function setNumberOfColors(int $number): self
     {
-        $this->input_bgnumberOfColors = $number;
+        $this->frontendforms['input_bgnumberOfColors'] = $number;
         return $this;
     }
 
@@ -107,19 +86,7 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
      */
     protected function getNumberOfColors(): int
     {
-        return $this->input_bgnumberOfColors;
-    }
-
-    /**
-     * Set the text color
-     * @param string $textColor
-     * @return $this
-     * @throws Exception
-     */
-    protected function setTextColor(string $textColor): self
-    {
-        $this->input_captchaTextColor = $textColor;
-        return $this;
+        return $this->frontendforms['input_bgnumberOfColors'];
     }
 
     /**
@@ -129,18 +96,7 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
      */
     protected function getTextColor(): array
     {
-        return $this->setColor($this->input_captchaTextColor);
-    }
-
-    /**
-     * Set the font size of the captcha text
-     * @param int $fontsize
-     * @return $this
-     */
-    protected function setFontSize(int $fontsize): self
-    {
-        $this->input_captchaFontsize = $fontsize;
-        return $this;
+        return $this->setColor($this->frontendforms['input_captchaTextColor']);
     }
 
     /**
@@ -149,18 +105,7 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
      */
     protected function getFontSize(): int
     {
-        return (int)$this->input_captchaFontsize;
-    }
-
-    /**
-     * Set the font family for the captcha text
-     * @param string $fontpath
-     * @return $this
-     */
-    protected function setFontFamily(string $fontpath): self
-    {
-        $this->input_captchaFontFamily = $fontpath;
-        return $this;
+        return (int)$this->frontendforms['input_captchaFontsize'];
     }
 
     /**
@@ -172,12 +117,12 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
      */
     protected function getFontFamily(bool $showPath = false): string
     {
-        if ($this->wire('files')->exists($this->input_captchaFontFamily)) {
-            if (pathinfo($this->input_captchaFontFamily, PATHINFO_EXTENSION) == 'ttf') {
+        if ($this->wire('files')->exists($this->frontendforms['input_captchaFontFamily'])) {
+            if (pathinfo($this->frontendforms['input_captchaFontFamily'], PATHINFO_EXTENSION) == 'ttf') {
                 if ($showPath) {
-                    return pathinfo($this->input_captchaFontFamily, PATHINFO_BASENAME);
+                    return pathinfo($this->frontendforms['input_captchaFontFamily'], PATHINFO_BASENAME);
                 }
-                return $this->input_captchaFontFamily;
+                return $this->frontendforms['input_captchaFontFamily'];
             }
             throw new ErrorException($this->_('This file is not a TrueType font file.'));
         }
@@ -239,7 +184,7 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
         $this->wire('session')->set('captcha_' . $formID, $this->getCaptchaValidValue()); // create the session first
         $coordinates = $this->generateTextPosition(); // calculate the position of the text next
 
-        if ($this->input_charactersOffLine) {
+        if ($this->frontendforms['input_charactersOffLine']) {
             // text off the line
             $captcha_string = str_split($content);
             $initial = 15;
@@ -332,20 +277,6 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
             }
         }
         return $colors;
-    }
-
-    /**
-     * Creates an array containing arrays of rgb values from an array of HEX values
-     * @param array $colors - an array with HEX values
-     * @return array
-     */
-    protected function createCustomColorsArray(array $colors): array
-    {
-        $customColors = [];
-        foreach ($colors as $color) {
-            $customColors[] = AbstractCaptcha::hex2rgb($color);
-        }
-        return $customColors;
     }
 
     /**
