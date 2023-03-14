@@ -342,6 +342,7 @@ General methods are methods that can be used on each object: form, input field, 
 | [removeAttribute()](#removeattribute---remove-a-single-attribute)  | remove a single attribute  |
 | [removeAttributeValue()](#removeattributevalue---remove-specific-value-of-an-attribute)  | remove specific value of an attribute  |
 | [prepend(), append()](#prepend-append---prepend-or-append-a-string-to-an-object-field-form-button)  | prepend or append a string to an object (field, form, button,..)  |
+| [removePrepend(), removeAppend()](#prepend-append---prepend-or-append-a-string-to-an-object-field-form-button)  | remove a previously set markup from an object (field, form, button,..)  |
 | [removeAttributeValue()](#removeattributevalue---remove-specific-value-of-an-attribute)  | remove specific value of an attribute  |
 
 
@@ -407,6 +408,14 @@ You can prepend/append a string before and after an object. So you can add addit
 
 ```php
   $field->prepend('<div class="grid">')->append('</div>');  
+```
+
+### removePrepend(), removeAppend() - remove a markup previously added to an object (field, form, button,..)
+This method can be used if a markup was set before via the prepend() or append() method and you want to remove it again.
+
+```php
+  $field->removePrepend();  
+  $field->removeAppend(); 
 ```
 
 ## Form methods
