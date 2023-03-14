@@ -34,11 +34,12 @@ wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inpu
 wire('classLoader')->addNamespace('FrontendForms',
     __DIR__ . '/Formelements/Inputelements/Textarea/defaults');
 
+use AllowDynamicProperties;
 use Exception;
 use Valitron\Validator;
 
 
-class FrontendForms extends WireData implements Module, ConfigurableModule
+#[AllowDynamicProperties] class FrontendForms extends WireData implements Module, ConfigurableModule
 {
 
     // use API path to the GitHub repository for the 100 most common passwords
@@ -46,6 +47,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     // This url contains the commits for the passwords including the dates of the commits (used for last modification date)
     const LAST_PASSWORDS_MODIFICATION_URL = 'https://api.github.com/repos/danielmiessler/SecLists/commits?path=/Passwords/Common-Credentials/10-million-password-list-top-100.txt';
 
+    protected string $temp_uploadPath = ''; // the path to the temporary upload folder
     // the validator object
     protected Validator $Validator;
 
@@ -65,7 +67,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     protected string $lang = 'en'; // default language
 
     /* File uploads */
-    protected string $input_uploadPath = ''; // the path to the folder for uploaded files
+    //protected string $input_uploadPath = ''; // the path to the folder for uploaded files
     protected bool $keepFiles = false; // keep files after attachments were sent (true) or delete them (false)
 
     /* Assets */
