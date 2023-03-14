@@ -33,6 +33,7 @@ en,de,description,file,hash
 "is not a valid time. You have to enter the time in this format: HH:MM:SS (fe. 19:00:00)","ist keine gültige Zeitangabe. Sie müssen die Zeit im Format HH:MM:SS (z.B. 19:00:00) eingeben",,site/modules/FrontendForms/Formelements/CustomRules.php,f0c45ecb171ec186a5dbc0ce9957c073
 "is not a valid month. You have to enter the month in this format including the year: YYYY-MM (fe. 2023-06)","ist keine gültige Monatsangabe. Sie müssen das Monat (inklusive Jahr) im Format YYYY-MM (z.B 2023-06) eingeben",,site/modules/FrontendForms/Formelements/CustomRules.php,cba20ded2eec02144db964c8fab90000
 "is not a valid week. You have to enter the week in this format including the year: YYYY-Www (fe. 2023-W06)","ist keine gültige Wochenangabe. Sie müssen die Woche (inklusive Jahr) im Format YYYY-Www (z.B 2023-W06) eingeben",,site/modules/FrontendForms/Formelements/CustomRules.php,fb6eb0f6821ca0cfffc7fb19fc2b1dde
+"is not a valid hexadecimal color code.","ist kein gültiger Hexadecimal-Farbcode.",,site/modules/FrontendForms/Formelements/CustomRules.php,47d0b991eb42ea41be94a77c66ad608b
 en,de,description,file,hash
 "Random string captcha","Zufallstext Captcha",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultTextCaptcha.php,7c62e8d4b13ecc03f28bb44905a5ec51
 "Enter the text from the image in the input field.","Geben Sie den Text aus dem Bild in das Eingabefeld ein.",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultTextCaptcha.php,3c6c9439c3e38d0da29b7629a300c3c5
@@ -400,6 +401,7 @@ en,de,description,file,hash
 "%s should not contain the value %s","%s darf nicht den Wert %s enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,5bf4df175a2c543ba607e1f8e8ffcd65
 "%s should only contain a valid week in the format YYYY-Www","%s muss eine gültige Woche im Format YYYY-Www enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,b5636cc5ae7dc2e4495ac2dd2adada93
 "%s should only contain a valid month in the format YYYY-MM","muss ein gültiges Monat im Format YYYY-MM enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,e1c152c6ff80439f69e2db72bb3ade3b
+"%s should be a valid HEX code in the format #XXX or #XXXXXX","%s muss ein gültiger Hexadecimal Code im Format #XXX oder #XXXXXX sein",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,98be58eb3446f813bc644faac5e42264
 en,de,description,file,hash
 "File upload","Datei Upload",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,c4265549c1f4d79aea1e279149a6a084
 "Select files","Wählen Sie die Dateien aus",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,1afe200fa26ba361f59b603b22ad6392
