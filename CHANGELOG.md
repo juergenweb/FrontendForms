@@ -239,7 +239,10 @@ developers to look how to write specific field validation rules.
 
 Readme was updated too and some minor fixes were taken.
 
-## 2023-03-10
+## [2.1.19] 2023-03-14
 New validation rule "checkHex" for validating HEX color codes added.
 Update Readme with tables containing all methods and links to a more detailed description of each method
-AllowDynamicProperties class added to prevent warning on PHP 8.2 for dynamically declared properties 
+Translation file updated
+AllowDynamicProperties class added to prevent warning on PHP 8.2 for dynamically declared properties in FrontendForms.module file.
+Dynamically created properties have been replaced to work properly with PHP 8.2 (Thanks to Gabriel Tenita for reporting the issue)
+Dynamically created properties will lead to an error in upcoming PHP 9 version. To prevent problems in the future all dynamic properties were replaced by a declared array property, which holds all dynamic properties
