@@ -22,35 +22,9 @@ use ProcessWire\WirePermissionException;
 abstract class AbstractCaptcha extends Tag
 {
 
-    // distortion lines
-    protected string $input_captchaLinesColor = '#666'; // the color for the distortion lines over the captcha content
-    protected string|int $input_captchaNumberOfLines = 0; // number of the distortion lines in the captcha image - the higher, the more lines
-    protected string|int $input_numberOfColorsOfLines = 0; // number of colors that should be used for the distortion lines
-    protected string|int $input_colorchooser = ''; // random or custom colors for the lines
-
-    // captcha dimensions
-    protected string|int $input_captchaWidth = 150; // the width of the captcha image
-    protected string|int $input_captchaHeight = 50; // the height of the captcha image
     protected string $captchaValidValue = ''; // the value from the captcha that should be entered by the user
     protected string $category = ''; // the category type of the captcha (text or image)
     protected string $type = ''; // the name of the captcha
-
-    // Properties only for image CAPTCHA
-    protected string|int $input_blurlevel = 0; // the intensity of the blur effect for images
-    protected string|int $input_pixelatelevel = 0; // the intensity of the pixelated effect for images
-
-    // Properties only for text and maths captcha
-    protected string $input_bgcolorchooser = 'custom'; // type of the background - random or custom
-    protected string|null $input_bgCustomColors = '#ddd'; // the background color of the captcha image
-    protected string|int $input_bgnumberOfColors = 1; // the number of colors that should be used for the background
-
-    protected string $input_captchaTextColor = '#fff'; // the color of the captcha content (random text or numbers)
-    protected string|int $input_captchaFontsize = 20; // the font size of the content inside the image
-    protected string $input_captchaFontFamily = ''; // the path to the font family for the captcha text
-
-    // Properties for text captcha only
-    protected string $input_captchaCharset = ''; // the charset of characters being used to create the random string
-    protected string|int $input_captchaNumberOfCharacters_ = 5; // the number of characters in the random string
 
     // General objects for all captcha
     protected Link $reloadLink; // the reload link object for reloading the captcha if needed
@@ -74,16 +48,6 @@ abstract class AbstractCaptcha extends Tag
         $this->captchaImageTag = new Image(); // instantiate the image tag object
     }
 
-    /**
-     * Set the color of the distortion lines
-     * @param string|array $linesColor
-     * @return $this
-     */
-    protected function setLinesColor(string|array $linesColor): self
-    {
-        $this->input_captchaLinesColor = $linesColor;
-        return $this;
-    }
 
     /**
      * Get the color of the distortion lines as RGBa array
@@ -93,21 +57,9 @@ abstract class AbstractCaptcha extends Tag
      */
     protected function getLinesColor(): array
     {
-        return self::linebreaksValuesToArray($this->input_captchaLinesColor);
+        return self::linebreaksValuesToArray($this->frontendforms['input_captchaLinesColor']);
     }
 
-    /**
-     * Level of distortion for lines inside the captcha image
-     * 0 means no distortion (disabled)
-     * The higher the number, the higher the number of distortion lines
-     * @param string|int $number
-     * @return $this
-     */
-    protected function setNumberOfLines(string|int $number): self
-    {
-        $this->input_captchaNumberOfLines = $number;
-        return $this;
-    }
 
     /**
      * Get the number of lines over the captcha image
@@ -115,7 +67,7 @@ abstract class AbstractCaptcha extends Tag
      */
     protected function getNumberOfLines(): int
     {
-        return (int)$this->input_captchaNumberOfLines;
+        return (int)$this->frontendforms['input_captchaNumberOfLines'];
     }
 
     /**
@@ -126,7 +78,7 @@ abstract class AbstractCaptcha extends Tag
      */
     protected function setNumberOfColors(int $number): self
     {
-        $this->input_numberOfColorsOfLines = $number;
+        $this->frontendforms['input_numberOfColorsOfLines'] = $number;
         return $this;
     }
 
@@ -136,19 +88,9 @@ abstract class AbstractCaptcha extends Tag
      */
     protected function getNumberOfColors(): int
     {
-        return $this->input_numberOfColorsOfLines;
+        return $this->frontendforms['input_numberOfColorsOfLines'];
     }
 
-    /**
-     * Set the width of the captcha image
-     * @param int $width
-     * @return $this
-     */
-    protected function setWidth(int $width): self
-    {
-        $this->input_captchaWidth = $width;
-        return $this;
-    }
 
     /**
      * Get the width of the captcha image
@@ -157,19 +99,9 @@ abstract class AbstractCaptcha extends Tag
      */
     protected function getWidth(): int
     {
-        return (int)$this->input_captchaWidth;
+        return (int)$this->frontendforms['input_captchaWidth'];
     }
 
-    /**
-     * Set the height of the captcha image
-     * @param int $height
-     * @return $this
-     */
-    protected function setHeight(int $height): self
-    {
-        $this->input_captchaHeight = $height;
-        return $this;
-    }
 
     /**
      * Get the height of the captcha image
@@ -178,19 +110,9 @@ abstract class AbstractCaptcha extends Tag
      */
     protected function getHeight(): int
     {
-        return (int)$this->input_captchaHeight;
+        return (int)$this->frontendforms['input_captchaHeight'];
     }
 
-    /**
-     * Set the type of the distortion lines (custom or random)
-     * @param string $type
-     * @return $this
-     */
-    protected function setLinesType(string $type): self
-    {
-        $this->input_colorchooser = $type;
-        return $this;
-    }
 
     /**
      * Get the type of the distortion lines (custom or random)
@@ -199,8 +121,8 @@ abstract class AbstractCaptcha extends Tag
      */
     protected function getLinesType(): string
     {
-        if (in_array($this->input_colorchooser, ['random', 'custom'])) {
-            return $this->input_colorchooser;
+        if (in_array($this->frontendforms['input_colorchooser'], ['random', 'custom'])) {
+            return $this->frontendforms['input_colorchooser'];
         } else {
             // return default value from module configuration instead
             return $this->wire('modules')->getModuleConfigData('FrontendForms')['input_colorchooser'];
@@ -260,21 +182,6 @@ abstract class AbstractCaptcha extends Tag
         return array_map('intval', $colorValues);
     }
 
-    /**
-     * Check if the given string is a valid hex code
-     * @param string $hex
-     * @return bool
-     */
-    public static function checkIfHex(string $hex): bool
-    {
-        // Hash prefix is optional.
-        $hex = ltrim($hex, '#');
-
-        $length = strlen($hex);
-        $valid = ($length === 3 || $length === 6);
-        // Must be a valid hex value.
-        return $valid && ctype_xdigit($hex);
-    }
 
     /**
      * Convert hex color string to rgb color array
