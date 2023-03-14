@@ -31,16 +31,6 @@ abstract class AbstractCharset extends AbstractTextCaptcha
         $this->setCaptchaContent($this->createRandomString());
     }
 
-    /**
-     * Set the set of characters which should be used for the text
-     * @param string $chars
-     * @return $this
-     */
-    protected function setCharset(string $chars): self
-    {
-        $this->input_captchaCharset = $chars;
-        return $this;
-    }
 
     /**
      * Get the string of the charset that will be used to create the captcha text
@@ -48,18 +38,7 @@ abstract class AbstractCharset extends AbstractTextCaptcha
      */
     protected function getCharset(): string
     {
-        return $this->input_captchaCharset;
-    }
-
-    /**
-     * Set the number of characters
-     * @param int $number
-     * @return $this
-     */
-    protected function setNumberOfCharacters(int $number): self
-    {
-        $this->input_captchaNumberOfCharacters = $number;
-        return $this;
+        return $this->frontendforms['input_captchaCharset'];
     }
 
     /**
@@ -68,7 +47,7 @@ abstract class AbstractCharset extends AbstractTextCaptcha
      */
     protected function getNumberOfCharacters(): int
     {
-        return $this->input_captchaNumberOfCharacters;
+        return $this->frontendforms['input_captchaNumberOfCharacters'];
     }
 
     /**
