@@ -63,14 +63,6 @@ class ValitronAPI
         return ['name' => $validator, 'options' => $options];
     }
 
-    /**
-     * Get the custom error message of the field validator
-     * @return string|null
-     */
-    public function getCustomMessage(): ?string
-    {
-        return $this->customMessage;
-    }
 
     /**
      * Set the custom error message of the field validator
@@ -81,15 +73,6 @@ class ValitronAPI
     {
         $this->customMessage = $msg;
         return $msg;
-    }
-
-    /**
-     * Get the custom field name for the error message
-     * @return string|null
-     */
-    public function getCustomFieldName(): ?string
-    {
-        return $this->customFieldname;
     }
 
     /**
