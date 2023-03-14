@@ -34,8 +34,8 @@ class Privacy extends InputCheckbox
         $this->setRule('required')->setCustomMessage($this->_('You have to accept our privacy policy'));
 
         // create the link to the privacy page if set
-        if($this->input_privacy){
-            $privacyPage = $this->wire('pages')->get($this->input_privacy); // grab the privacy page
+        if($this->frontendforms['input_privacy']){
+            $privacyPage = $this->wire('pages')->get($this->frontendforms['input_privacy']); // grab the privacy page
             $this->privacyLink = new Link();
             $this->privacyLink->setPageLink($privacyPage);
             $this->privacyLink->setLinkText($this->_('Privacy Policy'));
