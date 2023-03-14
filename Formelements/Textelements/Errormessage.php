@@ -26,7 +26,7 @@ class Errormessage extends TextElements
     {
         parent::__construct();
         $this->setCSSClass('error_messageClass');
-        if ($this->input_framework === 'bootstrap5.json')
+        if ($this->frontendforms['input_framework'] === 'bootstrap5.json')
             $this->setTag('div');
     }
 
