@@ -80,10 +80,6 @@ abstract class Tag extends Wire
         //  set the property values from the configuration settings from DB and sanitize it
         foreach ($this->wire('modules')->getConfig('FrontendForms') as $key => $value) {
             $this->frontendforms[$key] = $value;
-            // TODO löschen nach Update
-            if ($value != null) {
-                $this->$key = $value;
-            }
         }
 
         $this->uploadPath = $this->wire('config')->paths->siteModules . 'FrontendForms/temp_uploads/';
