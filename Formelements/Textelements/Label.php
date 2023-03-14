@@ -27,7 +27,7 @@ class Label extends TextElements
     public function __construct()
     {
         parent::__construct();
-        $this->enableAsterisk = $this->input_showasterisk; // from global settings
+        $this->enableAsterisk = $this->frontendforms['input_showasterisk']; // from global settings
         $this->setTag('label');
         $this->setCSSClass('labelClass');
     }
@@ -53,7 +53,7 @@ class Label extends TextElements
             if ($this->getRequired()) {
                 $this->setCSSClass('label_requiredClass');
                 if ($this->enableAsterisk) {
-                    $content .= ($this->input_showasterisk) ? $this->___renderAsterisk() : '';
+                    $content .= ($this->frontendforms['input_showasterisk']) ? $this->___renderAsterisk() : '';
                 }
 
             }
