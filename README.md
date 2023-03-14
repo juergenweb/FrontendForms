@@ -15,7 +15,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 7. Option to send emails using HTML email templates within the WireMail class by using custom methods and properties added to the WireMail class
 
 ## Requirements
-* PHP>=8.0.0 (Warning: Usage of PHP 8.2 will cause warnings at the moment, because of depreciated method calls)
+* PHP>=8.0.0
 * ProcessWire>=3.0.181
 * GD-Library for CAPTCHA image creation
 
