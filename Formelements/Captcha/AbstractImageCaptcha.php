@@ -31,18 +31,6 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
         $this->imagePath = $this->wire('config')->paths->siteModules . 'FrontendForms/captchaimages/';
         $this->captchaInput = new InputRadioMultiple('captcha');
         $this->captchaInput->topLabel->setText($this->_('Please select what you see in the image above.'));
-        $this->blurlevel = (int)$this->input_blurlevel;
-    }
-
-    /**
-     * Set the intensity of the blur effect
-     * param int $blurlevel
-     * @return $this
-     */
-    protected function setBlurLevel(int $blurlevel): self
-    {
-        $this->input_blurlevel = $blurlevel;
-        return $this;
     }
 
     /**
@@ -51,26 +39,15 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
      */
     protected function getBlurlevel(): int
     {
-        if ($this->input_blurlevel < 0) {
+        if ($this->frontendforms['input_blurlevel'] < 0) {
             return 0;
         } else {
-            if ($this->input_blurlevel > 10) {
+            if ($this->frontendforms['input_blurlevel'] > 10) {
                 return 10;
             } else {
-                return $this->input_blurlevel;
+                return $this->frontendforms['input_blurlevel'];
             }
         }
-    }
-
-    /**
-     * Set the intensity of the pixelated effect
-     * param int $pixelatelevel
-     * @return $this
-     */
-    protected function setPixelateLevel(int $pixelatelevel): self
-    {
-        $this->input_pixelatelevel = $pixelatelevel;
-        return $this;
     }
 
     /**
@@ -79,26 +56,15 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
      */
     protected function getPixelatelevel(): int
     {
-        if ($this->input_pixelatelevel < 0) {
+        if ($this->frontendforms['input_pixelatelevel'] < 0) {
             return 0;
         } else {
-            if ($this->input_pixelatelevel > 5) {
+            if ($this->frontendforms['input_pixelatelevel'] > 5) {
                 return 5;
             } else {
-                return $this->input_pixelatelevel;
+                return $this->frontendforms['input_pixelatelevel'];
             }
         }
-    }
-
-    /**
-     * Enable or disable the grayscale effect on images
-     * @param int|bool $grayscale
-     * @return $this
-     */
-    protected function setGrayscale(int|bool|string $grayscale = true): self
-    {
-        $this->input_grayscale = $grayscale;
-        return $this;
     }
 
     /**
@@ -107,18 +73,7 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
      */
     protected function getGrayscale(): int
     {
-        return (int)$this->input_grayscale;
-    }
-
-    protected function setNumberOfOptions(int $number): self
-    {
-        $this->input_numberOfOptions = $number;
-        return $this;
-    }
-
-    protected function getNumberOfOptions(): int
-    {
-        return $this->input_numberOfOptions;
+        return (int)$this->frontendforms['input_grayscale'];
     }
 
     /**
