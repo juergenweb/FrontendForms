@@ -342,7 +342,7 @@ General methods are methods that can be used on each object: form, input field, 
 | [removeAttribute()](#removeattribute---remove-a-single-attribute)  | remove a single attribute  |
 | [removeAttributeValue()](#removeattributevalue---remove-specific-value-of-an-attribute)  | remove specific value of an attribute  |
 | [prepend(), append()](#prepend-append---prepend-or-append-a-string-to-an-object-field-form-button)  | prepend or append a string to an object (field, form, button,..)  |
-| [removePrepend(), removeAppend()](#prepend-append---prepend-or-append-a-string-to-an-object-field-form-button)  | remove a previously set markup from an object (field, form, button,..)  |
+| [removePrepend(), removeAppend()](#removeprepend-removeappend---remove-a-markup-previously-added-to-an-object-field-form-button)  | remove a previously set markup from an object (field, form, button,..)  |
 | [removeAttributeValue()](#removeattributevalue---remove-specific-value-of-an-attribute)  | remove specific value of an attribute  |
 
 
