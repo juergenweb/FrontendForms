@@ -843,11 +843,18 @@ This method will turn an array with the names of all validators set to this fiel
 $field->getRules();
 ```
 
-#### removeRule() - remove all previously set validation rules from a field
-This is the opposite of setRule(). You can remove unwanted rules with this method. This is useful if you use ['default fields'](#default-fields), which contains some validation rules by default.
+#### removeRule() - remove a specific validation rule from a field
+This is the opposite of setRule(). You can remove an unwanted rule with this method. This is useful if you use ['default fields'](#default-fields), which contains some validation rules by default.
 
 ```php
 $field->removeRule('required'); // this removes the required validator from the field
+```
+
+#### removeAllRules() - remove all previously set validation rules from a field
+With this method, you can remove all previously set validation rules from a field at once
+
+```php
+$field->removeAllRules(); // this removes all validation rules from the field
 ```
 
 #### hasRule() - check if a field has a specific validation rule set
