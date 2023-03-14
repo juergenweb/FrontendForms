@@ -15,11 +15,12 @@ namespace FrontendForms;
 
 // include Functions.php
 
+use AllowDynamicProperties;
 use ProcessWire\Wire as Wire;
 use ProcessWire\WireException;
 use ProcessWire\WirePermissionException;
 
-abstract class Tag extends Wire
+#[AllowDynamicProperties] abstract class Tag extends Wire
 {
     const MULTIVALUEATTR = ['class', 'rel', 'style']; // array of all attributes that can have more than 1 value
     const BOOLEANATTR = [   // array of all boolean attributes
