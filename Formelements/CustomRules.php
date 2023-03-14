@@ -69,7 +69,7 @@ class CustomRules extends Tag
             // returns a multidimensional array containing the entered username => password combinations
             // can be used later on to check if multiple attempts with same username and different password
             // combinations were taken, to fe lock the user account due to security reasons.
-            $this->createSessionForLoginAttempts($fieldName, $username, $value);
+            $this->createSessionForLoginAttempts($fieldName, 'username', $value);
             return false;
         }, $this->_('and username do not match.'));
 
@@ -162,7 +162,7 @@ class CustomRules extends Tag
             // returns a multidimensional array containing the entered username/email => password combination
             // can be used later on to check if multiple attempts with same username/email and different password
             // combinations were taken, to fe lock the user account due to security.
-            $this->createSessionForLoginAttempts($fieldName, $email, $value);
+            $this->createSessionForLoginAttempts($fieldName, 'email', $value);
             return false;
         }, $this->_('and email do not match.'));
 
@@ -419,7 +419,6 @@ class CustomRules extends Tag
         V::addRule('checkHex', function ($field, $value) {
 
             if ($value) {
-                bd('hex code');
                 $hex_regex = '/#([a-fA-F0-9]{3}){1,2}\b/'; //regex for week format
                 return (preg_match($hex_regex, $value));
             }
