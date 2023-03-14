@@ -242,3 +242,4 @@ Readme was updated too and some minor fixes were taken.
 ## 2023-03-10
 New validation rule "checkHex" for validating HEX color codes added.
 Update Readme with tables containing all methods and links to a more detailed description of each method
+AllowDynamicProperties class added to prevent warning on PHP 8.2 for dynamically declared properties 
