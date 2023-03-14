@@ -54,7 +54,7 @@ abstract class Inputfields extends Element
         $this->errormessage = new Errormessage();// instantiate the error message object
         $this->notes = new Notes();// instantiate the notes object
         $this->description = new Description();// instantiate the description object
-        $this->markupType = $this->input_framework;//grab the markup type (fe uikit, none, bootstrap,...) and save it to a variable
+        $this->markupType = $this->frontendforms['input_framework'];//grab the markup type (fe uikit, none, bootstrap,...) and save it to a variable
         //  Set text sanitizer to all input elements (except multi-value inputs) for security reasons
         if (!in_array($this->className(), Tag::MULTIVALCLASSES)) {
             $this->setSanitizer('text');
@@ -337,7 +337,7 @@ abstract class Inputfields extends Element
                 } else {
                     $this->inputWrapper->setContent($label . $errormsg);
                     // set class to input-wrapper
-                    if ($this->input_framework === 'bootstrap5.json') {
+                    if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
                         $this->inputWrapper->setAttribute('class', 'form-check');
                     }
                     $content .= $this->inputWrapper->___render() . PHP_EOL;
@@ -410,7 +410,7 @@ abstract class Inputfields extends Element
      * Method to clear all validation rules of an element
      * @return void
      */
-    protected function removeAllRules():void
+    public function removeAllRules():void
     {
         $this->validatonRules = [];
     }
@@ -547,15 +547,6 @@ abstract class Inputfields extends Element
     }
 
     /**
-     * Return all names of the sanitizer methods
-     * @return array
-     */
-    protected function getSanitizer():array
-    {
-        return $this->sanitizer;
-    }
-
-    /**
      * Set a sanitizer from ProcessWire sanitizer methods to sanitize the input value
      * Checks first if the entered sanitizer method exists, otherwise informs you that this method does not exist
      * Check https://processwire.com/api/ref/sanitizer/ for all sanitizer methods
@@ -592,15 +583,6 @@ abstract class Inputfields extends Element
     {
         $sanitizer = trim(strtolower($sanitizer));
         return in_array($sanitizer, $this->sanitizer);
-    }
-
-    /**
-     * Get the error class for input fields
-     * @return string|null
-     */
-    protected function getinputErrorClass():?string
-    {
-        return $this->getCSSClass('input_errorClass');
     }
 
     /**
