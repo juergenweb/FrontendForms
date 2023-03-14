@@ -739,7 +739,8 @@ These methods can be used on each input field independent of the input type.
 | [removeSanitizers()](#removesanitizers---remove-all-previously-set-sanitizers)  |   remove one or more sanitizers  |
 | [setRule()](#setrule---set-a-validation-rule-to-a-field)  |    add a validation rule to a field  |
 | [getRules()](#getrules---get-all-previously-set-validation-rules-of-a-field)  |    get all previously set validation rules of a field  |
-| [removeRule()](#removerule---remove-all-previously-set-validation-rules-from-a-field)  |     remove all previously set validation rules from a field  |
+| [removeRule()](#removerule---remove-a-specific-validation-rule-from-a-field)  |     remove a specific validation rule from a field  |
+| [removeAllRules()](#removeallrules---remove-all-previously-set-validation-rules-from-a-field)  |     remove all previously set validation rules from a field  |
 | [hasRule()](#hasrule---check-if-a-field-has-a-specific-validation-rule-set)  |     check if a field has a specific validation rule set  |
 | [getErrorMessage()](#geterrormessage---get-the-error-message-object-of-a-field-for-further-manipulations)  |     get the error message object set by the validator  |
 | [setDefaultValue()](#setdefaultvalue---set-a-default-value-for-an-input-field-on-page-load)  |     set a default value for an input field on page load  |
