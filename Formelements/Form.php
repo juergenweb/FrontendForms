@@ -1036,12 +1036,14 @@ class Form extends CustomRules
     private function reArrayFiles(array $file_post):array
     {
         $file_ary = array();
+        if($file_post['error'] != 4){
         $file_count = count($file_post['name']);
         $file_keys = array_keys($file_post);
         for ($i = 0; $i < $file_count; $i++) {
             foreach ($file_keys as $key) {
                 $file_ary[$i][$key] = $file_post[$key][$i];
             }
+        }
         }
         return $file_ary;
     }
@@ -1060,8 +1062,10 @@ class Form extends CustomRules
             $this->wire('files')->mkdir($this->uploadPath);
             // get all upload fields inside the form
             foreach ($formElements as $element) {
-                if ($element instanceof InputFile) {
+
+                if (($element instanceof InputFile) || (is_subclass_of($element, 'InputFile'))){
                     $fieldName = $element->getAttribute('name'); // the name of the upload field
+
                     if ($element->getMultiple()) {
                         // multiple files
                         $files = $this->reArrayFiles($_FILES[$fieldName]);
