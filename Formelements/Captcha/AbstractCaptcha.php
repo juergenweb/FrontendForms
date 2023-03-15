@@ -38,10 +38,7 @@ abstract class AbstractCaptcha extends Tag
     public function __construct()
     {
         parent::__construct();
-        // set values from the module configuration
-        foreach ($this->wire('modules')->getConfig('FrontendForms') as $key => $value) {
-            $this->$key = $value;
-        }
+
         $this->type = $this->className(); // set the name of the captcha from the class name
         // instantiate link an image object
         $this->reloadLink = new Link(); // instantiate reload link object
