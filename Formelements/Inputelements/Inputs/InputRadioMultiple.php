@@ -22,7 +22,7 @@ class InputRadioMultiple extends Input
 
     protected array $radios = []; // array to hold all InputRadio objects
     protected bool $directionHorizontal = true; // default radio button orientation
-    protected TextElements $toplabel;
+    protected TextElements $topLabel;
 
 
     /**
