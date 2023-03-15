@@ -1150,8 +1150,10 @@ abstract class Inputfields extends Element
     {
         $accept_extensions = [];
         // add dot in front of file extensions
-        foreach ($value[0] as $ext) {
-            $accept_extensions[] = '.' . $ext;
+        if($value){
+            foreach ($value[0] as $ext) {
+                $accept_extensions[] = '.' . $ext;
+            }
         }
         $accept_extensions = implode(',', $accept_extensions);
         $this->setAttribute('accept',
