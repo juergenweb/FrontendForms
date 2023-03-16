@@ -249,3 +249,7 @@ Dynamically created properties will lead to an error in upcoming PHP 9 version. 
 
 ## [2.1.20 -2.1.21] 2023-03-16
 Some bug fixes according to the removement of dynamically created properties to make the module working without troubles at PHP 8.2 and higher
+
+## [2.1.22] 2023-03-16
+Add missing check if failed attempts should be logged or not. Before, every failed attempt has been logged independent of settings inside the module configuration.
+Remove hardcoded max attempts limit set to 0. This was added only for testing purposes and I have forgotten to remove it afterwards.
