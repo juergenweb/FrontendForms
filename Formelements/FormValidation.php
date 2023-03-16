@@ -19,7 +19,7 @@ use ProcessWire\WireInputData as WireInputData;
 use ProcessWire\WireLog;
 use ProcessWire\WirePermissionException;
 
-class FormValidation extends Wire
+class FormValidation extends Tag
 {
     protected WireInputData $input; //WireInputData object
     protected Form $form; // Form object
@@ -201,7 +201,10 @@ class FormValidation extends Wire
                 return true;
             } else {
                 if ($log) {
-                    $this->writeLogFailedAttempts();
+                    // check if logging of IP addresses is enabled
+                    if($this->frontendforms['input_logFailedAttempts']){
+                        $this->writeLogFailedAttempts();// write the log file
+                    }
                 }
                 $this->wire('session')->set('blocked', 'maxAttempts');// set session for blocked
                 return false;
