@@ -126,7 +126,6 @@ class Form extends CustomRules
         $this->setRequiredText($this->getLangValueOfConfigField('input_requiredText'));
         $this->logFailedAttempts($this->frontendforms['input_logFailedAttempts']); // enable or disable the logging of blocked visitor's IP depending on config settings
         $this->setMaxAttempts($this->frontendforms['input_maxAttempts']); // set max attempts
-        $this->setMaxAttempts(0);
         $this->setMinTime($this->frontendforms['input_minTime']); // set min time
         $this->setMaxTime($this->frontendforms['input_maxTime']); // set max time
         $this->setCaptchaType($this->frontendforms['input_captchaType']); // enable or disable the captcha and set type of captcha
