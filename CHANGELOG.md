@@ -246,3 +246,6 @@ Translation file updated
 AllowDynamicProperties class added to prevent warning on PHP 8.2 for dynamically declared properties in FrontendForms.module file.
 Dynamically created properties have been replaced to work properly with PHP 8.2 (Thanks to Gabriel Tenita for reporting the issue)
 Dynamically created properties will lead to an error in upcoming PHP 9 version. To prevent problems in the future all dynamic properties were replaced by a declared array property, which holds all dynamic properties
+
+## [2.1.20 -2.1.21] 2023-03-16
+Some bug fixes according to the removement of dynamically created properties to make the module working without troubles at PHP 8.2 and higher
