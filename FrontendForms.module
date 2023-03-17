@@ -25,14 +25,11 @@ wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Capt
 wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Images');
 wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Datalist');
 wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Inputs');
-wire('classLoader')->addNamespace('FrontendForms',
-    __DIR__ . '/Formelements/Inputelements/Inputs/defaults');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Inputs/defaults');
 wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Select');
-wire('classLoader')->addNamespace('FrontendForms',
-    __DIR__ . '/Formelements/Inputelements/Select/defaults');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Select/defaults');
 wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Textarea');
-wire('classLoader')->addNamespace('FrontendForms',
-    __DIR__ . '/Formelements/Inputelements/Textarea/defaults');
+wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Textarea/defaults');
 
 use AllowDynamicProperties;
 use Exception;
@@ -150,7 +147,7 @@ use Valitron\Validator;
      * Get all meta data for the module
      * @return array
      */
-    public static function getModuleInfo(): array
+    public static function getModuleInfo():array
     {
         return [
             'title' => 'FrontendForms',
@@ -171,7 +168,7 @@ use Valitron\Validator;
      * If the values are not stored inside the DB, they are not reachable via getModuleConfig();
      * return array
      */
-    public static function getDefaultData(): array
+    public static function getDefaultData():array
     {
         return [
             'input_showasterisk' => 1,
@@ -270,7 +267,7 @@ use Valitron\Validator;
      * @throws WireException
      * @throws WireException
      */
-    protected function getDataFromGitHub(string $url): mixed
+    protected function getDataFromGitHub(string $url):mixed
     {
         // add header for GitHub request to do not get a 403 response
         // Please note: GitHub only supports a certain number of requests from the same IP
@@ -307,7 +304,7 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    protected function setLanguageValue(string $inputfield_name, object $fieldObject): void
+    protected function setLanguageValue(string $inputfield_name, object $fieldObject):void
     {
         $languages = $this->wire('languages');
         if ($languages) { // check if multi-lang site
@@ -330,7 +327,7 @@ use Valitron\Validator;
      * @return WireMail
      * @throws Exception
      */
-    protected function setEmailTemplate(WireMail $mail, string $templateName): WireMail
+    protected function setEmailTemplate(WireMail $mail, string $templateName):WireMail
     {
         /*
          * This is only for modules, which are based on the FrontendForms module
@@ -357,7 +354,7 @@ use Valitron\Validator;
      * @param bool $add
      * @throws WireException
      */
-    protected function addRemoveIpFromBanList(bool $add): void
+    protected function addRemoveIpFromBanList(bool $add):void
     {
         //create array of string
         $ipAddresses = explode("\n", $this->moduleConfig['input_preventIPs']);
@@ -383,7 +380,7 @@ use Valitron\Validator;
      * @param string $path
      * @return array
      */
-    protected function createArrayOfTxtFile(string $path): array
+    protected function createArrayOfTxtFile(string $path):array
     {
         $listArray = [];
         // convert txt values to array
@@ -401,7 +398,7 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    protected function setEmailTemplates(): void
+    protected function setEmailTemplates():void
     {
         $templateFiles = $this->wire('files')->find($this->emailTemplatesPath, ['extensions' => 'html']);
         $fileNames = [];
@@ -415,7 +412,7 @@ use Valitron\Validator;
      * Get the names of all email templates inside the email_templates folder without the file extension (only names)
      * @return array - a numeric array of email template names
      */
-    protected function getEmailTemplates(): array
+    protected function getEmailTemplates():array
     {
         return $this->emailTemplates;
     }
@@ -424,7 +421,7 @@ use Valitron\Validator;
      * Get the language code (fe de, en,...)
      * @return string
      */
-    protected function getLang(): string
+    protected function getLang():string
     {
         return $this->lang;
     }
@@ -435,7 +432,7 @@ use Valitron\Validator;
      * @param string $lang
      * @return void
      */
-    public function setLang(string $lang): void
+    public function setLang(string $lang):void
     {
         $this->lang = trim($lang);
         $this->Validator::lang($this->lang);
@@ -448,7 +445,7 @@ use Valitron\Validator;
      * @return string
      * @throws WireException
      */
-    public static function getSiteProfileName(): string
+    public static function getSiteProfileName():string
     {
         // grab readme file if present
         $self = new self();
@@ -467,7 +464,7 @@ use Valitron\Validator;
      * These Hooks need to be inside ready(), do not work inside init()
      * @return void
      */
-    public function ready(): void
+    public function ready():void
     {
 
         /**
@@ -486,18 +483,20 @@ use Valitron\Validator;
             $keep_files = ($event->arguments(1)) ? ($event->arguments(1)) : false;
             // get the paths of the currently uploaded files
             $fileNames = $form->getUploadedFiles();
-            if($fileNames){
-                foreach($fileNames as $path){
+            if ($fileNames) {
+                foreach ($fileNames as $path) {
                     // move the files to the tmp folder
                     $file_name = pathinfo($path, PATHINFO_BASENAME);
-                    $this->wire('files')->copy($path,$this->temp_uploadPath);
-                    $mail->attachment($this->temp_uploadPath.$file_name);
-                    if((is_bool($keep_files)) && (!$keep_files)){
+                    $this->wire('files')->copy($path, $this->temp_uploadPath);
+                    $mail->attachment($this->temp_uploadPath . $file_name);
+                    if ((is_bool($keep_files)) && (!$keep_files)) {
                         // unlink the file in the page folder under site/assets/files/...
                         $this->wire('files')->unlink($path);
-                    } else if ((is_string($keep_files)) && ($keep_files != '')){
-                        $this->wire('files')->copy($path, $keep_files);
-                        $this->wire('files')->unlink($path);
+                    } else {
+                        if ((is_string($keep_files)) && ($keep_files != '')) {
+                            $this->wire('files')->copy($path, $keep_files);
+                            $this->wire('files')->unlink($path);
+                        }
                     }
                 }
             }
@@ -616,7 +615,7 @@ use Valitron\Validator;
      * @param HookEvent $event
      * @return void
      */
-    protected function setImageHeight(HookEvent $event): void
+    protected function setImageHeight(HookEvent $event):void
     {
         $data = $event->arguments(1);
         if (isset($data['input_captchaType']) && $data['input_captchaType'] === 'DefaultImageCaptcha') {
@@ -632,7 +631,7 @@ use Valitron\Validator;
      * @return string - the list of the passwords as a string separated by \n
      * @throws WireException
      */
-    protected function addPopularPasswords(bool $overwrite = false): string
+    protected function addPopularPasswords(bool $overwrite = false):string
     {
         //grab current blacklist data
         if ($overwrite) {
@@ -658,7 +657,7 @@ use Valitron\Validator;
      * @param string|array $data
      * @return string
      */
-    protected function cleanUpPasswordList(string|array $data): string
+    protected function cleanUpPasswordList(string|array $data):string
     {
         if (is_string($data)) {
             $data = explode("\n", $data);
@@ -686,7 +685,7 @@ use Valitron\Validator;
      * @param HookEvent $event
      * @return void
      */
-    protected function cleanUpBlacklist(HookEvent $event): void
+    protected function cleanUpBlacklist(HookEvent $event):void
     {
         $class = $event->arguments(0);
         $data = $event->arguments(1);
@@ -706,7 +705,7 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    protected function blacklistButtonSubmit(): void
+    protected function blacklistButtonSubmit():void
     {
         // check if blacklist update button was submitted
         if ($this->wire('input')->post->submit_save_passwordblacklist) {
@@ -721,7 +720,7 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    protected function saveIPButtonSubmit(): void
+    protected function saveIPButtonSubmit():void
     {
         // check if a save ip to blacklist button was submitted
         if ($this->wire('input')->post->submit_save_ip) {
@@ -737,7 +736,7 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    protected function removeIPButtonSubmit(): void
+    protected function removeIPButtonSubmit():void
     {
         // check if a save ip to blacklist button was submitted
         if ($this->wire('input')->post->submit_remove_ip) {
@@ -752,7 +751,7 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    protected function findFontFiles(): void
+    protected function findFontFiles():void
     {
         if ($this->wire('input')->post->input_submit_refreshFonts_frontendforms) {
             $data = $this->moduleConfig;
@@ -768,7 +767,7 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    protected function updateBlacklist(HookEvent $event): void
+    protected function updateBlacklist(HookEvent $event):void
     {
         $field = $event->arguments(0);
         if ($field->name == 'pass') {
@@ -785,7 +784,7 @@ use Valitron\Validator;
      * @param string|null $value
      * @return array
      */
-    protected function sanitizeMultilineTextarea(string|null $value): array
+    protected function sanitizeMultilineTextarea(string|null $value):array
     {
         if ($value != null) {
             // create array of string with separator \n
@@ -804,7 +803,7 @@ use Valitron\Validator;
      * @param HookEvent $event
      * @return void
      */
-    protected function validateIP(HookEvent $event): void
+    protected function validateIP(HookEvent $event):void
     {
         if ($event->object->name == 'input_preventIPs') {
             $value = $event->arguments(0);
@@ -830,7 +829,7 @@ use Valitron\Validator;
      * @param HookEvent $event
      * @return void
      */
-    protected function validateColorCodeTextarea(HookEvent $event): void
+    protected function validateColorCodeTextarea(HookEvent $event):void
     {
         $inputfields = ['input_captchaLinesColor', 'input_bgCustomColors'];
         $fieldname = $event->object->name;
@@ -860,7 +859,7 @@ use Valitron\Validator;
      * @param string $hex
      * @return bool
      */
-    public static function checkHex(string $hex): bool
+    public static function checkHex(string $hex):bool
     {
         // Hash prefix is optional.
         $hex = ltrim($hex, '#');
@@ -875,7 +874,7 @@ use Valitron\Validator;
      * @param HookEvent $event
      * @return void
      */
-    protected function sanitizeColorValues(HookEvent $event): void
+    protected function sanitizeColorValues(HookEvent $event):void
     {
         $fieldNames = ['input_captchaTextColor'];
         $fields = $event->arguments(0);
@@ -897,7 +896,7 @@ use Valitron\Validator;
      * @param HookEvent $event
      * @return void
      */
-    protected function addLinkToNotes(HookEvent $event): void
+    protected function addLinkToNotes(HookEvent $event):void
     {
         $field = $event->object;
         if (!in_array($field->name, ['input_dateformat', 'input_timeformat'])) {
@@ -924,7 +923,7 @@ use Valitron\Validator;
      * @return bool - true if download was successful, otherwise false
      * @throws WireException
      */
-    protected function downloadPasswordsFromGitHub(): bool
+    protected function downloadPasswordsFromGitHub():bool
     {
         $filedata = $this->getDataFromGitHub(self::TOP_PASSWORDS); //load json data from the txt.file
         if ($filedata) {
@@ -943,13 +942,14 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    protected function downloadPasswords(): void
+    protected function downloadPasswords():void
     {
         $data = $this->wire('modules')->getConfig($this);
         // let us check some conditions if it is necessary to update the passwords
         if ($this->wire('files')->exists($this->passwordPath)) {
 
             // check if last check was in the same month or not
+
             $check = $this->wire('datetime')->date('Y-m', $this->last_check) != $this->wire('datetime')->date('Y-m');
             if ($check) {
 
@@ -986,11 +986,11 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    protected function deleteUploadedFilesAfterSending(): void
+    protected function deleteUploadedFilesAfterSending():void
     {
         // all files were sent -> so empty the temp folder
         $files = $this->wire('files')->find($this->temp_uploadPath);
-        foreach($files as $file){
+        foreach ($files as $file) {
             $this->wire('files')->unlink($file);
         }
     }
@@ -1001,7 +1001,7 @@ use Valitron\Validator;
      * @param array $methods
      * @return string
      */
-    protected function createAdditionalNotesText(array $methods): string
+    protected function createAdditionalNotesText(array $methods):string
     {
         // create singular/plural default text
         $text = $this->_n($this->_('This can be overwritten on the form by using this method'),
@@ -1020,7 +1020,7 @@ use Valitron\Validator;
      * @param HookEvent $event
      * @return void
      */
-    protected function overwriteExamplesNotes(HookEvent $event): void
+    protected function overwriteExamplesNotes(HookEvent $event):void
     {
         $field = $event->object;
         $fields = [
@@ -1068,7 +1068,7 @@ use Valitron\Validator;
      * @throws WireException
      * @noinspection PhpUnused
      */
-    protected function addAssets(HookEvent $event): void
+    protected function addAssets(HookEvent $event):void
     {
         $page = $event->object;
         // don't add this to the admin pages
@@ -1093,7 +1093,7 @@ use Valitron\Validator;
      * @param string $unit
      * @return void
      */
-    protected function addUnitToLabel(HookEvent $event, string $fieldname, string $unit): void
+    protected function addUnitToLabel(HookEvent $event, string $fieldname, string $unit):void
     {
         $inputfield = $event->object;
         if ($inputfield->name === $fieldname) {
@@ -1107,7 +1107,7 @@ use Valitron\Validator;
      * @param HookEvent $event
      * @return void
      */
-    protected function inputfieldIntegerRenderAfter(HookEvent $event): void
+    protected function inputfieldIntegerRenderAfter(HookEvent $event):void
     {
         $this->addUnitToLabel($event, 'input_minTime', $this->_('Seconds'));
         $this->addUnitToLabel($event, 'input_maxTime', $this->_('Seconds'));
@@ -1125,7 +1125,7 @@ use Valitron\Validator;
      * @param string $ip
      * @return string
      */
-    protected function executeWhoisLookUp(string $ip): string
+    protected function executeWhoisLookUp(string $ip):string
     {
         $whoislookup = '<div id="linkwrapper"><a href="https://whois.domaintools.com/' . $ip . '" title="' . $this->_('Opens in a new window') . '" target="_blank">';
         $whoislookup .= sprintf($this->_('More detailed information about the IP %s at www.domaintools.com'),
@@ -1140,7 +1140,7 @@ use Valitron\Validator;
      * @throws WireException
      * @throws WirePermissionException
      */
-    protected function executeViewDetailsTable(string $ip): string
+    protected function executeViewDetailsTable(string $ip):string
     {
         $logs = $this->wire('log')->getEntries('failed-attempts-frontendforms');
 
@@ -1168,7 +1168,7 @@ use Valitron\Validator;
      * @throws WireException
      * @throws WirePermissionException
      */
-    public function ___executeTable(array $data = []): string
+    public function ___executeTable(array $data = []):string
     {
         if ($data) {
             $table = $this->wire('modules')->get('MarkupAdminDataTable');
@@ -1236,7 +1236,7 @@ use Valitron\Validator;
      * @return array
      * @throws WireException
      */
-    protected function findAllFontfiles(): array
+    protected function findAllFontfiles():array
     {
         $files = [];
         $rootPath = $this->wire('config')->paths->root;
@@ -1981,8 +1981,7 @@ use Valitron\Validator;
         $desc .= $this->_('The validator returns false, if the password was found on the blacklist, otherwise true.') . ' ';
         $desc .= $this->_('The list will be populated automatically with appropriate passwords from the top 100 passwords list below, but you can add your own passwords too - They will not get overwritten during the blacklistlist update.');
         $blacklist->description = $desc;
-        $notes = sprintf($this->_('Current number of entries in the blacklist: %s.'),
-            count($this->blacklist));
+        $notes = sprintf($this->_('Current number of entries in the blacklist: %s.'), count($this->blacklist));
         if ($this->last_check) {
             $notes .= ' ' . sprintf($this->_('Last update of the blacklist: %s.'),
                     $this->wire('datetime')->date($this->default_dateformat, $this->last_check));
@@ -2120,9 +2119,12 @@ use Valitron\Validator;
                 $user = $element['user'];
                 $text = json_decode($element['text']);
                 $ip = $text->IP;
-                (isset($result[$ip])) ?
-                    $result[$ip]['count'] += 1 :
-                    $result[$ip] = array('data' => $date, 'user' => $user, 'url' => $url, 'count' => 1);
+                (isset($result[$ip])) ? $result[$ip]['count'] += 1 : $result[$ip] = array(
+                    'data' => $date,
+                    'user' => $user,
+                    'url' => $url,
+                    'count' => 1
+                );
             }
             // sort array by count descending
             array_multisort(array_column($result, 'count'), SORT_DESC, SORT_NUMERIC, $result);
@@ -2149,26 +2151,24 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    protected function createFilesDir(string $from, string $to): void
+    protected function createFilesDir(string $from, string $to):void
     {
-        // check if directory exists
-        if (!$this->wire('files')->exists($to)) {
-            // create directory if not present
-            if ($this->wire('files')->mkdir($to)) {
-                // check if files exists in the modules assets folder
-                if ($this->wire('files')->exists($from)) {
-                    // scan directory if it contains files
-                    $files = $this->wire('files')->find($from);
-                    if ($files) {
-                        // copy all files to the newly created FrontendForms directory under site/assets/files
-                        $this->wire('files')->copy($from, $to);
-                        // now remove the assets folder and its content form FrontendForms/assets
-                        $this->wire('files')->rmdir($from, true);
-                    }
+        // if directory exists or directory was created successfully
+        if (($this->wire('files')->exists($to)) || ($this->wire('files')->mkdir($to))) {
+            // check if files exists in the modules assets folder
+            if ($this->wire('files')->exists($from)) {
+                // scan directory if it contains files
+                $files = $this->wire('files')->find($from);
+                if ($files) {
+                    // copy all files to the newly created FrontendForms directory under site/assets/files
+                    $this->wire('files')->copy($from, $to);
+                    // now remove the assets folder and its content form FrontendForms/assets
+                    $this->wire('files')->rmdir($from, true);
                 }
             }
         }
     }
+
 
     /**
      * Copy/Remove the captchaimage.php from the root and copy it back to site/modules/FrontendForms/Formelements/Captcha/captchaimage.php
@@ -2176,7 +2176,7 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    protected function createRemoveCaptchaImageFile(bool $install): void
+    protected function createRemoveCaptchaImageFile(bool $install):void
     {
         $moduleFile = $this->modulePath . 'Formelements/Captcha/captchaimage.php';
         $rootFile = $this->wire('config')->paths->root . 'captchaimage.php';
@@ -2191,7 +2191,7 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    public function ___install(): void
+    public function ___install():void
     {
         //save default module configurations on install
         $data = self::getDefaultData();
@@ -2222,9 +2222,12 @@ use Valitron\Validator;
         // copy files from FrontendForms/assets to site/assets/files/Frontendforms
         $to = $this->wire('config')->paths->assets . 'files/FrontendForms/';
         $from = $this->modulePath . 'assets/';
+        bd('install');
         $this->createFilesDir($from, $to);
+
         // copy captchaimage.php from site/modules/FrontendForms/Formfields/captcha/ to the root dir
         $this->createRemoveCaptchaImageFile(true);
+
         // create temp_uploads folder
         $this->wire('files')->mkdir($this->temp_uploadPath);
     }
@@ -2234,7 +2237,7 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    public function ___uninstall(): void
+    public function ___uninstall():void
     {
         // copy files from site/assets/files/Frontendforms to FrontendForms/assets
         $from = $this->wire('config')->paths->assets . 'files/FrontendForms/';
