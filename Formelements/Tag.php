@@ -448,6 +448,7 @@ abstract class Tag extends Wire
     protected function attributesToString(bool $selfClosing = true): string
     {
         $allAttributes = $this->getAttributes();
+
         //remove value attribute from attributes array if self-closing tag
         if ((!$selfClosing) && ($this->getTag() != 'option')) {
             unset($allAttributes['value']);
@@ -457,6 +458,7 @@ abstract class Tag extends Wire
         if (count($allAttributes)) {
             foreach ($allAttributes as $name => $value) {
                 if (is_array($value)) {
+
                     // if value is assoc array than chain the values without whitespace as separator
                     if ($this->isAssoc($value)) {
                         $newArray = [];
@@ -465,25 +467,16 @@ abstract class Tag extends Wire
                         }
                         $value = implode(';', $newArray);
                     } else {
-                        if (count($value) != count($value, COUNT_RECURSIVE)) {
-                            // if it is multidimensional array (can only be $_FILES) - set the value to empty string
-                            // otherwise the value will be an array with the error value 4 (no file was uploaded)
-                            $value = '';
-                            // TODO: check why $_FILES is inside attribute - should not be there
-                        } else {
-                            // if numeric add a whitespace as separator between the attribute values ( fe class, rel,..)
-                            $value = implode(' ', $value);
-                        }
-
+                        // if numeric add a whitespace as separator between the attribute values ( fe class, rel,..)
+                        $value = implode(' ', $value);
                     }
                 }
                 if (in_array($value, self::BOOLEANATTR)) {
-                    $attributes[] = $value;
+                    $attributes[] = $value; // checked OK
                 } else {
                     $attributes[] = $name . '="' . $value . '"';
                 }
             }
-
             $out = ' ' . implode(' ', $attributes);
         }
         return $out;
