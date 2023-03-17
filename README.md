@@ -225,6 +225,15 @@ of the anti-spam measures.
 A visitor will be blocked if he needs, for example, too many attempts to send the form (depending on your settings).
 In this section you can get more information about this visitor, and you have 2 buttons: add the visitor to or remove him from the IP blacklist.
 
+
+**Important note:** 
+
+The statistic section works only if you have "logging IP of visitors" enabled inside the security measure 1 (max attempst). If not, than no failde attempt will be logged and therefore no data will be available.
+
+The reason for this is that the storage of IP addresses concerns data protection and should no be automatically, because you have to inform the user before.
+
+If you have not enabled IP logging, you will be informed that no data is available for display.
+
 ### Measure 5: CAPTCHA
 This module offers various types of a CAPTCHA, that can be used. BTW: CAPTCHA should be used only if the other traps failed, and you get a lot of SPAM over your forms.
 Most visitors do not like CAPTCHA, but it is up to you whether to use them or not.
