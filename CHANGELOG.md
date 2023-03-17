@@ -253,3 +253,6 @@ Some bug fixes according to the removement of dynamically created properties to 
 ## [2.1.22] 2023-03-16
 Add missing check if failed attempts should be logged or not. Before, every failed attempt has been logged independent of settings inside the module configuration.
 Remove hardcoded max attempts limit set to 0. This was added only for testing purposes and I have forgotten to remove it afterwards.
+
+## [2.1.23] 2023-03-17
+Remove bug in createFilesDir() method inside FrontendForms.module. This method should copy files from FrontendForms/assets to site/assets/FrontenForms but there was a logical bug, so the files will never be copied. This bug is fixed now.
