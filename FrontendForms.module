@@ -2222,7 +2222,7 @@ use Valitron\Validator;
         // copy files from FrontendForms/assets to site/assets/files/Frontendforms
         $to = $this->wire('config')->paths->assets . 'files/FrontendForms/';
         $from = $this->modulePath . 'assets/';
-        bd('install');
+
         $this->createFilesDir($from, $to);
 
         // copy captchaimage.php from site/modules/FrontendForms/Formfields/captcha/ to the root dir
