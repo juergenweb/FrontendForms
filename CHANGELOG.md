@@ -256,3 +256,6 @@ Remove hardcoded max attempts limit set to 0. This was added only for testing pu
 
 ## [2.1.23] 2023-03-18
 Remove bug in createFilesDir() method inside FrontendForms.module. This method should copy files from FrontendForms/assets to site/assets/FrontenForms but there was a logical bug, so the files will never be copied. This bug is fixed now.
+
+## [2.1.24] 2023-03-25
+A small update of the getLangValueOfConfigField() method: By default the site language will be taken for the translation, but now a new parameter allows to add the id of a specific language. Now you can get the translation of of a static translation in every language not only in the current by adding the id of the language as parameter. This is needed for upcoming modules, but can be used in any situation if needed.
