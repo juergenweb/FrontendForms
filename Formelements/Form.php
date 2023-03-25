@@ -578,11 +578,12 @@ class Form extends CustomRules
      * @param string $fieldName
      * @return string
      */
-    protected function getLangValueOfConfigField(string $fieldName, array $modulConfig = null):string
+    protected function getLangValueOfConfigField(string $fieldName, array $modulConfig = null, int|null $lang_id = null):string
     {
         $modulConfig = (is_null($modulConfig)) ? $this->frontendforms : $modulConfig;
-        $fieldNameLang = $fieldName . $this->langAppendix;
-        if (isset($modulConfig[$fieldNameLang]) && (property_exists($this, $modulConfig[$fieldNameLang]))) {
+        $langAppendix = (is_null($lang_id)) ? $this->langAppendix : '__'.$lang_id;
+        $fieldNameLang = $fieldName.$langAppendix;
+        if (isset($modulConfig[$fieldNameLang])) {
             return $modulConfig[$fieldNameLang] != '' ? $modulConfig[$fieldNameLang] : $modulConfig[$fieldName];
         }
         return $modulConfig[$fieldName];
@@ -958,9 +959,11 @@ class Form extends CustomRules
      */
     public function getValues(bool $buttonValue = false):array|null
     {
+
         if ($buttonValue) {
             return $this->values;
         }
+
         $result = array_intersect($this->getNamesOfInputFields(), $this->getNamesOfInputFields());
         $values = [];
 
