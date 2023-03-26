@@ -22,7 +22,7 @@ use ProcessWire\WirePermissionException;
 class Language extends Select
 {
 
-    protected int|null $fixed_lang_id = null; // set fixed language as default independet of site language
+    protected int|null $fixed_lang_id = null; // set fixed language as default independend of site language
 
     /**
      * @param string $id
