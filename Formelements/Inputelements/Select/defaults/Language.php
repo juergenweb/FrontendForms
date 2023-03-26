@@ -22,7 +22,8 @@ use ProcessWire\WirePermissionException;
 class Language extends Select
 {
 
-    protected int|null $fixed_lang_id = null; // set fixed language as default independet of site language
+    protected int|null $fixed_lang_id = null; // set fixed language as default independent of site language
+    protected int $user_lang_id = 1010; // the current site language
 
     /**
      * @param string $id
@@ -70,6 +71,7 @@ class Language extends Select
      * Render the language select input field
      * Render it only if it is a multi-language site, otherwise output only an empty string
      * @return string
+     * @throws WireException
      */
     public function renderLanguage(): string
     {
