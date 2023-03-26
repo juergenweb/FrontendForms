@@ -22,7 +22,7 @@ use ProcessWire\WirePermissionException;
 class Language extends Select
 {
 
-    protected int|null $fixed_lang_id = null; // set fixed language as default independend of site language
+    protected int|null $fixed_lang_id = null; // set fixed language as default independet of site language
 
     /**
      * @param string $id
@@ -75,7 +75,7 @@ class Language extends Select
     {
         if(count($this->wire('languages')) > 1){
 
-            $value = (is_null($this->fixed_lang_id)) ? $this->user_lang_id : $this->fixed_lang_id
+            $value = (is_null($this->fixed_lang_id)) ? $this->user_lang_id : $this->fixed_lang_id;
             $this->setDefaultValue($value);
             return parent::___renderSelect();
         }
