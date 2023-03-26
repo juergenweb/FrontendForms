@@ -22,6 +22,8 @@ use ProcessWire\WirePermissionException;
 class Language extends Select
 {
 
+    protected int|null $fixed_lang_id = null; // set fixed language as default independet of site language
+
     /**
      * @param string $id
      * @throws WireException
@@ -32,17 +34,15 @@ class Language extends Select
         parent::__construct($id);
 
         // get the current user language
-        $user_lang_id = $this->user->language->id;
-
+        $this->user_lang_id = $this->user->language->id;
         $this->setLabel($this->_('Language'));
-        $this->setDefaultValue($user_lang_id);
 
         // create all language options
         $languageIDs = [];
         foreach ($this->wire('languages') as $lang) {
             $languageIDs[] = $lang->id;
             if($lang->title instanceof LanguagesPageFieldValue) {
-                $title = $lang->title->getLanguageValue($this->user->language->id);
+                $title = $lang->title->getLanguageValue($this->user_lang_id );
             } else {
                 $title = $lang->title;
             }
@@ -56,6 +56,17 @@ class Language extends Select
     }
 
     /**
+     * Set a fixed language to be selected
+     * @param int $id
+     * @return $this
+     */
+    public function setFixedLanguageID(int $id):self
+    {
+        $this->fixed_lang_id = $id;
+        return $this;
+    }
+
+    /**
      * Render the language select input field
      * Render it only if it is a multi-language site, otherwise output only an empty string
      * @return string
@@ -63,6 +74,9 @@ class Language extends Select
     public function renderLanguage(): string
     {
         if(count($this->wire('languages')) > 1){
+
+            $value = (is_null($this->fixed_lang_id)) ? $this->user_lang_id : $this->fixed_lang_id
+            $this->setDefaultValue($value);
             return parent::___renderSelect();
         }
         return '';
