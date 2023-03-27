@@ -59,7 +59,8 @@ class Form extends CustomRules
     protected string $emailTemplate = ''; // the filename of the email template including extension (fe. template.html)
     protected string $emailTemplatePath = ''; // the path to the body template
     protected array $uploaded_files = []; // array which holds all currently uploaded files with path as value
-
+    protected int|null $mail_language_id = null; // property for setting the language for mail templates manually
+    protected int|null $site_language_id = null; // internal property containing the current site language
     /* objects */
     protected Alert $alert; // alert box
     protected RequiredTextHint $requiredHint; // hint to inform that all required fields have to be filled out
@@ -89,6 +90,12 @@ class Form extends CustomRules
 
         // set the current user
         $this->user = $this->wire('user');
+
+        // set the current site language as language for mails
+        $this->mail_language_id = $this->user->language->id;
+
+        // set the id of the current site language
+        $this->site_language_id = $this->user->language->id;;
 
         // set the current page
         $this->page = $this->wire('page');
@@ -260,7 +267,7 @@ class Form extends CustomRules
      * @return void
      * @throws WireException
      */
-    private function createGeneralPlaceholders():void
+    protected function createGeneralPlaceholders():void
     {
         foreach ($this->generalPlaceholders() as $placeholderName => $placeholderValue) {
             $this->setMailPlaceholder($placeholderName, $placeholderValue);
@@ -308,9 +315,8 @@ class Form extends CustomRules
             }
             if ($mail->email_template != 'none') {
                 $body = $this->loadTemplate($this->emailTemplatesDirPath . $mail->email_template);
-                // replace the placeholder variables with the appropriate values
-                $body = wirePopulateStringTags($body, $this->getMailPlaceholders(),
-                    ['tagOpen' => '[[', 'tagClose' => ']]']);
+                $placeholders = $this->getMailPlaceholders();
+                $body = wirePopulateStringTags($body, $placeholders, ['tagOpen' => '[[', 'tagClose' => ']]']);
                 // set the result as the bodyHTML of the email
                 $mail->bodyHTML($body);
             }
@@ -446,8 +452,11 @@ class Form extends CustomRules
      */
     public function getDate(string|null $dateTime = null):string
     {
-        $fieldName = 'input_dateformat' . $this->langAppendix;
-        $format = $this->$fieldName ?? $this->defaultDateFormat;
+        $dateTime = (is_null($dateTime)) ? time() : $dateTime;
+        // get user language
+        $langID = $this->user->language->id;
+        $fieldName = 'input_dateformat__' . $langID;
+        $format = $this->frontendforms[$fieldName] ?? $this->defaultDateFormat;
         return $this->wire('datetime')->date($format, $dateTime);
     }
 
@@ -460,8 +469,11 @@ class Form extends CustomRules
      */
     public function getTime(string|null $dateTime = null):string
     {
-        $fieldName = 'input_timeformat' . $this->langAppendix;
-        $format = $this->$fieldName ?? $this->defaultTimeFormat;
+        $dateTime = (is_null($dateTime)) ? time() : $dateTime;
+        // get user language
+        $langID = $this->user->language->id;
+        $fieldName = 'input_timeformat__' . $langID;
+        $format = $this->frontendforms[$fieldName] ?? $this->defaultTimeFormat;
         return $this->wire('datetime')->date($format, $dateTime);
     }
 
@@ -925,15 +937,24 @@ class Form extends CustomRules
     /**
      * Get the value of a specific formfield after form submission by its name
      * Can be used to send fe this value via email to a recipient or store it inside the db
+     * You can enter pure name or name attribute including form prefix
      * @param string $name - the name attribute of the input field
      * @return string|array|null
      */
     public function getValue(string $name):string|array|null
     {
         $name = $this->createElementName(trim($name));
-        if (($this->getValues()) && (isset($this->getValues()[$name]))) {
-            return $this->getValues()[$name];
+        if($this->getValues()){
+            // first check if name exists
+            if (isset($this->getValues()[$name])) {
+                return $this->getValues()[$name];
+            } else if(isset($this->getValues()[$this->getID().'-'.$name])){
+                // check if name including form id prefix exists
+                return $this->getValues()[$this->getID().'-'.$name];
+            }
+            return null;
         }
+
         return null;
     }
 
