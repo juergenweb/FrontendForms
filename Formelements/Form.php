@@ -91,11 +91,13 @@ class Form extends CustomRules
         // set the current user
         $this->user = $this->wire('user');
 
-        // set the current site language as language for mails
-        $this->mail_language_id = $this->user->language->id;
+        if($this->wire('languages')){
+            // set the current site language as language for mails
+            $this->mail_language_id = $this->user->language->id;
 
-        // set the id of the current site language
-        $this->site_language_id = $this->user->language->id;;
+            // set the id of the current site language
+            $this->site_language_id = $this->user->language->id;
+        }
 
         // set the current page
         $this->page = $this->wire('page');
@@ -454,8 +456,12 @@ class Form extends CustomRules
     {
         $dateTime = (is_null($dateTime)) ? time() : $dateTime;
         // get user language
-        $langID = $this->user->language->id;
-        $fieldName = 'input_dateformat__' . $langID;
+        if($this->wire('languages')){
+            $langID = '__'.$this->user->language->id;
+        } else {
+            $langID = '';
+        }
+        $fieldName = 'input_dateformat' . $langID;
         $format = $this->frontendforms[$fieldName] ?? $this->defaultDateFormat;
         return $this->wire('datetime')->date($format, $dateTime);
     }
@@ -471,8 +477,12 @@ class Form extends CustomRules
     {
         $dateTime = (is_null($dateTime)) ? time() : $dateTime;
         // get user language
-        $langID = $this->user->language->id;
-        $fieldName = 'input_timeformat__' . $langID;
+        if($this->wire('languages')){
+            $langID = '__'.$this->user->language->id;
+        } else {
+            $langID = '';
+        }
+        $fieldName = 'input_timeformat' . $langID;
         $format = $this->frontendforms[$fieldName] ?? $this->defaultTimeFormat;
         return $this->wire('datetime')->date($format, $dateTime);
     }
