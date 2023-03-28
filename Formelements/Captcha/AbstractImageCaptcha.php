@@ -199,13 +199,20 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
      */
     protected function createOptions(): array
     {
-        $categories = glob($this->imagePath . '*', GLOB_ONLYDIR);
+        $path_to_img_dir = $this->imagePath;
+        $categories = [
+            'animal' => $this->_('Animal'),
+            'car' => $this->_('Car'),
+            'flower' => $this->_('Flower'),
+            'house' => $this->_('House'),
+            'lake' => $this->_('Lake'),
+            'mountain' => $this->_('Mountain'),
+            'tree' => $this->_('Tree')
+        ];
         $options = [];
-        foreach ($categories as $cat) {
-            if (count($this->wire('files')->find($cat)) !== 0) { // show only directories with content in it
-                $cat = basename($cat);
-                $label = ucfirst($cat);
-                $options[$cat] = $this->_($label);
+        foreach ($categories as $value => $label) {
+            if (count($this->wire('files')->find($path_to_img_dir.$value)) !== 0) { // show only directories with content in it
+                $options[$value] = $label;
             }
         }
         $this->catOptions = $options;
