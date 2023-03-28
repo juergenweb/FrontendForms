@@ -4,6 +4,14 @@ en,de,description,file,hash
 Captcha,=,,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,45d048c35e3cfd449dc0a1b503cd103a
 en,de,description,file,hash
 "Please select what you see in the image above.","Bitte wählen Sie aus, was sie im Bild oberhalb sehen.",,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,118f3464042a036c52a1087e923a307e
+Animal,Tier,,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,161e7ce7bfdc89ab4b9f52c1d4c94212
+Car,Auto,,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,e9989db5dabeea617f40c8dbfd07f5fb
+Flower,Blume,,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,338d1f8007f0c84287d9963d5ea36aeb
+House,Haus,,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,aebfe46795575772b7cf413e25caeab9
+Lake,See,,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,bc03219e367d3a4b7b1758c8af598174
+Mountain,Berg,,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,ec9903c79dd510ffa43f69ee867a9002
+Tree,Baum,,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,3b0c14770e6bd663518496da60f524da
+"CAPTCHA field for SPAM protection","CAPTCHA als SPAM-Schutz",,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,2caf429ed0a858c9cb2b6456d1914fe1
 en,de,description,file,hash
 "This file is not a TrueType font file.","Diese Datei ist keine TrueType Schriftart Datei.",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,ad1ca00ca558c196b2ffa224309706e4
 "This file does not exist under the specified path","Diese Datei existiert nicht unter dem angegebenen Pfad",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,d472945618bae0b84ca5082c7d916966
