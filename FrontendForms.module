@@ -157,7 +157,8 @@ use Valitron\Validator;
             'version' => '2.1.26',
             'singular' => true,
             'autoload' => true,
-            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
+            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181'],
+            'icon' => 'check-square-o'
         ];
     }
 
