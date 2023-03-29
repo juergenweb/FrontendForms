@@ -1267,6 +1267,9 @@ Parameter: validation name
 $field->setRule('noErrorOnUpload');
 ```
 
+Please note: This validator will be added to each input type file automatically. You can remove it if you want by using the removeRule('noErrorOnUpload') method.
+
+
 ### allowedFileExt
   This validation checks if an uploaded file is of one of the allowed extensions. It takes the value of
   $_FILES['name'] and extracts the extension. If the extension is not in the array of allowed extensions
@@ -1298,6 +1301,9 @@ Parameter: validation name
 ```php
 $field->setRule('phpIniFilesize');
 ```
+
+Please note: This validator will be added to each input type file automatically. You can remove it if you want by using the removeRule('phpIniFilesize') method.
+
 
 ### week
   This validation checks if the entered value is in the correct format of a week.
