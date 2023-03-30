@@ -43,6 +43,25 @@ $datalist->addOption('Safari', 'Safari');
 
 $form->add($datalist);
 
+
+$checkboxmultiarray = new \FrontendForms\InputCheckboxMultiple('multicheckboxhorizontalarray');
+$checkboxmultiarray->setLabel('Multiple checkboxes horizontal with default value as array');
+$checkboxmultiarray->addOption('Checkbox 1', '1');
+$checkboxmultiarray->addOption('Checkbox 2', '2');
+$checkboxmultiarray->addOption('Checkbox 3', '3');
+$checkboxmultiarray->setDefaultValue(['1', '3']); // default values as array
+$checkboxmultiarray->setRule('required');
+$form->add($checkboxmultiarray);
+
+$checkboxmultistring = new \FrontendForms\InputCheckboxMultiple('multicheckboxhorizontalstring');
+$checkboxmultistring->setLabel('Multiple checkboxes horizontal with default value as string');
+$checkboxmultistring->addOption('Checkbox 1', '1');
+$checkboxmultistring->addOption('Checkbox 2', '2');
+$checkboxmultistring->addOption('Checkbox 3', '3');
+$checkboxmultistring->setDefaultValue('1', '3'); // default values as comma separated string
+$checkboxmultistring->setRule('required');
+$form->add($checkboxmultistring);
+
 $inputCheckbox = new \FrontendForms\InputCheckbox('checkbox');
 $inputCheckbox->setLabel('Single checkbox');
 $inputCheckbox->setAttribute('value', 'single');
