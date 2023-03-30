@@ -256,7 +256,7 @@ $sel3->addOption('CSS 2', 'CSS 2');
 $sel3->addOption('CSS 3', 'CSS 3');
 $sel3->addOption('Less', 'Less');
 $sel3->addOption('Sass', 'Sass');
-$sel3->setDefaultValue('CSS 1', 'Sass');
+$sel3->setDefaultValue('CSS 1', 'CSS 3');
 $sel3->setRule('required');
 $form->add($sel3);
 
