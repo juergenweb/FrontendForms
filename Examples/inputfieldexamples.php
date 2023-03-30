@@ -237,25 +237,26 @@ $css->setRule('required');
 $form->add($css);
 
 $sel2 = new \FrontendForms\SelectMultiple('sel2');
-$sel2->setLabel('I have knowledge in');
+$sel2->setLabel('I have knowledge in (Default values as array)');
 $sel2->addEmptyOption();
 $sel2->addOption('CSS 1', 'CSS 1');
 $sel2->addOption('CSS 2', 'CSS 2');
 $sel2->addOption('CSS 3', 'CSS 3');
 $sel2->addOption('Less', 'Less');
 $sel2->addOption('Sass', 'Sass');
+$sel2->setDefaultValue(['Less', 'CSS 1' , 'CSS 2']);
 $sel2->setRule('required');
 $form->add($sel2);
 
 $sel3 = new \FrontendForms\SelectMultiple('sel3');
-$sel3->setLabel('I have knowledge in');
+$sel3->setLabel('I have knowledge in (Default values as comma separated string)');
 $sel3->addEmptyOption();
 $sel3->addOption('CSS 1', 'CSS 1');
 $sel3->addOption('CSS 2', 'CSS 2');
 $sel3->addOption('CSS 3', 'CSS 3');
 $sel3->addOption('Less', 'Less');
 $sel3->addOption('Sass', 'Sass');
-$sel3->setDefaultValue('CSS 1', 'Less', 'Sass');
+$sel3->setDefaultValue('CSS 1', 'Sass');
 $sel3->setRule('required');
 $form->add($sel3);
 
