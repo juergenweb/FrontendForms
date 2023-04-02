@@ -157,8 +157,7 @@ use Valitron\Validator;
             'version' => '2.1.26',
             'singular' => true,
             'autoload' => true,
-            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181'],
-            'icon' => 'check-square-o'
+            'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
         ];
     }
 
@@ -569,7 +568,7 @@ use Valitron\Validator;
         $this->addHookBefore('Page::render', $this, 'downloadPasswords');
 
         // add CSS and JS to the backend
-        $version = $this->getModuleInfo()['version'];
+        $version = $this->getModuleInfo()['version'] . '-' . time();
         $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version);
         //$this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version);
 
