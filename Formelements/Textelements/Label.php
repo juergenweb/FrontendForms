@@ -17,7 +17,7 @@ use ProcessWire\WirePermissionException;
 
 class Label extends TextElements
 {
-    protected int $enableAsterisk = 1;
+    protected int|string $enableAsterisk = 1;
     protected bool $required = false;
 
     /**
