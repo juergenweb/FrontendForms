@@ -263,6 +263,10 @@ A small update of the getLangValueOfConfigField() method: By default the site la
 ## [2.1.25] 2023-03-27
 Placeholder variables for date and time does not work in other languages than in English. This issue is fixed now. The language of the current user will be taken into account and the date and time will be output in the current user language. Some other small changes were done.
 
-## [2.1.26] 2023-04-02
+## [2.1.26] 2023-03-28
 Missing translations for image CAPTCHA added.
 Fixing bug on label if asterisk was disabled (missing typehint added)
+
+## [2.1.27] 2023-04-03
+Fixing bug on label if asterisk was disabled (missing typehint added)
+Fixing wrong date saving on password update from GitHub
