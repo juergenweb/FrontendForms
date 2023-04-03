@@ -965,7 +965,8 @@ use Valitron\Validator;
                         // download the passwords from GitHub
                         if ($this->downloadPasswordsFromGitHub()) {
                             $this->toppasswords_download = $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
-                            $this->github_modified = $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat);
+                            //$this->github_modified = $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat);
+                            $this->github_modified = $this->wire('datetime')->date($this->default_dateformat, $last_update);
                         }
                     }
                 }
@@ -975,7 +976,6 @@ use Valitron\Validator;
             // in the rare case that the file does not exist (fe accidentally deleted) - download it once more
             if ($this->downloadPasswordsFromGitHub()) {
                 $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
-                $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat);
                 wire('modules')->saveConfig($this, $data);
             }
         }
