@@ -270,3 +270,6 @@ Fixing bug on label if asterisk was disabled (missing typehint added)
 ## [2.1.27] 2023-04-03
 Fixing bug on label if asterisk was disabled (missing typehint added)
 Fixing wrong date saving on password update from GitHub
+
+## 2023-04-04
+New public method getFormElements() added: This outputs a numeric array containing all elements of the form (inputs, buttons) as objects
