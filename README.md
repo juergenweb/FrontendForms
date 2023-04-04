@@ -452,7 +452,8 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [getValuesAsString()](#getvaluesasstring---get-all-_post-values-after-successfull-form-submission-as-a-string)  | get all $_POST values after successfull form submission as a string  |
 | [getValue()](#getvalue---get-a-single-_post-value-by-its-name)  | get a single $_POST value by its name  |
 | [add()](#add---add-a-field-to-the-form-object)  | add a field to the form object  |
-| [getFormelementByName()](#getformelementbyname---get-a-specific-form-field-by-is-name)  | get a specific form field by is name  |
+| [getFormElements()]()  | Get all elements in the form (input, buttons, fieldset,..) as an numeric array of objects  |
+| [getFormElementByName()](#getformelementbyname---get-a-specific-form-field-by-is-name)  | get a specific form field by is name  |
 | [setErrorMsg()](#seterrormsg---overwrite-the-default-error-message-after-form-submission)  | overwrite the default error message after form submission  |
 | [setSuccessMsg()](#setsuccessmsg---overwrite-the-default-success-message-after-form-submission)  | overwrite the default success message after form submission  |
 | [useFormElementsWrapper()](#useformelementswrapper---addrmove-an-additional-div-container-wrapper-over-all-form-fields)  | add/rmove an additional div container (wrapper) over all form fields  |
@@ -584,6 +585,15 @@ This is the method to remove a field from the form. You have to enter the field 
 ```php
   $form->remove($field);
 ```
+
+### getFormelements() - Get all elements of the form (input, buttons, fieldset,..) as an numeric array of objects
+If you need all elements of the form, you can use this method to get all elements as an object. 
+
+```php
+  $form->getFormelements(); //
+```
+
+
 ### getFormelementByName() - get a specific form field by is name
 Grab a form element by its name attribute - returns the field object for further manipulation.
 Fe if you want to get the field with the name attribute "email" add "email" as parameter inside the parenthesis, and you will get the form field object as return value.
