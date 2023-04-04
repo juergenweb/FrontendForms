@@ -590,7 +590,7 @@ This is the method to remove a field from the form. You have to enter the field 
 If you need all elements of the form, you can use this method to get all elements as an object. 
 
 ```php
-  $form->getFormelements(); //
+  $form->getFormelements();
 ```
 
 
