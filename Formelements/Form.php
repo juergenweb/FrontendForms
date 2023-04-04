@@ -1014,6 +1014,15 @@ class Form extends CustomRules
     }
 
     /**
+     * Get all Elements (inputs, buttons,...) that are added to the form object
+     * @return array - returns an array of all form element objects
+     */
+    public function getFormElements():array
+    {
+        return $this->formElements;
+    }
+
+    /**
      * Get a specific element of the form by entering the name of the element as parameter
      * With this method you can grab and manipulate a specific element
      * @param string $name - the name attribute of the element (fe email)
@@ -1070,13 +1079,13 @@ class Form extends CustomRules
     {
         $file_ary = array();
         if($file_post['error'] != 4){
-        $file_count = count($file_post['name']);
-        $file_keys = array_keys($file_post);
-        for ($i = 0; $i < $file_count; $i++) {
-            foreach ($file_keys as $key) {
-                $file_ary[$i][$key] = $file_post[$key][$i];
+            $file_count = count($file_post['name']);
+            $file_keys = array_keys($file_post);
+            for ($i = 0; $i < $file_count; $i++) {
+                foreach ($file_keys as $key) {
+                    $file_ary[$i][$key] = $file_post[$key][$i];
+                }
             }
-        }
         }
         return $file_ary;
     }
