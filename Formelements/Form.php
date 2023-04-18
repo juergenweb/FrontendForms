@@ -1654,7 +1654,18 @@ class Form extends CustomRules
      * @param object $field - object of inputfield, fieldset, button,...
      * @return void
      */
-    public function add(object $field):void
+
+    /**
+     * Append a field object to the form
+     * The 2 optional parameters are only for the creation of 2 new methods: addBefore() and addAfter()
+     * These 2 methods can be used to add new form elements (inputs, text elements, fieldsets,..) to a formElements array at a certain position
+     * These 2 methods are especially designed for the future usage in module dev - no need to use it if you are creting the form by your own
+     * @param object $field - the current form field which should be appended to the form
+     * @param object|null $otherfield - optional: another form field
+     * @param bool $add_before - optional: current should be inserted before or after this (another) form field
+     * @return void
+     */
+    public function add(Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field, Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose|null $otherfield = null, bool $add_before = false):void
     {
         // add or remove wrapper divs on each form element
         if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
@@ -1670,9 +1681,80 @@ class Form extends CustomRules
             // Add id of the form as prefix for the name attribute of the field
             $field->setAttribute('name', $this->getID() . '-' . $field->getId());
         }
-        $this->formElements = array_merge($this->formElements, [$field]); // array must be numeric for honeypot field
+        if(!is_null($otherfield)){
+
+            // check if the field with this id exists inside the formElements array
+            if($this->getFormelementByName($otherfield->getAttribute('name'))){
+                $position = null;
+
+                // get the key of this field inside the formElements array
+                foreach($this->formElements as $key => $element){
+                    if($element == $otherfield){
+                        $position = $key;
+                        break;
+                    }
+                }
+
+                // insert field to the new position
+                if(is_int($position)){
+
+                    // check if field should be added before or after this field and add appropriate counter
+                    if($add_before){
+                        $counter = -1;
+                    } else {
+                        $counter = 1;
+                    }
+                    $new_position = $position + $counter;
+
+                    if($new_position < 0){
+                        // add element as first element of the array
+                        array_unshift($this->formElements, $field);
+                    } else {
+                        // insert element at the given position (key)
+                        array_splice($this->formElements, $new_position, 0, [$field]);
+                    }
+                }
+            }
+        } else {
+            // no other element is present -> so add it to formElements array as next element
+            $this->formElements = array_merge($this->formElements, [$field]); // array must be numeric for honeypot field
+        }
+
     }
 
+    /**
+     * Insert a form field before another form field
+     * Can be used if you have not created the form by your own, but you need to add a new field to a created formElements
+     * array at a certain position
+     * @param object $field - the current form field
+     * @param object $before_field - the form field object before which the current form field object should be inserted
+     * @return void
+     */
+    public function addBefore(Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field, Inputfields|Textelements|FieldsetOpen|FieldsetClose $before_field): void
+    {
+        // if field is present inside the formelements array, remove it first
+        if($this->getFormelementByName($field->getAttribute('name'))){
+            $this->remove($field);
+        }
+        $this->add($field, $before_field,true);
+    }
+
+    /**
+     * Insert a form field after another form field
+     * Can be used if you have not created the form by your own, but you need to add a new field to a created formElements
+     * array at a certain position                                                                                        * @param object $field - the current form field
+     * @param object $after_field - the form field object after which the current form field object should be inserted
+     * @return void
+     */
+    public function addAfter(Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field, Inputfields|Textelements|FieldsetOpen|FieldsetClose $after_field): void
+    {
+        // if field is present inside the formelements array, remove it first
+        if($this->getFormelementByName($field->getAttribute('name'))){
+            $this->remove($field);
+        }
+        $this->add($field, $after_field);
+    }
+    
     /**
      * Remove a form field from the fields array
      * @param object $field
