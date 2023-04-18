@@ -273,3 +273,9 @@ Fixing wrong date saving on password update from GitHub
 
 ## 2023-04-04
 New public method getFormElements() added: This outputs a numeric array containing all elements of the form (inputs, buttons) as objects
+
+## [2.1.28] 2023-04-18
+2 new methods for positioning fields inside the form added. This is especially useful for developers, not for creating forms by hands.
+addBefore(): add a field before a given field
+addAfter(): add a field after a given field
+Both methods check before if the field is present in the formelements array and remove it to prevent 2 instances of the same field
