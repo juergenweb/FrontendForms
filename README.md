@@ -452,6 +452,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [getValuesAsString()](#getvaluesasstring---get-all-_post-values-after-successfull-form-submission-as-a-string)  | get all $_POST values after successfull form submission as a string  |
 | [getValue()](#getvalue---get-a-single-_post-value-by-its-name)  | get a single $_POST value by its name  |
 | [add()](#add---add-a-field-to-the-form-object)  | add a field to the form object  |
+| [remove()](#remove---remove-a-field-from-the-form-object)  | remove a field from the form object  |
 | [getFormElements()](#getformelements---get-all-elements-of-the-form-input-buttons-fieldset-as-an-numeric-array-of-objects)  | Get all elements in the form (input, buttons, fieldset,..) as an numeric array of objects  |
 | [getFormElementByName()](#getformelementbyname---get-a-specific-form-field-by-is-name)  | get a specific form field by is name  |
 | [setErrorMsg()](#seterrormsg---overwrite-the-default-error-message-after-form-submission)  | overwrite the default error message after form submission  |
