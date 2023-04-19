@@ -1682,36 +1682,42 @@ class Form extends CustomRules
             $field->setAttribute('name', $this->getID() . '-' . $field->getId());
         }
         if(!is_null($otherfield)){
-
             // check if the field with this id exists inside the formElements array
             if($this->getFormelementByName($otherfield->getAttribute('name'))){
                 $position = null;
-
                 // get the key of this field inside the formElements array
-                foreach($this->formElements as $key => $element){
+                foreach(array_filter($this->formElements) as $key => $element){
                     if($element == $otherfield){
                         $position = $key;
                         break;
                     }
                 }
 
+
                 // insert field to the new position
                 if(is_int($position)){
 
                     // check if field should be added before or after this field and add appropriate counter
-                    if($add_before){
-                        $counter = -1;
-                    } else {
-                        $counter = 1;
-                    }
+                    $counter = ($add_before) ? -1 : 1;
                     $new_position = $position + $counter;
 
-                    if($new_position <= 0){
+                    if($new_position < 0){
                         // add element as first element of the array
                         array_unshift($this->formElements, $field);
                     } else {
                         // insert element at the given position (key)
-                        array_splice($this->formElements, $new_position, 0, [$field]);
+                        if($add_before){ // add before
+                            if($position == 0){
+                                $position = 1;
+                            } else {
+                                $position = $position - 1;
+                            }
+                        } else { // add after
+                            if($position == 0){
+                                $position = 1;
+                            }
+                        }
+                        $this->formElements = array_merge(array_slice($this->formElements, 0, $position), [$field], array_slice($this->formElements, $position));
                     }
                 }
             }
@@ -1719,6 +1725,7 @@ class Form extends CustomRules
             // no other element is present -> so add it to formElements array as next element
             $this->formElements = array_merge($this->formElements, [$field]); // array must be numeric for honeypot field
         }
+
 
     }
 
