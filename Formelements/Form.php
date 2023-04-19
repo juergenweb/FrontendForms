@@ -1706,7 +1706,7 @@ class Form extends CustomRules
                     }
                     $new_position = $position + $counter;
 
-                    if($new_position < 0){
+                    if($new_position <= 0){
                         // add element as first element of the array
                         array_unshift($this->formElements, $field);
                     } else {
