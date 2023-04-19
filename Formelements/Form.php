@@ -1740,7 +1740,7 @@ class Form extends CustomRules
     public function addBefore(Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field, Inputfields|Textelements|FieldsetOpen|FieldsetClose $before_field): void
     {
         // if field is present inside the formelements array, remove it first
-        if($this->getFormelementByName($field->getAttribute('name'))){
+        if(($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))){
             $this->remove($field);
         }
         $this->add($field, $before_field,true);
@@ -1756,7 +1756,7 @@ class Form extends CustomRules
     public function addAfter(Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field, Inputfields|Textelements|FieldsetOpen|FieldsetClose $after_field): void
     {
         // if field is present inside the formelements array, remove it first
-        if($this->getFormelementByName($field->getAttribute('name'))){
+        if(($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))){
             $this->remove($field);
         }
         $this->add($field, $after_field);
