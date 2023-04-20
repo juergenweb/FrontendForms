@@ -237,6 +237,8 @@ class FormValidation extends Tag
             if ($this->wire('session')->get('doubleSubmission-' . $form->getID()) == $secretFormValue) {
                 return true;
             }
+            // redirect to the same page
+            $this->wire('session')->redirect($this->wire('page')->url);
             return false;
         } else {
             throw new Exception("Token value to prevent double form submission is missing", 1);
