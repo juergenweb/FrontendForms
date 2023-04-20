@@ -285,3 +285,7 @@ Correct bug in getPlaceholder() method inside form.php
 Adding redirect in formvalidation.php in checkDoubleFormSubmission() method after double form submission to clear form fields
 Adding new method subject() to form.php only for dev purposes for future modules (not needed in normal form creation)
 Optimizing ad re-writing the add() method inside form.php. Preparing the method for upcoming FrontendContact module.
+
+## [2.1.30] 2023-04-20
+Important update: Temporary upload folder for sending attachments will not be created newly after updating the module. This leads to an error if sendAttachments() method will be used.
+Now the existence of the folder will be checked before and if the folder is not present it will be created.
