@@ -279,3 +279,6 @@ New public method getFormElements() added: This outputs a numeric array containi
 addBefore(): add a field before a given field
 addAfter(): add a field after a given field
 Both methods check before if the field is present in the formelements array and remove it to prevent 2 instances of the same field
+
+## 2023-04-20
+Correct bug in getPlaceholder() method inside form.php
