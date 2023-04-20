@@ -942,14 +942,18 @@ use Valitron\Validator;
      * @return void
      * @throws WireException
      */
-    protected function createTmpDir(): void
+    protected function createTmpDir(HookEvent $event): void
     {
         // Get the object the event occurred on, if needed
         $module = $event->object;
+        bd($module);
         if($module->name == 'FrontendForms'){
             // check if temp_uploads folder exists, otherwise create it
             if(!$this->wire('files')->exists($this->temp_uploadPath)){
-                $this->wire('files')->mkdir($this->temp_uploadPath);
+                if($this->wire('files')->mkdir($this->temp_uploadPath)){
+                    $this->wire->message('Folder created');
+                    $this->wire('session')->message('Folder created');
+                }
             }
         }
     }
