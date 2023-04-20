@@ -55,6 +55,7 @@ class Form extends CustomRules
     protected string $defaultDateFormat = 'Y-m-d'; // the default format for date strings
     protected string $defaultTimeFormat = 'H:i a'; // the default format for time strings
     protected string $receiverAddress = ''; // the email address of the receiver of the mails
+    protected string $mail_subject = ''; // the subject for a mail sent after form validation
     protected string $emailTemplatesDirPath = ''; // the path to the email templates directory
     protected string $emailTemplate = ''; // the filename of the email template including extension (fe. template.html)
     protected string $emailTemplatePath = ''; // the path to the body template
@@ -91,7 +92,7 @@ class Form extends CustomRules
         // set the current user
         $this->user = $this->wire('user');
 
-        if($this->wire('languages')){
+        if ($this->wire('languages')) {
             // set the current site language as language for mails
             $this->mail_language_id = $this->user->language->id;
 
@@ -446,6 +447,19 @@ class Form extends CustomRules
     }
 
     /**
+     * Set the subject for the email on per form base
+     * In this case the subject can be set/changed on per form base instead of directly on the WireMail object
+     * Needed in every case, where the WireMail object is not directly reachable
+     * @param string $subject
+     * @return $this
+     */
+    public function subject(string $subject):self
+    {
+        $this->mail_subject = $subject;
+        return $this;
+    }
+
+    /**
      * Get a date string in the given format as set in the config of the module
      * If no value is entered as parameter, the current date will be displayed
      * @param string|null $dateTime
@@ -456,8 +470,8 @@ class Form extends CustomRules
     {
         $dateTime = (is_null($dateTime)) ? time() : $dateTime;
         // get user language
-        if($this->wire('languages')){
-            $langID = '__'.$this->user->language->id;
+        if ($this->wire('languages')) {
+            $langID = '__' . $this->user->language->id;
         } else {
             $langID = '';
         }
@@ -477,8 +491,8 @@ class Form extends CustomRules
     {
         $dateTime = (is_null($dateTime)) ? time() : $dateTime;
         // get user language
-        if($this->wire('languages')){
-            $langID = '__'.$this->user->language->id;
+        if ($this->wire('languages')) {
+            $langID = '__' . $this->user->language->id;
         } else {
             $langID = '';
         }
@@ -564,7 +578,8 @@ class Form extends CustomRules
     public function getMailPlaceholder(string $placeholderName):string
     {
         $content = '';
-        if (array_key_exists(strtoupper($placeholderName), $this->mailPlaceholder)) {
+        $placeholderName = strtoupper($placeholderName);
+        if (array_key_exists($placeholderName, $this->mailPlaceholder)) {
             $content = $this->mailPlaceholder[$placeholderName];
         }
         return $content;
@@ -600,11 +615,14 @@ class Form extends CustomRules
      * @param string $fieldName
      * @return string
      */
-    protected function getLangValueOfConfigField(string $fieldName, array $modulConfig = null, int|null $lang_id = null):string
-    {
+    protected function getLangValueOfConfigField(
+        string $fieldName,
+        array $modulConfig = null,
+        int|null $lang_id = null
+    ):string {
         $modulConfig = (is_null($modulConfig)) ? $this->frontendforms : $modulConfig;
-        $langAppendix = (is_null($lang_id)) ? $this->langAppendix : '__'.$lang_id;
-        $fieldNameLang = $fieldName.$langAppendix;
+        $langAppendix = (is_null($lang_id)) ? $this->langAppendix : '__' . $lang_id;
+        $fieldNameLang = $fieldName . $langAppendix;
         if (isset($modulConfig[$fieldNameLang])) {
             return $modulConfig[$fieldNameLang] != '' ? $modulConfig[$fieldNameLang] : $modulConfig[$fieldName];
         }
@@ -954,13 +972,15 @@ class Form extends CustomRules
     public function getValue(string $name):string|array|null
     {
         $name = $this->createElementName(trim($name));
-        if($this->getValues()){
+        if ($this->getValues()) {
             // first check if name exists
             if (isset($this->getValues()[$name])) {
                 return $this->getValues()[$name];
-            } else if(isset($this->getValues()[$this->getID().'-'.$name])){
-                // check if name including form id prefix exists
-                return $this->getValues()[$this->getID().'-'.$name];
+            } else {
+                if (isset($this->getValues()[$this->getID() . '-' . $name])) {
+                    // check if name including form id prefix exists
+                    return $this->getValues()[$this->getID() . '-' . $name];
+                }
             }
             return null;
         }
@@ -1078,7 +1098,7 @@ class Form extends CustomRules
     private function reArrayFiles(array $file_post):array
     {
         $file_ary = array();
-        if($file_post['error'] != 4){
+        if ($file_post['error'] != 4) {
             $file_count = count($file_post['name']);
             $file_keys = array_keys($file_post);
             for ($i = 0; $i < $file_count; $i++) {
@@ -1105,7 +1125,7 @@ class Form extends CustomRules
             // get all upload fields inside the form
             foreach ($formElements as $element) {
 
-                if (($element instanceof InputFile) || (is_subclass_of($element, 'InputFile'))){
+                if (($element instanceof InputFile) || (is_subclass_of($element, 'InputFile'))) {
                     $fieldName = $element->getAttribute('name'); // the name of the upload field
 
                     if ($element->getMultiple()) {
@@ -1665,8 +1685,12 @@ class Form extends CustomRules
      * @param bool $add_before - optional: current should be inserted before or after this (another) form field
      * @return void
      */
-    public function add(Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field, Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose|null $otherfield = null, bool $add_before = false):void
-    {
+    public function add(
+        Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field,
+        Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose|null|bool $otherfield = null,
+        bool $add_before = false
+    ):void {
+
         // add or remove wrapper divs on each form element
         if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
             $field->useInputWrapper($this->useInputWrapper);
@@ -1681,51 +1705,39 @@ class Form extends CustomRules
             // Add id of the form as prefix for the name attribute of the field
             $field->setAttribute('name', $this->getID() . '-' . $field->getId());
         }
-        if(!is_null($otherfield)){
-            // check if the field with this id exists inside the formElements array
-            if($this->getFormelementByName($otherfield->getAttribute('name'))){
-                $position = null;
-                // get the key of this field inside the formElements array
-                foreach(array_filter($this->formElements) as $key => $element){
-                    if($element == $otherfield){
-                        $position = $key;
-                        break;
-                    }
-                }
 
-
-                // insert field to the new position
-                if(is_int($position)){
-
-                    // check if field should be added before or after this field and add appropriate counter
-                    $counter = ($add_before) ? -1 : 1;
-                    $new_position = $position + $counter;
-
-                    if($new_position < 0){
-                        // add element as first element of the array
-                        array_unshift($this->formElements, $field);
-                    } else {
-                        // insert element at the given position (key)
-                        if($add_before){ // add before
-                            if($position == 0){
-                                $position = 1;
-                            } else {
-                                $position = $position - 1;
-                            }
-                        } else { // add after
-                            if($position == 0){
-                                $position = 1;
-                            }
+        if (!is_null($otherfield)) {
+            // check if other field exist
+            if (is_bool($otherfield)) {
+                throw new Exception("The reference field (argument 2) where you want to add this field before or after does not exist. Please check if you have written the name attribute correctly.",
+                    1);
+            } else {
+                // check if the field with this id exists inside the formElements array
+                if ($this->getFormelementByName($otherfield->getAttribute('name'))) {
+                    $ref_position = null;
+                    // get the key of this field inside the formElements array
+                    $this->formElements = array_values($this->formElements);
+                    foreach ($this->formElements as $key => $element) {
+                        if ($element == $otherfield) {
+                            $ref_position = $key;
                         }
-                        $this->formElements = array_merge(array_slice($this->formElements, 0, $position), [$field], array_slice($this->formElements, $position));
+                    }
+
+                    // insert field to the new position
+                    if (is_int($ref_position)) {
+                        if (!$add_before) { // add after
+                            $ref_position = $ref_position + 1;
+                        }
+                        $this->formElements = array_merge(array_slice($this->formElements, 0, $ref_position), [$field],
+                            array_slice($this->formElements, $ref_position));
                     }
                 }
             }
         } else {
             // no other element is present -> so add it to formElements array as next element
-            $this->formElements = array_merge($this->formElements, [$field]); // array must be numeric for honeypot field
+            $this->formElements = array_merge($this->formElements,
+                [$field]); // array must be numeric for honeypot field
         }
-
 
     }
 
@@ -1737,13 +1749,15 @@ class Form extends CustomRules
      * @param object $before_field - the form field object before which the current form field object should be inserted
      * @return void
      */
-    public function addBefore(Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field, Inputfields|Textelements|FieldsetOpen|FieldsetClose $before_field): void
-    {
+    public function addBefore(
+        Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field,
+        Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $before_field
+    ):void {
         // if field is present inside the formelements array, remove it first
-        if(($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))){
+        if (($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))) {
             $this->remove($field);
         }
-        $this->add($field, $before_field,true);
+        $this->add($field, $before_field, true);
     }
 
     /**
@@ -1753,15 +1767,17 @@ class Form extends CustomRules
      * @param object $after_field - the form field object after which the current form field object should be inserted
      * @return void
      */
-    public function addAfter(Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field, Inputfields|Textelements|FieldsetOpen|FieldsetClose $after_field): void
-    {
+    public function addAfter(
+        Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field,
+        Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $after_field
+    ):void {
         // if field is present inside the formelements array, remove it first
-        if(($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))){
+        if (($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))) {
             $this->remove($field);
         }
         $this->add($field, $after_field);
     }
-    
+
     /**
      * Remove a form field from the fields array
      * @param object $field
@@ -1891,35 +1907,29 @@ class Form extends CustomRules
      * @return string|null - a readable string of the time (fe 1 day instead of 86400 seconds)
      * @throws Exception
      */
-    protected function readableTimestringFromSeconds(int $seconds = 0): ?string
+    protected function readableTimestringFromSeconds(int $seconds = 0):?string
     {
         $then = new DateTime(date('Y-m-d H:i:s', 0));
         $now = new DateTime(date('Y-m-d H:i:s', $seconds));
         $interval = $then->diff($now);
 
         if ($interval->y >= 1) {
-            $thetime[] = $interval->y . ' ' . _n($this->_('year'),
-                    $this->_('years'), $interval->y);
+            $thetime[] = $interval->y . ' ' . _n($this->_('year'), $this->_('years'), $interval->y);
         }
         if ($interval->m >= 1) {
-            $thetime[] = $interval->m . ' ' . _n($this->_('month'),
-                    $this->_('months'), $interval->m);
+            $thetime[] = $interval->m . ' ' . _n($this->_('month'), $this->_('months'), $interval->m);
         }
         if ($interval->d >= 1) {
-            $thetime[] = $interval->d . ' ' . _n($this->_('day'),
-                    $this->_('days'), $interval->d);
+            $thetime[] = $interval->d . ' ' . _n($this->_('day'), $this->_('days'), $interval->d);
         }
         if ($interval->h >= 1) {
-            $thetime[] = $interval->h . ' ' . _n($this->_('hour'),
-                    $this->_('hours'), $interval->h);
+            $thetime[] = $interval->h . ' ' . _n($this->_('hour'), $this->_('hours'), $interval->h);
         }
         if ($interval->i >= 1) {
-            $thetime[] = $interval->i . ' ' . _n($this->_('minute'),
-                    $this->_('minutes'), $interval->i);
+            $thetime[] = $interval->i . ' ' . _n($this->_('minute'), $this->_('minutes'), $interval->i);
         }
         if ($interval->s >= 1) {
-            $thetime[] = $interval->s . ' ' . _n($this->_('second'),
-                    $this->_('seconds'), $interval->s);
+            $thetime[] = $interval->s . ' ' . _n($this->_('second'), $this->_('seconds'), $interval->s);
         }
 
         return isset($thetime) ? implode(' ', $thetime) : null;
