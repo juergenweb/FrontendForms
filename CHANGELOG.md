@@ -280,7 +280,8 @@ addBefore(): add a field before a given field
 addAfter(): add a field after a given field
 Both methods check before if the field is present in the formelements array and remove it to prevent 2 instances of the same field
 
-## 2023-04-20
+## [2.1.29] 2023-04-20
 Correct bug in getPlaceholder() method inside form.php
 Adding redirect in formvalidation.php in checkDoubleFormSubmission() method after double form submission to clear form fields
-Adding new method subject() to form.php for dev purposes
+Adding new method subject() to form.php only for dev purposes for future modules (not needed in normal form creation)
+Optimizing ad re-writing the add() method inside form.php. Preparing the method for upcoming FrontendContact module.
