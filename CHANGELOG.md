@@ -282,3 +282,5 @@ Both methods check before if the field is present in the formelements array and 
 
 ## 2023-04-20
 Correct bug in getPlaceholder() method inside form.php
+Adding redirect in formvalidation.php in checkDoubleFormSubmission() method after double form submission to clear form fields
+Adding new method subject() to form.php for dev purposes
