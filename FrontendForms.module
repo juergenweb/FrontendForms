@@ -480,6 +480,11 @@ use Valitron\Validator;
 
             $form = $event->arguments(0);
 
+            // check if temp_uploads folder exists - otherwise create it
+            if(!$this->wire('files')->exists($this->temp_uploadPath)){
+                $this->wire('files')->mkdir($this->temp_uploadPath);
+            }
+
             $keep_files = ($event->arguments(1)) ? ($event->arguments(1)) : false;
             // get the paths of the currently uploaded files
             $fileNames = $form->getUploadedFiles();
@@ -566,7 +571,6 @@ use Valitron\Validator;
         $this->addHookBefore('InputfieldText::processInput', $this, 'sanitizeColorValues');
         $this->addHookBefore('Inputfield::render', $this, 'addLinkToNotes');
         $this->addHookBefore('Page::render', $this, 'downloadPasswords');
-        $this->addHookAfter('Process::upgrade', $this, 'createTmpDir');
 
         // add CSS and JS to the backend
         $version = $this->getModuleInfo()['version'] . '-' . time();
@@ -934,28 +938,6 @@ use Valitron\Validator;
             return (bool)($this->wire('files')->filePutContents($this->passwordPath, $download_content));
         }
         return false;
-    }
-
-    /**
-     * Method that creates the temp_uploads folder for sending attachements after update
-     * This folder will always be deleted if the module will be updated
-     * @return void
-     * @throws WireException
-     */
-    protected function createTmpDir(HookEvent $event): void
-    {
-        // Get the object the event occurred on, if needed
-        $module = $event->object;
-        bd($module);
-        if($module->name == 'FrontendForms'){
-            // check if temp_uploads folder exists, otherwise create it
-            if(!$this->wire('files')->exists($this->temp_uploadPath)){
-                if($this->wire('files')->mkdir($this->temp_uploadPath)){
-                    $this->wire->message('Folder created');
-                    $this->wire('session')->message('Folder created');
-                }
-            }
-        }
     }
 
     /**
