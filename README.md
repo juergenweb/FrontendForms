@@ -454,7 +454,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [add()](#add---add-a-field-to-the-form-object)  | add a field to the form object  |
 | [remove()](#remove---remove-a-field-from-the-form-object)  | remove a field from the form object  |
 | [getFormElements()](#getformelements---get-all-elements-of-the-form-input-buttons-fieldset-as-an-numeric-array-of-objects)  | Get all elements in the form (input, buttons, fieldset,..) as an numeric array of objects  |
-| [getFormElementByName()](#getformelementbyname---get-a-specific-form-field-by-is-name)  | get a specific form field by is name  |
+| [getFormElementByName()](#getformelementbyname---get-a-specific-form-field-by-its-name)  | get a specific form field by its name  |
 | [setErrorMsg()](#seterrormsg---overwrite-the-default-error-message-after-form-submission)  | overwrite the default error message after form submission  |
 | [setSuccessMsg()](#setsuccessmsg---overwrite-the-default-success-message-after-form-submission)  | overwrite the default success message after form submission  |
 | [useFormElementsWrapper()](#useformelementswrapper---addrmove-an-additional-div-container-wrapper-over-all-form-fields)  | add/rmove an additional div container (wrapper) over all form fields  |
