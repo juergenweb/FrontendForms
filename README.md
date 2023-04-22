@@ -595,7 +595,7 @@ If you need all elements of the form, you can use this method to get all element
 ```
 
 
-### getFormelementByName() - get a specific form field by is name
+### getFormelementByName() - get a specific form field by its name
 Grab a form element by its name attribute - returns the field object for further manipulation.
 Fe if you want to get the field with the name attribute "email" add "email" as parameter inside the parenthesis, and you will get the form field object as return value.
 ```php
