@@ -251,7 +251,7 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
         $captchaInput->useFieldWrapper($this->useFieldWrapper);
         $captchaInput->getFieldWrapper()->setAttribute('class', 'captcha');
         $captchaInput->getInputWrapper()->setAttribute('class', 'captcha');
-        $captchaInput->setLabel('Captcha field for security');
+        $captchaInput->setLabel($this->_('Captcha field for security'));
         $captchaInput->prepend($this->createCaptchaImageTag($formID)
                 ->setAttribute('id', $formID . '-captcha-image')
                 ->___render() . // render captcha image
