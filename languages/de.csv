@@ -15,6 +15,7 @@ Tree,Baum,,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.
 en,de,description,file,hash
 "This file is not a TrueType font file.","Diese Datei ist keine TrueType Schriftart Datei.",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,ad1ca00ca558c196b2ffa224309706e4
 "This file does not exist under the specified path","Diese Datei existiert nicht unter dem angegebenen Pfad",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,d472945618bae0b84ca5082c7d916966
+"Captcha field for security","CAPTCHA Sicherheitsabfrage",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,f985413aacdc4d6e125cd3b6fb2a3eae
 en,de,description,file,hash
 Send,Senden,,site/modules/FrontendForms/Formelements/Miscellaneous/Button.php,94966d90747b97d1f0f206c98a8b1ac3
 en,de,description,file,hash
