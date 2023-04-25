@@ -289,3 +289,9 @@ Optimizing ad re-writing the add() method inside form.php. Preparing the method 
 ## [2.1.30] 2023-04-20
 Important update: Temporary upload folder for sending attachments will not be created newly after updating the module. This leads to an error if sendAttachments() method will be used.
 Now the existence of the folder will be checked before and if the folder is not present it will be created.
+
+## [2.1.31] 2023-04-25
+Fixing of 2 bugs (Thanks to pmichaelis from the ProcessWire support forum)
+- Renaming of TextcaptchaFactory.php to TextCaptchaFactory.php to prevent problems between upper and lowercase letters on live server. There was a writing mistake inside the file name.
+- Add missing translation string inside AbstractTextCaptcha.php
+Renaming TextcaptchaFactory.php to TextcaptchaFactory.php
