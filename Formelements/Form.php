@@ -1255,7 +1255,11 @@ class Form extends CustomRules
                                 if (!$element->hasAttribute('disabled')) {
                                     if ($element instanceof InputFile) {
                                         $file_upload_name = $element->getAttribute('name');
-                                        $sanitizedValues[$file_upload_name] = $this->reArrayFiles($_FILES[$file_upload_name]);
+                                        if ($element->getMultiple()) {
+                                            $sanitizedValues[$file_upload_name] = $this->reArrayFiles($_FILES[$file_upload_name]);
+                                        } else {
+                                            $sanitizedValues[$file_upload_name] = [$_FILES[$file_upload_name]];
+                                        }
                                     } else {
                                         $sanitizedValues[$element->getAttribute('name')] = $validation->sanitizePostValue($element);
                                     }
