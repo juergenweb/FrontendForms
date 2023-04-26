@@ -299,3 +299,6 @@ Renaming TextcaptchaFactory.php to TextcaptchaFactory.php
 ## [2.1.32] 2023-04-26
 - Renaming showFormAfterValidFormSubmission() and getShowFormAfterValidFormSubmission() methods to showForm() and getShowForm().
 - Updating readme.md with descriptions of both methods
+
+## 2023-04-26
+- upgrad() method added to update captchaimage.php in root directory too during module update
