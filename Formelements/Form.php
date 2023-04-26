@@ -44,7 +44,6 @@ class Form extends CustomRules
     protected array $formErrors = []; // holds the array containing all form errors after submission
     protected array $values = []; // array of all form values (key = name of the inputfield)
     protected bool $showForm = true; // show the form on the page
-    protected string|int $showFormAfterValidSubmission = 0; // Show form after valid submission - by default only a message should be displayed
     protected string $visitorIP = ''; // the IP of the visitor who is visiting this page
     protected string $captchaCategory = ''; // the category of the captcha (text or image)
     protected string $langAppendix = ''; // string, which will be appended to multi-lang config fields inside the db
@@ -221,18 +220,18 @@ class Form extends CustomRules
      * @param bool|int $show
      * @return void
      */
-    public function showFormAfterValidSubmission(bool|int $show):void
+    public function showForm(bool|int $show):void
     {
-        $this->showFormAfterValidSubmission = $show;
+        $this->showForm = $show;
     }
 
     /**
      * Get the value whether the form should be displayed after successful submission or not
      * @return bool
      */
-    public function getShowFormAfterValidSubmission():bool
+    public function getShowForm():bool
     {
-        return (bool)$this->showFormAfterValidSubmission;
+        return (bool)$this->showForm;
     }
 
     /**
@@ -408,7 +407,7 @@ class Form extends CustomRules
             // output success msg
             $this->alert->setCSSClass('alert_successClass');
             $this->alert->setText($this->getSuccessMsg());
-            $this->showForm = $this->getShowFormAfterValidSubmission();
+            $this->showForm = $this->getShowForm();
             $this->wire('session')->remove('valid-message');
         }
     }
