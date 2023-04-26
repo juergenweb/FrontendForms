@@ -717,6 +717,26 @@ Only to mention: A visitor will be blocked if the max number of attempts to subm
   $form->render()
 ```
 
+### showForm() - Show or hide the rendering of the form
+
+```php
+  echo $form->showForm(true);// true or false
+```
+
+This method is not designed for daily use. It is more a method that can be used for devs to manipulate the displaying of the form under certain conditions.
+
+Example: If you have submitted a form and the form is valid, the usual behaviour is that you will get a success message, but the form will not be displayed any longer. With this method you can force the displaying of the form after submission, even if the form is valid. You only need to add this method inside the isValid() method.
+
+### getShowForm() - Get the value (true/false) if the value should be displayed
+
+```php
+  echo $form->getShowForm();// returns true or false
+```
+
+This method is only the Getter method of the previous method, where you can check the status of the form displaying.
+
+This method is also not interesting for daily use.
+
 ### render() - output the markup of the form
 Render the form on the page.
 
