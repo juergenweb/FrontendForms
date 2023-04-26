@@ -295,3 +295,7 @@ Fixing of 2 bugs (Thanks to pmichaelis from the ProcessWire support forum)
 - Renaming of TextcaptchaFactory.php to TextCaptchaFactory.php to prevent problems between upper and lowercase letters on live server. There was a writing mistake inside the file name.
 - Add missing translation string inside AbstractTextCaptcha.php
 Renaming TextcaptchaFactory.php to TextcaptchaFactory.php
+
+## [2.1.32] 2023-04-26
+- Renaming showFormAfterValidFormSubmission() and getShowFormAfterValidFormSubmission() methods to showForm() and getShowForm().
+- Updating readme.md with descriptions of both methods
