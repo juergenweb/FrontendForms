@@ -2245,7 +2245,14 @@ use Valitron\Validator;
      */
     public function ___upgrade($fromVersion, $toVersion): void
     {
-        $this->createRemoveCaptchaImageFile(true); // copy new captchaimage.php to the root
+        // copy new captchaimage.php to the root
+        $this->createRemoveCaptchaImageFile(true);
+        // create temp_uploads folder again
+        $this->wire('files')->mkdir($this->temp_uploadPath);
+        // copy files from FrontendForms/assets to site/assets/files/Frontendforms
+        $to = $this->wire('config')->paths->assets . 'files/FrontendForms/';
+        $from = $this->modulePath . 'assets/';
+        $this->createFilesDir($from, $to);
     }
 
     /**
