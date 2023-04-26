@@ -2238,6 +2238,17 @@ use Valitron\Validator;
     }
 
     /**
+     * Running some code after the module has been updated
+     * @param $fromVersion
+     * @param $toVersion
+     * @return void
+     */
+    public function ___upgrade($fromVersion, $toVersion): void
+    {
+        $this->createRemoveCaptchaImageFile(true); // copy new captchaimage.php to the root
+    }
+
+    /**
      * Run during uninstall
      * @return void
      * @throws WireException
