@@ -466,6 +466,8 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [logFailedAttempts()](#logfailedattempts---enabledisable-logging-of-ip-addresses-after-the-number-of-max-failed-attempts)  | enable/disable logging of IP addresses after the number of max failed attempts  |
 | [isValid()](#isvalid---main-method-to-validate-the-form)  | main method to validate the form  |
 | [isBlocked()](#isblocked---check-whether-a-visitor-is-blocked-or-not)  | check whether a visitor is blocked or not  |
+| [showForm()](#showform---show-or-hide-the-rendering-of-the-form)  | show or hide the form  |
+| [getShowForm()](#getshowform---get-the-value-truefalse-if-the-value-should-be-displayed)  | Get the value, whether the form should be displayed or not  |
 | [render()](#render---output-the-markup-of-the-form)  | output the markup of the form  |
 
 
