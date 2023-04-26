@@ -301,4 +301,6 @@ Renaming TextcaptchaFactory.php to TextcaptchaFactory.php
 - Updating readme.md with descriptions of both methods
 
 ## 2023-04-26
-- upgrad() method added to update captchaimage.php in root directory too during module update
+- upgrade() method added to update captchaimage.php in root directory too during module update
+- tmp_uploads folder for temporary storage of uploaded files will be created once more if it does not exist
+- content of assets folder, which contains images for HTML email templates will be copied to site/assets/files again
