@@ -314,12 +314,11 @@ class Form extends CustomRules
             if ($mail->email_template == 'inherit') {
                 // use the value from the FrontendForms module configuration
                 $mail->email_template = $this->wire('modules')->getConfig('FrontendForms')['input_emailTemplate'];
-            }
-            if ($mail->email_template != 'none') {
+            } else {
                 $body = $this->loadTemplate($this->emailTemplatesDirPath . $mail->email_template);
                 $placeholders = $this->getMailPlaceholders();
                 $body = wirePopulateStringTags($body, $placeholders, ['tagOpen' => '[[', 'tagClose' => ']]']);
-                // set the result as the bodyHTML of the email
+                // overwrite the bodyHTML of the email
                 $mail->bodyHTML($body);
             }
         }
@@ -379,7 +378,7 @@ class Form extends CustomRules
                     ['tagOpen' => '[[', 'tagClose' => ']]']);
                 $this->setMailPlaceholder('body', $body);
             }
-
+            // set body/bodyHTML as default if no template is used
             $mail->bodyHTML($body);
             $mail->body($body);
 
