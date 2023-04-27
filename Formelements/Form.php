@@ -379,7 +379,7 @@ class Form extends CustomRules
                 $this->setMailPlaceholder('body', $body);
             }
             // set body/bodyHTML as default if no template is used
-            $mail->bodyHTML($body);
+            $mail->bodyHTML($body); // will be overwritten in includeMailTemplate if template was set
             $mail->body($body);
 
         }
