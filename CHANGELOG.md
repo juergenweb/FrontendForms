@@ -300,8 +300,9 @@ Renaming TextcaptchaFactory.php to TextcaptchaFactory.php
 - Renaming showFormAfterValidFormSubmission() and getShowFormAfterValidFormSubmission() methods to showForm() and getShowForm().
 - Updating readme.md with descriptions of both methods
 
-## 2023-04-26
-This update contains 3 fixes for updating the module:
+## [2.1.33] 2023-04-26
+This update contains 4 fixes for updating the module:
 - upgrade() method added to update captchaimage.php in root directory too during module update
 - tmp_uploads folder for temporary storage of uploaded files will be created once more if it does not exist
 - content of assets folder, which contains images for HTML email templates will be copied to site/assets/files again
+- The email pre-header, which will be set with the $mail->title('My pre-header text'), will be added automatically to the email. No need to add it to HTML templates manually. By not using an email template it will be added automatically on top of the email, before the content.
