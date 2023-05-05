@@ -305,7 +305,7 @@ This update contains 4 fixes for updating the module:
 - upgrade() method added to update captchaimage.php in root directory too during module update
 - tmp_uploads folder for temporary storage of uploaded files will be created once more if it does not exist
 - content of assets folder, which contains images for HTML email templates will be copied to site/assets/files again
-- The email pre-header, which will be set with the $mail->title('My pre-header text'), will be added automatically to the email. No need to add it to HTML templates manually. By not using an email template it will be added automatically on top of the email, before the content.
+- The email pre-header, which will be set with the $mail->title('My pre-header text') property, will be added automatically to the email. No need to add it to HTML templates manually. By not using an HTMLl template it will be added automatically on top of the email, before the content.
 
 ## 2023-05-05
 - Improving markup of following email templates: template_1.html, template_4.html. Both templates now fit better on different screen sizes.
