@@ -1762,7 +1762,13 @@ This makes the email template code much more cleaner.
 
 #### New method title()
 
-The title method adds a title attribute to the HTML template which will be displayed under the subject. You can also output it inside your template with the placeholder [[TITLE]]
+The title method adds a title, also known as pre-header attribute to the HTML template which will be displayed under the subject. 
+This will be added automatically to the email, independent if you are using a HTML email template or not - no need to add it manually.
+
+This value will be placed inside an div tag and will be invisible to the user.
+
+BTW, if you want to show this value inside your template, you can use the placeholder [[TITLE]] inside the body area and the value will be visible for the user.
+
 
 ```php
 $mail = new WireMail();
