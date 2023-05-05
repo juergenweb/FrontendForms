@@ -24,6 +24,7 @@ use ProcessWire\Wire;
 use ProcessWire\WireArray;
 use ProcessWire\WireData;
 use ProcessWire\WireException;
+use ProcessWire\WireMail;
 use ProcessWire\WirePermissionException;
 use Valitron\Validator;
 use function ProcessWire\wire as wire;
@@ -294,6 +295,7 @@ class Form extends CustomRules
      * Special general methods for sending emails
      */
 
+
     /**
      * Include the body template in the mail if it was set in the configuration or directly on the WireMail object
      * Takes the input_emailTemplate property to check whether a template should be used or not
@@ -308,19 +310,39 @@ class Form extends CustomRules
             $mail->email_template = $this->frontendforms['input_emailTemplate'];
         }
 
+
         // check if email template is set
         if ($mail->email_template != 'none') {
             // set body as placeholder
             if ($mail->email_template == 'inherit') {
                 // use the value from the FrontendForms module configuration
                 $mail->email_template = $this->wire('modules')->getConfig('FrontendForms')['input_emailTemplate'];
-            } else {
+            }
+            if ($mail->email_template != 'none') {
                 $body = $this->loadTemplate($this->emailTemplatesDirPath . $mail->email_template);
+
+                // add pre-header text (if present) right after the opening body tag
+                if($mail->title){
+                    $doc = new \DOMDocument();
+                    $doc->loadHTML($body);
+                    $bodyTags = $doc->getElementsByTagName('body');
+                    if ($bodyTags and $bodyTags->length > 0) {
+                        $bodyElement = $bodyTags->item(0);
+                        $preheader = $doc->createElement('div', $mail->title.$this->getLitmusHack());
+                        $preheader->setAttribute('style', $this->getPreheaderStyle());
+                        $bodyElement->insertBefore($preheader, $bodyElement->firstChild);
+                        $body = $doc->saveHTML();
+                    }
+                }
+
                 $placeholders = $this->getMailPlaceholders();
                 $body = wirePopulateStringTags($body, $placeholders, ['tagOpen' => '[[', 'tagClose' => ']]']);
-                // overwrite the bodyHTML of the email
+                // set the result as the bodyHTML of the email
                 $mail->bodyHTML($body);
             }
+        } else {
+            // add invisible div with email pre-header to the top of the email body
+            $mail->bodyHTML($this->generateEmailPreHeader($mail).$mail->bodyHTML);
         }
     }
 
@@ -378,8 +400,8 @@ class Form extends CustomRules
                     ['tagOpen' => '[[', 'tagClose' => ']]']);
                 $this->setMailPlaceholder('body', $body);
             }
-            // set body/bodyHTML as default if no template is used
-            $mail->bodyHTML($body); // will be overwritten in includeMailTemplate if template was set
+
+            $mail->bodyHTML($body);
             $mail->body($body);
 
         }
@@ -1963,6 +1985,35 @@ class Form extends CustomRules
     {
         $this->alert->setCSSClass('alert_dangerClass');
         $this->alert->setText($this->_('Email could not be sent due to possible wrong email configuration settings.'));
+    }
+
+    /**
+     * Return placeholders for email pre-header to prevent showing up other text
+     * The Litmus hack adds empty spaces after the mail placeholder to prevent the display of other text inside the pre-header
+     * @return string
+     */
+    protected function getLitmusHack(): string
+    {
+        return '&#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279;';
+    }
+
+    protected function getPreheaderStyle(): string
+    {
+        return 'display:none;font-size:1px; color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;';
+    }
+
+    /**
+     * Generate an invisible pre-header text after the subject for an email
+     * @param string|null $preheader
+     * @return string|null
+     */
+    protected function generateEmailPreHeader(WireMail $mail): string
+    {
+        if($mail->title){ // check if title property was set
+            // generate an invisible div container
+            return '<div id="preheader-text" style="'.$this->getPreheaderStyle().'">'.$mail->title.$this->getLitmusHack().'</div>';
+        }
+        return '';
     }
 
 }
