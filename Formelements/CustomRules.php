@@ -279,7 +279,7 @@ class CustomRules extends Tag
                 }
             }
             return true;
-        }, $this->_('is larger than the allowed filesize of %s.'));
+        }, $this->_('is larger than the allowed filesize.'));
 
 
         /**
