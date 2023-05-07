@@ -169,7 +169,7 @@ abstract class Inputfields extends Element
         // inform about max filesize
         if ($validator == 'allowedFileSize') {
             $this->notes_array['allowedFileSize']['text'] = sprintf($this->_('Please do not upload files larger than %s'),
-                wireBytesStr($variables[0]*1024));
+                wireBytesStr($variables[0]));
             $this->notes_array['allowedFileSize']['value'] = $variables[0];
         }
 
