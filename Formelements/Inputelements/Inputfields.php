@@ -16,6 +16,7 @@ use Exception;
 use ProcessWire\WireException;
 use ProcessWire\WirePermissionException;
 use Valitron\Validator;
+use function ProcessWire\wireBytesStr;
 
 abstract class Inputfields extends Element
 {
@@ -136,19 +137,6 @@ abstract class Inputfields extends Element
     }
 
     /**
-     * Convert filesize in bytes to KB, MB, GB or TB for better readability
-     * @param string|int|float $size
-     * @return string
-     */
-    protected function convertToReadableSize(string|int|float $size):string
-    {
-        $base = log((float)$size) / log(1024);
-        $suffix = array("", "KB", "MB", "GB", "TB");
-        $f_base = floor($base);
-        return round(pow(1024, $base - floor($base))) . $suffix[$f_base];
-    }
-
-    /**
      * Set a validator rule to validate the input value
      * Checks first if the validator method exists, otherwise does nothing
      * Check https://processwire.com/api/ref/sanitizer/ for all sanitizer methods
@@ -181,7 +169,7 @@ abstract class Inputfields extends Element
         // inform about max filesize
         if ($validator == 'allowedFileSize') {
             $this->notes_array['allowedFileSize']['text'] = sprintf($this->_('Please do not upload files larger than %s'),
-                $this->convertToReadableSize($variables[0]));
+                wireBytesStr($variables[0]*1024));
             $this->notes_array['allowedFileSize']['value'] = $variables[0];
         }
 
@@ -198,7 +186,7 @@ abstract class Inputfields extends Element
         if ($validator == 'phpIniFilesize') {
             $max_file_size = (int)ini_get("upload_max_filesize") * 1024;
             $this->notes_array['phpIniFilesize']['text'] = sprintf($this->_('Please do not upload files larger than %s'),
-                $this->convertToReadableSize($max_file_size));
+                wireBytesStr($max_file_size));
             $this->notes_array['phpIniFilesize']['value'] = $max_file_size;
         }
 
@@ -227,6 +215,9 @@ abstract class Inputfields extends Element
         if (method_exists($this, $method_name)) {
             $this->$method_name();
         }
+
+        // remove additional notes if present
+        unset($this->notes_array[$rule]);
         return $this;
     }
 
