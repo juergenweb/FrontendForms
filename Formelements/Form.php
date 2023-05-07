@@ -1635,9 +1635,11 @@ class Form extends CustomRules
 
             foreach ($this->formElements as $element) {
 
-                //create input ID as a combination of form id and input name
+                //create input ID as a combination of form id and input name, but only if old id is present
                 $oldId = $element->getAttribute('id');
-                $element->setAttribute('id', $this->getID() . '-' . $oldId);
+                if($oldId){
+                    $element->setAttribute('id', $this->getID() . '-' . $oldId);
+                }
 
                 // change the name attribute of the CSRF field
                 if ($element->getID() == $this->getID() . '-post_token') {
