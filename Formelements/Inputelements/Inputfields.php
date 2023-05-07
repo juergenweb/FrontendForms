@@ -529,7 +529,7 @@ abstract class Inputfields extends Element
                 }
                 if (($this->className() != 'InputCheckboxMultiple') || ($this->className() != 'InputSelectMultiple')) {
                     $this->setAttribute('value', $value);
-                    // set only default value and value if a value attribute is present or it is a select input field
+                    // set only default value and value if a value attribute is present, or it is a select input field
                     $this->defaultValue = $default;
                 }
             }
@@ -544,7 +544,7 @@ abstract class Inputfields extends Element
      * @param string $sanitizer - the name of the sanitizer
      * @throws Exception
      */
-    public function setSanitizer(string $sanitizer)
+    public function setSanitizer(string $sanitizer): void
     {
         $sanitizer = trim(strtolower($sanitizer));
         //if sanitizer method exist add the name of the sanitizer to the sanitizer property
