@@ -307,5 +307,6 @@ This update contains 4 fixes for updating the module:
 - content of assets folder, which contains images for HTML email templates will be copied to site/assets/files again
 - The email pre-header, which will be set with the $mail->title('My pre-header text') property, will be added automatically to the email. No need to add it to HTML templates manually. By not using an HTMLl template it will be added automatically on top of the email, before the content.
 
-## 2023-05-05
-- Improving markup of following email templates: template_1.html, template_4.html. Both templates now fit better on different screen sizes.
+## [2.1.34] 2023-05-07
+- Improving markup of following email templates: template_1.html, template_4.html. Now, both templates fit better on different screen sizes
+- Fixing bug in file size conversion to readable string and output under file upload field
