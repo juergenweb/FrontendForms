@@ -34,6 +34,7 @@ function onReady() {
         }
     }
 
+
 }
 
 /*
@@ -95,3 +96,15 @@ function reloadCaptcha(id, event) {
     document.getElementById(id).src = src +  '&time=' + Date.now();
 }
 
+/**
+ * Clear a file upload field by clicking on the link below the input field
+ * @param event
+ */
+function clearInputfield(event){
+    let id = event.id;
+    let uploadfield_id = id.replace("-clear", "");
+    let uploadfield = document.getElementById(uploadfield_id);
+    if(uploadfield.value){
+        uploadfield.value = null;
+    }
+}
