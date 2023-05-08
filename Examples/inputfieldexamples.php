@@ -20,6 +20,7 @@ $form->setErrorMsg('Ouups! There are some errors.');
 $form->setSuccessMsg('Congratulation! There are no errors.');
 
 $file1 = new \FrontendForms\InputFile('fileupload1');
+$file1->showClearLink(true); // show an link to empty the input field under the input field
 $file1->setLabel('Multiple files upload');
 $file1->setRule('allowedFileSize', '60000');
 $file1->setRule('allowedFileExt', ['jpg','pdf']);
