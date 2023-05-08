@@ -34,7 +34,7 @@ en,de,description,file,hash
 "entered must be different from the old password.","muss sich vom alten Passwort unterscheiden.",,site/modules/FrontendForms/Formelements/CustomRules.php,9dc911237765edb7f22808f0b2102b63
 "value entered is not correct.","Wert ist nicht korrekt.",,site/modules/FrontendForms/Formelements/CustomRules.php,4d9ecb529945a9c05dc622c41cb7ab08
 "value is in the list of the most popular passwords and therefore not save. Please select another one.","ist in der Liste der beliebtesten Passwörter und wird daher nicht gespeichert. Bitte wählen Sie ein anderes aus.",,site/modules/FrontendForms/Formelements/CustomRules.php,5da3ffa343c2825257dc7f7b35b1ff21
-"is larger than the allowed filesize of %s.","ist größer als die zulässige Dateigröße von %s.",,site/modules/FrontendForms/Formelements/CustomRules.php,146cfc8e33a5772b551e2f8a6266198f
+"is larger than the allowed filesize.","ist größer als die zulässige Dateigröße von %s.",,site/modules/FrontendForms/Formelements/CustomRules.php,05e14bb8d5644c5393b8ba6b3047cd2c
 "caused an error during the upload.","verursachte einen Fehler beim Hochladen.",,site/modules/FrontendForms/Formelements/CustomRules.php,e73de70795c028bc6fabdaf499a9e38f
 "does not belong to the allowed file types: %s.","ist nicht vom Typ der  erlaubten Dateitypen: %s.",,site/modules/FrontendForms/Formelements/CustomRules.php,e9104007e1d2a05266de336a3d10a55b
 "is larger than the max. allowed filesize.","ist größer als die max. zulässige Dateigröße.",,site/modules/FrontendForms/Formelements/CustomRules.php,2588b342e65a171fe8e5433b310a9223
@@ -414,6 +414,7 @@ en,de,description,file,hash
 en,de,description,file,hash
 "File upload","Datei Upload",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,c4265549c1f4d79aea1e279149a6a084
 "Select files","Wählen Sie die Dateien aus",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,1afe200fa26ba361f59b603b22ad6392
+"Clear the input field","Das Datei-Upload-Feld leeren",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,86a135398368af9fbb0a9d3f966e3706
 en,de,description,file,hash
 "Show password","Passwort anzeigen",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,a1cc7ba89ca3016cf59d7c31506a9681
 "The password must be at least %s characters and must contain characters of the following categories: %s.","Das Passwort muss mindestes %s Zeichen lang sein und folgende Zeichen enthalten: %s.",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,8bc6641f570b88866300ca703223bf6b
@@ -449,6 +450,6 @@ en,de,description,file,hash
 Surname,Nachname,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Surname.php,8e55577a8ed3b20bff65d23c000280d4
 en,de,description,file,hash
 Username,Benutzername,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Username.php,f6039d44b29456b20f8f373155ae4973
-en,de,description,file,hash
+en,default,description,file,hash
 "Image captcha","Bild CAPTCHA",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,1e27db1c7a9a959ca4cd75964525fa2d
 "Assign the image to a category","Ordnen sie das Bild einer Kategorie zu",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,5972e22698d0e9faba6397ce1b6b6f74
