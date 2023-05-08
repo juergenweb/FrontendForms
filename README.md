@@ -994,7 +994,7 @@ These methods can only be used on certain input fields and not at all.
 | [allowMultiple()](#allowmultiple-for-file-input-fields)  | add support for multiple file uploads on input type file  |
 | [mailTemplate()](#mailtemplate---changedisable-the-usage-of-an-email-template-manually)  | change/disable the usage of an email template manually  |
 | [showClearLink()](#showclearlink---show-or-hide-a-link-to-clear-a-file-input-field)  | show/hide a link under the file input field to clear the input  |
-| [getClearLink()](#mailtemplate---changedisable-the-usage-of-an-email-template-manually)  | get the link object for the clear input link for further manipulations  |
+| [getClearLink()](#getclearlink---get-the-link-object-described-in-the-previous-method-for-further-manipulations)  | get the link object for the clear input link for further manipulations  |
 
 
 #### alignVertical() - set the alignment for checkboxes and radio buttons
