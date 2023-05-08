@@ -1635,11 +1635,9 @@ class Form extends CustomRules
 
             foreach ($this->formElements as $element) {
 
-                //create input ID as a combination of form id and input name, but only if old id is present
+                //create input ID as a combination of form id and input name
                 $oldId = $element->getAttribute('id');
-                if($oldId){
-                    $element->setAttribute('id', $this->getID() . '-' . $oldId);
-                }
+                $element->setAttribute('id', $this->getID() . '-' . $oldId);
 
                 // change the name attribute of the CSRF field
                 if ($element->getID() == $this->getID() . '-post_token') {
@@ -1940,22 +1938,28 @@ class Form extends CustomRules
         $interval = $then->diff($now);
 
         if ($interval->y >= 1) {
-            $thetime[] = $interval->y . ' ' . _n($this->_('year'), $this->_('years'), $interval->y);
+            $thetime[] = $interval->y . ' ' . _n($this->_('year'),
+                    $this->_('years'), $interval->y);
         }
         if ($interval->m >= 1) {
-            $thetime[] = $interval->m . ' ' . _n($this->_('month'), $this->_('months'), $interval->m);
+            $thetime[] = $interval->m . ' ' . _n($this->_('month'),
+                    $this->_('months'), $interval->m);
         }
         if ($interval->d >= 1) {
-            $thetime[] = $interval->d . ' ' . _n($this->_('day'), $this->_('days'), $interval->d);
+            $thetime[] = $interval->d . ' ' . _n($this->_('day'),
+                    $this->_('days'), $interval->d);
         }
         if ($interval->h >= 1) {
-            $thetime[] = $interval->h . ' ' . _n($this->_('hour'), $this->_('hours'), $interval->h);
+            $thetime[] = $interval->h . ' ' . _n($this->_('hour'),
+                    $this->_('hours'), $interval->h);
         }
         if ($interval->i >= 1) {
-            $thetime[] = $interval->i . ' ' . _n($this->_('minute'), $this->_('minutes'), $interval->i);
+            $thetime[] = $interval->i . ' ' . _n($this->_('minute'),
+                    $this->_('minutes'), $interval->i);
         }
         if ($interval->s >= 1) {
-            $thetime[] = $interval->s . ' ' . _n($this->_('second'), $this->_('seconds'), $interval->s);
+            $thetime[] = $interval->s . ' ' . _n($this->_('second'),
+                    $this->_('seconds'), $interval->s);
         }
 
         return isset($thetime) ? implode(' ', $thetime) : null;
