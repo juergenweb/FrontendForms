@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace FrontendForms;
 
 use Exception;
+use FrontendForms\Link;
 
 class InputFile extends Input
 {
@@ -21,6 +22,8 @@ class InputFile extends Input
     protected Button $button; // the button object for uikit3
     protected ?Wrapper $wrapper; // the wrapper object for uikit3
     protected bool $multiple = true; // allow multiple file upload or not
+    protected bool $showClearLink = false;
+    protected Link $clearlink; // the link object for the file input clear link
 
     /**
      * @param string $id
@@ -49,6 +52,31 @@ class InputFile extends Input
             $this->wrapper->setAttribute('class', 'js-upload');
             $this->wrapper->setAttribute('data-uk-form-custom');
         }
+        // instantiate the clear link object
+            $this->clearlink = new Link($this->getID().'-clear');
+            $this->clearlink->setUrl('#');
+            $this->clearlink->setAttribute('class', 'clear-link');
+            $this->clearlink->setAttribute('onclick', 'event.preventDefault();clearInputfield(this); return false;');
+            $this->clearlink->setLinkText($this->_('Clear the input field'));
+    }
+
+    /**
+     * Show or hide a clear the input field link under the input field
+     * @param bool $show
+     * @return void
+     */
+    public function showClearLink(bool $show = false): void
+    {
+        $this->showClearLink = $show;
+    }
+
+    /**
+     * Get the clear link object for further manipulations
+     * @return \FrontendForms\Link
+     */
+    public function getClearLink(): Link
+    {
+       return $this->clearlink;
     }
 
     /**
@@ -74,6 +102,9 @@ class InputFile extends Input
         return $this->multiple;
     }
 
+
+
+
     /**
      * Render the input element
      * @return string
@@ -89,10 +120,15 @@ class InputFile extends Input
                 $out = $this->renderInput();
                 $out .= $this->button->___render();
                 $this->wrapper->setContent($out);
-                return $this->wrapper->___render();
+                $out = $this->wrapper->___render();
             default:
-                return $this->renderInput();
+                $out = $this->renderInput();
         }
+        if($this->showClearLink) {
+            $this->clearlink->setAttribute('id',$this->getID().'-clear'); // set new id including form id
+            $out .= '<div id="'.$this->getID().'-clearlink-wrapper" class="clear-link-wrapper">' . $this->clearlink->___render() . '</div>';
+        }
+        return $out;
     }
 
     /**
@@ -101,6 +137,7 @@ class InputFile extends Input
      */
     public function ___render(): string
     {
+
         // check for simultaneously presence of 'phpIniFilesize' and 'allowedFileSize'
         if ((array_key_exists('phpIniFilesize', $this->notes_array)) && (array_key_exists('allowedFileSize',
                 $this->notes_array))) {
@@ -118,7 +155,9 @@ class InputFile extends Input
             $this->setAttribute('max-size', (string)$file_size);
         }
 
-        return parent::___render();
+        $inputfield = parent::___render();
+
+        return $inputfield;
     }
 
 }
