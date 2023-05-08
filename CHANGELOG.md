@@ -310,3 +310,10 @@ This update contains 4 fixes for updating the module:
 ## [2.1.34] 2023-05-07
 - Improving markup of following email templates: template_1.html, template_4.html. Now, both templates fit better on different screen sizes
 - Fixing bug in file size conversion to readable string and output under file upload field
+
+## [2.1.35] 2023-05-08
+New feature added: Now you can display a link under file input fields to clear the input via JavaScript. If you have selected a file and you want to remove it before sending it, just click on the link and the input field will be cleared.
+
+By default, this feature is not enabled, so you have to enable it with the [showClearLink()](#showclearlink---show-or-hide-a-link-to-clear-a-file-input-field) method. If you want to customize the link to your needs you have to take the [getClearLink()](#getclearlink---get-the-link-object-described-in-the-previous-method-for-further-manipulations) method for further manipulations.
+
+To read more about these 2 new methods go to the readme file and search for showClearLink() and getClearLink().
