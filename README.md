@@ -993,7 +993,8 @@ These methods can only be used on certain input fields and not at all.
 | [sendAttachment()](#sendattachment---send-files-via-the-wiremail-class)  | send files via the WireMail class  |
 | [allowMultiple()](#allowmultiple-for-file-input-fields)  | add support for multiple file uploads on input type file  |
 | [mailTemplate()](#mailtemplate---changedisable-the-usage-of-an-email-template-manually)  | change/disable the usage of an email template manually  |
-
+| [showClearLink()](#mailtemplate---changedisable-the-usage-of-an-email-template-manually)  | show/hide a link under the file input field to clear the input  |
+| [getClearLink()](#mailtemplate---changedisable-the-usage-of-an-email-template-manually)  | get the link object for the clear input link for further manipulations  |
 
 
 #### alignVertical() - set the alignment for checkboxes and radio buttons
@@ -1099,6 +1100,20 @@ $m->mailTemplate('template1,html'); // use template1.html for sending emails wit
 ```php
 $m = wireMail();
 $m->mailTemplate('none'); // disable the usage of email templates for sending emails with this form
+```
+
+#### showClearLink() - show or hide a link to clear a file input field 
+By default, this feature is disabled. If you want to display a link under a file input field to provide the option to empty a file input field, you only have to set true as parameter.
+
+```php
+$field->showClearLink(true); // true: link will be displayed, false: link will be removed if present
+```
+
+#### getClearLink() - get the link object described in the previous method for further manipulations 
+If you want to manipulate the clear link (fe adding an additional styling CSS class), you will get instance for the link with this method.
+
+```php
+$field->getClearLink(true); // returns the link object
 ```
 
 ## Form validation
