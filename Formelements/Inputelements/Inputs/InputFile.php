@@ -10,11 +10,9 @@ declare(strict_types=1);
  * Created: 12.07.2022 
  */
 
-
 namespace FrontendForms;
 
 use Exception;
-use FrontendForms\Link;
 
 class InputFile extends Input
 {
@@ -22,7 +20,7 @@ class InputFile extends Input
     protected Button $button; // the button object for uikit3
     protected ?Wrapper $wrapper; // the wrapper object for uikit3
     protected bool $multiple = true; // allow multiple file upload or not
-    protected bool $showClearLink = false;
+    protected bool $showClearLink = true; // set default to true to show the link under the input field
     protected Link $clearlink; // the link object for the file input clear link
 
     /**
@@ -53,11 +51,14 @@ class InputFile extends Input
             $this->wrapper->setAttribute('data-uk-form-custom');
         }
         // instantiate the clear link object
-            $this->clearlink = new Link($this->getID().'-clear');
-            $this->clearlink->setUrl('#');
-            $this->clearlink->setAttribute('class', 'clear-link');
-            $this->clearlink->setAttribute('onclick', 'event.preventDefault();clearInputfield(this); return false;');
-            $this->clearlink->setLinkText($this->_('Clear the input field'));
+        $this->clearlink = new Link($this->getID() . '-clear');
+        $this->clearlink->setUrl('#');
+        $this->clearlink->setAttribute('class', 'clear-link');
+        $this->clearlink->setAttribute('onclick', 'event.preventDefault();clearInputfield(this); return false;');
+        $this->clearlink->setLinkText($this->_('Clear the input field'));
+        //$this->showClearLink(true); // show the clear link by default
+        $this->setAttribute('onchange', 'showClearLink(event)');
+
     }
 
     /**
@@ -70,13 +71,14 @@ class InputFile extends Input
         $this->showClearLink = $show;
     }
 
+
     /**
      * Get the clear link object for further manipulations
-     * @return \FrontendForms\Link
+     * @return Link
      */
     public function getClearLink(): Link
     {
-       return $this->clearlink;
+        return $this->clearlink;
     }
 
     /**
@@ -87,7 +89,7 @@ class InputFile extends Input
     public function setMultiple(bool $multiple = true): self
     {
         $this->multiple = $multiple;
-        if($multiple){
+        if ($multiple) {
             $this->setAttribute('multiple');
         }
         return $this;
@@ -102,18 +104,16 @@ class InputFile extends Input
         return $this->multiple;
     }
 
-
-
-
     /**
      * Render the input element
      * @return string
      */
     public function ___renderInputFile(): string
     {
+
         // add brackets to name attribute if multiple attribute is present
-        if($this->getMultiple())
-            $this->setAttribute('name', $this->getAttribute('name').'[]');
+        if ($this->getMultiple())
+            $this->setAttribute('name', $this->getAttribute('name') . '[]');
         switch ($this->frontendforms['input_framework']) {
             case('uikit3.json'):
 
@@ -121,12 +121,13 @@ class InputFile extends Input
                 $out .= $this->button->___render();
                 $this->wrapper->setContent($out);
                 $out = $this->wrapper->___render();
+                break;
             default:
                 $out = $this->renderInput();
         }
-        if($this->showClearLink) {
-            $this->clearlink->setAttribute('id',$this->getID().'-clear'); // set new id including form id
-            $out .= '<div id="'.$this->getID().'-clearlink-wrapper" class="clear-link-wrapper">' . $this->clearlink->___render() . '</div>';
+        if ($this->showClearLink) {
+            $this->clearlink->setAttribute('id', $this->getID() . '-clear'); // set new id including form id
+            $out .= '<div id="' . $this->getID() . '-clearlink-wrapper" class="clear-link-wrapper" style="display:none;">' . $this->clearlink->___render() . '</div>';
         }
         return $out;
     }
@@ -148,16 +149,13 @@ class InputFile extends Input
                 unset($this->notes_array['allowedFileSize']); // remove allowedFileSize from the array
             }
         }
-        
+
         // create HTML5 max-size attribute depending on validator settings
-        if((array_key_exists('phpIniFilesize',$this->notes_array)) || (array_key_exists('allowedFileSize',$this->notes_array))){
+        if ((array_key_exists('phpIniFilesize', $this->notes_array)) || (array_key_exists('allowedFileSize', $this->notes_array))) {
             $file_size = $this->notes_array['phpIniFilesize']['value'] ?? $this->notes_array['allowedFileSize']['value'];
             $this->setAttribute('max-size', (string)$file_size);
         }
-
-        $inputfield = parent::___render();
-
-        return $inputfield;
+        return parent::___render();
     }
 
 }
