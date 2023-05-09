@@ -41,22 +41,21 @@ function onReady() {
 Show or hide the password in the password field by checking/unchecking the show/hide checkbox below the input field
 */
 
-let togglePasswords = document.getElementsByClassName("pwtoggle");
+let togglePasswords = document.getElementsByClassName('pwtoggle');
 if(togglePasswords.length > 0){
-
-    for (i = 0; i < togglePasswords.length; i++) {
-        console.log(togglePasswords[i].parentNode.previousElementSibling);
-        if(togglePasswords[i].parentNode.previousElementSibling.type === "password"){
-            togglePasswords[i].addEventListener("click", function () {
-                var passwordInput = togglePasswords[i].parentNode.previousElementSibling;
-                if (passwordInput.type === "password") {
-                    passwordInput.type = "text";
-                } else {
-                    passwordInput.type = "password";
-                }
-            });
+  for (let i = 0; i < togglePasswords.length; i++) {
+    console.log(togglePasswords[i].parentNode.previousElementSibling);
+    if(togglePasswords[i].parentNode.previousElementSibling.type === 'password'){
+      togglePasswords[i].addEventListener('click', function () {
+        var passwordInput = togglePasswords[i].parentNode.previousElementSibling;
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+        } else {
+          passwordInput.type = "password";
         }
+      });
     }
+  }
 }
 
 /**
