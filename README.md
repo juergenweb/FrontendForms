@@ -1103,10 +1103,11 @@ $m->mailTemplate('none'); // disable the usage of email templates for sending em
 ```
 
 #### showClearLink() - show or hide a link to clear a file input field 
-By default, this feature is disabled. If you want to display a link under a file input field to provide the option to empty a file input field, you only have to set true as parameter.
+By default, this feature is enabled. If you want to prevent the display of the link under a file input field, you only have to set false as parameter.
+The link will only be displayed if a file was selected and added to a file upload field, otherwise it is not visible.
 
 ```php
-$field->showClearLink(true); // true: link will be displayed, false: link will be removed if present
+$field->showClearLink(false); // true: link will be displayed, false: link will be removed if present
 ```
 
 #### getClearLink() - get the link object described in the previous method for further manipulations 
