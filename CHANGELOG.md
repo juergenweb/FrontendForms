@@ -318,5 +318,5 @@ By default, this feature is not enabled, so you have to enable it with the [show
 
 To read more about these 2 new methods go to the readme file and search for showClearLink() and getClearLink().
 
-## 2023-05-09
+## [2.1.36] 2023-05-09
 - Clear input field link now will be displayed by default (before it was set to false = no display), but a Javascript function was added to display the link only if a file was added to the file upload field and not to display the link every time as before.
