@@ -13,11 +13,11 @@ document.onreadystatechange = onReady;
 
 function onReady() {
     if (document.readyState === "complete") {
-        let el = document.getElementById('timecounter');
+        let el = document.getElementById("timecounter");
         if (el) {
-            let timeleft = parseInt(document.getElementById('minTime').getAttribute('data-time'));
-            let timetext = document.getElementById('minTime').getAttribute('data-unit');
-            timetext = timetext.split(';');
+            let timeleft = parseInt(document.getElementById("minTime").getAttribute("data-time"));
+            let timetext = document.getElementById("minTime").getAttribute("data-unit");
+            timetext = timetext.split(";");
 
             let downloadTimer = setInterval(function () {
                 if (timeleft <= 0) {
@@ -28,7 +28,7 @@ function onReady() {
                 if (timeleft <= 1) {
                     text = timetext[1];
                 }
-                el.innerText = timeleft + ' ' + text + '.';
+                el.innerText = timeleft + " " + text + ".";
                 timeleft -= 1;
             }, 1000);
         }
@@ -41,21 +41,22 @@ function onReady() {
 Show or hide the password in the password field by checking/unchecking the show/hide checkbox below the input field
 */
 
-let togglePasswords = document.getElementsByClassName('pwtoggle');
+let togglePasswords = document.getElementsByClassName("pwtoggle");
 if(togglePasswords.length > 0){
-  for (let i = 0; i < togglePasswords.length; i++) {
-    console.log(togglePasswords[i].parentNode.previousElementSibling);
-    if(togglePasswords[i].parentNode.previousElementSibling.type === 'password'){
-      togglePasswords[i].addEventListener('click', function () {
-        var passwordInput = togglePasswords[i].parentNode.previousElementSibling;
-        if (passwordInput.type === "password") {
-          passwordInput.type = "text";
-        } else {
-          passwordInput.type = "password";
+
+    for (i = 0; i < togglePasswords.length; i++) {
+        console.log(togglePasswords[i].parentNode.previousElementSibling);
+        if(togglePasswords[i].parentNode.previousElementSibling.type === "password"){
+            togglePasswords[i].addEventListener("click", function () {
+                var passwordInput = togglePasswords[i].parentNode.previousElementSibling;
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                } else {
+                    passwordInput.type = "password";
+                }
+            });
         }
-      });
     }
-  }
 }
 
 /**
@@ -66,21 +67,21 @@ if(togglePasswords.length > 0){
  */
 function removeURLParameter(url, parameter) {
     //prefer to use l.search if you have a location/link object
-    var urlparts= url.split('?');
+    var urlparts= url.split("?");
     if (urlparts.length>=2) {
 
-        var prefix= encodeURIComponent(parameter)+'=';
+        var prefix= encodeURIComponent(parameter)+"=";
         var pars= urlparts[1].split(/[&;]/g);
 
         //reverse iteration as may be destructive
-        for (var i= pars.length; i-- > 0;) {
+        for (i= pars.length; i-- > 0;) {
             //idiom for string.startsWith
             if (pars[i].lastIndexOf(prefix, 0) !== -1) {
                 pars.splice(i, 1);
             }
         }
 
-        url= urlparts[0]+'?'+pars.join('&');
+        url= urlparts[0]+"?"+pars.join("&");
         return url;
     } else {
         return url;
@@ -92,8 +93,8 @@ function reloadCaptcha(id, event) {
     event.preventDefault();
     var src = document.getElementById(id).src;
     console.log(src);
-    src = removeURLParameter(src, 'time');
-    document.getElementById(id).src = src +  '&time=' + Date.now();
+    src = removeURLParameter(src, "time");
+    document.getElementById(id).src = src +  "&time=" + Date.now();
 }
 
 /**
@@ -107,4 +108,27 @@ function clearInputfield(event){
     if(uploadfield.value){
         uploadfield.value = null;
     }
+    // set display:none to clear link
+    let clear_link_id = id.replace("-clear", "-clearlink-wrapper");
+    let clear_link = document.getElementById(id);
+    if(clear_link){
+        clear_link.style = "display:none";
+    }
 }
+
+/**
+ * Show the clear link only if a file was added to the input field
+ * @param event
+ */
+function showClearLink(event){
+    let id = event.target.id+"-clearlink-wrapper";
+    let clear_link = document.getElementById(id);
+    if(clear_link){
+        if(event.target.files.length > 0) {
+            clear_link.style = "display:block";
+        } else {
+            clear_link.style = "display:none";
+        }
+    }
+}
+
