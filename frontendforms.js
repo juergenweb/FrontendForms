@@ -108,9 +108,9 @@ function clearInputfield(event){
     if(uploadfield.value){
         uploadfield.value = null;
     }
-    // set display:none to clear link
+    // set display:none to clear link wrapper
     let clear_link_id = id.replace("-clear", "-clearlink-wrapper");
-    let clear_link = document.getElementById(id);
+    let clear_link = document.getElementById(clear_link_id);
     if(clear_link){
         clear_link.style = "display:none";
     }
@@ -131,4 +131,3 @@ function showClearLink(event){
         }
     }
 }
-
