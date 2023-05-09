@@ -39,6 +39,7 @@ class InputFile extends Input
         // set this validation rules as default on file upload field
         $this->setRule('noErrorOnUpload'); // check for upload errors on default
         $this->setRule('phpIniFilesize'); // add the max file size of php.ini as absolute limit of file size by default
+        $this->setAttribute('onchange', 'showClearLink(event)');
         if ($this->frontendforms['input_framework'] === 'uikit3.json') {
             // instantiate the button for the uikit3 framework
             $this->button = new Button();
@@ -56,8 +57,6 @@ class InputFile extends Input
         $this->clearlink->setAttribute('class', 'clear-link');
         $this->clearlink->setAttribute('onclick', 'event.preventDefault();clearInputfield(this); return false;');
         $this->clearlink->setLinkText($this->_('Clear the input field'));
-        //$this->showClearLink(true); // show the clear link by default
-        $this->setAttribute('onchange', 'showClearLink(event)');
 
     }
 
