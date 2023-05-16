@@ -17,6 +17,10 @@ $content =  '<h2>A form for using a lot (not all) validators</h2>';
 $content .=  '<p>This is a test page for testing validation rules and to show how the validation rules should be used.</p>';
 
 $form = new \FrontendForms\Form('validators');
+// disable all the following security features
+$form->setMaxAttempts(0);
+$form->setMinTime(0);
+$form->setMaxTime(0);
 
 $required = new \FrontendForms\InputText('required');
 $required->setLabel('Validator required');
@@ -233,7 +237,8 @@ $form->add($datebefore);
 // negative means within 8 days in the past starting from the reference date
 $dateWithinDaysRange = new \FrontendForms\InputDate('datewithindaysrange');
 $dateWithinDaysRange->setLabel('Validator dateWithinDaysRange');
-$dateWithinDaysRange->setRule('dateWithinDaysRange', 'date', 8);
+// it is recommended to use a custom message that fits better than the default error message
+$dateWithinDaysRange->setRule('dateWithinDaysRange', 'date', 8)->setCustomMessage(sprintf('The date entered must be within 8 days starting from %s', ($_POST) ? $_POST['validators-date'] : ''));
 $dateWithinDaysRange->setDescription('Validator to check if the value is a date within the time range of 8 days in the future.');
 $dateWithinDaysRange->setNotes('Enter a date, that is within the time range between the date entered inside the field with the id "date" and 8 days in the future.');
 $form->add($dateWithinDaysRange);
@@ -243,7 +248,7 @@ $form->add($dateWithinDaysRange);
 // negative means date must be at least 8 days before in the past starting from the reference date
 $dateOutsideDaysRange = new \FrontendForms\InputDate('dateoutsideofdaysrange');
 $dateOutsideDaysRange->setLabel('Validator dateOutsideOfDaysRange');
-$dateOutsideDaysRange->setRule('dateOutsideOfDaysRange', 'date', 8);
+$dateOutsideDaysRange->setRule('dateOutsideOfDaysRange', 'date', 8)->setCustomMessage(sprintf('The date entered must be after 8 days after the starting date %s', ($_POST) ? $_POST['validators-date'] : ''));
 $dateOutsideDaysRange->setDescription('Validator to check if the value is a date outside the time range of 8 days in the future.');
 $dateOutsideDaysRange->setNotes('Enter a date, that is after the time range between the date entered inside the field with the id "date" and 8 days in the future.');
 $form->add($dateOutsideDaysRange);
