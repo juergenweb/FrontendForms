@@ -320,3 +320,10 @@ To read more about these 2 new methods go to the readme file and search for show
 
 ## [2.1.36] 2023-05-09
 - Clear input field link now will be displayed by default (before it was set to false = no display), but a Javascript function was added to display the link only if a file was added to the file upload field and not to display the link every time as before.
+
+## [2.1.37] 2023-05-16
+4 new validation rules for validation of dates inspired by Andy from the PW forum added:
+- dateBeforeField validator: Checks if a date is before a date entered in another field inside the form
+- dateAfterField validator: Checks if a date is after a date entered in another field inside the form
+- dateWithinDaysRange validator: Checks if a date is within a given timerange in days depending on a date entered inside another field inside the form. Fe date must be in a timerange of 7 days in the future starting from a date entered inside another form field. Example of time range: start date: 2023-05-15, timerange: 2023-05-15 - 2023-05-22. Value must be inside this timerange.
+- dateOutsideOfDaysRange validator: Checks if a date is outside a given timerange in days depending on a date entered inside another field inside the form. Fe date must be in a timerange of 7 days in the future starting from a date entered inside another form field. Example of time range: start date: 2023-05-15, forbidden timerange: 2023-05-15 - 2023-05-22. Value must be outside this timerange -> after 2023-05-22.
