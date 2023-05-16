@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace FrontendForms;
 
+use DateInterval;
+use DateTime;
+use Exception;
 use ProcessWire\User;
 use ProcessWire\WireException;
 use ProcessWire\WirePermissionException;
@@ -426,7 +429,124 @@ class CustomRules extends Tag
 
         }, $this->_('is not a valid hexadecimal color code.'));
 
+        /**
+         * 25) Check if a date is before a date entered in another field
+         */
+        V::addRule('dateBeforeField', function ($field, $value, array $params) {
+            $reference_date_field = $params[0]; // name of the reference field
+            $date_1 = $this->getValue($reference_date_field);
+            if($date_1){
+                return $this->compareDates($date_1, $value);
+            }
+            return true;
+        }, $this->_('must be before %s.'));
 
+        /**
+         * 26) Check if a date is after a date entered in another field
+         */
+        V::addRule('dateAfterField', function ($field, $value, array $params) {
+            $reference_date_field = $params[0]; // name of the reference field
+            $date_1 = $this->getValue($reference_date_field);
+            if($date_1){
+                return $this->compareDates($date_1, $value, false);
+            }
+            return true;
+        }, $this->_('must be after %s.'));
+
+        /**
+         * 27) Check if a date is within a given timerange in days depending on another field
+         */
+        V::addRule('dateWithinDaysRange', function ($field, $value, array $params) {
+            return $this->checkDateRange($params[0], $value, $params[1]);
+        }, $this->_('must be within the allowed time range.'));
+
+        /**
+         * 28) Check if a date is outside a given timerange in days depending on another field
+         */
+        V::addRule('dateOutsideOfDaysRange', function ($field, $value, array $params) {
+            return $this->checkDateRange($params[0], $value, $params[1], false);
+        }, $this->_('must be outside the forbidden time range.'));
+
+    }
+
+    /**
+     * Private method to check if an entered date is within or outside a given time range
+     * @param string|null $date_1
+     * @param string $value
+     * @param int $days
+     * @param bool $within
+     * @return bool
+     * @throws WireException
+     * @throws Exception
+     */
+    private function checkDateRange(string|null $date_1, string $value, int $days, bool $within = true): bool
+    {
+        $days = $this->wire('sanitizer')->intSigned($days);
+        $date_1 = $this->getValue($date_1);
+
+        if($date_1){
+            // converting $date_1 to timestring
+            $date_1 = $this->wire('datetime')->strtotime($date_1);
+            // converting it to Y-m-d format
+            $date_1 = $this->wire('datetime')->date('Y-m-d', $date_1);
+
+            // calculating the new date
+            $date_2 = new DateTime($date_1);
+
+            if($days > 0){
+                // value is in the future
+                $date_2->add(new DateInterval('P'.$days.'D')); // P1D means a period of 1 day
+                $date_2 = $date_2->format('Y-m-d');
+                if($within) {
+                    // date must be within the given time range
+                    return (($value <= $date_2) && ($value > $date_1));
+                } else {
+                    // date must be after the given time range
+                    return ($value > $date_2);
+                }
+            } else if ($days < 0){
+                // value is in the past
+                $days = $days * (-1);
+                $date_2->sub(new DateInterval('P'.$days.'D'));
+                $date_2 = $date_2->format('Y-m-d');
+                if($within){
+                    return (($value >= $date_2) && ($value < $date_1));
+                } else {
+                    // date must be before the given time range
+                    return ($value < $date_2);
+                }
+            } else {
+                // value is 0
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Private function to compare dates if one date is before or after another date
+     * @param string|null $date_1
+     * @param string $date_2
+     * @param bool $before
+     * @return bool
+     * @throws WireException
+     */
+    private function compareDates(string|null $date_1, string $date_2, bool $before = true): bool
+    {
+        // converting $date_1 to timestring
+        $date_1 = $this->wire('datetime')->strtotime($date_1);
+        // converting it to Y-m-d format for comparison
+        $date_1 = $this->wire('datetime')->date('Y-m-d', $date_1);
+
+        // converting $date_2 to timestring
+        $date_2 = $this->wire('datetime')->strtotime($date_2);
+        // converting it to Y-m-d format for comparison
+        $date_2 = $this->wire('datetime')->date('Y-m-d', $date_2);
+        // check if the date 2 is before date 1
+        if($before){
+            return ($date_2 < $date_1);
+        }
+        return ($date_2 > $date_1);
     }
 
 
