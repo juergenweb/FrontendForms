@@ -43,6 +43,10 @@ en,de,description,file,hash
 "is not a valid month. You have to enter the month in this format including the year: YYYY-MM (fe. 2023-06)","ist keine gültige Monatsangabe. Sie müssen das Monat (inklusive Jahr) im Format YYYY-MM (z.B 2023-06) eingeben",,site/modules/FrontendForms/Formelements/CustomRules.php,cba20ded2eec02144db964c8fab90000
 "is not a valid week. You have to enter the week in this format including the year: YYYY-Www (fe. 2023-W06)","ist keine gültige Wochenangabe. Sie müssen die Woche (inklusive Jahr) im Format YYYY-Www (z.B 2023-W06) eingeben",,site/modules/FrontendForms/Formelements/CustomRules.php,fb6eb0f6821ca0cfffc7fb19fc2b1dde
 "is not a valid hexadecimal color code.","ist kein gültiger Hexadecimal-Farbcode.",,site/modules/FrontendForms/Formelements/CustomRules.php,47d0b991eb42ea41be94a77c66ad608b
+"must be before %s.","muss ein Datum vor %s sein.",,site/modules/FrontendForms/Formelements/CustomRules.php,631c49fb2a0a41ae81fb7c7dc09a6571
+"must be after %s.","muss ein Datum nach %s sein.",,site/modules/FrontendForms/Formelements/CustomRules.php,b83a396a69b272c4b79df4a61c18009f
+"must be within the allowed time range.","muss ein Datum innerhalb des erlaubten Zeitraumes sein.",,site/modules/FrontendForms/Formelements/CustomRules.php,265d89403b5c013461609c89ab268bc7
+"must be outside the forbidden time range.","muss ein Datum außerhalb des verbotenen Zeitraumes sein.",,site/modules/FrontendForms/Formelements/CustomRules.php,0f3f63f95068a11bfa7ad25ca209fedc
 en,de,description,file,hash
 "Random string captcha","Zufallstext Captcha",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultTextCaptcha.php,7c62e8d4b13ecc03f28bb44905a5ec51
 "Enter the text from the image in the input field.","Geben Sie den Text aus dem Bild in das Eingabefeld ein.",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultTextCaptcha.php,3c6c9439c3e38d0da29b7629a300c3c5
