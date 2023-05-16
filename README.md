@@ -66,7 +66,7 @@ $form = new \FrontendForms\Form('myForm'); // take a look at the leading '\' in 
 // the example above
 ```
 
-Tipp: Instead of writing the namespace in front of every new instantiated form object, you can also use PHPs 'use' function on top of your file - it is up to you. 
+Tipp: Instead of writing the namespace in front of every new instantiated form object, you can also use PHPs 'use' function on top of your file - it is up to you.
 
 ```php
 $form = new \FrontendForms\Form('myForm');
@@ -183,14 +183,14 @@ In the table afterwards you will find information about the sanitizers and valid
 You can set a number of max attempts for submitting the form successfully inside the module configuration or by adding the [setMaxAttempts()](#setmaxattempts)
 method to your form object.
 If the number of unsuccessful attempts is higher than the allowed number, the form submission will be blocked.
-It is only a soft block by using a session. The vistor will be prompted to close the browser to remove the session and to re-open the page again. If the session is active, the form will not be displayed on the page. 
+It is only a soft block by using a session. The vistor will be prompted to close the browser to remove the session and to re-open the page again. If the session is active, the form will not be displayed on the page.
 Can be disabled by setting the value to zero.
 
 ### Measure 2: Time measurement
 You can set a global min and max time for submit a form inside the module configuration, but you can set the them also manually on per form base. In this case you only have to add the [setMinTime() and/or setMaxTime()](#setmintime-setmaxtime) method(s) to your form object. Setting the value to zero disables this feature.
 If a visitor or a SPAM bot submits the form outside of this time range, the form will not be submitted.
 By the way, SPAM bots tend to fill out forms very quickly or analyse the forms very long and submit them after a long while.
-After every submission the time will be calculated new. 
+After every submission the time will be calculated new.
 
 **Good to know, but you do not have to do something special**
 
@@ -204,13 +204,13 @@ Please note that the honeypot field will be hidden via the frontendforms.css fil
 
 ```css
 .seca {
-  opacity: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 0;
-  width: 0;
-  z-index: -1;
+   opacity: 0;
+   position: absolute;
+   top: 0;
+   left: 0;
+   height: 0;
+   width: 0;
+   z-index: -1;
 }
 ```
 You can remove the embedding of the file inside the module configuration, and you can embed this code in your own CSS file if you want.
@@ -226,7 +226,7 @@ A visitor will be blocked if he needs, for example, too many attempts to send th
 In this section you can get more information about this visitor, and you have 2 buttons: add the visitor to or remove him from the IP blacklist.
 
 
-**Important note:** 
+**Important note:**
 
 The statistic section works only if you have "logging IP of visitors" enabled inside the security measure 1 (max attempst). If not, than no failde attempt will be logged and therefore no data will be available.
 
@@ -295,7 +295,7 @@ If something has been changed on the list, it will be downloaded and added to th
 So you do not have to take care about it and the list will be always up-to-date.
 
 ### Measure 7: HTML 5 browser validation
-If you want to make a frontend validation before the the server-side validation, you can enable HTML 5 browser validation in the module configuration. 
+If you want to make a frontend validation before the the server-side validation, you can enable HTML 5 browser validation in the module configuration.
 This will take HTML 5 attributes (fe. min or required attribute) and validates it by the browser before the form will be submitted to the server.
 The browser attributes will be added/removed automatically by adding/removing a validation rule to a field.
 
@@ -545,7 +545,7 @@ Set the min and max time for form submission in seconds. The form will only be s
   $form->setMinTime(5);
   $form->setMaxTime(3600);
 ```
-### setMaxAttempts() - change max number of invalid submission attempts 
+### setMaxAttempts() - change max number of invalid submission attempts
 
 Set the max number of attempts to submit a form successful. If the number of unsuccessful attempts is higher than the max number of attempts, the form submission will be blocked.
 
@@ -590,7 +590,7 @@ This is the method to remove a field from the form. You have to enter the field 
 ```
 
 ### getFormelements() - Get all elements of the form (input, buttons, fieldset,..) as an numeric array of objects
-If you need all elements of the form, you can use this method to get all elements as an object. 
+If you need all elements of the form, you can use this method to get all elements as an object.
 
 ```php
   $form->getFormelements();
@@ -620,10 +620,10 @@ With this method you can wrap all form fields in an extra div, or remove the wra
 
 ```html
   <form>
-    <div id="formelementswrapper">
-        ....
-    </div>
-  </form>
+   <div id="formelementswrapper">
+      ....
+   </div>
+</form>
 ```
 You only have to add this method to your form object with bool parameter
 ```php
@@ -663,8 +663,8 @@ $form->appendLabelOnCheckboxes(false); // the input tag will be wrapped by the l
 You can do the same for radio buttons by using the appendLabelOnRadios() method.
 
 ### setUploadPath() - change the default storage location for uploaded files
-If you are using a file upload field inside your form, all uploaded files will be in the site/assets/files/ directory inside a folder named after the id of the page where the form  is included. Fe the id of the page where the form is included is 1000, then the files will be stored inside site/assets/files/1000. 
-This is usually the way to go, but in rare cases you will need to store the files at an other location. 
+If you are using a file upload field inside your form, all uploaded files will be in the site/assets/files/ directory inside a folder named after the id of the page where the form  is included. Fe the id of the page where the form is included is 1000, then the files will be stored inside site/assets/files/1000.
+This is usually the way to go, but in rare cases you will need to store the files at an other location.
 For this use case you can use this method.
 
 ```php
@@ -672,8 +672,8 @@ $form->setUploadPath('mycustomfolder/'); // the files will be stored at site/ass
 ```
 
 ### useIPBan() - enable/disable checking of forbidden IP address
-As written in the [security part](#measure-4-ip-blacklist), you can log every IP that did not submit a form within the allowed number of max attempts. 
-Each IP that has been logged, cannot view a form until it the logging 
+As written in the [security part](#measure-4-ip-blacklist), you can log every IP that did not submit a form within the allowed number of max attempts.
+Each IP that has been logged, cannot view a form until it the logging
 You can disable the checking of the IP address on each form manually.
 
 ```php
@@ -754,14 +754,14 @@ For better understanding of methods explained afterwards, take a look of the ana
 
 ```html
 <div class="uk-margin" id="validationform-test1-fieldwrapper"> <!-- This is the field wrapper -->
-  <label class="uk-form-label required" for="validationform-test1">Test required<span class="asterisk">*</span></label> <!-- The label -->
-  <div class="uk-form-controls" id="validationform-test1-inputwrapper"> <!-- This is the input wrapper -->
-    <input id="validationform-test1" name="test1" type="text" class="uk-input" required=""> <!-- The input field -->
-    <p class"uk-text-error">This would be the error text on validation errors</p> <!-- The error message text -->
-  </div>
-  <p class="notes">Field is required</p> <!-- The notes text -->
-  <p class="description">This is my field description</p> <!-- The field description text -->
- </div>
+   <label class="uk-form-label required" for="validationform-test1">Test required<span class="asterisk">*</span></label> <!-- The label -->
+   <div class="uk-form-controls" id="validationform-test1-inputwrapper"> <!-- This is the input wrapper -->
+      <input id="validationform-test1" name="test1" type="text" class="uk-input" required=""> <!-- The input field -->
+      <p class"uk-text-error">This would be the error text on validation errors</p> <!-- The error message text -->
+   </div>
+   <p class="notes">Field is required</p> <!-- The notes text -->
+   <p class="description">This is my field description</p> <!-- The field description text -->
+</div>
 ```
 
 #### Field wrapper
@@ -1059,7 +1059,7 @@ $password->showPasswordToggle();
 ```
 
 #### sendAttachment() - send files via the WireMail class
-This method has to be used with the WireMail class. The form object has to be added as the first parameter. This method is similar to the WireMail attachment() method, but it has some extra functionality and needs to be taken instead of the attachment() method. You will find more detailled information inside the [file-upload-section](#file-uploads) later on. 
+This method has to be used with the WireMail class. The form object has to be added as the first parameter. This method is similar to the WireMail attachment() method, but it has some extra functionality and needs to be taken instead of the attachment() method. You will find more detailled information inside the [file-upload-section](#file-uploads) later on.
 
 
 ```php
@@ -1102,7 +1102,7 @@ $m = wireMail();
 $m->mailTemplate('none'); // disable the usage of email templates for sending emails with this form
 ```
 
-#### showClearLink() - show or hide a link to clear a file input field 
+#### showClearLink() - show or hide a link to clear a file input field
 By default, this feature is enabled. If you want to prevent the display of the link under a file input field, you only have to set false as parameter.
 The link will only be displayed if a file was selected and added to a file upload field, otherwise it is not visible.
 
@@ -1110,7 +1110,7 @@ The link will only be displayed if a file was selected and added to a file uploa
 $field->showClearLink(false); // true: link will be displayed, false: link will be removed if present
 ```
 
-#### getClearLink() - get the link object described in the previous method for further manipulations 
+#### getClearLink() - get the link object described in the previous method for further manipulations
 If you want to manipulate the clear link (fe adding an additional styling CSS class), you will get instance for the link with this method.
 
 ```php
@@ -1123,7 +1123,7 @@ class comes with a lot of ready-to-use validation rules.
 Please take a look at [Valitron validationtypes](https://github.com/vlucas/valitron#built-in-validation-rules) for all
 available validation rules. There you will all validation rules with their explanation.
 
-In addition, I have added over 20 custom validation rules especially designed for the usage with ProcessWire, so there are 
+In addition, I have added over 20 custom validation rules especially designed for the usage with ProcessWire, so there are
 more than 60 validators available out of the box.
 
 In addition, some of the validation rules add HTML 5 attributes to the input tag, which will be used for browser validation, if enabled.
@@ -1133,58 +1133,62 @@ Table of all custom validation rules for better overview:
 For more detailed explanation on each validation rule click the link at the validation rule name
 
 
-| Validation rule name  | Explanation |
-| ------------- | ------------- |
-| [uniqueUsername](#uniqueusername)  | Checks if a username is used by another user or not  |
-| [matchUsername](#matchUsername)  | Checks if a username and password match (for login)  |
-| [meetsPasswordConditions](#meetsPasswordConditions)  | Checks if password meets the required conditions set in the backend  |
-| [usernameSyntax](#usernameSyntax)  | Checks if the entered username contains the allowed characters  |
-| [uniqueEmail](#uniqueEmail)  | Checks if an email address is used by another user or not  |
-| [checkPasswordOfUser](#checkPasswordOfUser)  | This validation rule is for logged-in users only. Checks if entered password is the same as stored in the DB  |
-| [matchEmail](#matchEmail)  | Checks if a email and password match (for login)  |
-| [isBooleanAndTrue](#isBooleanAndTruel)  | Check if a value is from type boolean and true (no really applicable for form values)  |
-| [isBooleanAndFalse](#isBooleanAndFalse)  | Check if a value is from type boolean and false (no really applicable for form values)  |
-| [isBooleanAndFalse](#isBooleanAndFalse)  | Check if a value is from type boolean and false (no really applicable for form values)  |
-| [exactValue](#exactValue)  | Check if a value entered is exact the same value given as second parameter  |
-| [differentValue](#differentValue)  | Check if a value entered different than the value given as second parameter  |
-| [checkTfaCode](#checkTfaCode)  | Check if a value entered is the correct Tfa-Code sent by the TfaEmail module (only for internal usage)   |
-| [differentPassword](#differentPassword)  | Checks if the password entered is different from the old password stored inside the database   |
-| [safePassword](#safePassword)  | Checks if a password entered against the blacklist of forbidden passwords   |
-| [allowedFileSize](#safePassword)  | Checks if an uploaded file is not larger than the allowed filesize   |
-| [noErrorOnUpload](#noErrorOnUpload)  | Checks if an error occurs during the upload of a file   |
-| [allowedFileExt](#allowedFileExt)  | Checks if an uploaded file is of one of the allowed extensions   |
-| [forbiddenFileExt](#forbiddenFileExt)  | Checks if an uploaded file is of one of the forbidden extensions   |
-| [phpIniFilesize](#phpIniFilesize)  | Checks if an uploaded file is not larger than the allowed filesize as declared in the php.ini file   |
-| [week](#week)  |  Checks if the entered value is in the correct format of a week. The syntax should be YYYY-Www (fe 2023-W09)    |
-| [month](#month)  |  Checks if the entered value is in the correct format of a month. The syntax should be YYYY-MM (fe 2023-09)    |
-| [checkHex](#checkHex)  |  Checks if the entered value is a valid HEX color code    |
+| Validation rule name  | Explanation                                                                                                  |
+| ------------- |--------------------------------------------------------------------------------------------------------------|
+| [uniqueUsername](#uniqueusername)  | Checks if a username is used by another user or not                                                          |
+| [matchUsername](#matchUsername)  | Checks if a username and password match (for login)                                                          |
+| [meetsPasswordConditions](#meetsPasswordConditions)  | Checks if password meets the required conditions set in the backend                                          |
+| [usernameSyntax](#usernameSyntax)  | Checks if the entered username contains the allowed characters                                               |
+| [uniqueEmail](#uniqueEmail)  | Checks if an email address is used by another user or not                                                    |
+| [checkPasswordOfUser](#checkPasswordOfUser)  | This validation rule is for logged-in users only. Checks if entered password is the same as stored in the DB |
+| [matchEmail](#matchEmail)  | Checks if a email and password match (for login)                                                             |
+| [isBooleanAndTrue](#isBooleanAndTruel)  | Check if a value is from type boolean and true (no really applicable for form values)                        |
+| [isBooleanAndFalse](#isBooleanAndFalse)  | Check if a value is from type boolean and false (no really applicable for form values)                       |
+| [isBooleanAndFalse](#isBooleanAndFalse)  | Check if a value is from type boolean and false (no really applicable for form values)                       |
+| [exactValue](#exactValue)  | Check if a value entered is exact the same value given as second parameter                                   |
+| [differentValue](#differentValue)  | Check if a value entered different than the value given as second parameter                                  |
+| [checkTfaCode](#checkTfaCode)  | Check if a value entered is the correct Tfa-Code sent by the TfaEmail module (only for internal usage)       |
+| [differentPassword](#differentPassword)  | Checks if the password entered is different from the old password stored inside the database                 |
+| [safePassword](#safePassword)  | Checks if a password entered against the blacklist of forbidden passwords                                    |
+| [allowedFileSize](#safePassword)  | Checks if an uploaded file is not larger than the allowed filesize                                           |
+| [noErrorOnUpload](#noErrorOnUpload)  | Checks if an error occurs during the upload of a file                                                        |
+| [allowedFileExt](#allowedFileExt)  | Checks if an uploaded file is of one of the allowed extensions                                               |
+| [forbiddenFileExt](#forbiddenFileExt)  | Checks if an uploaded file is of one of the forbidden extensions                                             |
+| [phpIniFilesize](#phpIniFilesize)  | Checks if an uploaded file is not larger than the allowed filesize as declared in the php.ini file           |
+| [week](#week)  | Checks if the entered value is in the correct format of a week. The syntax should be YYYY-Www (fe 2023-W09)  |
+| [month](#month)  | Checks if the entered value is in the correct format of a month. The syntax should be YYYY-MM (fe 2023-09)   |
+| [checkHex](#checkHex)  | Checks if the entered value is a valid HEX color code                                                        |
+| [dateBeforeField](#dateBeforeFieldx)  | Checks if the entered date is before a given date set in another field                                       |
+| [dateAfterField](#dateAfterField)  | Checks if the entered date is after a given date set in another field                                        |
+| [dateWithinDaysRange](#dateWithinDaysRange)  | Checks if the entered date is within a given timerange in days starting from a date set in another field     |
+| [dateOutsideOfDaysRange](#dateOutsideOfDaysRange)  | Checks if the entered date is outside a given timerange in days starting from a date set in another field    |
 
 
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
 
 ### uniqueUsername
-  Checks if a username is used by another user or not - useful for user registration form. Returns false if username is in use, otherwise false.
+Checks if a username is used by another user or not - useful for user registration form. Returns false if username is in use, otherwise false.
 
-   Parameter: validation name
+Parameter: validation name
 
 ```php
 $field->setRule('uniqueUsername');
 ```
 
 ### matchUsername
-  This is intended to be used on login forms where you login with username and password.
-  Has to be added to the password field; checks if password and username matches. Returns true if username and password match, otherwise false.
+This is intended to be used on login forms where you login with username and password.
+Has to be added to the password field; checks if password and username matches. Returns true if username and password match, otherwise false.
 
-   First parameter: validation name / Second parameter: the field name of username field
+First parameter: validation name / Second parameter: the field name of username field
 
 ```php
 $field->setRule('matchUsername', 'myemailfieldname');
 ```
 
 ### meetsPasswordConditions
-  Has to be added to the password field; checks if password meets the required conditions set in the backend - useful for registration form.
-  Returns true if entered password meets the requirements, otherwise false
+Has to be added to the password field; checks if password meets the required conditions set in the backend - useful for registration form.
+Returns true if entered password meets the requirements, otherwise false
 
 Parameter: validation name
 
@@ -1193,7 +1197,7 @@ $field->setRule('meetsPasswordConditions');
 ```
 
 ### usernameSyntax
-  Checks if the entered username only contains a-z0-9-_.@ characters - useful for registration or profile form. Returns true if username contains only allowed characters, otherwise false.
+Checks if the entered username only contains a-z0-9-_.@ characters - useful for registration or profile form. Returns true if username contains only allowed characters, otherwise false.
 
 Parameter: validation name
 
@@ -1202,8 +1206,8 @@ $field->setRule('usernameSyntax');
 ```
 
 ### uniqueEmail
-  Checks if an email address is used by another user or not - useful for registration and profile form. Has to be added
-  to an email field. Returns true if this email is not used by another user, otherwise false.
+Checks if an email address is used by another user or not - useful for registration and profile form. Has to be added
+to an email field. Returns true if this email is not used by another user, otherwise false.
 
 Parameter: validation name
 
@@ -1212,8 +1216,8 @@ $field->setRule('uniqueEmail');
 ```
 
 ### checkPasswordOfUser
-  This validation rule is for logged-in users only. Idea: If you want to change your password you have to enter the old password before.
-  And for that reason I have created this rule. So this rule is for a password field where you have to enter the current password for security reasons - useful for the profile form. Returns true if the password entered by the logged in user ist correct, otherwise false.
+This validation rule is for logged-in users only. Idea: If you want to change your password you have to enter the old password before.
+And for that reason I have created this rule. So this rule is for a password field where you have to enter the current password for security reasons - useful for the profile form. Returns true if the password entered by the logged in user ist correct, otherwise false.
 
 First parameter: validation name / Second parameter: The user object
 
@@ -1221,10 +1225,10 @@ First parameter: validation name / Second parameter: The user object
 $field->setRule('checkPasswordOfUser', $user);
 ```
 
-### matchEmail 
-  This is intended to be used on login forms where you login with email and password.
-  Has to be added to the password field; checks if password and email matches.
-  It is the same validation as matchUsername, but in this case you can use email and password for the login. Returns true if email and password match, otherwise false.
+### matchEmail
+This is intended to be used on login forms where you login with email and password.
+Has to be added to the password field; checks if password and email matches.
+It is the same validation as matchUsername, but in this case you can use email and password for the login. Returns true if email and password match, otherwise false.
 
 First parameter: validation name / Second parameter: the field name of the email field
 
@@ -1233,7 +1237,7 @@ $field->setRule('matchEmail', 'myemailfieldname');
 ```
 
 ### isBooleanAndTrue
-  You can check if a value is from type boolean and true. Returns true if value is boolean true, otherwise false.
+You can check if a value is from type boolean and true. Returns true if value is boolean true, otherwise false.
 
 Parameter: validation name
 
@@ -1242,7 +1246,7 @@ $field->setRule('isBooleanAndTrue');
 ```
 
 ### isBooleanAndFalse
-  You can check if a value is from type boolean and false. Returns true if value is boolean false, otherwise false.
+You can check if a value is from type boolean and false. Returns true if value is boolean false, otherwise false.
 
 Parameter: validation name
 
@@ -1250,8 +1254,8 @@ Parameter: validation name
 $field->setRule('isBooleanAndFalse');
 ```
 
-### exactValue 
-  You can check if a value entered inside a text field is exactly the same value as a value given. Returns true, if entered value is exactly the value of the second parameter, otherwise false.
+### exactValue
+You can check if a value entered inside a text field is exactly the same value as a value given. Returns true, if entered value is exactly the value of the second parameter, otherwise false.
 
 First parameter: validation name / Second parameter: the value that the field must have
 
@@ -1260,7 +1264,7 @@ $field->setRule('exactValue', 'mygivenValue');
 ```
 
 ### differentValue
-  You can check if a value entered inside a text field is different from a value given. Returns true, if entered value is different the value of the second parameter, otherwise false.
+You can check if a value entered inside a text field is different from a value given. Returns true, if entered value is different the value of the second parameter, otherwise false.
 
 First parameter: validation name / Second parameter: the value that the field cannot have
 
@@ -1268,14 +1272,14 @@ First parameter: validation name / Second parameter: the value that the field ca
 $field->setRule('differentValue', 'myvalue');
 ```
 
-### checkTfaCode 
-  This is a special method for the login process if you are using TfaEmail component. It checks if the code sent by the
-  TfaEmail module is correct. This validator is not intended to be for normal field validation. Returns true, if TFA code is correct, otherwise false.
+### checkTfaCode
+This is a special method for the login process if you are using TfaEmail component. It checks if the code sent by the
+TfaEmail module is correct. This validator is not intended to be for normal field validation. Returns true, if TFA code is correct, otherwise false.
 
 ### differentPassword
-  This validation checks if the password is different from the old password stored inside the database.
-  Useful if a user wants to change his password, and you have a password field for the old password and the new one.
-  So it compares the 2 fields that the value in the old password field is not the same as in the new one. Returns true if new password is different to the old one, otherwise false.
+This validation checks if the password is different from the old password stored inside the database.
+Useful if a user wants to change his password, and you have a password field for the old password and the new one.
+So it compares the 2 fields that the value in the old password field is not the same as in the new one. Returns true if new password is different to the old one, otherwise false.
 
 First parameter: validation name / Second parameter: field name of the password field
 
@@ -1284,9 +1288,9 @@ $field->setRule('differentPassword' 'mypasswordfield');
 ```
 
 ### safePassword
-  This validation checks if the password is not on the blacklist, which contains the 100 most common passwords.
-  This validator is added to password fields by default, so no need to add it manually.
-  This validator is useful, if you offer a user registration on your site. Returns true, if password is not on the password blacklist, otherwise false.
+This validation checks if the password is not on the blacklist, which contains the 100 most common passwords.
+This validator is added to password fields by default, so no need to add it manually.
+This validator is useful, if you offer a user registration on your site. Returns true, if password is not on the password blacklist, otherwise false.
 
 Parameter: validation name
 
@@ -1295,9 +1299,9 @@ $field->setRule('safePassword');
 ```
 
 ### allowedFileSize
-  This validation checks if an uploaded file is not larger than the allowed filesize. It takes the value of
-  $_FILES['size'] and compare it the max file size set as second parameter.
-  The value of the filesize must be in Bytes (fe 10 000 Bytes equals 10kB). Returns ture if the uploaded fiel is not larger than the allowed file size, otherwise false.
+This validation checks if an uploaded file is not larger than the allowed filesize. It takes the value of
+$_FILES['size'] and compare it the max file size set as second parameter.
+The value of the filesize must be in Bytes (fe 10 000 Bytes equals 10kB). Returns ture if the uploaded fiel is not larger than the allowed file size, otherwise false.
 
 First parameter: validation name / Second parameter: allowed filesize in Bytes
 
@@ -1306,8 +1310,8 @@ $field->setRule('allowedFileSize', '10000');
 ```
 
 ### noErrorOnUpload
-  This validation checks if an error occurs during the upload of a file. It takes the value of
-  $_FILES['error'] and outputs an error message if the value is not 0. Returns true if $_FILES['error'] = 0, otherwise false. 
+This validation checks if an error occurs during the upload of a file. It takes the value of
+$_FILES['error'] and outputs an error message if the value is not 0. Returns true if $_FILES['error'] = 0, otherwise false.
 
 Parameter: validation name
 
@@ -1320,9 +1324,9 @@ Please note: This validator will be added to each input type file automatically.
 
 
 ### allowedFileExt
-  This validation checks if an uploaded file is of one of the allowed extensions. It takes the value of
-  $_FILES['name'] and extracts the extension. If the extension is not in the array of allowed extensions
-  an error message will be displayed. Returns true if file is type of the allowed file types, otherwise false.
+This validation checks if an uploaded file is of one of the allowed extensions. It takes the value of
+$_FILES['name'] and extracts the extension. If the extension is not in the array of allowed extensions
+an error message will be displayed. Returns true if file is type of the allowed file types, otherwise false.
 
 First parameter: validation name / Second parameter: array of allowed file extensions
 
@@ -1331,9 +1335,9 @@ $field->setRule('allowedFileExt', ['jpg','pdf','doc']);
 ```
 
 ### forbiddenFileExt
-  This validation checks if an uploaded file is of one of the forbidden extensions. It takes the value of
-  $_FILES['name'] and extracts the extension. If the extension is in the array of forbidden extensions
-  an error message will be displayed. Returns true if file is not type of the forbidden file types, otherwise false.
+This validation checks if an uploaded file is of one of the forbidden extensions. It takes the value of
+$_FILES['name'] and extracts the extension. If the extension is in the array of forbidden extensions
+an error message will be displayed. Returns true if file is not type of the forbidden file types, otherwise false.
 
 First parameter: validation name / Second parameter: array of forbidden file extensions
 
@@ -1342,8 +1346,8 @@ $field->setRule('forbiddenFileExt', ['exe','pps']);
 ```
 
 ### phpIniFilesize
-  This validation checks if an uploaded file is not larger than the allowed filesize as declared in the php.ini file.
-  It takes the value of $_FILES['size'] and compare it the max file size of the php.ini file. Returns true if file is smaller than the allowed file size in php.ini file, otherwise false.
+This validation checks if an uploaded file is not larger than the allowed filesize as declared in the php.ini file.
+It takes the value of $_FILES['size'] and compare it the max file size of the php.ini file. Returns true if file is smaller than the allowed file size in php.ini file, otherwise false.
 
 Parameter: validation name
 
@@ -1355,8 +1359,8 @@ Please note: This validator will be added to each input type file automatically.
 
 
 ### week
-  This validation checks if the entered value is in the correct format of a week.
- The syntax should be YYYY-Www. The first 4 digits are the year followed by a hyphen an a W and the week of the number. The 12th week in 2023 should be written as followed: 2023-W12. Returns true if the week is written in the correct syntax, otherwise false.
+This validation checks if the entered value is in the correct format of a week.
+The syntax should be YYYY-Www. The first 4 digits are the year followed by a hyphen an a W and the week of the number. The 12th week in 2023 should be written as followed: 2023-W12. Returns true if the week is written in the correct syntax, otherwise false.
 
 Parameter: validation name
 
@@ -1365,8 +1369,8 @@ $field->setRule('week');
 ```
 
 ### month
-  This validation checks if the entered value is in the correct format of a month.
- The syntax should be YYYY-MM. The first 4 digits are the year followed by a hyphen and the week of the number. The 12th month in 2023 should be written as followed: 2023-12. Returns true if the month is written in the correct syntax, otherwise false.
+This validation checks if the entered value is in the correct format of a month.
+The syntax should be YYYY-MM. The first 4 digits are the year followed by a hyphen and the week of the number. The 12th month in 2023 should be written as followed: 2023-12. Returns true if the month is written in the correct syntax, otherwise false.
 
 Parameter: validation name
 
@@ -1375,13 +1379,66 @@ $field->setRule('month');
 ```
 
 ### checkHex
-  This validation checks if the entered value is a valid HEX color code.
- The syntax should be #XXX or #XXXXXX. Returns true if the HEX code is in the correct syntax, otherwise false.
+This validation checks if the entered value is a valid HEX color code.
+The syntax should be #XXX or #XXXXXX. Returns true if the HEX code is in the correct syntax, otherwise false.
 
 Parameter: validation name
 
 ```php
 $field->setRule('checkHex');
+```
+
+### dateBeforeField
+This is the same rule as dateBefore with the only difference that the value of the date will be taken from another form
+field.
+
+Parameter: name of the field that contains the date
+
+```php
+$field->setRule('dateBeforeField', 'date');
+```
+
+Explanation: The field that contains the date has the name attribute "date" in this case and is a another field inside the form.
+Fe a user has entered the date 2023-05-15, this validator checks if the value entered in THIS field is before 2023-05-15.
+If it is so, the validator returns true, otherwise false.
+So you can check if a date entered in THIS field is before a date entered inside ANOTHER field of the form.
+
+### dateAfterField
+This is the opposition of the validator explained before.
+
+Parameter: name of the field that contains the date
+
+```php
+$field->setRule('dateAfterField', 'date');
+```
+
+### dateWithinDaysRange
+This is a very special validation rule, which will check if a date is within a given time range in days after another date
+as set inside another field.
+In other words: you have another date field inside your form, where the user enters a date (fe 2023-05-15).
+Now you can enter a time range in days (fe 7 days). This timerange starts from the date entered inside the other field +
+7 days.
+In this example the time range starts from 2023-05-15 and ends at 2023-05-22 (7 days).
+This validator checks, if a date entere in THIS field is within the time range of the 7 days. If it is so, it will return
+true, otherwise false.
+
+First parameter: name of the field that contains the date / time range in days
+
+A positive days value (7) means a time range in the future: from 2023-05-15 to 2023-05-22 (7 days)
+A negative days value (-7) means a time range in the past:  from 2023-05-08 to 2023-05-15 (-7 days)
+
+```php
+$field->setRule('dateWithinDaysRange', 'date' 7);
+```
+
+### dateOutsideOfDaysRange
+This is pretty the same validation rule as the one before, but it does not check if the date is WITHIN the time range, it 
+will check if the date is OUTSIDE (before or after) the given time range.
+
+First parameter: name of the field that contains the date / time range in days
+
+```php
+$field->setRule('dateOutsideOfDaysRange', 'date' 7);
 ```
 
 Maybe other custom validation rules will be added in the future. If you have an idea for an useful validator, please let me know.
@@ -1567,7 +1624,7 @@ By default, the files will be removed from the server after the mail have been s
 
 This method offers you 2 additional possibilities by adding a second parameter to the method:
 
-* do not delete the file after sending and 
+* do not delete the file after sending and
 * move the file to another location after sending
 
 To keep the file after sending, you only have to add boolean true as the second parameter:
@@ -1585,7 +1642,7 @@ $mail->sendAttachements($form, 'path/to/the/new/location');
 To be honest, these are rare case scenarios, but if you need it, it will be possible. :-)
 
 If you want to see a working real world example of sending attachments, please take a look at the example page at
-[site/modules/FrontendForms/Examples/contactform.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactform.php) 
+[site/modules/FrontendForms/Examples/contactform.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactform.php)
 inside the Examples folder.
 
 
@@ -1778,7 +1835,7 @@ This makes the email template code much more cleaner.
 
 #### New method title()
 
-The title method adds a title, also known as pre-header attribute to the HTML template which will be displayed under the subject. 
+The title method adds a title, also known as pre-header attribute to the HTML template which will be displayed under the subject.
 This will be added automatically to the email, independent if you are using a HTML email template or not - no need to add it manually.
 
 This value will be placed inside an div tag and will be invisible to the user.
