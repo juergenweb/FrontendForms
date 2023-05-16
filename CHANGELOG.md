@@ -325,7 +325,7 @@ To read more about these 2 new methods go to the readme file and search for show
 4 new validation rules for validation of dates inspired by Andy from the PW forum added:
 - dateBeforeField validator: Checks if a date is before a date entered in another field inside the form
 - dateAfterField validator: Checks if a date is after a date entered in another field inside the form
-- dateWithinDaysRange validator: Checks if a date is within a given timerange in days depending on a date entered inside another field inside the form. Fe date must be in a timerange of 7 days in the future starting from a date entered inside another form field. Example of time range: start date: 2023-05-15, timerange: 2023-05-15 - 2023-05-22. Value must be inside this timerange.
-- dateOutsideOfDaysRange validator: Checks if a date is outside a given timerange in days depending on a date entered inside another field inside the form. Fe date must be in a timerange of 7 days in the future starting from a date entered inside another form field. Example of time range: start date: 2023-05-15, forbidden timerange: 2023-05-15 - 2023-05-22. Value must be outside this timerange -> after 2023-05-22.
+- dateWithinDaysRange validator: Checks if a date is outside a given time range in days depending on a date entered inside another field inside the form.
+Fe date must after the end of a time range of 7 days starting from a date entered inside another form field. Example of time range: start date: 2023-05-15, forbidden timerange: 2023-05-15 - 2023-05-22 (7 days in the future). Value must be outside this time range -> after 2023-05-22. Supports a positive (future) and negative (past) days value.
 
 Usage examples of this new validators can be found inside the examples folder in the field-validation.php. Please study the examples there on how to use them.
