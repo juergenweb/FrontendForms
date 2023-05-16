@@ -1158,10 +1158,10 @@ For more detailed explanation on each validation rule click the link at the vali
 | [week](#week)  | Checks if the entered value is in the correct format of a week. The syntax should be YYYY-Www (fe 2023-W09)  |
 | [month](#month)  | Checks if the entered value is in the correct format of a month. The syntax should be YYYY-MM (fe 2023-09)   |
 | [checkHex](#checkHex)  | Checks if the entered value is a valid HEX color code                                                        |
-| [dateBeforeField](#dateBeforeFieldx)  | Checks if the entered date is before a given date set in another field                                       |
-| [dateAfterField](#dateAfterField)  | Checks if the entered date is after a given date set in another field                                        |
-| [dateWithinDaysRange](#dateWithinDaysRange)  | Checks if the entered date is within a given timerange in days starting from a date set in another field     |
-| [dateOutsideOfDaysRange](#dateOutsideOfDaysRange)  | Checks if the entered date is outside a given timerange in days starting from a date set in another field    |
+| [dateBeforeField](##datebeforefield)  | Checks if the entered date is before a given date set in another field                                       |
+| [dateAfterField](#dateafterfield)  | Checks if the entered date is after a given date set in another field                                        |
+| [dateWithinDaysRange](#datewithindaysrange)  | Checks if the entered date is within a given timerange in days starting from a date set in another field     |
+| [dateOutsideOfDaysRange](#dateoutsideofdaysrange)  | Checks if the entered date is outside a given timerange in days starting from a date set in another field    |
 
 
 
