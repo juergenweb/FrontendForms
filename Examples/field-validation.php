@@ -207,12 +207,46 @@ $week->setDescription('Validator to check if the value is a valid week string');
 $week->setNotes('Valid value: 2023-W27, invalid value: 2023-12');
 $form->add($week);
 
-$date = new \FrontendForms\InputText('date');
+$date = new \FrontendForms\InputDate('date');
 $date->setLabel('Validator date');
 $date->setRule('date', ['word1', 'word2', 'word3']);
 $date->setDescription('Validator to check if the value is a valid date');
 $date->setNotes('Valid value: 01.01.2023, invalid value: 01.01.20235');
 $form->add($date);
+
+$dateafter = new \FrontendForms\InputDate('dateafterfield');
+$dateafter->setLabel('Validator dateAfterField');
+$dateafter->setRule('dateAfterField', 'date');
+$dateafter->setDescription('Validator to check if the value is a date after the date entered in the field with the id/name "date"');
+$dateafter->setNotes('Enter a date, that is after the date entered in the previous field.');
+$form->add($dateafter);
+
+$datebefore = new \FrontendForms\InputDate('datebeforefield');
+$datebefore->setLabel('Validator dateBeforeField');
+$datebefore->setRule('dateBeforeField', 'date');
+$datebefore->setDescription('Validator to check if the value is a date before the date entered in the field with the id/name "date"');
+$datebefore->setNotes('Enter a date, that is before the date as entered in the pre-previous field.');
+$form->add($datebefore);
+
+// you can enter a positive or negative number of days (in this case +8, but you can also enter -8)
+// positive means within 8 days in the future starting from the reference date
+// negative means within 8 days in the past starting from the reference date
+$dateWithinDaysRange = new \FrontendForms\InputDate('datewithindaysrange');
+$dateWithinDaysRange->setLabel('Validator dateWithinDaysRange');
+$dateWithinDaysRange->setRule('dateWithinDaysRange', 'date', 8);
+$dateWithinDaysRange->setDescription('Validator to check if the value is a date within the time range of 8 days in the future.');
+$dateWithinDaysRange->setNotes('Enter a date, that is within the time range between the date entered inside the field with the id "date" and 8 days in the future.');
+$form->add($dateWithinDaysRange);
+
+// you can enter a positive or negative number of days (in this case +8, but you can also enter -8)
+// positive means date must be at least 8 days after in the future starting from the reference date
+// negative means date must be at least 8 days before in the past starting from the reference date
+$dateOutsideDaysRange = new \FrontendForms\InputDate('dateoutsideofdaysrange');
+$dateOutsideDaysRange->setLabel('Validator dateOutsideOfDaysRange');
+$dateOutsideDaysRange->setRule('dateOutsideOfDaysRange', 'date', 8);
+$dateOutsideDaysRange->setDescription('Validator to check if the value is a date outside the time range of 8 days in the future.');
+$dateOutsideDaysRange->setNotes('Enter a date, that is after the time range between the date entered inside the field with the id "date" and 8 days in the future.');
+$form->add($dateOutsideDaysRange);
 
 $dateformat = new \FrontendForms\InputText('dateformat');
 $dateformat->setLabel('Validator dateformat');
