@@ -1160,8 +1160,8 @@ For more detailed explanation on each validation rule click the link at the vali
 | [checkHex](#checkHex)  | Checks if the entered value is a valid HEX color code                                                        |
 | [dateBeforeField](#datebeforefield)  | Checks if the entered date is before a given date set in another field                                       |
 | [dateAfterField](#dateafterfield)  | Checks if the entered date is after a given date set in another field                                        |
-| [dateWithinDaysRange](#datewithindaysrange)  | Checks if the entered date is within a given timerange in days starting from a date set in another field     |
-| [dateOutsideOfDaysRange](#dateoutsideofdaysrange)  | Checks if the entered date is outside a given timerange in days starting from a date set in another field    |
+| [dateWithinDaysRange](#datewithindaysrange)  | Checks if the entered date is within a given time range in days starting from a date set in another field     |
+| [dateOutsideOfDaysRange](#dateoutsideofdaysrange)  | Checks if the entered date is outside a given time range in days starting from a date set in another field    |
 
 
 
@@ -1416,7 +1416,7 @@ $field->setRule('dateAfterField', 'date');
 This is a very special validation rule, which will check if a date is within a given time range in days after another date
 as set inside another field.
 In other words: you have another date field inside your form, where the user enters a date (fe 2023-05-15).
-Now you can enter a time range in days (fe 7 days). This timerange starts from the date entered inside the other field +
+Now you can enter a time range in days (fe 7 days). This time range starts from the date entered inside the other field +
 7 days.
 In this example the time range starts from 2023-05-15 and ends at 2023-05-22 (7 days).
 This validator checks, if a date entere in THIS field is within the time range of the 7 days. If it is so, it will return
