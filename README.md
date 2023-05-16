@@ -1392,7 +1392,7 @@ $field->setRule('checkHex');
 This is the same rule as dateBefore with the only difference that the value of the date will be taken from another form
 field.
 
-Parameter: name of the field that contains the date
+Parameter: name of the reference field that contains the date
 
 ```php
 $field->setRule('dateBeforeField', 'date');
@@ -1406,7 +1406,7 @@ So you can check if a date entered in THIS field is before a date entered inside
 ### dateAfterField
 This is the opposition of the validator explained before.
 
-Parameter: name of the field that contains the date
+Parameter: name of the reference field that contains the date
 
 ```php
 $field->setRule('dateAfterField', 'date');
@@ -1422,7 +1422,7 @@ In this example the time range starts from 2023-05-15 and ends at 2023-05-22 (7 
 This validator checks, if a date entere in THIS field is within the time range of the 7 days. If it is so, it will return
 true, otherwise false.
 
-First parameter: name of the field that contains the date / time range in days
+First parameter: name of the reference field that contains the date / time range in days
 
 A positive days value (7) means a time range in the future: from 2023-05-15 to 2023-05-22 (7 days)
 A negative days value (-7) means a time range in the past:  from 2023-05-08 to 2023-05-15 (-7 days)
@@ -1435,7 +1435,7 @@ $field->setRule('dateWithinDaysRange', 'date' 7);
 This is pretty the same validation rule as the one before, but it does not check if the date is WITHIN the time range, it 
 will check if the date is OUTSIDE (before or after) the given time range.
 
-First parameter: name of the field that contains the date / time range in days
+First parameter: name of the reference field that contains the date / time range in days
 
 ```php
 $field->setRule('dateOutsideOfDaysRange', 'date' 7);
