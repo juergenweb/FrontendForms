@@ -36,6 +36,7 @@ abstract class Inputfields extends Element
     protected string $markupType = ''; // the selected markup type (fe UiKit, none, Bootstrap,... whatever)
     protected array $defaultValue = []; // array of all default values
     protected array $notes_array = []; // property that holds multiple notes as an array - needed for some fields internally
+    protected string $form_id_submitted = ''; // get the id of the form after form submission - needed for some validation rules
 
     /**
      * Every input field must have a name, so the name is required as parameter in the constructor
@@ -60,6 +61,28 @@ abstract class Inputfields extends Element
         if (!in_array($this->className(), Tag::MULTIVALCLASSES)) {
             $this->setSanitizer('text');
         }// set sanitizer text to all input fields by default
+        // get form id after submission
+        $this->form_id_submitted = $this->getFormIDFromRequest($_REQUEST);
+
+    }
+
+    /**
+     * Get the id of the form
+     * Works only after Request (Get, Post)
+     * Will be needed for some validation rules
+     * @param $arr
+     * @return string
+     */
+    private function getFormIDFromRequest(array $arr):string
+    {
+        $result = '';
+        foreach ($arr as $key => $val) {
+            if (str_ends_with($key, '-form_id')) {
+                $result = $val;
+                break;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -544,7 +567,7 @@ abstract class Inputfields extends Element
      * @param string $sanitizer - the name of the sanitizer
      * @throws Exception
      */
-    public function setSanitizer(string $sanitizer): void
+    public function setSanitizer(string $sanitizer):void
     {
         $sanitizer = trim(strtolower($sanitizer));
         //if sanitizer method exist add the name of the sanitizer to the sanitizer property
@@ -1141,7 +1164,7 @@ abstract class Inputfields extends Element
     {
         $accept_extensions = [];
         // add dot in front of file extensions
-        if($value){
+        if ($value) {
             foreach ($value[0] as $ext) {
                 $accept_extensions[] = '.' . $ext;
             }
@@ -1280,5 +1303,144 @@ abstract class Inputfields extends Element
     {
         $this->removeAttribute('pattern');
     }
+
+    /**
+     * Internal method to set validator attributes to beforeDateField and afterDateField validators
+     * Both validators needs a similar setting of attributes
+     * @param bool $before
+     * @return void
+     */
+    private function beforeAfter(array $value, bool $before):void
+    {
+        $this->setAttribute('data-ff_field', $value[0]); // get name of the reference field
+        $attribute = ($before) ? 'max' : 'min';
+        $this->setAttribute('data-ff_attribute', $attribute);
+        $this->setAttribute('data-ff_id', $this->getID()); // get the pure ID of this field
+        // set the value of the reference field after form submission
+        if ($this->form_id_submitted) {
+            $date = $_REQUEST[$this->form_id_submitted . '-' . $value[0]];
+            if ($before) {
+                // subtract 1 day
+                $new_date = date('Y-m-d', strtotime($date . ' - 1 day'));
+            } else {
+                // add 1 day
+                $new_date = date('Y-m-d', strtotime($date . ' + 1 day'));
+            }
+            $this->setAttribute($attribute, $new_date);
+        }
+    }
+
+    /**
+     * Add HTML5 attribute max to the input tag
+     * Validator rule: dateBeforeField
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5dateBeforeField(array $value):void
+    {
+        $this->setAttribute('data-ff_validator', 'dateBeforeField');
+        $this->beforeAfter($value, true);
+    }
+
+    /**
+     * Remove attribute max from the input tag
+     * Validator rule: dateBeforeField
+     * @return void
+     */
+    protected function removeHTML5dateBeforeField():void
+    {
+        $this->removeAttribute('max');
+    }
+
+    /**
+     * Add HTML5 attribute max to the input tag
+     * Validator rule: dateAfterField
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5dateAfterField(array $value):void
+    {
+        $this->setAttribute('data-ff_validator', 'dateAfterField');
+        $this->beforeAfter($value, false);
+    }
+
+    /**
+     * Remove attribute min from the input tag
+     * Validator rule: dateAfterField
+     * @return void
+     */
+    protected function removeHTML5dateAfterField():void
+    {
+        $this->removeAttribute('min');
+    }
+
+
+    private function withinOutside(array $value, string $type):void
+    {
+        $this->setAttribute('data-ff_field', $value[0]); // get name of the reference field
+        $this->setAttribute('data-ff_days', (string)$value[1]);
+        $this->setAttribute('data-ff_attribute', ($value[1] > 0) ? 'min' : 'max');
+        $this->setAttribute('data-ff_validator', $type);
+        $this->setAttribute('data-ff_id', $this->getID()); // get the pure ID of this field
+        // set the value of the reference field after form submission
+        if ($this->form_id_submitted) {
+            if ($type == 'withinOutside') {
+                $this->setAttribute('min', $_REQUEST[$this->form_id_submitted . '-' . $value[0]]);
+                // calculate the new date
+                $this->setAttribute('max', $_REQUEST[$this->form_id_submitted . '-' . $value[0]]);
+            } else {
+                if ($value[1] > 0) {
+                    $this->setAttribute('min', $_REQUEST[$this->form_id_submitted . '-' . $value[0]]);
+                } else {
+                    $this->setAttribute('max', $_REQUEST[$this->form_id_submitted . '-' . $value[0]]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Add HTML5 attribute min and max to the input tag
+     * Validator rule: dateWithinDaysRange (min - max)
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5dateWithinDaysRange(array $value):void
+    {
+        $this->withinOutside($value, 'dateWithinDaysRange');
+    }
+
+    /**
+     * Remove attribute min and max from the input tag
+     * Validator rule: dateWithinDaysRange
+     * @return void
+     */
+    protected function removeHTML5dateWithinDaysRange():void
+    {
+        $this->removeAttribute('min');
+        $this->removeAttribute('max');
+    }
+
+    /**
+     * Add HTML5 attribute min and max to the input tag
+     * Validator rule: dateOutsideOfDaysRange (min - max)
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5dateOutsideOfDaysRange(array $value):void
+    {
+        $this->withinOutside($value, 'dateOutsideOfDaysRange');
+    }
+
+    /**
+     * Remove attribute min and max from the input tag
+     * Validator rule: dateOutsideOfDaysRange
+     * @return void
+     */
+    protected function removedateOutsideOfDaysRange():void
+    {
+        $this->removeAttribute('min');
+        $this->removeAttribute('max');
+    }
+
 
 }
