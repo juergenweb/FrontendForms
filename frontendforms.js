@@ -9,10 +9,8 @@ Informs the user about how long he has to wait until he can submit the form once
 Runs only if minTime was set and the form was submitted to fast
 */
 
-document.onreadystatechange = onReady;
 
-function onReady() {
-    if (document.readyState === "complete") {
+    window.onload = function () {
         let el = document.getElementById("timecounter");
         if (el) {
             let timeleft = parseInt(document.getElementById("minTime").getAttribute("data-time"));
@@ -33,7 +31,7 @@ function onReady() {
             }, 1000);
         }
     }
-}
+
 
 /*
 Show or hide the password in the password field by checking/unchecking the show/hide checkbox below the input field
