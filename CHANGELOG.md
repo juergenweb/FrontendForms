@@ -336,6 +336,8 @@ Usage examples of this new validators can be found inside the examples folder in
 - Replacing check if page has been loaded in Javascript: document.readyState === "complete" was replaced by window.onload = function () because it does not work anymore. This check is necessary for showing and counting the seconds to the user if a form was submitted too fast.
 - New Javascript functions added for the new validators (dateBeforeField, dateAfterField, dateWithinDaysRange, dateOutsideOfDaysRange) which were added in version 2.1.37. The new Javascript functions add min and/or max HTML5 attributes on the fly to the input field depending on the date value inside another field. It works by using eventlisteners and data attributes. 
 
+The min and max attribute on date fields with the date picker prevent users from selecting dates which are not allowed.
+
 Please note: This Javascript enhancement is primarly designed for the usage with date and datetime input fields. These fields use the ISO format for dates (YYYY-mm-dd), so please use these input types for dates.
 If you are using a text field instead, you have to take care that the user enters the date in the ISO format, otherwise the Javascript functions would not work. 
 So using date and datetime fields for entering dates would be the best way to go.
