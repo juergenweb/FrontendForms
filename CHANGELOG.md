@@ -331,4 +331,4 @@ Fe date must after the end of a time range of 7 days starting from a date entere
 Usage examples of this new validators can be found inside the examples folder in the field-validation.php. Please study the examples there on how to use them.
 
 ## 2023-05-20
-- Replacing check if page loaded in Javascript: document.readyState === "complete" was replaced by window.onload = function () because it does not work anymore. This check is necessary for showing and counting the seconds to the user if a form was submitted too fast.
+- Replacing check if page has been loaded in Javascript: document.readyState === "complete" was replaced by window.onload = function () because it does not work anymore. This check is necessary for showing and counting the seconds to the user if a form was submitted too fast.
