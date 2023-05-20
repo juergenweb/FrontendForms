@@ -329,3 +329,6 @@ To read more about these 2 new methods go to the readme file and search for show
 Fe date must after the end of a time range of 7 days starting from a date entered inside another form field. Example of time range: start date: 2023-05-15, forbidden timerange: 2023-05-15 - 2023-05-22 (7 days in the future). Value must be outside this time range -> after 2023-05-22. Supports a positive (future) and negative (past) days value.
 
 Usage examples of this new validators can be found inside the examples folder in the field-validation.php. Please study the examples there on how to use them.
+
+## 2023-05-20
+- Replacing check if page loaded in Javascript: document.readyState === "complete" was replaced by window.onload = function () because it does not work anymore. This check is necessary for showing and counting the seconds to the user if a form was submitted too fast.
