@@ -325,10 +325,17 @@ To read more about these 2 new methods go to the readme file and search for show
 4 new validation rules for validation of dates inspired by Andy from the PW forum added:
 - dateBeforeField validator: Checks if a date is before a date entered in another field inside the form
 - dateAfterField validator: Checks if a date is after a date entered in another field inside the form
-- dateWithinDaysRange validator: Checks if a date is outside a given time range in days depending on a date entered inside another field inside the form.
-Fe date must after the end of a time range of 7 days starting from a date entered inside another form field. Example of time range: start date: 2023-05-15, forbidden timerange: 2023-05-15 - 2023-05-22 (7 days in the future). Value must be outside this time range -> after 2023-05-22. Supports a positive (future) and negative (past) days value.
+- dateWithinDaysRange validator: Checks if a date is within a given time range in days depending on a date entered inside another field inside the form.
+Fe date must be within a time range of 7 days starting from a date entered inside another form field. Example of time range: start date: 2023-05-15, timerange: 2023-05-15 - 2023-05-22 (7 days in the future). Value must be between those 2 dates -> between 2023-05-15 and 2023-05-22. Supports a positive (future) and negative (past) days value.
+- dateOutsideOfDaysRange validator: Checks if a date is outside a given time range in days depending on a date entered inside another field inside the form.
+Fe date must be after the end of a time range of 7 days starting from a date entered inside another form field. Example of time range: start date: 2023-05-15, forbidden timerange: 2023-05-15 - 2023-05-22 (7 days in the future). Value must be outside this time range -> after 2023-05-22. Supports a positive (future) and negative (past) days value.
 
 Usage examples of this new validators can be found inside the examples folder in the field-validation.php. Please study the examples there on how to use them.
 
-## 2023-05-20
+## [2.1.38] 2023-05-20
 - Replacing check if page has been loaded in Javascript: document.readyState === "complete" was replaced by window.onload = function () because it does not work anymore. This check is necessary for showing and counting the seconds to the user if a form was submitted too fast.
+- New Javascript functions added for the new validators (dateBeforeField, dateAfterField, dateWithinDaysRange, dateOutsideOfDaysRange) which were added in version 2.1.37. This Javascript add min and/or max HTML5 attributes on the fly to the input field depending on the date value inside another field. It uses eventlisteners and data attributes. 
+
+Please note: This Javascript enhancement is primarly designed for the usage with date and datetime input fields. These fields use the ISO format for dates (YYYY-mm-dd), so please use these input types for dates.
+If you are using a text field instead, you have to take care that the user enters the date in the ISO format, otherwise the Javascript functions would not work. 
+So using date and datetime fields for entering dates would be the best way to go.
