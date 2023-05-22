@@ -1093,7 +1093,7 @@ abstract class Inputfields extends Element
             }
 
             // Concatenate all look ahead to working regex string and return it
-            return implode('', $regex_parameters) . '.{' . $length . ',}$';
+            return implode('', $regex_parameters) . '.{' . $length . ', 256}$';
         }
         return null;
     }
