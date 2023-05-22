@@ -116,7 +116,7 @@ class InputPassword extends InputText
     {
         $passwordModule = $this->wire('modules')->get('InputfieldPassword');
         $requirements = array_unique(array_merge($passwordModule->requirements, (array)$this->passwordField->requirements));
-        bd($requirements);
+
         if (in_array('none', $requirements)) {
             return null;
         }
