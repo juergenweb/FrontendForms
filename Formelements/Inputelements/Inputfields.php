@@ -1047,6 +1047,80 @@ abstract class Inputfields extends Element
     }
 
     /**
+     * Method to generate a regex for the password validation depending on the settings of the password field
+     * @return string|null - returns the regex for usage in HTML5 validation attribute or null if requirements are set
+     * to "none" in the backend
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    public function createPasswordRegex():string|null
+    {
+        // get the password field module
+        $passwordModule = $this->wire('modules')->get('InputfieldPassword'); // get the password field module
+        // get the password field by the name of the field inside the user template, usually "pass"
+        $passwordField = $this->wire('fields')->get('pass');
+        // password conditions can be overwritten on per field base, so check before if they are overwritten. Otherwise, take the default from the module
+        if (!$passwordField->requirements) {
+            // if no requirements are stored in the database, take the default data from the inputfield default configuration
+            $requirements = $passwordModule->requirements;
+        } else {
+            $requirements = $passwordField->requirements;
+        }
+        if (!in_array('none', $requirements)) {
+
+            // create array of positive look ahead for all options of the password as defined in the backend
+            $regex_requirements = [
+                'letter' => '(?=.*[A-Za-z])', // at least 1 letter (upper and lowercase)
+                'lower' => '(?=.*[a-z])', // at least 1 lower case letter
+                'upper' => '(?=.*[A-Z])', // at least 1 upper case letter
+                'digit' => '(?=.*\d)', // at least 1 number
+                'other' => '(?=.*\W)' // at least 1 non-word character
+            ];
+
+            $regex_parameters = [];
+            foreach ($regex_requirements as $key => $look_ahead) {
+                if (in_array($key, $requirements)) {
+                    $regex_parameters[$key] = $look_ahead;
+                }
+            }
+
+            // get the default min length value as set in the input field if present
+            if ($passwordField->minlength) {
+                $length = (string)$passwordField->minlength;
+            } else {
+                // get the default value from the module
+                $length = (string)$passwordModule->minlength;
+            }
+
+            // Concatenate all look ahead to working regex string and return it
+            return implode('', $regex_parameters) . '.{' . $length . ',}$';
+        }
+        return null;
+    }
+
+    /**
+     * Method to add the pattern attribute to the input tag for password syntax
+     * @return void
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function addHTML5meetsPasswordConditions():void
+    {
+        if (!is_null($this->createPasswordRegex())) {
+            $this->setAttribute('pattern', $this->createPasswordRegex());
+        }
+    }
+
+    /**
+     * Remove the password syntax pattern, if validator for the password requirements is no longer present
+     * @return void
+     */
+    protected function removeHTML5meetsPasswordConditions():void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
      * Add HTML5 attribute pattern for a date in the given format to the input tag
      * Validator rule: dateformat
      * @param array $value
@@ -1307,6 +1381,7 @@ abstract class Inputfields extends Element
     /**
      * Internal method to set validator attributes to beforeDateField and afterDateField validators
      * Both validators needs a similar setting of attributes
+     * @param array $value
      * @param bool $before
      * @return void
      */
@@ -1441,6 +1516,5 @@ abstract class Inputfields extends Element
         $this->removeAttribute('min');
         $this->removeAttribute('max');
     }
-
-
+    
 }
