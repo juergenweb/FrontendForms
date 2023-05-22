@@ -215,6 +215,7 @@ abstract class Inputfields extends Element
 
         // add HTML5 validation attribute if present
         $method_name = 'addHTML5' . $validator;
+
         if (method_exists($this, $method_name)) {
             $this->$method_name($variables);
         }
@@ -703,7 +704,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5lengthMin(array $value):void
     {
-        $this->setAttribute('minlength', $value[0]);
+        $this->setAttribute('minlength', (string)$value[0]);
     }
 
     /**
