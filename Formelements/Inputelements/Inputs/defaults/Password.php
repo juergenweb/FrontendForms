@@ -29,6 +29,9 @@ class Password extends InputPassword
         $this->setLabel($this->_('Password')); // set default label
         $this->setRule('required');
         $this->setRule('safePassword');
+        $this->setRule('lengthMin', $this->minLength);
+        $this->setRule('lengthMax', '128');
+        bd($this->getAttributes());
     }
 
     /**
@@ -38,6 +41,7 @@ class Password extends InputPassword
      */
     public function ___renderPassword(): string
     {
+
         return parent::___renderInputPassword();
     }
 
