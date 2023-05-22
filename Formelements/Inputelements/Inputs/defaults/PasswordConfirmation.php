@@ -34,6 +34,8 @@ class PasswordConfirmation extends InputPassword
         $this->setLabel($this->_('Password Confirmation')); // set default label
         $this->setRule('required'); // a confirmation field is required by default
         $this->setRule('equals', $passwordfieldName);
+        $this->setRule('lengthMin', $this->minLength);
+        $this->setRule('lengthMax', '128');
     }
 
     /**
