@@ -115,7 +115,8 @@ class InputPassword extends InputText
     protected function getPasswordConditions(): ?string
     {
         $passwordModule = $this->wire('modules')->get('InputfieldPassword');
-        $requirements = array_merge($passwordModule->requirements, (array)$this->passwordField->requirements);
+        $requirements = array_unique(array_merge($passwordModule->requirements, (array)$this->passwordField->requirements));
+        bd($requirements);
         if (in_array('none', $requirements)) {
             return null;
         }
