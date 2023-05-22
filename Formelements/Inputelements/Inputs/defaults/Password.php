@@ -31,7 +31,6 @@ class Password extends InputPassword
         $this->setRule('safePassword');
         $this->setRule('lengthMin', $this->minLength);
         $this->setRule('lengthMax', '128');
-        bd($this->getAttributes());
     }
 
     /**
