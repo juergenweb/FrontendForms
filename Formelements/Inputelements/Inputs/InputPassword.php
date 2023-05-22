@@ -19,8 +19,10 @@ use ProcessWire\WirePermissionException;
 class InputPassword extends InputText
 {
     protected $passwordField; // the password field object
+    protected $passwordModule; // the password fieldtype module
     protected string $passwordFieldName = 'pass';
     protected bool $showPasswordRequirements = false;
+    protected int|string $minLength = '6'; // the min length of the password as set inside the input field configuration
     protected InputCheckbox $showPasswordToggle; // The password toggle checkbox object
 
     /**
@@ -34,9 +36,29 @@ class InputPassword extends InputText
         parent::__construct($id);
         $this->setAttribute('type', 'password');
         $this->passwordField = $this->wire('fields')->get($this->passwordFieldName);
+        $this->passwordModule = $this->wire('modules')->get('InputfieldPassword');
+        $this->minLength = $this->getMinLength();
         // add meetsPasswordConditions Validator by default
         $this->setRule('meetsPasswordConditions');
 
+    }
+
+    /**
+     * Get the minimum password length from the password field configuration in the backend
+     * @return string
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function getMinLength(): string
+    {
+        // get the default min length value as set in the input field if present
+        if ($this->passwordField->minlength) {
+            $length = $this->passwordField->minlength;
+        } else {
+            // get the default value from the module
+            $length = $this->passwordModule->minlength;
+        }
+        return (string)$length;
     }
 
     /**
@@ -93,14 +115,12 @@ class InputPassword extends InputText
      */
     public function renderPasswordRequirements(): ?string
     {
-        // check if minlength is stored inside the db otherwise take it from default data
-        $passLength = $this->passwordField->minlength ?? $this->wire('modules')->get('InputfieldPassword')->minlength;
         if ($this->getPasswordConditions()) {
             return sprintf($this->_('The password must be at least %s characters and must contain characters of the following categories: %s.'),
-                $passLength, $this->getPasswordConditions());
+                (string)$this->minlength, $this->getPasswordConditions());
         } else {
-            if ($passLength) {
-                return sprintf($this->_('The password must be at least %s characters.'), $passLength);
+            if ($this->minlength) {
+                return sprintf($this->_('The password must be at least %s characters.'), (string)$this->minlength);
             }
             return null;
         }
@@ -116,7 +136,6 @@ class InputPassword extends InputText
     {
         $passwordModule = $this->wire('modules')->get('InputfieldPassword');
         $requirements = array_unique(array_merge($passwordModule->requirements, (array)$this->passwordField->requirements));
-
         if (in_array('none', $requirements)) {
             return null;
         }
