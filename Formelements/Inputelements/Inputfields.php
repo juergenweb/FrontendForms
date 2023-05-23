@@ -1030,7 +1030,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5usernameSyntax():void
     {
-        $this->setAttribute('pattern ', '^[a-zA-Z][a-zA-Z0-9-_\.@]{1,50}$');
+        $this->setAttribute('pattern ', '^[-_a-z0-9]{1,50}$');
         $label = $this->getLabel()->getText();
         $this->setAttribute('title',
             sprintf($this->_('%s contains not allowed characters. Please use only letters, numbers, underscores, periods, hyphens and @signs (no whitespaces)'),
