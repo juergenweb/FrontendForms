@@ -2253,6 +2253,23 @@ use Valitron\Validator;
         $to = $this->wire('config')->paths->assets . 'files/FrontendForms/';
         $from = $this->modulePath . 'assets/';
         $this->createFilesDir($from, $to);
+        
+        // copy custom email templates back to the updated email_templates folder
+        $new_templates = $this->getEmailTemplates();
+        $old_templates_path = $this->wire('config')->paths->siteModules.'.FrontendForms/email_templates/';
+        $old_templates = $this->wire('files')->find($old_templates_path);
+        $old_templates_name = [];
+        foreach($old_templates as $path){
+            $old_templates_name[$path] = basename($path);
+        }
+        $diff = array_diff($old_templates_name, $new_templates);
+
+        // copy each custom file to the email_templates folder
+        foreach($diff as $path => $filename){
+            $dist = $this->modulePath.'email_templates/';
+            $this->wire('files')->copy($path, $dist);
+        }
+
     }
 
     /**
