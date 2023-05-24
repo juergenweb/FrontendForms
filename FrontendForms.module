@@ -2266,6 +2266,7 @@ use Valitron\Validator;
 
         // copy each custom file to the email_templates folder
         foreach($diff as $path => $filename){
+        bd($path);
             $dist = $this->modulePath.'email_templates/';
             $this->wire('files')->copy($path, $dist);
         }
