@@ -344,3 +344,4 @@ So using date and datetime fields for entering dates would be the best way to go
 
 ## 2023-05-22
 - New method to create password syntax pattern added to allow HTML5 browser validation for password field. If HTML5 browser validation is enabled, the requirements for the password can be checked via HTML5 browser validation pattern.
+- Username validation syntax changed to only allow lowercase letters, numbers, underscore and hyphen (syntax will be taken from ProcessProfile.module)
