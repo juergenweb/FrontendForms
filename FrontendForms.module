@@ -2268,8 +2268,6 @@ use Valitron\Validator;
         foreach($diff as $path => $filename){
             $dist = $this->modulePath.'email_templates/'.$filename;
             $this->wire('files')->copy($path, $dist);
-            $this->wire('session')->message('session');
-            $this->warning('test');
         }
 
     }
