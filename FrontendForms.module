@@ -2237,7 +2237,7 @@ use Valitron\Validator;
         $this->wire('files')->mkdir($this->temp_uploadPath);
 
         // create folder for the custom email templates
-        $this->wire('files')->mkdir($this->wire('config')->paths->site.'FrontendForms-custom-email-templates/');
+        $this->wire('files')->mkdir($this->wire('config')->paths->site.'frontendforms-custom-templates/');
     }
 
     /**
@@ -2258,7 +2258,7 @@ use Valitron\Validator;
         $this->createFilesDir($from, $to);
 
         // create custom email template folder if it does not exist
-        $this->wire('files')->mkdir($this->wire('config')->paths->site.'FrontendForms-custom-email-templates/');
+        $this->wire('files')->mkdir($this->wire('config')->paths->site.'frontendforms-custom-templates/');
 
     }
 
