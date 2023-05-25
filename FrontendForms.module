@@ -154,7 +154,7 @@ use Valitron\Validator;
             'summary' => 'Create forms and validate them using the Valitron library.',
             'author' => "Jürgen Kern",
             'href' => 'https://github.com/juergenweb/FrontendForms',
-            'version' => '2.1.37',
+            'version' => '2.1.38',
             'singular' => true,
             'autoload' => true,
             'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
@@ -2258,7 +2258,13 @@ use Valitron\Validator;
         $this->createFilesDir($from, $to);
 
         // create custom email template folder if it does not exist
-        $this->wire('files')->mkdir($this->wire('config')->paths->site.'frontendforms-custom-templates/');
+        if($this->wire('files')->mkdir($this->wire('config')->paths->site.'frontendforms-custom-templates/')){
+            $this->message($this->_('Folder for the custom email templates has been created.'));
+        } else {
+            $text = $this->_('Folder for the custom email could not be created.').'<br>';
+            $text .= $this->_('Please create the folder "frontendforms-custom-template" manually under the site directory.');
+            $this->message($text);
+        }
 
     }
 
