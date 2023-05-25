@@ -1718,6 +1718,14 @@ ProcessWire is shipped with the WireMail class to send emails.
 Unfortunately this class does not support the usage of stylish HTML email templates by default, so I decided to enhance
 this class with a new method to simply choose an email template, which is stored inside the [email_templates folder](https://github.com/juergenweb/FrontendForms/tree/main/email_templates) of this module.
 
+## Custom email templates
+If you want to use your own custom email templates, an extra folder called **"frontendforms-custom-templates"** will be created during the install process under the site directory. So you will find this folder here: site/frontendforms-custom-template/.
+
+Please put all your own custom email templates inside this folder and not in the default email templates folder as described in the previous point. Otherwise your custom email templates will get lost after an update.
+
+To create your own custom templates, I recommend you to study the templates inside the email templates folder and adapt them to your needs.
+The custom email templates folder will be created during the install process automatically. If it is not there, please create it manually.
+
 ### New method mailTemplate()
 First you need to know, that inside the email_templates folder you will find HTML files with various names
 (fe template_1.html, template_2.html,...).
@@ -1739,8 +1747,8 @@ It is recommended to take a look at the email templates which are shipped with t
 example on how to write your own email templates (or download free templates from the internet and add the placeholders
 by yourself).
 
-If you have created a template on your own, add it to the email_templates folder as the other templates, and now you are
-ready to use it.
+If you have created a template on your own, add it to the the custom folder **"frontendforms-custom-template"** and not inside the "email_templates"!!
+Now you can go to the module configuration and under the email settings tab you can select your custom email template.
 
 ### Images inside email templates
 You can also use images in your email templates, but be aware to use the absolute URL to this image (not relative).
