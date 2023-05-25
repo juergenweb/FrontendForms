@@ -154,7 +154,7 @@ use Valitron\Validator;
             'summary' => 'Create forms and validate them using the Valitron library.',
             'author' => "Jürgen Kern",
             'href' => 'https://github.com/juergenweb/FrontendForms',
-            'version' => '2.1.38',
+            'version' => '2.1.37',
             'singular' => true,
             'autoload' => true,
             'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
@@ -2253,8 +2253,12 @@ use Valitron\Validator;
         $to = $this->wire('config')->paths->assets . 'files/FrontendForms/';
         $from = $this->modulePath . 'assets/';
         $this->createFilesDir($from, $to);
+
+        // create custom email template folder if it does not exist
+        $this->wire('files')->mkdir($this->wire('config')->paths->assets.'FrontendForms-custom-email-templates/');
         
         // copy custom email templates back to the updated email_templates folder
+        /*
         $new_templates = $this->getEmailTemplates();
         $old_templates_path = $this->wire('config')->paths->siteModules.'.FrontendForms/email_templates/';
         $old_templates = $this->wire('files')->find($old_templates_path);
@@ -2268,7 +2272,7 @@ use Valitron\Validator;
         foreach($diff as $path => $filename){
             $dist = $this->modulePath.'email_templates/'.$filename;
             $this->wire('files')->copy($path, $dist);
-        }
+        }*/
 
     }
 
