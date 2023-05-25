@@ -86,6 +86,7 @@ use Valitron\Validator;
     protected array $mailProperties = []; // array of placeholder variables for HTML templates
     protected array $emailTemplates = []; // email template names as numeric array
     protected string $emailTemplatesPath = ''; // path to the email templates folder
+    protected string $custom_emailTemplatesPath = ''; // path to the custom email templates folder
     protected array $mailPlaceholders = []; //  array the holds all custom mail properties for placeholder attributes as placeholder => value
     protected string $bodyHTML = ''; // declare property from WireMail class
     protected string $body = ''; // declare property from WireMail class
@@ -241,6 +242,7 @@ use Valitron\Validator;
         $this->imagePath = $this->modulePath . 'captchaimages/'; // path to the images for the CAPTCHA
         $this->passwordPath = $this->modulePath . 'passwords.txt'; // path to password.txt file
         $this->emailTemplatesPath = $this->modulePath . 'email_templates';//  set the path to the email templates folder
+        $this->custom_emailTemplatesPath = $this->wire('config')->paths->site.'frontendforms-custom-templates'; //  set the path to the custom email templates folder
         $this->temp_uploadPath = $this->modulePath . 'temp_uploads/';// set the path to the temporary folder for mail attachments
 
         //  create and set a property of each configuration setting from DB
@@ -400,9 +402,11 @@ use Valitron\Validator;
      */
     protected function setEmailTemplates():void
     {
+        $custom_templateFiles = $this->wire('files')->find($this->custom_emailTemplatesPath, ['extensions' => 'html']);
         $templateFiles = $this->wire('files')->find($this->emailTemplatesPath, ['extensions' => 'html']);
+        $files = array_merge($custom_templateFiles, $templateFiles);
         $fileNames = [];
-        foreach ($templateFiles as $file) {
+        foreach ($files as $file) {
             $fileNames[] = pathinfo($file, PATHINFO_BASENAME);
         }
         $this->emailTemplates = $fileNames; // set it to property emailTemplates
