@@ -330,7 +330,7 @@ class Form extends CustomRules
                 } else if ($this->wire('files')->exists($this->emailCustomTemplatesDirPath . $mail->email_template)){
                     $body = $this->loadTemplate($this->emailCustomTemplatesDirPath . $mail->email_template);
                 } else {
-                    throw new Exception(sprintf($this->_('Mail could not be sent, because the mail template with the name %s does not exist. Please contact the webmaster and inform him about this error message.'),
+                    throw new Exception(sprintf('Mail could not be sent, because the mail template with the name %s does not exist.',
                         $mail->email_template));
                 }
 
