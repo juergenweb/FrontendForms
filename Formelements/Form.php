@@ -57,8 +57,10 @@ class Form extends CustomRules
     protected string $receiverAddress = ''; // the email address of the receiver of the mails
     protected string $mail_subject = ''; // the subject for a mail sent after form validation
     protected string $emailTemplatesDirPath = ''; // the path to the email templates directory
+    protected string $emailCustomTemplatesDirPath = ''; // the path to the email custom templates directory
     protected string $emailTemplate = ''; // the filename of the email template including extension (fe. template.html)
     protected string $emailTemplatePath = ''; // the path to the body template
+    protected string $emailCustomTemplatePath = ''; // the path to the custom body template
     protected array $uploaded_files = []; // array which holds all currently uploaded files with path as value
     protected int|null $mail_language_id = null; // property for setting the language for mail templates manually
     protected int|null $site_language_id = null; // internal property containing the current site language
@@ -82,11 +84,14 @@ class Form extends CustomRules
 
         // set path to the template folder for the email templates
         $this->emailTemplatesDirPath = $this->wire('config')->paths->siteModules . 'FrontendForms/email_templates/';
+        // set path to the custom template folder for the email templates
+        $this->emailCustomTemplatesDirPath = $this->wire('config')->paths->site . 'frontendforms-custom-templates/';
 
         // set the path to the email template from the module config
         if ($this->frontendforms['input_emailTemplate'] != 'none') {
             $this->emailTemplate = $this->frontendforms['input_emailTemplate']; // set filename
             $this->emailTemplatePath = $this->emailTemplatesDirPath . $this->emailTemplate; // set file path
+            $this->emailCustomTemplatePath = $this->emailCustomTemplatesDirPath . $this->emailTemplate; // set file path
         }
 
         // set the current user
@@ -319,7 +324,16 @@ class Form extends CustomRules
                 $mail->email_template = $this->wire('modules')->getConfig('FrontendForms')['input_emailTemplate'];
             }
             if ($mail->email_template != 'none') {
-                $body = $this->loadTemplate($this->emailTemplatesDirPath . $mail->email_template);
+
+                if($this->wire('files')->exists($this->emailTemplatesDirPath . $mail->email_template)){
+                    $body = $this->loadTemplate($this->emailTemplatesDirPath . $mail->email_template);
+                } else if ($this->wire('files')->exists($this->emailCustomTemplatesDirPath . $mail->email_template)){
+                    $body = $this->loadTemplate($this->emailCustomTemplatesDirPath . $mail->email_template);
+                } else {
+                    throw new Exception(sprintf($this->_('Mail could not be sent, because the mail template with the name %s does not exist. Please contact the webmaster and inform him about this error message.'),
+                        $mail->email_template));
+                }
+
 
                 // add pre-header text (if present) right after the opening body tag
                 if($mail->title){
