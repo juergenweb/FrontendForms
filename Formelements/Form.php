@@ -302,7 +302,7 @@ class Form extends CustomRules
 
 
     /**
-     * Include the body template in the mail if it was set in the configuration or directly on the WireMail object
+     * Include the template in the mail if it was set in the configuration or directly on the WireMail object
      * Takes the input_emailTemplate property to check whether a template should be used or not
      * @param Module|wire|WireArray|WireData $mail
      * @return void
@@ -315,13 +315,12 @@ class Form extends CustomRules
             $mail->email_template = $this->frontendforms['input_emailTemplate'];
         }
 
-
         // check if email template is set
         if ($mail->email_template != 'none') {
             // set body as placeholder
             if ($mail->email_template == 'inherit') {
                 // use the value from the FrontendForms module configuration
-                $mail->email_template = $this->wire('modules')->getConfig('FrontendForms')['input_emailTemplate'];
+                $mail->email_template = $this->frontendforms['input_emailTemplate'];
             }
             if ($mail->email_template != 'none') {
 
@@ -333,7 +332,6 @@ class Form extends CustomRules
                     throw new Exception(sprintf('Mail could not be sent, because the mail template with the name %s does not exist.',
                         $mail->email_template));
                 }
-
 
                 // add pre-header text (if present) right after the opening body tag
                 if($mail->title){
