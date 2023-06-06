@@ -22,7 +22,7 @@ en,de,description,file,hash
 "must be unique. This username is already in use. Please choose another username.","muss eindeutig sein. Dieser Benutzername wird bereits verwendet. Bitte wählen Sie einen anderen aus.",,site/modules/FrontendForms/Formelements/CustomRules.php,5f20144817f8a8a10c0c3e42aaacb234
 "and username do not match.","und Benutzername stimmen nicht überein.",,site/modules/FrontendForms/Formelements/CustomRules.php,0692f1d96297b3d3ebb476ecb909b71f
 "does not meet the conditions.","erfüllt nicht die Bedingungen.",,site/modules/FrontendForms/Formelements/CustomRules.php,a19a1f724a26244cf7542e78fce6082d
-"contains not allowed characters. Please use only letters, numbers, underscores, periods, hyphens and @signs (no whitespaces).","enthält unzulässige Zeichen. Bitte verwenden Sie nur Kleinbuchstaben, Ziffern, Unterstriche, Punkte, Bindestriche und @-Zeichen (keine Leerzeichen).",,site/modules/FrontendForms/Formelements/CustomRules.php,752be8b722d4ece4888ded5cab764def
+"contains not allowed characters. User name may contain lowercase a-z, 0-9, hyphen or underscore (no whitespaces).","enthält nicht erlaubte Zeichen. Der Benutzername darf nur Kleinbuchstaben a-z, Ziffern 0-9 sowie Bindestriche und Unterstriche (keine Leerzeichen) enthalten.",,site/modules/FrontendForms/Formelements/CustomRules.php,efde12902a00485cee4d631f54f55f81
 "must be unique. This email is already in use. Please use another email address.","muss einzigartig sein. Diese E-Mail-Adresse wird schon verwendet. Bitte verwenden Sie eine andere E-Mail-Adresse.",,site/modules/FrontendForms/Formelements/CustomRules.php,b413595e71b40c70836a66e8f056896d
 "entered is not the same password as the one, that is stored in the database.","ist nicht das gleiche Passwort wie jenes, welches in der Datenbank gespeichert ist.",,site/modules/FrontendForms/Formelements/CustomRules.php,8233c64b0291b99ef0d07c47db79105a
 "and email do not match.","und E-Mail stimmen nicht überein.",,site/modules/FrontendForms/Formelements/CustomRules.php,c557836813d5c70d5972372d2a7a9ed4
@@ -47,6 +47,9 @@ en,de,description,file,hash
 "must be after %s.","muss ein Datum nach %s sein.",,site/modules/FrontendForms/Formelements/CustomRules.php,b83a396a69b272c4b79df4a61c18009f
 "must be within the allowed time range.","muss ein Datum innerhalb des erlaubten Zeitraumes sein.",,site/modules/FrontendForms/Formelements/CustomRules.php,265d89403b5c013461609c89ab268bc7
 "must be outside the forbidden time range.","muss ein Datum außerhalb des verbotenen Zeitraumes sein.",,site/modules/FrontendForms/Formelements/CustomRules.php,0f3f63f95068a11bfa7ad25ca209fedc
+en,de,description,file,hash
+"Image captcha","Bild CAPTCHA",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,1e27db1c7a9a959ca4cd75964525fa2d
+"Assign the image to a category","Ordnen sie das Bild einer Kategorie zu",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,5972e22698d0e9faba6397ce1b6b6f74
 en,de,description,file,hash
 "Random string captcha","Zufallstext Captcha",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultTextCaptcha.php,7c62e8d4b13ecc03f28bb44905a5ec51
 "Enter the text from the image in the input field.","Geben Sie den Text aus dem Bild in das Eingabefeld ein.",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultTextCaptcha.php,3c6c9439c3e38d0da29b7629a300c3c5
@@ -387,6 +390,9 @@ here,hier,,site/modules/FrontendForms/FrontendForms.module,6c92285fa6d3e827b198d
 "Statistics of blocked visitors","Statistiken blockierter Besucher",,site/modules/FrontendForms/FrontendForms.module,8f2bb91c583e42fa3e2b720a6c8a192f
 "Get information about blocked visitors (IP, form) from the log files","Lassen Sie sich Informationen über blockierte Besucher (IP-Adresse, Formular) aus den Log-Dateien anzeigen",,site/modules/FrontendForms/FrontendForms.module,af58911ece7a676214c04009bdf307f6
 "Nothing to show - logfile does not exist","Es gibt leider nichts anzuzeigen - Die Log-Datei existiert nicht.",,site/modules/FrontendForms/FrontendForms.module,ceb9f0db8a96d4c417d41c44f465a2e6
+"Loggin of failed attempts is not enabled. If you want to use this feature, you need to enable it inside ""Measure 1: Restrict number of failed attempts"".","Die Protokollierung von Fehlversuchen ist nicht aktiviert. Wenn Sie diese Funktion nutzen möchten, müssen Sie diese in ""Maßnahme 1: Anzahl der Fehlversuche einschränken"" aktivieren.",,site/modules/FrontendForms/FrontendForms.module,53393f77c0672eef307a9d1295cf281e
+"""Max number of failed attempts"" must be higher than 0 and  the checkbox ""Log failed attempts"" must be enabled.","Die ""Maximale Anzahl der Fehlversuche"" muss größer als 0 sein und das Kontrollkästchen ""Fehlversuche protokollieren"" muss aktiviert sein.",,site/modules/FrontendForms/FrontendForms.module,5635cc4f8b96d3c90275341be0068233
+"Go to the settings to enable logging of failed attemtps","Gehen Sie zu den Einstellungen, um die Protokollierung fehlgeschlagener Versuche zu aktivieren",,site/modules/FrontendForms/FrontendForms.module,460d997b9205d3a198de11fdb0a23c14
 en,de,description,file,hash
 Gender,Anrede,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,019ec3132cdf8ee0f2e2a75cf5d3e459
 "Please select","Bitte auswählen",,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,992eda0d64a430fa5c7925d23ef9d0a3
@@ -454,6 +460,3 @@ en,de,description,file,hash
 Surname,Nachname,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Surname.php,8e55577a8ed3b20bff65d23c000280d4
 en,de,description,file,hash
 Username,Benutzername,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Username.php,f6039d44b29456b20f8f373155ae4973
-en,default,description,file,hash
-"Image captcha","Bild CAPTCHA",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,1e27db1c7a9a959ca4cd75964525fa2d
-"Assign the image to a category","Ordnen sie das Bild einer Kategorie zu",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,5972e22698d0e9faba6397ce1b6b6f74
