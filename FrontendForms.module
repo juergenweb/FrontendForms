@@ -2146,7 +2146,7 @@ use Valitron\Validator;
         }
         // show a hint to the user if logging failed attempts is not enabled
         if((!$this->input_logFailedAttempts) || ($this->input_maxAttempts < 1)){
-            $hint_text = '<p>'.$this->_('Loggin of failed attempts is not enabled. If you want to use this feature, you need to enable it inside "Measure 1: Restrict number of failed attempts".');
+            $hint_text = '<p>'.$this->_('Logging of failed attempts is not enabled. If you want to use this feature, you need to enable it inside "Measure 1: Restrict number of failed attempts".');
             $hint_text .= '<br>'.$this->_('"Max number of failed attempts" must be higher than 0 and  the checkbox "Log failed attempts" must be enabled.').'</p>';
             $hint_text .= '<p><a id="enable-logging" href="#spam">'.$this->_('Go to the settings to enable logging of failed attemtps').'</a></p>';
             $value .= '<div class="uk-alert-warning" data-uk-alert>' . $hint_text . '</div>';
