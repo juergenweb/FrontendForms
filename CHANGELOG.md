@@ -351,5 +351,6 @@ So using date and datetime fields for entering dates would be the best way to go
 This update contains a bug fix concerning sending mails with custom templates. If a custom template was selected via the mailTemplate() method, the custom folder has not been checked for the template. 
 Now, if a template will be selected via the mailTemplate() method, it checks for the template in the default template folder first, then inside the custom template folder and if the the template was not found it throws an exception to the user, that the template was not found.
 
-## 2023-06-06
-Declare properties title and desc in AbstractImageCaptcha.php to prevent notification in PHP 8.2
+## [2.1.41] 2023-06-06
+- Declare properties title and desc in AbstractImageCaptcha.php to prevent notification in PHP 8.2
+- Adding a hint to the statistic block if logging of failed attempts is not enabled. If so, then the user will be able to click on a link which opens the appropriate settings fieldset where he can enable logging. This is more user friendly.
