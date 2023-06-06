@@ -237,7 +237,7 @@ use Valitron\Validator;
         }
 
         // add the appropriate values to properties, so you can get them everywhere inside the class
-        $this->modulePath = $this->wire('config')->paths->$this; // set relative path to this module
+        $this->modulePath = $this->wire('config')->paths->siteModules.'FrontendForms/'; // set relative path to this module
         $this->moduleConfig = $this->wire('modules')->getConfig($this);
         $this->imagePath = $this->modulePath . 'captchaimages/'; // path to the images for the CAPTCHA
         $this->passwordPath = $this->modulePath . 'passwords.txt'; // path to password.txt file
