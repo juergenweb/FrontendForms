@@ -579,7 +579,7 @@ use Valitron\Validator;
         // add CSS and JS to the backend
         $version = $this->getModuleInfo()['version'] . '-' . time();
         $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version);
-        //$this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version);
+        $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version);
 
         // add CSS and JS links to the frontend template
         $this->addHookAfter('Page::render', $this, 'addAssets');
@@ -1557,10 +1557,12 @@ use Valitron\Validator;
         $fieldset5->description = $this->_('Make your global settings for spam protection and security. Most of the settings can be overwritten on per form base if needed.');
         $fieldset5->collapsed = 1;
         $fieldset5->icon = 'fa-shield';
+        $fieldset5->attr('id','spam');
 
         $fieldsetsecurity1 = $modules->get('InputfieldFieldset');
         $fieldsetsecurity1->label = $this->_('Measure 1: Restrict number of failed attempts');
         $fieldsetsecurity1->collapsed = 1;
+        $fieldsetsecurity1->attr('id','failed-attempts');
 
         // set max number of failed attempts
         $maxAttempts = $this->modules->get('InputfieldInteger');
@@ -2142,6 +2144,14 @@ use Valitron\Validator;
         } else {
             $value = $this->_('Nothing to show - logfile does not exist');
         }
+        // show a hint to the user if logging failed attempts is not enabled
+        if((!$this->input_logFailedAttempts) || ($this->input_maxAttempts < 1)){
+            $hint_text = '<p>'.$this->_('Loggin of failed attempts is not enabled. If you want to use this feature, you need to enable it inside "Measure 1: Restrict number of failed attempts".');
+            $hint_text .= '<br>'.$this->_('"Max number of failed attempts" must be higher than 0 and  the checkbox "Log failed attempts" must be enabled.').'</p>';
+            $hint_text .= '<p><a id="enable-logging" href="#spam">'.$this->_('Go to the settings to enable logging of failed attemtps').'</a></p>';
+            $value .= '<div class="uk-alert-warning" data-uk-alert>' . $hint_text . '</div>';
+        }
+
         $stat->value = '<p>' . $value . '</p>';
         $fieldset6->append($stat);
 
