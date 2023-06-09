@@ -355,3 +355,6 @@ Now, if a template will be selected via the mailTemplate() method, it checks for
 - Declare properties title and desc in AbstractImageCaptcha.php to prevent notification in PHP 8.2
 - Adding a hint to the statistic block if logging of failed attempts is not enabled. If so, then the user will be able to click on a link which opens the appropriate settings fieldset where he can enable logging. This is more user friendly.
 - Change the path to the module from $this->wire('config')->paths->$this to $this->wire('config')->paths->siteModules.'FrontendForms/'. This line of code leads to problem on the FrontendContact.module
+
+## 2023-06-09
+- 3 new CAPTCHA images added
