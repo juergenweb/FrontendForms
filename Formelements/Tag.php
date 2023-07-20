@@ -208,6 +208,10 @@ abstract class Tag extends Wire
         $key = $this->sanitizeAttributeName($key);
         // value must be string, array or null
         if (!is_null($value)) {
+            // convert numbers to string
+            if(is_numeric($value)){
+                $value = (string)$value;
+            }
             if ((!is_string($value)) && (!is_array($value))) {
                 return $this;
             }
