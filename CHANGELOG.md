@@ -358,3 +358,9 @@ Now, if a template will be selected via the mailTemplate() method, it checks for
 
 ## 2023-06-09
 - 3 new CAPTCHA images added
+
+## [2.1.42] 2023-07-21
+This update comes with 2 small bug fixes:
+
+1) There was a rendering bug on input field type hidden, where the attribute *hidden* was rendered instead of *type="hidden"*. This leads to problems if you are trying to set the value via JavaScript.
+2) Another bug was by setting integers to form field values, because form field values are always a string or an array. If you are trying to set an integer as the value, it will be ignored. Now a value of type number will be automatically typecasted to a string if you try to set this as an input value.
