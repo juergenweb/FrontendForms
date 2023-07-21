@@ -209,7 +209,7 @@ abstract class Tag extends Wire
         // value must be string, array or null
         if (!is_null($value)) {
             // convert numbers to string
-            if(is_numeric($value)){
+            if (is_numeric($value)) {
                 $value = (string)$value;
             }
             if ((!is_string($value)) && (!is_array($value))) {
@@ -385,7 +385,7 @@ abstract class Tag extends Wire
         if ($attributeValue) {
             $value = trim($attributeValue);
             // check if the attribute exists in the attributes array
-            if(isset($this->getAttributes()[$key])){
+            if (isset($this->getAttributes()[$key])) {
                 // remove values form assoc. arrays like style attribute
                 if (is_array($this->getAttributes()[$key]) && ($this->isAssoc($this->getAttributes()[$key]))) {
                     if (array_key_exists($attributeValue, $this->attributes[$key])) {
@@ -397,15 +397,15 @@ abstract class Tag extends Wire
                     // remove values from non assoc. arrays like class, rel, id,...
                     if (array_key_exists($key, $this->getAttributes())) {
                         //if (in_array($value, $this->getAttributes())) {
-                            if (in_array($key, self::MULTIVALUEATTR)) {
-                                if (count($this->attributes[$key]) > 1) {
-                                    $this->attributes[$key] = array_diff($this->attributes[$key], [$value]);
-                                } else {
-                                    unset($this->attributes[$key]);
-                                }
+                        if (in_array($key, self::MULTIVALUEATTR)) {
+                            if (count($this->attributes[$key]) > 1) {
+                                $this->attributes[$key] = array_diff($this->attributes[$key], [$value]);
                             } else {
                                 unset($this->attributes[$key]);
                             }
+                        } else {
+                            unset($this->attributes[$key]);
+                        }
                         //}
                     }
                 }
@@ -476,13 +476,19 @@ abstract class Tag extends Wire
                     }
                 }
                 if (in_array($value, self::BOOLEANATTR)) {
-                    $attributes[] = $value; // checked OK
+                    if ($name != 'type') {
+                        $attributes[] = $value; // checked OK
+                    } else {
+                        // allow attribute value hidden on type=hidden
+                        $attributes[] = $name . '="' . $value . '"';
+                    }
                 } else {
                     $attributes[] = $name . '="' . $value . '"';
                 }
             }
             $out = ' ' . implode(' ', $attributes);
         }
+
         return $out;
     }
 
@@ -527,9 +533,10 @@ abstract class Tag extends Wire
      */
     protected function renderNonSelfclosingTag(
         string $tag,
-        bool $showNoContent = false,
-        bool $showAttributeValue = false
-    ): string {
+        bool   $showNoContent = false,
+        bool   $showAttributeValue = false
+    ): string
+    {
         $out = '';
         $show = match ($this->getContent()) {
             null, '' => $showNoContent,
