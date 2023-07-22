@@ -365,6 +365,14 @@ This update comes with 2 small bug fixes:
 1) There was a rendering bug on input field type hidden, where the attribute *hidden* was rendered instead of *type="hidden"*. This leads to problems if you are trying to set the value via JavaScript.
 2) Another bug was by setting integers to form field values, because form field values are always a string or an array. If you are trying to set an integer as the value, it will be ignored. Now a value of type number will be automatically typecasted to a string if you try to set this as an input value.
 
-## 2023-07-22
+## [2.1.43] 2023-07-22
+This update comes with an addition and a bug fix for path problems on certain servers caused by filenames with uppercase letters.
 
+*1) New validation rule added*   
 New validation rule for checking syntax of international names added. This rule is based on the international names regex from https://regexpattern.com/international-first-last-names/. The name of the new validation rule is [firstAndLastname](https://github.com/juergenweb/FrontendForms#firstandlastname).
+
+*2) Fixing path problem for uploaded files*  
+Thanks to pmichaelis from the support forum who reported a path problem on uploaded files, which contains uppercase letters in the file name. The uppercase letters in the file names lead to the situation that Processwire could not find this file on the live server in his case. Converting the filenames to lowercase letters only solves this problem (Thanks for providing the solution too :-).
+I have fixed this bug by converting all filenames to lowercase before saving it inside the assets folder. As an addition I also use the [filename sanitizer](https://processwire.com/api/ref/sanitizer/filename/) from ProcessWire to beautify the filenames and to set a max length of 128 characters.
+If you are running into troubles after this changes to the uploaded files, please let me know.
+
