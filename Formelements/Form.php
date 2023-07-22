@@ -13,6 +13,8 @@ namespace FrontendForms;
  */
 
 use DateTime;
+use DOMDocument;
+use DOMException;
 use Exception;
 use ProcessWire\Field as Field;
 use ProcessWire\HookEvent;
@@ -237,7 +239,7 @@ class Form extends CustomRules
      */
     public function getShowForm():bool
     {
-        return (bool)$this->showForm;
+        return $this->showForm;
     }
 
     /**
@@ -307,6 +309,8 @@ class Form extends CustomRules
      * @param Module|wire|WireArray|WireData $mail
      * @return void
      * @throws WireException
+     * @throws DOMException
+     * @throws Exception
      */
     protected function includeMailTemplate(Module|Wire|WireArray|WireData $mail):void
     {
@@ -335,7 +339,7 @@ class Form extends CustomRules
 
                 // add pre-header text (if present) right after the opening body tag
                 if($mail->title){
-                    $doc = new \DOMDocument();
+                    $doc = new DOMDocument();
                     $doc->loadHTML($body);
                     $bodyTags = $doc->getElementsByTagName('body');
                     if ($bodyTags and $bodyTags->length > 0) {
@@ -1165,7 +1169,9 @@ class Form extends CustomRules
                         $files = $this->reArrayFiles($_FILES[$fieldName]);
                         foreach ($files as $file) {
                             if ($file['error'] == 0) {
-                                $target_file = $this->uploadPath . basename($file['name']);
+                                // sanitize file name an convert it to lowercase to prevent problems on certain servers
+                                $filename = $this->wire('sanitizer')->filename($file['name'], true, 128);
+                                $target_file = $this->uploadPath . strtolower($filename);
                                 $uploaded_files[] = $target_file;
                                 move_uploaded_file($file['tmp_name'], $target_file);
                             }
@@ -1174,7 +1180,9 @@ class Form extends CustomRules
                         // single file
                         $file = $_FILES[$fieldName];
                         if ($file['error'] == 0) {
-                            $target_file = $this->uploadPath . basename($file['name']);
+                            // sanitize file name an convert it to lowercase to prevent problems on certain servers
+                            $filename = $this->wire('sanitizer')->filename(basename($file['name']), true, 128);
+                            $target_file = $this->uploadPath . strtolower($filename);
                             $uploaded_files[] = $target_file;
                             move_uploaded_file($file['tmp_name'], $target_file);
                         }
@@ -1228,6 +1236,7 @@ class Form extends CustomRules
      */
     public function ___isValid():bool
     {
+
         // set WireInput array depth to 2 because auf multiple file uploads
         $this->wire('config')->wireInputArrayDepth = 2;
         $formMethod = $this->getAttribute('method'); // grab the method (get or post)
@@ -1260,6 +1269,7 @@ class Form extends CustomRules
                 // 3) check if max attempts were reached
                 if ($validation->checkMaxAttempts($this->wire('session')->attempts)) {
                     // 4) check for double form submission
+
                     if ($validation->checkDoubleFormSubmission($this, $this->useDoubleFormSubmissionCheck)) {
                         // 5) Check for CSRF attack
                         if ($this->wire('session')->CSRF->hasValidToken()) {
@@ -1557,8 +1567,9 @@ class Form extends CustomRules
 
         $out = $this->prepend;
         $out .= $this->append;
+
         // allow only get or post - if value is not get or post set post as default value
-        if (!in_array(strtolower($this->getAttribute('method')), self::FORMMETHODS)) {
+        if (!in_array(strtolower($this->getAttribute('method')), Form::FORMMETHODS)) {
             $this->setAttribute('method', 'post');
         }
 
@@ -1620,7 +1631,6 @@ class Form extends CustomRules
             $hiddenField4->setAttribute('value', self::encryptDecrypt((string)time()));
             $this->add($hiddenField4);
         }
-
         /* BLOCKING ALERTS */
         if ($this->wire('session')->get('blocked')) {
             // set danger alert for blocking messages
@@ -1692,6 +1702,7 @@ class Form extends CustomRules
 
                 $formElements .= $element->render() . PHP_EOL;
             }
+
 
             // add formElementsWrapper -> add the div container after the form tag
             if ($this->frontendforms['input_wrapperFormElements']) {
