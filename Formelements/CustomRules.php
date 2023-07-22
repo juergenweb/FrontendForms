@@ -467,6 +467,16 @@ class CustomRules extends Tag
             return $this->checkDateRange($params[0], $value, $params[1], false);
         }, $this->_('must be outside the forbidden time range.'));
 
+
+        /**
+         * 29) Check international first and last name
+         * Based on https://regexpattern.com/international-first-last-names/
+         */
+        V::addRule('firstAndLastname', function ($field, $value) {
+            $pattern = '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/u';
+            return preg_match($pattern, $value);
+        }, $this->_('contains invalid characters for a name.'));
+
     }
 
     /**
