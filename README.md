@@ -1162,6 +1162,7 @@ For more detailed explanation on each validation rule click the link at the vali
 | [dateAfterField](#dateafterfield)  | Checks if the entered date is after a given date set in another field                                        |
 | [dateWithinDaysRange](#datewithindaysrange)  | Checks if the entered date is within a given time range in days starting from a date set in another field     |
 | [dateOutsideOfDaysRange](#dateoutsideofdaysrange)  | Checks if the entered date is outside a given time range in days starting from a date set in another field    |
+| [firstAndLastname](#firstandlastname)  | Checks if first and lastname contains only allowed characters    |
 
 
 
@@ -1439,6 +1440,14 @@ First parameter: name of the reference field that contains the date / time range
 
 ```php
 $field->setRule('dateOutsideOfDaysRange', 'date' 7);
+```
+
+### firstAndLastname
+Checks first and lastname according to international syntax based on https://regexpattern.com/international-first-last-names/.
+The regex contains only allowed characters for international names. So this name check should be usable around the world. If not, let me know.
+
+```php
+$field->setRule('firstAndLastname');
 ```
 
 Maybe other custom validation rules will be added in the future. If you have an idea for an useful validator, please let me know.
