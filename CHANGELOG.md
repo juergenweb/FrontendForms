@@ -364,3 +364,7 @@ This update comes with 2 small bug fixes:
 
 1) There was a rendering bug on input field type hidden, where the attribute *hidden* was rendered instead of *type="hidden"*. This leads to problems if you are trying to set the value via JavaScript.
 2) Another bug was by setting integers to form field values, because form field values are always a string or an array. If you are trying to set an integer as the value, it will be ignored. Now a value of type number will be automatically typecasted to a string if you try to set this as an input value.
+
+## 2023-07-22
+
+New validation rule for checking syntax of international names added. This rule is based on the international names regex from https://regexpattern.com/international-first-last-names/. The name of the new validation rule is [firstAndLastname](https://github.com/juergenweb/FrontendForms#firstandlastname).
