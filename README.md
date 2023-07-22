@@ -1444,7 +1444,7 @@ $field->setRule('dateOutsideOfDaysRange', 'date' 7);
 
 ### firstAndLastname
 Checks first and lastname according to international syntax based on https://regexpattern.com/international-first-last-names/.
-The regex contains only allowed characters for international names. So this name check should be usable around the world. If not, let me know.
+The regex contains only allowed characters for international names. You can use it to check first, middle or lastname or all together at once. This name check should be usable around the world. If not, let me know.
 
 ```php
 $field->setRule('firstAndLastname');
