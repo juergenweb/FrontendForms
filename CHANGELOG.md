@@ -376,3 +376,7 @@ Thanks to pmichaelis from the support forum who reported a path problem on uploa
 I have fixed this bug by converting all filenames to lowercase before saving it inside the assets folder. As an addition I also use the [filename sanitizer](https://processwire.com/api/ref/sanitizer/filename/) from ProcessWire to beautify the filenames and to set a max length of 128 characters.
 If you are running into troubles after this changes to the uploaded files, please let me know.
 
+## 2023-07-24
+Minor update to Forms/Textelements/Link.php
+Now you will be able to add multiple querystrings to a link and not only one. The querystring property has been changed from a string to an array. Now you can use the mehod *setQueryString()* multiple times on a Link object to add multiple querystrings.
+This is more interesting for Devs and does not has an impact on most of the users.
