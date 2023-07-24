@@ -378,5 +378,6 @@ If you are running into troubles after this changes to the uploaded files, pleas
 
 ## 2023-07-24
 Minor update to Forms/Textelements/Link.php
+
 Now you will be able to add multiple querystrings to a link and not only one. The querystring property has been changed from a string to an array. Now you can use the mehod *setQueryString()* multiple times on a Link object to add multiple querystrings.
 This is more interesting for Devs and does not has an impact on most of the users.
