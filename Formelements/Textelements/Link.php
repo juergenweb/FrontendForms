@@ -24,7 +24,7 @@ class Link extends TextElements
 
     protected string $url = '';
     protected string $anchor = '';
-    protected string $queryString = '';
+    protected array $queryString = []; // array that can contain multiple querystrings
     protected string $linkText = '';
 
     /**
@@ -136,12 +136,15 @@ class Link extends TextElements
 
     /**
      * Add a querystring to a link
+     * You can use this method several times to add multiple query strings
      * @param string $queryString
      * @return $this
      */
     public function setQueryString(string $queryString): self
     {
-        $this->queryString = $this->setGetParameter('?', $queryString);
+        $qs = $this->queryString;
+        $qs[] = $queryString;
+        $this->queryString = $qs;
         return $this;
     }
 
@@ -151,7 +154,7 @@ class Link extends TextElements
      */
     public function getQueryString(): string
     {
-        return $this->queryString;
+        return implode('&',$this->queryString);
     }
 
     /**
