@@ -1040,7 +1040,8 @@ class Form extends CustomRules
     }
 
     /**
-     * Get all form values after form submission as an array
+     * Get all sanitized form values after form submission as an array
+     * If there are sanitizers set for the form values, they will be applied
      * @param bool $buttonValue
      * @return array|null
      */
@@ -1312,6 +1313,7 @@ class Form extends CustomRules
                                 }
                             }
 
+
                             $v = new Validator($sanitizedValues);
 
                             foreach ($formElements as $element) {
@@ -1468,6 +1470,7 @@ class Form extends CustomRules
 
     /**
      * Internal method to add all form values to the values array
+     * All sanitizers applied to an input element will be used before they will be added to the array
      * @return void
      */
     private function setValues():void
@@ -1475,7 +1478,19 @@ class Form extends CustomRules
         $values = [];
         foreach ($this->formElements as $element) {
             if ($element->getAttribute('value')) {
-                $values[$element->getAttribute('name')] = $element->getAttribute('value');
+                //$values[$element->getAttribute('name')] = $element->getAttribute('value');
+
+                // Run all sanitizer methods over the value
+                if(method_exists($element, 'getSanitizers')){
+                    $sanitizers = $element->getSanitizers();
+                    foreach($sanitizers as $sanitizer){
+                        $value = $element->wire('sanitizer')->$sanitizer($element->getAttribute('value'));
+                    }
+                } else {
+                    $value = $element->getAttribute('value');
+                }
+                $values[$element->getAttribute('name')] = $value;
+
                 // set all form values to a placeholder
                 $fieldName = str_replace($this->getID() . '-', '', $element->getAttribute('name')) . 'value';
 
