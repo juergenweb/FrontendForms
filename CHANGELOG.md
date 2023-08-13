@@ -381,3 +381,9 @@ Minor update to Forms/Textelements/Link.php
 
 Now you will be able to add multiple querystrings to a link and not only one. The querystring property has been changed from a string to an array. Now you can use the mehod *setQueryString()* multiple times on a Link object to add multiple querystrings.
 This is more interesting for Devs and does not has an impact on most of the users.
+
+## 2023-08-13
+Minor update to Forms.php
+
+There was a problem of the Captcha position if you are using hidden fields after the submit button. If a hidden field will be added after the submit button, then the CAPTCHA will be added after the submit button and before the hidden field, but it should be inserted always before the button element. This is a rare case scenario, but it happened in my case. 
+I have corrected this little bug by ignoring all input fields of the type hidden in the input fields array. The last visible form element should be the button. If you are adding some hidden fields after the button, it does not matter any more and the CAPTCHA will stay before the button element.
