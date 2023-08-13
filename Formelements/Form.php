@@ -1282,7 +1282,6 @@ class Form extends CustomRules
                                 $formElements[] = $this->createHoneypot();
                             }
                             //add captcha to the array because it will be rendered afterwards
-
                             if ($this->getCaptchaType() !== 'none') {
                                 $formElements[] = $this->getCaptcha()->createCaptchaInputField($this->getID());
                             }
@@ -1594,9 +1593,13 @@ class Form extends CustomRules
 
         // get keys of all input fields (excluding buttons, fieldsets,.. only input fields that collect user data)
         $inputfieldKeys = [];
+
         foreach ($this->formElements as $key => $inputfield) {
             if (is_subclass_of($inputfield, 'FrontendForms\Inputfields')) {
-                $inputfieldKeys[] = $key;
+                // exclude hidden input fields - add only visible fields
+                if($inputfield->className() !==  'InputHidden'){
+                    $inputfieldKeys[] = $key;
+                }
             }
         }
 
