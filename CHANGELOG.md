@@ -387,3 +387,6 @@ Minor update to Forms.php
 
 There was a problem of the Captcha position if you are using hidden fields after the submit button. If a hidden field will be added after the submit button, then the CAPTCHA will be added after the submit button and before the hidden field, but it should be inserted always before the button element. This is a rare case scenario, but it happened in my case. 
 I have corrected this little bug by ignoring all input fields of the type hidden in the input fields array. The last visible form element should be the button. If you are adding some hidden fields after the button, it does not matter any more and the CAPTCHA will stay before the button element.
+
+## 2023-09-02
+Some new images for image captcha added. All captcha images reduced in size to 900x600px to reduce storage space.
