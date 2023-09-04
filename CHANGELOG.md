@@ -390,3 +390,10 @@ I have corrected this little bug by ignoring all input fields of the type hidden
 
 ## 2023-09-02
 Some new images for image captcha added. All captcha images reduced in size to 900x600px to reduce storage space.
+
+## [2.1.44] 2023-09-04
+Get rid of usage of AllowDynamicProperties class
+
+PHP 8.2 complains about undeclared properties. To prevent the display of the warning messages, the AllowDynamicProperties class was used, which is a work around for this issue. In PHP 8.3 undeclared properties will lead to an error and not to a warning. To prevent unwanted surprises in higher PHP versions, all undeclared properties will be declared and the usage of the AllowDynamicProperties class will be removed.
+
+As written before some new CAPTCHA images have been added and the query string method has be modified too.
