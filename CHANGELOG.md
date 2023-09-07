@@ -397,3 +397,12 @@ Get rid of usage of AllowDynamicProperties class
 PHP 8.2 complains about undeclared properties. To prevent the display of the warning messages, the AllowDynamicProperties class was used, which is a work around for this issue. In PHP 8.3 undeclared properties will lead to an error and not to a warning. To prevent unwanted surprises in higher PHP versions, all undeclared properties will be declared and the usage of the AllowDynamicProperties class will be removed.
 
 As written before some new CAPTCHA images have been added and the query string method has be modified too.
+
+## [2.1.45] 2023-09-07
+Correcting rendering bug of email template if there are multiple forms on 1 page.
+
+I have discovered that if you are using more than 1 module that derives from the FrontendForms module on the same page (fe FrontendContact and FrontendLoginRegister), than the rendering of the email template takes place multiple times before the email will be send, so that the markup of the HTML of the template will be broken. 
+I could not figure out the cause of this problem, but I found a way to prevent this behaviour by using a session to check if the template have been rendered or not.
+The session prevents the rendering of the template once more on the next run, so it will only be rendered once instead of twice or multiple times.
+After the mail has been sent, the session will be deleted.
+As always, please test the mail sending process, if it works as expected and post possible issues here.
