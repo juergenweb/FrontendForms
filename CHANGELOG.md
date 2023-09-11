@@ -406,3 +406,6 @@ I could not figure out the cause of this problem, but I found a way to prevent t
 The session prevents the rendering of the template once more on the next run, so it will only be rendered once instead of twice or multiple times.
 After the mail has been sent, the session will be deleted.
 As always, please test the mail sending process, if it works as expected and post possible issues here.
+
+## [2.1.46] 2023-09-11
+Fixing bug on calculating the wrong position of CAPTCHA field inside the form.
