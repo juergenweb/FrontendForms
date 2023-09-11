@@ -409,3 +409,7 @@ As always, please test the mail sending process, if it works as expected and pos
 
 ## [2.1.46] 2023-09-11
 Fixing bug on calculating the wrong position of CAPTCHA field inside the form.
+
+## 2023-09-11
+According to the wish of an user, an additional wrapper has been added arround the input field of the CAPTCHA with the class"captcha-input-wrapper".
+This addition has no effect for others.
