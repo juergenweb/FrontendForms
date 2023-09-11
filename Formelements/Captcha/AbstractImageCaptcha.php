@@ -252,8 +252,8 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
                 ->setAttribute('id', $formID . '-reload-link')
                 ->setAttribute('onclick',
                     'reloadCaptcha(\'' . $formID . '-captcha-image\', event); loadCaptchaSolutions(\'' . $formID . '-captcha-inputwrapper\', event)')
-                ->___render()); // render the reload link
-
+                ->___render().'<div class="captcha-input-wrapper">'); // render the reload link
+        $captchaInput->append('</div>');
         if (!$this->catOptions) { // prevent the same options being added multiple times after reloading the page
             foreach ($this->createOptions() as $value => $label) {
                 $this->captchaInput->addOption($label, $value);
