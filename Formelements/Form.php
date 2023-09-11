@@ -1622,9 +1622,10 @@
                 // add captcha field as last input field
                 if ($this->getCaptchaType() != 'none') {
                     // position in form fields array to insert
-                    $captchaPosition = end($inputfieldKeys) + 1;
+                    $captchaPosition = array_key_last($inputfieldKeys) + 1;
                     $captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
                     // insert the captcha input field after the last input field
+
                     $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
                         array($captchafield), array_slice($this->formElements, $captchaPosition));
                 }
