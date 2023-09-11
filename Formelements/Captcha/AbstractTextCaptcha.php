@@ -258,7 +258,8 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
             $this->createReloadLink()
                 ->setAttribute('id', $formID . '-reload-link')
                 ->setAttribute('onclick', 'reloadCaptcha(\'' . $formID . '-captcha-image\', event)')
-                ->___render()); // render the reload link
+                ->___render().'<div class="captcha-input-wrapper">'); // render the reload link
+        $captchaInput->append('</div>');
         return $captchaInput;
     }
 
