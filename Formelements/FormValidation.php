@@ -18,6 +18,8 @@ use ProcessWire\WireException;
 use ProcessWire\WireInputData as WireInputData;
 use ProcessWire\WireLog;
 use ProcessWire\WirePermissionException;
+use function ProcessWire\_n;
+
 
 class FormValidation extends Tag
 {
@@ -95,14 +97,14 @@ class FormValidation extends Tag
 
                 $diff = $submit_Time - (int)$start_Time;
 
-                $submit_Time = $this->secondsToReadable($diff);
+                $submit_Time = self::secondsToReadable($diff);
                 // too fast
                 if ($this->form->getMinTime() && ($diff < $this->form->getMinTime())) {
                     $secondsLeft = $this->_('seconds left'); //plural
                     $secondLeft = $this->_('second left'); // singular
                     $text = sprintf($this->_('You have submitted the form within %s. This seems pretty fast for a human. Your behavior is more similar to a Spam bot. Please wait at least %s until you submit the form once more.'),
                             $submit_Time,
-                            '<span id="minTime" data-time="' . $this->form->getMinTime() . '" data-unit="' . $secondsLeft . ';' . $secondLeft . '">' . $this->secondsToReadable($this->form->getMinTime())) . '</span><div id="timecounter"></div>';
+                            '<span id="minTime" data-time="' . $this->form->getMinTime() . '" data-unit="' . $secondsLeft . ';' . $secondLeft . '">' . self::secondsToReadable($this->form->getMinTime())) . '</span><div id="timecounter"></div>';
                     $this->alert->setCSSClass('alert_warningClass');
                     $this->alert->setText($text);
                     return false;
@@ -110,7 +112,7 @@ class FormValidation extends Tag
                 //too slow
                 if ($this->form->getMaxTime() && ($diff > $this->form->getMaxTime())) {
                     $text = sprintf($this->_('You have submitted the form after %s. This seems pretty slow for a human. Your behavior is more similar to a Spam bot. Please submit the form within %s the next time. You are blocked now and you have to close the browser to unlock, open it again and visit this page once more.'),
-                        $submit_Time, $this->secondsToReadable($this->form->getMaxTime()));
+                        $submit_Time, self::secondsToReadable($this->form->getMaxTime()));
                     $this->alert->setText($text);
                     $this->wire('session')->set('blocked',
                         $submit_Time); // set session for blocked value is the submission time
@@ -127,7 +129,51 @@ class FormValidation extends Tag
      * @param int $ss - seconds
      * @return string
      */
-    public function secondsToReadable(int $ss): string
+    public static function secondsToReadable(int $ss): string
+    {
+        $bit = [
+            'month' => floor($ss / 2592000),
+            'week' => floor(($ss % 2592000) / 604800),
+            'day' => floor(($ss % 604800) / 86400),
+            'hour' => floor(($ss % 86400) / 3600),
+            'minute' => floor(($ss % 3600) / 60),
+            'second' => $ss % 60
+        ];
+
+        $labelSingular = [
+            'month' => _('month'),
+            'week' => _('week'),
+            'day' => _('day'),
+            'hour' => _('hour'),
+            'minute' => _('minute'),
+            'second' => _('second')
+        ];
+
+        $labelPlural = [
+            'month' => _('months'),
+            'week' => _('weeks'),
+            'day' => _('days'),
+            'hour' => _('hours'),
+            'minute' => _('minutes'),
+            'second' => _('seconds')
+        ];
+
+        $ret = [];
+        foreach ($bit as $k => $v) {
+            $number = explode(' ', (string)$v);
+            if ($number[0] != 0) {
+                $label = _n($labelSingular[$k], $labelPlural[$k], $v);
+                $ret[] = $v . ' ' . $label;
+            }
+        }
+
+        if (count($ret) > 1) {
+            array_splice($ret, count($ret) - 1, 0, _('and'));
+        }
+        return implode(' ', $ret);
+    }
+
+    public function secondsToReadableCopy(int $ss): string
     {
         $bit = [
             'month' => floor($ss / 2592000),
@@ -229,6 +275,7 @@ class FormValidation extends Tag
         } // if check is disabled, return true and go on...
         // assign submitted **secretFormValue** from your form to a local variable
         $tokenfieldName = $this->form->getID() . '-doubleSubmission_token';
+
         $secretFormValue = isset($this->input->$tokenfieldName) ? filter_var($this->input->$tokenfieldName,
             FILTER_UNSAFE_RAW) : '';
         // check if the value is present in the **secretFormValue** variable
