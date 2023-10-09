@@ -16,3 +16,98 @@ Created: 08.07.2022
     width: 0;
     z-index: -1;
 }
+
+
+/* -----------------------------------------------------
+  Pure CSS Progress Bars
+  GitHub Project: https://github.com/rkchauhan/pure-css-progress-bars/
+  By: Ravikumar Chauhan
+  Find me on -
+  Twitter: https://twitter.com/rkchauhan01
+  Facebook: https://www.facebook.com/ravi032chauhan
+  GitHub: https://github.com/rkchauhan
+  CodePen: http://codepen.io/rkchauhan
+-------------------------------------------------------- */
+/* -----------------------------------------------------
+   CSS Progress Bars
+-------------------------------------------------------- */
+.cssProgress {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.cssProgress .progress1 {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    font-family: "Roboto", sans-serif;
+}
+
+.cssProgress .cssProgress-bar {
+    display: block;
+    float: left;
+    width: 0;
+    height: 100%;
+    background: #3798d9;
+    box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+    -webkit-transition: width 0.8s ease-in-out;
+    transition: width 0.8s ease-in-out;
+}
+
+
+.cssProgress .cssProgress-success {
+    background-color: #66bb6a !important;
+}
+
+
+.cssProgress .cssProgress-active {
+    background-image: -webkit-linear-gradient(135deg, rgba(255, 255, 255, 0.125) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.125) 50%, rgba(255, 255, 255, 0.125) 75%, transparent 75%, transparent);
+    background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.125) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.125) 50%, rgba(255, 255, 255, 0.125) 75%, transparent 75%, transparent);
+    background-size: 35px 35px;
+}
+
+.cssProgress-active {
+    -webkit-animation: cssProgressActive 2s linear infinite;
+    -ms-animation: cssProgressActive 2s linear infinite;
+    animation: cssProgressActive 2s linear infinite;
+}
+
+@-webkit-keyframes cssProgressActive {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 35px 35px;
+    }
+}
+
+@-ms-keyframes cssProgressActive {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 35px 35px;
+    }
+}
+
+@keyframes cssProgressActive {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 35px 35px;
+    }
+}
+
+/* -----------------------------------------------------
+  Progress Bar 1
+-------------------------------------------------------- */
+.progress1 {
+    background-color: #EEE;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.progress1 .cssProgress-bar {
+    height: 18px;
+}
+
