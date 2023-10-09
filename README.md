@@ -13,6 +13,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 5. Highly customizable
 6. Multi-language
 7. Option to send emails using HTML email templates within the WireMail class by using custom methods and properties added to the WireMail class
+8. Ajax support for form submission
 
 ## Requirements
 * PHP>=8.0.0
@@ -469,7 +470,9 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [showForm()](#showform---show-or-hide-the-rendering-of-the-form)  | show or hide the form  |
 | [getShowForm()](#getshowform---get-the-value-truefalse-if-the-value-should-be-displayed)  | Get the value, whether the form should be displayed or not  |
 | [render()](#render---output-the-markup-of-the-form)  | output the markup of the form  |
-
+| [setSubmitWithAjax()](#render---output-the-markup-of-the-form)  | Use Ajax to submit a form without page reload  |
+| [showProgressbar()](#render---output-the-markup-of-the-form)  | Show or hide the progressbar during Ajax form submission  |
+| [setRedirectUrlAfterAjax()](#render---output-the-markup-of-the-form)  | Redirect to another page after successfull form submission via Ajax  |
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
@@ -744,6 +747,30 @@ Render the form on the page.
 
 ```php
   echo $form->render();
+```
+### setSubmitWithAjax() - use Ajax for form submission
+Enable/disable Ajax form submission by using this method. The global value is set inside the module configuration,
+but you can overwrite this value by using this method. Enter "true" to enable or "false" to disable Ajax support inside the parenthesis.
+
+```php
+  echo $form->setSubmitWithAjax(true); // true or false
+```
+
+### showProgressbar() - show/hide the progress bar during Ajax form submission
+An animated progress bar shows the user, that the form will be validated after an Ajax form submission. Otherwise, the user will not see, that something happens behind the scenes.
+The global value (show or hide the bar) is set inside the module configuration,
+but you can overwrite this value by using this method. Enter "true" to show or "false" to hide the progress bar.
+
+```php
+  echo $form->showProgressbar(true); // true or false
+```
+
+### setRedirectUrlAfterAjax() - redirect to another page after successful form submission via Ajax
+If you are using Ajax to submit a form, a PHP session redirect will not work, if you want to redirect to another page after successful form submission. In this case, you have to do a JavaScript redirect. 
+This method will force JavaScript to redirect to another page - you only have to add the new page URL inside the parenthesis.
+
+```php
+  echo $form->setRedirectUrlAfterAjax('/blog/');
 ```
 
 ## Input field methods
