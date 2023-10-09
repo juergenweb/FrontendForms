@@ -1,5 +1,6 @@
 {
 	"alertClass": "uk-alert",
+	"alert_primaryClass": "uk-alert-primary",
 	"alert_dangerClass": "uk-alert-danger",
 	"alert_successClass": "uk-alert-success",
 	"alert_warningClass": "uk-alert-warning",
