@@ -60,12 +60,17 @@
         protected string $mail_subject = ''; // the subject for a mail sent after form validation
         protected string $emailTemplatesDirPath = ''; // the path to the email templates directory
         protected string $emailCustomTemplatesDirPath = ''; // the path to the email custom templates directory
-        protected string $emailTemplate = ''; // the filename of the email template including extension (fe. template.html)
+        protected string $emailTemplate = ''; // the filename of the email template including the extension (fe. template.html)
         protected string $emailTemplatePath = ''; // the path to the body template
         protected string $emailCustomTemplatePath = ''; // the path to the custom body template
-        protected array $uploaded_files = []; // array which holds all currently uploaded files with path as value
+        protected array $uploaded_files = []; // array which holds all currently uploaded files with the path as value
         protected int|null $mail_language_id = null; // property for setting the language for mail templates manually
         protected int|null $site_language_id = null; // internal property containing the current site language
+        protected string|int|null|bool $submitAjax = 0; // whether to submit the form via Ajax (1) or not (0)
+        protected string|null $ajaxRedirect = null; // redirect to this URL after a valid form has been submitted - only for Ajax submission
+        protected string $validated = '0'; // the form is validated (1) or not (0)
+        protected string|null|int|bool $showProgressbar = true;
+
         /* objects */
         protected Alert $alert; // alert box
         protected RequiredTextHint $requiredHint; // hint to inform that all required fields have to be filled out
@@ -84,9 +89,9 @@
         {
             parent::__construct();
 
-            // set path to the template folder for the email templates
+            // set the path to the template folder for the email templates
             $this->emailTemplatesDirPath = $this->wire('config')->paths->siteModules . 'FrontendForms/email_templates/';
-            // set path to the custom template folder for the email templates
+            // set the path to the custom template folder for the email templates
             $this->emailCustomTemplatesDirPath = $this->wire('config')->paths->site . 'frontendforms-custom-templates/';
 
             // set the path to the email template from the module config
@@ -107,6 +112,15 @@
                 $this->site_language_id = $this->user->language->id;
             }
 
+            // set Ajax form submission according to the configuration settings
+            $this->setSubmitWithAjax((int)$this->frontendforms['input_ajaxformsubmission']);
+
+            // set show/hide progressbar during Ajax form submission according to the configuration settings
+            if (array_key_exists('input_hideProgressBar', $this->frontendforms)) {
+                $this->showProgressbar = !(($this->frontendforms['input_hideProgressBar'] == '1'));
+            }
+            $this->showProgressbar($this->showProgressbar);
+
             // set the current page
             $this->page = $this->wire('page');
 
@@ -123,9 +137,9 @@
 
             // set default properties
             $this->visitorIP = $this->wire('session')->getIP();
-            $this->showForm = $this->allowFormViewByIP(); // show or hide the form depending on IP ban
+            $this->showForm = $this->allowFormViewByIP(); // show or hide the form depending on the IP ban
             $this->setAttribute('method', 'post'); // default is post
-            $this->setAttribute('action', $this->page->url); // stay on the same page - needs to run after API is ready
+            $this->setAttribute('action', $this->page->url); // stay on the same page - needs to run after the API is ready
             $this->setAttribute('id', $id); // set the id
             $this->setAttribute('name', $this->getID() . '-' . time());
             $this->setHtml5Validation($this->frontendforms['input_html5_validation']);
@@ -138,7 +152,7 @@
             $this->getFormElementsWrapper()->setAttribute('id',
                 $this->getAttribute('id') . '-formelementswrapper'); // add id
             $this->getFormElementsWrapper()->setAttribute('class',
-                $this->frontendforms['input_wrapperFormElementsCSSClass']); // add css class to wrapper element
+                $this->frontendforms['input_wrapperFormElementsCSSClass']); // add css class to the wrapper element
             $this->useDoubleFormSubmissionCheck($this->useDoubleFormSubmissionCheck);
             $this->setRequiredText($this->getLangValueOfConfigField('input_requiredText'));
             $this->logFailedAttempts($this->frontendforms['input_logFailedAttempts']); // enable or disable the logging of blocked visitor's IP depending on config settings
@@ -196,6 +210,37 @@
         }
 
         /**
+         * Enable/disable form submission via ajax
+         * @param bool|int|null $ajax - true => form will be submitted via Ajax
+         * @return $this
+         */
+        public function setSubmitWithAjax(bool|int|null|string $ajax = true): self
+        {
+            $this->submitAjax = boolval($ajax);
+            return $this;
+        }
+
+        /**
+         * Whether to show the progressbar during the Ajax form submission or not
+         * @param bool|int|string|null $showProgressbar
+         * @return $this
+         */
+        public function showProgressbar(bool|int|null|string $showProgressbar = true): self
+        {
+            $this->showProgressbar = boolval($showProgressbar);
+            return $this;
+        }
+
+        /**
+         * Get the setting value if Ajax should be used to submit the form
+         * @return bool
+         */
+        public function getSubmitWithAjax(): bool
+        {
+            return (bool)$this->submitAjax;
+        }
+
+        /**
          * Enable/disable checking of double form submissions
          * True: enabled
          * False: disabled
@@ -224,7 +269,7 @@
 
         /**
          * Should the form be displayed after a successful submission (true or 1) or not (false or 0)
-         * By default only the success-message will be displayed after valid form submission and not the whole form
+         * By default, only the success-message will be displayed after valid form submission and not the whole form
          * This prevents double form submissions
          * @param bool|int $show
          * @return void
@@ -246,7 +291,7 @@
         /**
          * Method, that holds an array with all general placeholders
          * These placeholders can be used in mail templates or mail body templates/texts
-         * The array contains the placeholder name as key and its value (placeholder name => value)
+         * The array contains the placeholder name as the key and its value (placeholder name => value)
          * @return array
          * @throws WireException
          */
@@ -271,6 +316,22 @@
                 'browservalue' => $_SERVER['HTTP_USER_AGENT'],
                 'donotreplayvalue' => $this->_('This is an auto generated message, please do not reply.')
             ];
+        }
+
+        /**
+         * Create the default progress bar
+         * @return string
+         */
+        public function createProgressbar(): string
+        {
+            return '
+            <div class="cssProgress">
+          <div class="progress1">
+            <div class="cssProgress-bar cssProgress-active cssProgress-success" data-percent="100" style="width: 100%; transition: none 0s ease 0s;">
+            </div>
+          </div>
+        </div>
+            ';
         }
 
         /**
@@ -344,7 +405,7 @@
                         $doc = new DOMDocument();
                         $doc->loadHTML($body);
                         $bodyTags = $doc->getElementsByTagName('body');
-                        if ($bodyTags and $bodyTags->length > 0) {
+                        if ($bodyTags->length > 0) {
                             $bodyElement = $bodyTags->item(0);
                             $preheader = $doc->createElement('div', $mail->title . $this->getLitmusHack());
                             $preheader->setAttribute('style', $this->getPreheaderStyle());
@@ -396,7 +457,11 @@
 
         /**
          * Render the mail template: replace placeholders and use HTML email template if set
-         * @throws WireException
+         * @param \ProcessWire\HookEvent $event
+         * @return \ProcessWire\Module|\ProcessWire\Wire|\ProcessWire\WireArray|\ProcessWire\WireData
+         * @throws \DOMException
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
          */
 
         public function renderTemplate(HookEvent $event): Module|Wire|WireArray|WireData
@@ -409,15 +474,14 @@
             // set the placeholder for the body
             if (($mail->bodyHTML) || ($mail->body)) {
 
-                // set $mail->bodyHTML as prefered value
+                // set $mail->bodyHTML as preferred value
                 $content = $mail->bodyHTML ?: $mail->body;
-
+                $body = '';
                 if ($content) {
-
                     $body = wirePopulateStringTags($content, $this->getMailPlaceholders(),
                         ['tagOpen' => '[[', 'tagClose' => ']]']);
-                    $this->setMailPlaceholder('body', $body);
                 }
+                $this->setMailPlaceholder('body', $body);
 
                 $mail->bodyHTML($body);
                 $mail->body($body);
@@ -478,8 +542,8 @@
         }
 
         /**
-         * Set the recipient email address on per form base
-         * In this case the recipient can be set/changed on per form base instead of directly on the WireMail object
+         * Set the recipient email address on per-form base
+         * In this case, the recipient can be set/changed on per-form base instead of directly on the WireMail object
          * Needed in every case, where the WireMail object is not directly reachable
          * @param string $email
          * @return $this
@@ -497,8 +561,8 @@
         }
 
         /**
-         * Set the subject for the email on per form base
-         * In this case the subject can be set/changed on per form base instead of directly on the WireMail object
+         * Set the subject for the email on per-form base
+         * In this case, the subject can be set/changed on per-form base instead of directly on the WireMail object
          * Needed in every case, where the WireMail object is not directly reachable
          * @param string $subject
          * @return $this
@@ -650,7 +714,7 @@
         }
 
         /**
-         * Checks if an input field with a specific name is present the current form (but not if it has a value)
+         * Check if an input field with a specific name is present the current form (but not if it has a value)
          * @param string $fieldName
          * @return bool
          */
@@ -663,6 +727,8 @@
         /**
          * Output the value of multilang fields from the module configuration
          * @param string $fieldName
+         * @param array|null $modulConfig
+         * @param int|null $lang_id
          * @return string
          */
         protected function getLangValueOfConfigField(
@@ -744,7 +810,7 @@
         }
 
         /**
-         * Disable/enable and set type of captcha on per form base
+         * Disable/enable and set type of captcha on per-form base
          * @param string $captchaType
          * @return void
          */
@@ -805,8 +871,8 @@
         }
 
         /**
-         * Check if visitor is on the black list or not
-         * @return bool - true if visitor is not on the black list
+         * Check if the visitor is on the blacklist or not
+         * @return bool - true if the visitor is not on the blacklist
          */
         protected function allowFormViewByIP(): bool
         {
@@ -822,7 +888,7 @@
 
         /**
          * Convert the values of a textbox to an array
-         * Will be needed for list of banned IP in the module configuration
+         * Will be needed for the list of banned IP in the module configuration
          * @param string|null $textarea - the value of the textarea field
          * @return array
          */
@@ -1023,7 +1089,7 @@
         {
             $name = $this->createElementName(trim($name));
             if ($this->getValues()) {
-                // first check if name exists
+                // first check if the name exists
                 if (isset($this->getValues()[$name])) {
                     return $this->getValues()[$name];
                 } else {
@@ -1085,7 +1151,7 @@
         }
 
         /**
-         * Get all Elements (inputs, buttons,...) that are added to the form object
+         * Get all Elements (inputs, buttons, ...) that are added to the form object
          * @return array - returns an array of all form element objects
          */
         public function getFormElements(): array
@@ -1184,8 +1250,8 @@
                             $files = $this->reArrayFiles($_FILES[$fieldName]);
                             foreach ($files as $file) {
                                 if ($file['error'] == 0) {
-                                    // sanitize file name an convert it to lowercase to prevent problems on certain servers
-                                    $filename = $this->wire('sanitizer')->filename($file['name'], true, 128);
+                                    // sanitize file name and convert it to lowercase to prevent problems on certain servers
+                                    $filename = $this->wire('sanitizer')->filename($file['name'], true);
                                     $target_file = $this->uploadPath . strtolower($filename);
                                     $uploaded_files[] = $target_file;
                                     move_uploaded_file($file['tmp_name'], $target_file);
@@ -1195,8 +1261,8 @@
                             // single file
                             $file = $_FILES[$fieldName];
                             if ($file['error'] == 0) {
-                                // sanitize file name an convert it to lowercase to prevent problems on certain servers
-                                $filename = $this->wire('sanitizer')->filename(basename($file['name']), true, 128);
+                                // sanitize file name and convert it to lowercase to prevent problems on certain servers
+                                $filename = $this->wire('sanitizer')->filename(basename($file['name']), true);
                                 $target_file = $this->uploadPath . strtolower($filename);
                                 $uploaded_files[] = $target_file;
                                 move_uploaded_file($file['tmp_name'], $target_file);
@@ -1277,6 +1343,7 @@
             // instantiates the FormValidation object
             $validation = new FormValidation($input, $this, $this->alert);
 
+
             // 1) check if this form was submitted and no other form on the same page
             if ($validation->thisFormSubmitted()) {
                 // 2) check if form was submitted in time range
@@ -1284,8 +1351,8 @@
                     // 3) check if max attempts were reached
                     if ($validation->checkMaxAttempts($this->wire('session')->attempts)) {
                         // 4) check for double form submission
-
                         if ($validation->checkDoubleFormSubmission($this, $this->useDoubleFormSubmissionCheck)) {
+
                             // 5) Check for CSRF attack
                             if ($this->wire('session')->CSRF->hasValidToken()) {
 
@@ -1325,7 +1392,6 @@
                                         $element->removeAllRules();
                                     }
                                 }
-
 
                                 $v = new Validator($sanitizedValues);
 
@@ -1374,6 +1440,7 @@
                                 }
 
                                 if ($v->validate()) {
+                                    $this->validated = '1';
                                     $this->alert->setCSSClass('alert_successClass');
                                     $this->alert->setText($this->getSuccessMsg());
                                     $this->wire('session')->remove('attempts');
@@ -1389,11 +1456,12 @@
                                     return true;
                                 } else {
                                     // set error alert
+                                    $this->wire('session')->set('errors', '1');
                                     $this->formErrors = $v->errors();
                                     $this->alert->setCSSClass('alert_dangerClass');
                                     $this->alert->setText($this->getErrorMsg());
 
-                                    // add max attempts warning message to error message
+                                    // add a max attempts warning message to the error message
                                     if ($this->getMaxAttempts() && isset($this->wire('session')->attempts)) {
 
                                         $attemptDiff = $this->getMaxAttempts() - $this->wire('session')->attempts;
@@ -1491,7 +1559,6 @@
             $values = [];
             foreach ($this->formElements as $element) {
                 if ($element->getAttribute('value')) {
-                    //$values[$element->getAttribute('name')] = $element->getAttribute('value');
 
                     // Run all sanitizer methods over the value
                     if (method_exists($element, 'getSanitizers')) {
@@ -1555,7 +1622,7 @@
         }
 
         /**
-         * Method to run if a user has taken too much attempts
+         * Method to run if a user has taken too many attempts
          * This method has to be before the render method of the form
          * You can use it fe to save some data to the database -> you got the idea
          * @return bool -> returns true if the user is blocked, otherwise false
@@ -1570,14 +1637,48 @@
         }
 
         /**
+         * Set a redirect url after the form has been submitted successfully via Ajax
+         * This forces a Javascript redirect after the form has been validated without errors
+         * @param string|null $url
+         * @return $this
+         */
+        public function setRedirectUrlAfterAjax(string|null $url = null): self
+        {
+            if (!is_null($url)) {
+                $this->ajaxRedirect = $url;
+            }
+            return $this;
+        }
+
+
+        /**
          * Render the form markup (including alerts if present) on the frontend
          * @return string
          * @throws WireException
+         * @throws \Exception
          */
         public function render(): string
         {
 
-            /* Check if form contains file upload fields, then add enctype attribute */
+            $out = '';
+
+            // if Ajax submit was selected, add an aditional data attribute to the form tag
+            if ($this->getSubmitWithAjax()) {
+
+                // check if a user has Javascript enabled, otherwise show a warning message inside an alert box
+                $warningAlert = new Alert();
+                $warningAlert->setCSSClass('alert_warningClass');
+                $warningAlert->prepend('<noscript>');
+                $warningAlert->append('</noscript>');
+                $warningAlert->setText($this->_('You do not have Javascript enabled. This could cause problems. Please enable Javascript to submit the form without any problems.'));
+                $out .= $warningAlert->___render();
+
+                $this->setAttribute('data-submitajax', $this->getID());
+
+                // add special div container for Ajax form submission
+                $out .= '<div id="' . $this->getID() . '-ajax-wrapper" data-validated="' . $this->validated . '">';
+            }
+            /* Check if the form contains file upload fields, then add enctype attribute */
             foreach ($this->formElements as $obj) {
                 if ($obj instanceof InputFile) {
                     $this->setAttribute('enctype', 'multipart/form-data');
@@ -1593,7 +1694,7 @@
                 $this->showForm = false;
             }
 
-            $out = $this->prepend;
+            $out .= $this->prepend;
             $out .= $this->append;
 
             // allow only get or post - if value is not get or post set post as default value
@@ -1605,7 +1706,7 @@
             $tokenName = $this->wire('session')->CSRF->getTokenName();
             $tokenValue = $this->wire('session')->CSRF->getTokenValue();
 
-            // get keys of all input fields (excluding buttons, fieldsets,.. only input fields that collect user data)
+            // get keys of all input fields (excluding buttons, fieldsets, … only input fields that collect user data)
             $inputfieldKeys = [];
 
             foreach ($this->formElements as $key => $inputfield) {
@@ -1634,6 +1735,16 @@
                 if ($this->frontendforms['input_useHoneypot']) {
                     shuffle($inputfieldKeys);
                     array_splice($this->formElements, $inputfieldKeys[0], 0, [$this->createHoneypot()]);
+                }
+            }
+
+            // create hidden Ajax redirect input if set
+            // this value can be grabbed afterwards via Javascript to make a JS redirect
+            if ($this->getSubmitWithAjax()) {
+                if ($this->ajaxRedirect) {
+                    $ajaxredirectField = new InputHidden('ajax_redirect');
+                    $ajaxredirectField->setAttribute('value', $this->ajaxRedirect);
+                    $this->add($ajaxredirectField);
                 }
             }
 
@@ -1668,13 +1779,14 @@
             if ($this->wire('session')->get('blocked')) {
                 // set danger alert for blocking messages
                 $this->alert->setCSSClass('alert_dangerClass');
-                // return blocking text for too much failed attempts
+                // return blocking text for too many failed attempts
                 if ($this->wire('session')->get('blocked') == 'maxAttempts') {
                     if ($this->wire('session')->get('attempts') == $this->getMaxAttempts()) {
                         $this->alert->setText($this->_('You have reached the max. number of allowed attempts and therefore you cannot submit the form once more. To reset the blocking and to submit the form anyway you have to close this browser, open it again and visit this page once more.'));
                     }
                 }
             }
+
 
             // Output the form markup
             $out .= $this->alert->___render();
@@ -1684,11 +1796,14 @@
             if ($this->showForm && (($this->wire('session')->get('blocked') == null))) {
 
                 //add required texts
-                $this->prepend($this->renderRequiredText('top')); // required text hint at top
+                $this->prepend($this->renderRequiredText('top')); // required text hint at the top
                 $this->append($this->renderRequiredText('bottom')); // required text hint at bottom
                 $formElements = '';
 
-                foreach ($this->formElements as $element) {
+                $elementsClassNames = (array_map("get_class", $this->formElements));
+                $position = array_search('FrontendForms\Button', $elementsClassNames);
+
+                foreach ($this->formElements as $key => $element) {
 
                     //create input ID as a combination of form id and input name
                     $oldId = $element->getAttribute('id');
@@ -1726,11 +1841,25 @@
                         }
                     }
 
+                    // add an element (progressbar, text,...) before the first button element for Ajax submit
+                    if ($this->getSubmitWithAjax()) {
+
+                        if ($key === $position) { // add it only before the first button inside the form
+                            if ($this->showProgressbar) {
+                                // create progressbar and info text for form submission
+                                $submitInfo = new Alert();
+                                $submitInfo->setCSSClass('alert_primaryClass');
+                                $submitInfo->setContent($this->createProgressbar() . $this->_('Please be patient... the form will be validated!'));
+                                $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo->___render() . '</div>';
+                            }
+                        }
+                    }
+
                     if (array_key_exists($name, $this->formErrors)) {
                         $element->setCSSClass('input_errorClass');
                         // set error class for input element
                         $element->setErrorMessage($this->formErrors[$name][0]);
-                        //get first error message
+                        //get a first error message
                     }
 
                     $formElements .= $element->render() . PHP_EOL;
@@ -1745,26 +1874,35 @@
                 // render the form with all its fields
                 $this->setContent($formElements);
                 $out .= $this->renderNonSelfclosingTag($this->getTag());
+
             }
+            if ($this->getSubmitWithAjax()) {
+                $out .= '</div>';
+            }
+
             return $out;
+
         }
 
         /**
          * Append a field object to the form
-         * @param object $field - object of inputfield, fieldset, button,...
+         * @param object $field - object of inputfield, fieldset, button, ...
          * @return void
          */
 
         /**
          * Append a field object to the form
          * The 2 optional parameters are only for the creation of 2 new methods: addBefore() and addAfter()
-         * These 2 methods can be used to add new form elements (inputs, text elements, fieldsets,..) to a formElements
+         * These 2 methods can be used to add new form elements (inputs, text elements, fieldsets,…) to a formElements
          * array at a certain position These 2 methods are especially designed for the future usage in module dev - no
          * need to use it if you are creting the form by your own
-         * @param object $field - the current form field which should be appended to the form
-         * @param object|null $otherfield - optional: another form field
+         * @param \FrontendForms\Inputfields|\FrontendForms\Textelements|\FrontendForms\Button|\FrontendForms\FieldsetOpen|\FrontendForms\FieldsetClose $field -
+         *     the current form field which should be appended to the form
+         * @param \FrontendForms\Inputfields|\FrontendForms\Textelements|\FrontendForms\Button|\FrontendForms\FieldsetOpen|\FrontendForms\FieldsetClose|bool|null $otherfield -
+         *     optional: another form field
          * @param bool $add_before - optional: current should be inserted before or after this (another) form field
          * @return void
+         * @throws \Exception
          */
         public function add(
             Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose           $field,
@@ -1782,14 +1920,14 @@
                 $this->setMailPlaceholder($fieldname . 'label', $field->getLabel()->getText());
                 $this->setMailPlaceholder($fieldname . 'value', $field->getAttribute('value'));
             }
-            // if field is not a text element, set the name attribute
+            // if the field is not a text element, set the name attribute
             if (!is_subclass_of($field, 'FrontendForms\TextElements')) {
                 // Add id of the form as prefix for the name attribute of the field
                 $field->setAttribute('name', $this->getID() . '-' . $field->getId());
             }
 
             if (!is_null($otherfield)) {
-                // check if other field exist
+                // check if another field exists
                 if (is_bool($otherfield)) {
                     throw new Exception("The reference field (argument 2) where you want to add this field before or after does not exist. Please check if you have written the name attribute correctly.",
                         1);
@@ -1827,17 +1965,19 @@
          * Insert a form field before another form field
          * Can be used if you have not created the form by your own, but you need to add a new field to a created
          * formElements array at a certain position
-         * @param object $field - the current form field
-         * @param object $before_field - the form field object before which the current form field object should be
-         *     inserted
+         * @param \FrontendForms\Inputfields|\FrontendForms\Textelements|\FrontendForms\Button|\FrontendForms\FieldsetOpen|\FrontendForms\FieldsetClose $field -
+         *     the current form field
+         * @param \FrontendForms\Inputfields|\FrontendForms\Textelements|\FrontendForms\FieldsetOpen|\FrontendForms\FieldsetClose|\FrontendForms\Button|bool $before_field -
+         *     the form field object before which the current form field object should be inserted
          * @return void
+         * @throws \Exception
          */
         public function addBefore(
             Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose      $field,
             Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $before_field
         ): void
         {
-            // if field is present inside the formelements array, remove it first
+            // if a field is present inside the formelements array, remove it first
             if (($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))) {
                 $this->remove($field);
             }
@@ -1848,17 +1988,20 @@
          * Insert a form field after another form field
          * Can be used if you have not created the form by your own, but you need to add a new field to a created
          * formElements array at a certain position
-         *                    * @param object $field - the current form field
-         * @param object $after_field - the form field object after which the current form field object should be
-         *     inserted
+         *                    *
+         * @param \FrontendForms\Inputfields|\FrontendForms\Textelements|\FrontendForms\Button|\FrontendForms\FieldsetOpen|\FrontendForms\FieldsetClose $field -
+         *     the current form field
+         * @param \FrontendForms\Inputfields|\FrontendForms\Textelements|\FrontendForms\FieldsetOpen|\FrontendForms\FieldsetClose|\FrontendForms\Button|bool $after_field -
+         *     the form field object after which the current form field object should be inserted
          * @return void
+         * @throws \Exception
          */
         public function addAfter(
             Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose      $field,
             Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $after_field
         ): void
         {
-            // if field is present inside the formelements array, remove it first
+            // if a field is present inside the formelements array, remove it first
             if (($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))) {
                 $this->remove($field);
             }
@@ -1874,7 +2017,7 @@
         {
             if (($key = array_search($field, $this->formElements)) !== false) {
                 unset($this->formElements[$key]);
-                // remove the placeholders too, if they are present
+                // remove the placeholders too if they are present
                 $fieldname = $field->getAttribute('name');
                 $this->removePlaceholder(strtoupper($fieldname . 'label'));
                 $this->removePlaceholder(strtoupper($fieldname . 'value'));
@@ -1949,7 +2092,7 @@
         }
 
         /**
-         * Create required hint text element if showTextHint is set to true
+         * Create a required hint text element if showTextHint is set to true
          * @param string $position - has to be 'top' or 'bottom'
          * @return string
          */
@@ -2074,8 +2217,8 @@
 
         /**
          * Generate an invisible pre-header text after the subject for an email
-         * @param string|null $preheader
-         * @return string|null
+         * @param \ProcessWire\WireMail $mail
+         * @return string
          */
         protected function generateEmailPreHeader(WireMail $mail): string
         {
