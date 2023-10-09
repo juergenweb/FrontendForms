@@ -753,7 +753,7 @@ Enable/disable Ajax form submission by using this method. The global value is se
 but you can overwrite this value by using this method. Enter "true" to enable or "false" to disable Ajax support inside the parenthesis.
 
 ```php
-  echo $form->setSubmitWithAjax(true); // true or false
+  $form->setSubmitWithAjax(true); // true or false
 ```
 
 ### showProgressbar() - show/hide the progress bar during Ajax form submission
@@ -762,7 +762,7 @@ The global value (show or hide the bar) is set inside the module configuration,
 but you can overwrite this value by using this method. Enter "true" to show or "false" to hide the progress bar.
 
 ```php
-  echo $form->showProgressbar(true); // true or false
+  $form->showProgressbar(true); // true or false
 ```
 
 ### setRedirectUrlAfterAjax() - redirect to another page after successful form submission via Ajax
@@ -770,7 +770,7 @@ If you are using Ajax to submit a form, a PHP session redirect will not work, if
 This method will force JavaScript to redirect to another page - you only have to add the new page URL inside the parenthesis.
 
 ```php
-  echo $form->setRedirectUrlAfterAjax('/blog/');
+  $form->setRedirectUrlAfterAjax('/blog/');
 ```
 
 ## Input field methods
