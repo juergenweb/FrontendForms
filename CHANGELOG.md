@@ -413,3 +413,20 @@ Fixing bug on calculating the wrong position of CAPTCHA field inside the form.
 ## 2023-09-11
 According to the wish of an user, an additional wrapper has been added arround the input field of the CAPTCHA with the class"captcha-input-wrapper".
 This addition has no effect for others.
+
+## [2.1.47] 2023-10-09
+Now FrontendForms supports Ajax form submission!
+
+Ajax form submission prevents a page reload after the form has been submitted. This could be useful in scenarios, where you do not want a reload (fe if your form is inside a modal box or inside a tab) after the form has been submitted.
+You can disable/enable Ajax submission by checking a checkbox inside the module configuration, or you can overwrite the global value by using the setSubmitWithAjax() method on per form base.
+
+If you are enabling this feature, a progress bar will be displayed after you have pressed the submit button to inform the user, that the form will be validated now. Otherwise, the user will not see any action until the validated form will be loaded back into the page.
+If you do not want to show the progress bar, you can disable it inside the module configuration too. 
+With the showProgressbar() method, you can overwrite this global setting on per form base.
+
+In the case, you want to redirect the visitor to another page, after the form has been submitted successfully, you cannot do this via a PHP session redirect, because the form has been submitted via Ajax.
+In this case a JavaScript redirect has to be done. To force a JS redirect after the submission, you need to use the setRedirectUrlAfterAjax() method. Put the new URL inside the parenthesis, and the user will be redirected to this URL after the form has been validated successful.
+
+You will find a more detailed information about these 3 new methods here: https://github.com/juergenweb/FrontendForms/blob/main/README.md#setsubmitwithajax---use-ajax-for-form-submission
+
+
