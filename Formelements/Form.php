@@ -113,7 +113,9 @@
             }
 
             // set Ajax form submission according to the configuration settings
-            $this->setSubmitWithAjax((int)$this->frontendforms['input_ajaxformsubmission']);
+            if (array_key_exists('input_ajaxformsubmission', $this->frontendforms)) {
+                $this->setSubmitWithAjax((int)$this->frontendforms['input_ajaxformsubmission']);
+            }
 
             // set show/hide progressbar during Ajax form submission according to the configuration settings
             if (array_key_exists('input_hideProgressBar', $this->frontendforms)) {
