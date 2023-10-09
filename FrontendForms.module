@@ -2045,7 +2045,7 @@
             // get password requirements
             $hintText .= '<h3>' . $this->_('Current password requirements settings:') . '</h3>';
             $hintText .= '<p>' . $this->_('A password must contain at least one of the following characters:') . '</p><ul>';
-            foreach ($this->password_object->getSetting('requirementsLabels') as $value => $label) {
+            foreach ($this->password_object->getSetting('requirements') as $value => $label) {
                 if (in_array($value, $this->password_field->requirements)) {
                     $hintText .= '<li>' . $label . '</li>';
                 }
