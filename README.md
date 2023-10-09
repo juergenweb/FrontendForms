@@ -470,9 +470,9 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [showForm()](#showform---show-or-hide-the-rendering-of-the-form)  | show or hide the form  |
 | [getShowForm()](#getshowform---get-the-value-truefalse-if-the-value-should-be-displayed)  | Get the value, whether the form should be displayed or not  |
 | [render()](#render---output-the-markup-of-the-form)  | output the markup of the form  |
-| [setSubmitWithAjax()](#render---output-the-markup-of-the-form)  | Use Ajax to submit a form without page reload  |
-| [showProgressbar()](#render---output-the-markup-of-the-form)  | Show or hide the progressbar during Ajax form submission  |
-| [setRedirectUrlAfterAjax()](#render---output-the-markup-of-the-form)  | Redirect to another page after successfull form submission via Ajax  |
+| [setSubmitWithAjax()](#setsubmitwithajax---use-ajax-for-form-submission)  | Use Ajax to submit a form without page reload  |
+| [showProgressbar()](#showprogressbar---showhide-the-progress-bar-during-ajax-form-submission)  | Show or hide the progressbar during Ajax form submission  |
+| [setRedirectUrlAfterAjax()](#showprogressbar---showhide-the-progress-bar-during-ajax-form-submission)  | Redirect to another page after successfull form submission via Ajax  |
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
