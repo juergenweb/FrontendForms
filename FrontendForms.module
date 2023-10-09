@@ -78,6 +78,8 @@
         protected string $input_wrapperFormElementsCSSClass = ''; // the CSS class for the wrapperFormElements div
         protected string $input_framework = 'none.json'; // default framework selection
         protected string|int $input_showasterisk = 1; // show asterisk on required fields
+        protected string|int $input_ajaxformsubmission = 0; // submit forms via Ajax (1) or not (0)
+        protected string|int $input_hideProgressBar = 0; // Hide the progressbar during form submission (1) or not (0)
 
         /* Email configuration */
         protected string $input_emailTemplate = 'template_1.html'; // default email template
@@ -178,6 +180,8 @@
                 'input_removeCSS' => 0,
                 'input_framework' => 'none.json',
                 'input_appendLabel' => [],
+                'input_ajaxformsubmission' => 0,
+                'input_hideProgressBar' => 0,
                 'input_emailTemplate' => 'template_1.html',
                 'input_dateformat' => 'Y-m-d',
                 'input_timeformat' => 'H:i a',
@@ -576,8 +580,8 @@
 
             // add CSS and JS to the backend
             $version = $this->getModuleInfo()['version'] . '-' . time();
-            $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version);
-            $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version);
+            $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version.'&time='.time());
+            $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version.'&time='.time());
 
             // add CSS and JS links to the frontend template
             $this->addHookAfter('Page::render', $this, 'addAssets');
@@ -1049,6 +1053,8 @@
                     '$form->appendLabelOnCheckboxes(true); // true, false',
                     '$form->appendLabelOnRadios(true); // true, false'
                 ],
+                'input_ajaxformsubmission' => ['$form->setSubmitWithAjax(true); // true, false'],
+                'input_hideProgressBar' => ['$form->showProgressbar(true); // true, false'],
                 'input_emailTemplate' => ['$mail->mailTemplate("template_2.html"); // has to be added to the WireMail object not to the form'],
                 'input_useIPBan' => ['$form->useIPBan(false); // true, false',],
                 'input_preventIPs' => [
@@ -1085,11 +1091,11 @@
 
             $version = $this->getModuleInfo()['version'];
             if (!$this->input_removeJS) {
-                $js = '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '"></script>' . PHP_EOL;
+                $js = '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '&time='.time().'"></script>' . PHP_EOL;
                 $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
             }
             if (!$this->input_removeCSS) {
-                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css' . '"/>' . PHP_EOL;
+                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css?v=' . $version . '&time='.time().'"/>' . PHP_EOL;
                 $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
             }
         }
@@ -1474,6 +1480,31 @@
             $fieldset1->add($fieldsetAssets, $inputfields, $inputfields);
             $inputfields->add($fieldset1);
 
+            $fieldset2 = $this->wire('modules')->get('InputfieldFieldset');
+            $fieldset2->label = $this->_('Ajax form submission');
+            $fieldset2->collapsed = 1;
+            $fieldset2->icon = 'fa-code';
+
+                $ajaxformsubmission = $this->wire('modules')->get('InputfieldCheckbox');
+                $ajaxformsubmission->attr('name', 'input_ajaxformsubmission');
+                $ajaxformsubmission->attr('checked', $this->input_ajaxformsubmission == '1' ? 'checked' : '');
+                $ajaxformsubmission->label = $this->_('Submit forms via Ajax');
+                $ajaxformsubmission->description = $this->_('If the box is checked, every form and its form data will be submitted via Ajax. This means that there will be no page reload after submission.');
+                $ajaxformsubmission->notes = $this->_('Please note, if Javascript is not enabled, the form will be submitted with page reload, but this could cause problems under certain circumstances where no page reload is necessary. If Javascript is not enabled, the user will see a warning message above the form.');
+
+            $fieldset2->add($ajaxformsubmission, $inputfields);
+
+            $hideProgressBar = $this->wire('modules')->get('InputfieldCheckbox');
+            $hideProgressBar->attr('name', 'input_hideProgressBar');
+            $hideProgressBar->attr('checked', $this->input_hideProgressBar == '1' ? 'checked' : '');
+            $hideProgressBar->label = $this->_('Hide the progressbar during form submission');
+            $hideProgressBar->description = $this->_('If the box is checked, the progressbar will not be displayed during the form submission via Ajax.');
+            $hideProgressBar->notes = $this->_('Usually, a progressbar with a text will be displayed during the submission of a form via Ajax to inform the user that the form will be submitted. This could be helpful to users, if the submission will take a little more time.');
+
+            $fieldset2->add($hideProgressBar, $inputfields);
+
+            $inputfields->add($fieldset2);
+
             $fieldset3 = $this->wire('modules')->get('InputfieldFieldset');
             $fieldset3->label = $this->_('Email settings');
             $fieldset3->collapsed = 1;
@@ -1494,7 +1525,7 @@
                 $emailTemplate->attr('value', $this->input_emailTemplate);
                 $emailTemplate->required = 1;
                 $emailTemplate->description = $this->_('Choose whether you want to use the HTML template for your emails and if so, which one.');
-                $emailTemplate->notes = $this->_('If you are using FrontendForms with the PW WireMail class to send emails, you can use a HTML email template by adding the mailTemplate() method to the WireMail object.');
+                $emailTemplate->notes = $this->_('If you are using FrontendForms with the PW WireMail class to send emails, you can use a HTML email template by adding the mailTemplate() method to the WireMail object. Can be overwritten on each form.');
                 $fieldset3->add($emailTemplate, $inputfields);
             }
 
