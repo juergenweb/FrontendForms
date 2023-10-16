@@ -33,6 +33,10 @@ function submitCounter() {
 window.onload = function () {
     submitCounter();
 
+    ajaxSubmit();
+    jumpToAnchor();
+    maxCharsCounterReverse();
+
 }
 
 /*
@@ -107,7 +111,7 @@ function clearInputfield(event) {
     let clear_link_id = id.replace("-clear", "-clearlink-wrapper");
     let clear_link = document.getElementById(clear_link_id);
     if (clear_link) {
-        clear_link.style = "display:none";
+        clear_link.style.display = "none";
     }
 }
 
@@ -120,9 +124,9 @@ function showClearLink(event) {
     let clear_link = document.getElementById(id);
     if (clear_link) {
         if (event.target.files.length > 0) {
-            clear_link.style = "display:block";
+            clear_link.style.display = "block";
         } else {
-            clear_link.style = "display:none";
+            clear_link.style.display = "none";
         }
     }
 }
@@ -279,90 +283,160 @@ function jumpTo(anchor_id) {
  * Submit forms and send their form data via Ajax
  * Returns the validated form without reloading the page
  */
-function ajaxSubmit() {
+function ajaxSubmit(formid = null) {
 
-    // get all forms that contain the data-submitajax attribute
-    let pageforms = document.querySelectorAll('[data-submitajax]');
+    if (formid) {
+        let form = document.getElementById(formid);
+        subAjax(form);
+    } else {
+        let pageforms = document.querySelectorAll('[data-submitajax]');
 
-    if (pageforms.length) {
-        let i = 0;
-        for (i; i < pageforms.length; i++) {
-
-            let form = pageforms[i];
-            // add eventlistener to all forms which include the data-submit attribute
-            form.addEventListener('submit', function (e) {
-
-                e.preventDefault();
-
-                let formid = form.dataset.submitajax;
-                let action = form.getAttribute('action');
-                let progress = document.getElementById(formid + '-form-submission');
-                // show the info (text, progressbar, ...) by removing display:none from the outer container
-                if (progress) {
-                    progress.style.display = null;
-                }
-
-
-                // check if anchor is present in the action attribute
-                let anchor = action.split(/#(.*)/)[1];
-                if (anchor !== 'undefined') {
-                    // no anchor, add the anchor of the ajax-wrapper div
-                    anchor = formid + '-ajax-wrapper';
-                }
-
-
-                // make the Ajax request
-                let xhr = new XMLHttpRequest();
-
-                xhr.onload = function () {
-
-                    let result = this.responseText;
-
-                    const parser = new DOMParser();
-                    let doc = parser.parseFromString(result, "text/html");
-
-
-                    let wrapper = doc.getElementById(formid + '-ajax-wrapper');
-                    let content = wrapper.innerHTML;
-
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        let redirectFieldName = formid + '-ajax_redirect';
-                        let redirectUrl = formData.get(redirectFieldName);
-
-                        // check if the form is valid because redirect should only happen after a valid submission
-                        if (wrapper.dataset.validated === '1') {
-                            // check if a special redirect data attribute is present
-                            if (redirectUrl) {
-                                window.location = redirectUrl;
-                            } else {
-                                // load the validated form back into the target div
-                                document.getElementById(formid + '-ajax-wrapper').innerHTML = content;
-                                // jump to the start of the form
-                                jumpTo(anchor);
-                            }
-                        } else {
-                            // load the validated form back into the target div
-                            document.getElementById(formid + '-ajax-wrapper').innerHTML = content;
-                            // jump to the start of the form
-                            jumpTo(anchor);
-                            // load a new CAPTCHA if CAPTCHA is used
-                            reloadCaptcha(formid + '-captcha-image', e);
-                            // start as the first page load
-                            ajaxSubmit();
-                            // start counter
-                            submitCounter();
-                        }
-
-                    }
-                }
-                xhr.open("POST", action);
-                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                let formData = new FormData(form);
-                xhr.send(formData);
-            })
+        // get all forms that contain the data-submitajax attribute
+        if (pageforms.length) {
+            let i = 0;
+            for (i; i < pageforms.length; i++) {
+                subAjax(pageforms[i]);
+            }
         }
     }
 
 }
 
-ajaxSubmit();
+/**
+ * Submit a form via Ajax
+ * @param form
+ */
+function subAjax(form) {
+
+    if (typeof (form) == 'string') {
+        form = document.getElementById(form);
+    }
+
+    if (form) {
+
+        // add eventlistener to all forms which include the data-submit attribute
+        form.addEventListener('submit', function (e) {
+
+            e.preventDefault();
+
+            let formid = form.dataset.submitajax;
+            let action = form.getAttribute('action');
+            let progress = document.getElementById(formid + '-form-submission');
+            // show the info (text, progressbar, ...) by removing display:none from the outer container
+            if (progress) {
+                progress.style.display = null;
+            }
+
+            // check if anchor is present in the action attribute
+            let anchor = action.split(/#(.*)/)[1];
+            if (anchor !== 'undefined') {
+                // no anchor, add the anchor of the ajax-wrapper div
+                anchor = formid + '-ajax-wrapper';
+            }
+
+            // make the Ajax request
+            let xhr = new XMLHttpRequest();
+
+            xhr.onload = function () {
+
+                let result = this.responseText;
+
+                const parser = new DOMParser();
+                let doc = parser.parseFromString(result, "text/html");
+
+                let wrapper = doc.getElementById(formid + '-ajax-wrapper');
+                let content = wrapper.innerHTML;
+
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    let redirectFieldName = formid + '-ajax_redirect';
+                    let redirectUrl = formData.get(redirectFieldName);
+
+                    // check if the form is valid because redirect should only happen after a valid submission
+                    if (wrapper.dataset.validated === '1') {
+                        let anchorQueryString = '';
+
+                        // check if a special redirect data attribute is present
+                        if (redirectUrl) {
+                            let urlParts = redirectUrl.split('#');
+                            // check if an internal anchor is set
+                            if (urlParts.length > 1) {
+
+                                // an internal anchor is set
+                                redirectUrl = urlParts[0];
+                                let anchor = urlParts[1];
+                                // instead of the anchor, use a query string which does not make problems
+                                anchorQueryString = '?fc-anchor=' + anchor;
+                            }
+                            window.location = redirectUrl + anchorQueryString;
+                        } else {
+                            // load the validated form back into the target div
+                            document.getElementById(formid + '-ajax-wrapper').innerHTML = content;
+                            // jump to the start of the form
+                            jumpTo(anchor);
+                        }
+                    } else {
+                        // load the validated form back into the target div
+                        document.getElementById(formid + '-ajax-wrapper').innerHTML = content;
+                        // jump to the start of the form
+                        jumpTo(anchor);
+                        // load a new CAPTCHA if CAPTCHA is used
+                        reloadCaptcha(formid + '-captcha-image', e);
+                        // start as the first page load
+                        ajaxSubmit();
+                        // start counter
+                        submitCounter();
+                    }
+
+                }
+            }
+            xhr.open("POST", action);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            let formData = new FormData(form);
+            xhr.send(formData);
+        });
+
+    }
+}
+
+/**
+ * Jump to an anchor if a query string with the name "fc-anchor" is present
+ * The name of the anchor is the value of that querystring
+ * This is necessary if a form has been submitted via Ajax and a redirect containing an anchor has been set
+ * An usual anchor like #newtarget inside the redirect url will lead to stop loading the validated form correctly after a valid submission
+ * So this is a JavaScript based work-around to be able to use internal anchors without problems inside redirects
+ *
+ */
+function jumpToAnchor() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const anchor = urlParams.get('fc-anchor');
+    if (anchor) {
+        console.log(urlParams);
+        urlParams.delete("fc-anchor");
+        console.log(urlParams);
+        location.hash = "#" + anchor;
+    }
+}
+
+
+/**
+ * Count the letters inside a textarea and output the characters left
+ */
+function maxCharsCounterReverse() {
+    const textarea = document.querySelector("textarea");
+
+    textarea.addEventListener("input", event => {
+        const target = event.currentTarget;
+        const maxLength = target.getAttribute("maxlength");
+        const currentLength = target.value.length;
+        const counterSpan = document.getElementById(target.id + '-char_count');
+
+        // if max number of characters is reached, output a special info message
+        if (currentLength === maxLength) {
+            counterSpan.innerHTML = counterSpan.dataset.maxreached;
+        } else {
+            // change the current length inside span element
+            counterSpan.children[0].innerHTML = maxLength - currentLength;
+        }
+    });
+}
+
