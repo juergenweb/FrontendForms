@@ -1022,7 +1022,7 @@ These methods can only be used on certain input fields and not at all.
 | [mailTemplate()](#mailtemplate---changedisable-the-usage-of-an-email-template-manually)  | change/disable the usage of an email template manually  |
 | [showClearLink()](#showclearlink---show-or-hide-a-link-to-clear-a-file-input-field)  | show/hide a link under the file input field to clear the input  |
 | [getClearLink()](#getclearlink---get-the-link-object-described-in-the-previous-method-for-further-manipulations)  | get the link object for the clear input link for further manipulations  |
-
+| [useCharacterCounter()](#showclearlink---show-or-hide-a-link-to-clear-a-file-input-field)  | add a character counter to a textarea if lengthMax validator is set  |
 
 #### alignVertical() - set the alignment for checkboxes and radio buttons
 This is only a method for multiple checkboxes and radio buttons to align them vertical instead of horizontal (default).
@@ -1142,6 +1142,22 @@ If you want to manipulate the clear link (fe adding an additional styling CSS cl
 
 ```php
 $field->getClearLink(true); // returns the link object
+```
+
+#### useCharacterCounter() - add a reverse character counter below a textarea if maxLength validator is set
+If you only allow a certain number of characters inside a textarea, you can show a visible character counter to the visitor, which counts the entered characters in reverse order down to zero.
+The visitor will see a text like "You have 245 characters left", so he is always informed how many characters can be entered until the max limit is reached.
+Please not: This method works only if the validator "lengthMax" has been added to the textarea. Without this validator, the character counter will not be displayed in any case.
+
+```php
+$field->useCharacterCounter(false); // true or false
+```
+
+#### getcharacterCounter() - get the character counter object described in the previous method for further manipulations
+If you want to manipulate the character counter (fe adding an additional styling CSS class), you will get the counter object with this method.
+
+```php
+$field->geCharacterCounter(); 
 ```
 
 ## Form validation
