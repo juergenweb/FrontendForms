@@ -1154,7 +1154,7 @@ Please not: This method works only if the validator "lengthMax" has been added t
 $field->useCharacterCounter(false); // true or false
 ```
 
-#### getcharacterCounter() - get the character counter object described in the previous method for further manipulations
+#### getCharacterCounter() - get the character counter object described in the previous method for further manipulations
 If you want to manipulate the character counter (fe adding an additional styling CSS class), you will get the counter object with this method.
 
 ```php
