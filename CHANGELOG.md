@@ -433,13 +433,18 @@ You will find a more detailed information about these 3 new methods here: https:
 This version comes with some fixes and a new addition
 
 The previously introduced support for Ajax form submission leads to a problem if you use the setRedirectAfterAjax() method in combination with an internal anchor (fe the $form->setRedirectAfterAjax($page->url.'?#myanchor).
-It has worked well without the anchor in the URL, but adding an anchor blockes the correct rendering of the form and the output of the success message afterwards.
-To prevent this behavior, I have written a work-around in JavaScript: an internal anchor will be removed and re-written to a query-string (fe "#myanchor" will be re-written to "?fc-anchor=myanchor"). In this case the rendering of the form after the redirect works without problems.
-The anchor will be added afterwards via JavaScript and the page jumps to the given anchor. 
-Visitors will not see any difference to the normal way. The only difference is that you have the additional querystring inside the browser bar. Thats all, but now you can also use internal anchors without problems. 
+It has worked well without the anchor in the URL, but adding an anchor blocks the correct rendering of the form and the output of the success message afterwards.
 
-The second change is the addition of a character counter for textareas. 
+To prevent this behavior, I have written a work-around in JavaScript: an internal anchor will be removed and re-written to a query-string (fe "#myanchor" will be re-written to "?fc-anchor=myanchor"). In this case, the rendering of the form after the redirect works without problems.
+
+The anchor will be added afterwards via JavaScript and the page jumps to the given anchor. 
+Visitors will not see any difference to the normal way. The only difference is that you have an additional querystring inside the browser bar. That's all, but now you can also use internal anchors without problems. 
+
+The second change is the addition of a character counter for textareas.
+
 If you want to restrict the numbers of characters that could be added inside the textarea, you have to use the "lengthMax" validator including the value of the max allowed characters.
-This is fine, but the visitor will not know how many characters he has left until he reaches the limit of number. For this case scenario you can add a new method to ever textarea field: [useCharacterCounter](https://github.com/juergenweb/FrontendForms/blob/main/README.md#usecharactercounter---add-a-reverse-character-counter-below-a-textarea-if-maxlength-validator-is-set).
-This method will add a character counter under the textarea which shows how much characters can be entered until the limit is reached.
+
+This is fine, but the visitor will not know how many characters he has left until he reaches the limit of numbers. For this case scenario, you can add a new method to every textarea field: [useCharacterCounter()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#usecharactercounter---add-a-reverse-character-counter-below-a-textarea-if-maxlength-validator-is-set).
+
+This method will add a character counter under the textarea which shows how many characters can be entered until the limit is reached.
 
