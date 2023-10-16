@@ -439,4 +439,3 @@ function maxCharsCounterReverse() {
         }
     });
 }
-
