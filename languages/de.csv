@@ -1,4 +1,6 @@
 en,de,description,file,hash
+"You have reached the maximum number of characters.","Sie haben die maximale Anzahl von Zeichen erreicht.",,site/modules/FrontendForms/Formelements/Inputelements/Textarea/Textarea.php,ef4384b98530cb2c2cdd7f9828d0ada2
+"You have %s characters left.","Sie haben noch %s Zeichen übrig.",,site/modules/FrontendForms/Formelements/Inputelements/Textarea/Textarea.php,c265a6b5fe0229c56cdf89d9ff9d7754
 "Click to load a new captcha","Bitte anklicken, um ein neues Captcha zu laden",,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,b52dc33684da9e3d394738b7d0dd2725
 "Reload image","Bild neu laden",,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,7c89feb583d9e778c3533017b111263d
 Captcha,=,,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,45d048c35e3cfd449dc0a1b503cd103a
