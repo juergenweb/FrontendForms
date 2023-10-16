@@ -79,7 +79,7 @@
                     $maxChars = (string)$this->getRules()['lengthMax']['options'][0];
                     $this->charCounter->setAttribute('id', $this->getID() . '-char_count');
                     $this->charCounter->setAttribute('data-maxreached', $this->_('You have reached the maximum number of characters.'));
-                    $this->charCounter->setContent(sprintf($this->_('You have %s chars left.'), '<span>' . $maxChars . '</span>'));
+                    $this->charCounter->setContent(sprintf($this->_('You have %s characters left.'), '<span>' . $maxChars . '</span>'));
                     $this->charCounter->prepend('<div>');
                     $this->charCounter->append('</div>');
                     $counter = $this->charCounter->___render();
