@@ -124,17 +124,13 @@ abstract class Tag extends Wire
     }
 
     /**
-     * Check if form was submitted or not
+     * Check if form was submitted or not - works only on POST submissions
      * @return bool -> true: the form was submitted, false: the form was not submitted
      * It is the opposition of notSubmitted() method
      */
     protected function isSubmitted(): bool
     {
-        if (!empty($this->getServerMethod())) {
-            return true;
-        } else {
-            return false;
-        }
+        return (!empty($_POST));
     }
 
     /**
