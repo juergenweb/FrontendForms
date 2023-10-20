@@ -1879,7 +1879,7 @@ If you think about creating or using a custom HTML email template, and you want 
 (fe the name of your company), you can add a custom placeholder to your form with the following method.
 
 ```php
-$form->setPlaceholder('companyname', 'My company');
+$form->setMailPlaceholder('companyname', 'My company');
 ```
 Then you will be able to use the custom placeholder inside your email template: [[COMPANYNAME]].
 Before sending of the email the placeholder will be replaced by "My company".
@@ -1889,7 +1889,7 @@ the same, and therefore it can be added hardcoded to the template (no need for c
 A better example would be fe an order number, because this number is variable.
 
 ```php
-$form->setPlaceholder('ordernumber', '123456');
+$form->setMailPlaceholder('ordernumber', '123456');
 ```
 By using a placeholder variable, there is no need to add php code to the email template to grab the order number.
 This makes the email template code much more cleaner.
