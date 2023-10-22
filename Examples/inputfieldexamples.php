@@ -135,7 +135,7 @@ $password->setLabel('Password');
 $password->setRule('required');
 $password->setRule('safePassword');
 $password->showPasswordRequirements();
-$password->showPasswordToggle();
+//$password->showPasswordToggle(false); // if you want to hide the toggle checkbox
 $form->add($password);
 
 $singleRadio = new \FrontendForms\InputRadio('single');
