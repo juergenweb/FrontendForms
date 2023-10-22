@@ -450,5 +450,5 @@ This method will add a character counter under the textarea which shows how many
 
 ## [2.1.49] 2023-10-22
 Small update that fixes the permanent display of the toggle checkbox to hide/show the entered password inside a password field (Thanks to dynweb for reporting this issue).
-The problem was, that the checkbox was always visible next to the password field, independent if the display was set to true or false.
+The problem was, that the checkbox was always visible next to the password field, independent if the showPasswordToggle() method was used or not.
 To keep backwards compatibility for other user, I have set the display the checkbox by default to true and you have to manually disable it by setting showPasswordToggle(false) to false. This will not confuse other user, because the checkbox is still there after the update.  
