@@ -453,4 +453,4 @@ Small update that fixes the permanent display of the toggle checkbox to hide/sho
 
 The problem was, that the checkbox was always visible next to the password field, independent if the showPasswordToggle() method was used or not.
 
-To keep backwards compatibility for other user, I have set the display the checkbox by default to true and you have to manually disable it by setting showPasswordToggle(false) to false. This will not confuse other user, because the checkbox is still there after the update.  
+To keep backwards compatibility for other user, I have set the display of the checkbox by default to true and you have to manually disable it by setting showPasswordToggle(false) to false. This will not confuse other user, because the checkbox is still there after the update. Otherwise it would not be longer visible after the update until you enable it manually. 
