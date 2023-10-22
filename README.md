@@ -1078,12 +1078,12 @@ $password2->showPasswordRequirements('test'); // the values from the field "test
 ```
 
 #### showPasswordToggle() - show a checkbox to make the password value visible next to a password field
-This method can be added to a password field and adds a checkbox below the input field. If the checkbox will be checked, the password entered will be displayed in plain text, otherwise not.
+This method can be used to add or hide a toggle checkbox below the input field to show or hide the entered password. If the checkbox will be checked, the password entered will be displayed in plain text, otherwise not. By default, the display of the toggle checkbox is enabled.
 JavaScript is used to show/hide the password in plain text.
 
 ```php
 $password = new InputPassword('password');
-$password->showPasswordToggle();
+$password->showPasswordToggle(false); // true or false
 ```
 
 #### sendAttachment() - send files via the WireMail class
