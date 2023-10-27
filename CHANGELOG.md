@@ -454,3 +454,27 @@ Small update that fixes the permanent display of the toggle checkbox to hide/sho
 The problem was, that the checkbox was always visible next to the password field, independent if the showPasswordToggle() method was used or not.
 
 To keep backwards compatibility for other user, I have set the display of the checkbox by default to true and you have to manually disable it by setting showPasswordToggle(false) to false. This will not confuse other user, because the checkbox is still there after the update. Otherwise it would not be longer visible after the update until you enable it manually. 
+
+## [2.1.50] 2023-10-27
+Added a new class to create a text for accepting the privacy policy without using a checkbox.
+
+Thanks to Chris-PW from the support forum for pointing out to me that an "Accept our Terms and Privacy Policy" checkbox in contact forms is no longer needed and recommended (especially in Europe).
+
+Here is the link to a lawyer firm: [https://www.e-recht24.de/dsg/12687-kontaktformular.html](https://www.e-recht24.de/dsg/12687-kontaktformular.html).
+
+For legal reasons, using a checkbox to accept the terms of use and privacy policy is not the way to go, as the user has to take action. It is better to use just a text before the submit button to indicate that the user accepts the privacy policy when filling out a contact form.
+
+For this reason, I created a new class "PrivacyText" in /site/modules/FrontendForms/Formlements/Textelements/Defaults/PrivacyText.php.
+
+This class simply creates a predefined text ("By submitting this form, you agree to our Terms of Use and Privacy Policy.") that can be added to the form simply by adding the following lines of code:
+
+``php
+$acceptText = new \FrontendForms\PrivacyText();
+$form->add($acceptText);
+```
+
+The best place for this text would be before the submit button element.
+
+You can also find this new class implemented in the [default examples](https://github.com/juergenweb/FrontendForms/blob/main/Examples/default-inputs.php#L91) file.
+
+It is up to you whether you use the "Privacy Accept" checkbox or the new PrivacyText class.
