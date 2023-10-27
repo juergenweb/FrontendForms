@@ -504,5 +504,5 @@ en,de,description,file,hash
 Surname,Nachname,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Surname.php,8e55577a8ed3b20bff65d23c000280d4
 en,de,description,file,hash
 Username,Benutzername,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Username.php,f6039d44b29456b20f8f373155ae4973
-"By submitting this form you agree to our %s.","Durch das Absenden des Formulars stimmen sie uneren %s zu.",,site/modules/FrontendForms/Formelements/Textelements/Defaults/PrivacyText.php,2c34ad3fc22ef60c91a73189e7f26e8e
+"By submitting this form you agree to our %s.","Durch das Absenden des Formulars stimmen sie unseren %s zu.",,site/modules/FrontendForms/Formelements/Textelements/Defaults/PrivacyText.php,2c34ad3fc22ef60c91a73189e7f26e8e
 "Terms of use and Privacy Policy","Bedingungen und Datenschutzbestimmungen",,site/modules/FrontendForms/Formelements/Textelements/Defaults/PrivacyText.php,953a9a5b5747639204478270493a532d
