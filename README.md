@@ -1592,7 +1592,7 @@ BTW: You can use all text elements that are inside the Formelements/Textelements
 
 ## Default fields
 Writing fields is a lot of work. But it is getting more frustrating if you have to write always the same fields inside different forms.
-To make life a little easier I have created the most common fields in forms as pre-defined default fields withits own class.
+To make life a little easier I have created the most common fields in forms as pre-defined default fields with its own class.
 
 These are:
 
@@ -1602,6 +1602,7 @@ These are:
 * Password (Input password to enter a password - class name: Password)
 * Password confirmation (Input password to enter the password confirmation - class name: PasswordConfirmation)
 * Privacy (Checkbox to accept the data privacy - class name: Privacy)
+* PrivacyText (Text only for accepting the Terms and Privacy Policy - class name: Privacy) - this is not an input field -> it is a child of the TextElements class and can be used instead of the Privacy checkbox. It outputs only a text string
 * SendCopy (Checkbox to force the sending a copy of the text of a contact form to me - class name: SendCopy)
 * Subject (Input text to enter a subject - class name: Subject)
 * Message (Textarea to enter a text - class name: Message)
@@ -1640,6 +1641,7 @@ BTW you will find the files of all pre-defined input types inside the "defaults"
 - [Formelements/Inputelements/Inputs/defaults/](https://github.com/juergenweb/FrontendForms/tree/main/Formelements/Inputelements/Inputs/defaults)
 - [Formelements/Inputelements/Select/defaults/](https://github.com/juergenweb/FrontendForms/tree/main/Formelements/Inputelements/Select/defaults)
 - [Formelements/Inputelements/Textarea/defaults/](https://github.com/juergenweb/FrontendForms/tree/main/Formelements/Inputelements/Textarea/defaults)
+
 
 You can study the code to see, what validators and sanitizers are included by default. If you have an idea for another
 inputfield, please let me know.
