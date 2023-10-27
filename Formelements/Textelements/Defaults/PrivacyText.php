@@ -14,7 +14,7 @@
         protected string $privacy = '';
         protected Link $policyLink;
 
-        public function __construct(?string $id = null)
+        public function __construct(?string $id = 'privacy-text')
         {
             parent::__construct($id);
 
