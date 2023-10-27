@@ -468,7 +468,7 @@ For this reason, I created a new class "PrivacyText" in /site/modules/FrontendFo
 
 This class simply creates a predefined text ("By submitting this form, you agree to our Terms of Use and Privacy Policy.") that can be added to the form simply by adding the following lines of code:
 
-``php
+```php
 $acceptText = new \FrontendForms\PrivacyText();
 $form->add($acceptText);
 ```
