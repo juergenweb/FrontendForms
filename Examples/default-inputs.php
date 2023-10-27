@@ -71,16 +71,26 @@ $form->add($password);
 $passwordconfirm = new \FrontendForms\password('passwordconfirm', 'contact-password');
 $form->add($passwordconfirm);
 
-// add the privacy field
-$privacy = new \FrontendForms\Privacy('privacy');
-$form->add($privacy);
-
 $username = new \FrontendForms\Username('username');
 $form->add($username);
 
 // add the send copy field
 $sendcopy = new \FrontendForms\SendCopy('copy');
 $form->add($sendcopy);
+
+/**
+* For output a accept the privacy policy option, you have 2 possibilities
+* 1) output a checkbox, which the user has to check or
+* 2) output a simple text string which informs the user that he accepts the Terms and Privacy Policy by submitting the form
+*/
+
+// add the privacy field as a checkbox
+$privacy = new \FrontendForms\Privacy('privacy');
+$form->add($privacy);
+
+// or add the privacy hint as a pure text string
+$privacyText = new \FrontendForms\PrivacyText();
+$form->add($privacyText);
 
 $button = new \FrontendForms\Button('submit');
 $button->setAttribute('value', 'Send');
