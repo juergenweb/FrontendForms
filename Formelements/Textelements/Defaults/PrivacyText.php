@@ -21,7 +21,7 @@
             // set default values
             $this->setText($this->_('By submitting this form you agree to our %s.'));
             $this->privacy = $this->_('Terms of use and Privacy Policy');
-            $this->setCSSClass('policy-text');
+            $this->setAttribute('class','policy-text');
 
             // create the link instance for the privacy link
             $this->policyLink = new Link();
