@@ -19,8 +19,8 @@
             parent::__construct($id);
 
             // set default values
-            $this->setText($this->_('By submitting you agree to our %s.'));
-            $this->privacy = $this->_('Terms and Privacy Policy');
+            $this->setText($this->_('By submitting this form you agree to our %s.'));
+            $this->privacy = $this->_('Terms of use and Privacy Policy');
             $this->setCSSClass('policy-text');
 
             // create the link instance for the privacy link
