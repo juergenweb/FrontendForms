@@ -478,3 +478,18 @@ The best place for this text would be before the submit button element.
 You can also find this new class implemented in the [default examples](https://github.com/juergenweb/FrontendForms/blob/main/Examples/default-inputs.php#L91) file.
 
 It is up to you whether you use the "Privacy Accept" checkbox or the new PrivacyText class.
+
+## [2.1.51] 2023-10-28
+3 new methods for the form object have been added and a new functionality for the position the privacy checkbox or privacy text automatically before the submit button if set.
+
+This update consists of 3 new public methods, which will be used for the new functionality to add the "Accept the privacy checkbox" or the "Accept the privacy" text directly next to the submit button, independent on the position it was added before.
+
+This means, if you are adding fe the privacy checkbox as the first form element, it would be rendered as the first element inside the form. This does not make sense in case of a privacy form element, because it has to be near the submit button and not on the top of the form.
+
+With this new functionality, privacy form fields (text or checkbox) will be always positioned after a CAPTCHA (if set) and before the submit button. This is the only position where it should be.
+
+The 3 new methods, that were created for this functionality, are public methods and can also be used for other use cases if needed. 
+
+* [removeMultipleEntriesByClass()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#removemultipleentriesbyclass---delete-all-instances-of-a-form-element-of-a-given-class-except-the-last-one) - delete all instances of a form element of a given class except the last one
+* [formContainsElementByClass()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#formcontainselementbyclass---check-if-the-form-object-contains-at-least-one-form-element-of-the-given-class) - check if the form object contains at least one form element of the given class
+* [getElementsbyClass()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getelementsbyclass---get-array-of-all-form-elements-of-the-given-class) - get array of all form elements of the given class
