@@ -473,6 +473,9 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setSubmitWithAjax()](#setsubmitwithajax---use-ajax-for-form-submission)  | Use Ajax to submit a form without page reload  |
 | [showProgressbar()](#showprogressbar---showhide-the-progress-bar-during-ajax-form-submission)  | Show or hide the progressbar during Ajax form submission  |
 | [setRedirectUrlAfterAjax()](#showprogressbar---showhide-the-progress-bar-during-ajax-form-submission)  | Redirect to another page after successfull form submission via Ajax  |
+| [removeMultipleEntriesByClass()](#removemultipleentriesbyclass---delete-all-instances-of-a-form-element-of-a-given-class-except-the-last-one)  | delete all instances of a form element of a given class except the last one  |
+| [formContainsElementByClass()](#formcontainselementbyclass---check-if-the-form-object-contains-at-least-one-form-element-of-the-given-class)  | check if the form object contains at least one form element of the given class  |
+| [getElementsbyClass()](#getelementsbyclass---get-array-of-all-form-elements-of-the-given-class)  | get array of all form elements of the given class  |
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
