@@ -32,6 +32,7 @@
     use function ProcessWire\wire as wire;
     use function ProcessWire\wirePopulateStringTags;
     use function ProcessWire\_n;
+    use function ProcessWire\wireClassNamespace;
 
     class Form extends CustomRules
     {
@@ -1652,6 +1653,60 @@
             return $this;
         }
 
+        /**
+         * Check if the form contains an element from the given class
+         * @param string $className
+         * @return int -> the number of fields found
+         */
+        public function formContainsElementByClass(string $className): int
+        {
+            $className = wireClassNamespace($className, true);
+            $number = (count(array_filter($this->formElements, function ($entry) use ($className) {
+                return ($entry instanceof $className);
+            })));
+            return $number;
+        }
+
+        /**
+         * If there are multiple instances of a given class, remove all except the last one
+         * This is useful if only one instance is allowed, but there are multiple instances
+         * Returns the key of the last item, which will not be deleted (unset)
+         * @param string $className
+         * @return int
+         */
+        public function removeMultipleEntriesByClass(string $className): null|int
+        {
+            // there are too many PrivacyText elements, only one is allowed per form -> remove all except the last one
+            $elements = $this->getElementsbyClass($className);
+            $k = null;
+            if ($elements) {
+                foreach ($elements as $key => $e) {
+                    if ($key !== array_key_last($elements)) {
+                        unset($this->formElements[key($e)]);
+                    } else {
+                       $k = key($e);
+                    }
+                }
+            }
+            return $k;
+        }
+
+        /**
+         * Get all form element objects of a given class as an array
+         * @param string $className
+         * @return array
+         */
+        public function getElementsbyClass(string $className): array
+        {
+            $elements = [];
+            if ($this->formContainsElementByClass($className)) {
+                $className = wireClassNamespace($className, true);
+                $elements[] = array_filter($this->formElements, function ($entry) use ($className) {
+                    return ($entry instanceof $className);
+                });
+            }
+            return $elements;
+        }
 
         /**
          * Render the form markup (including alerts if present) on the frontend
@@ -1720,18 +1775,57 @@
                 }
             }
 
+
+            // remove all instances of form elements where only one instance per form is allowed, but there are multiple
+            $singleClassObjects = ['PrivacyText', 'Privacy'];
+            foreach ($singleClassObjects as $className) {
+                ${$className.'_key'} =$this->removeMultipleEntriesByClass($className);
+            }
+
+            // re-index the form elements
+            //$this->formElements = array_values($this->formElements);
+
+            $privacyFields = [$PrivacyText_key, $Privacy_key];
+
+            // remove all null values from the array
+            $privacyFields = array_filter($privacyFields, static function($var){return $var !== null;});
+
+            // set $refKey to false by default
+            $refKey = false;
+            if($privacyFields){
+                // get the lowest value inside this array
+                $min = min($privacyFields);
+                $index = array_search($min, $privacyFields);
+
+                // put the CAPTCHA before this key if using of CAPTCHA has been set
+                $refKey = $privacyFields[$index];
+            }
+
             // Add honeypot field only if at least 1 input field is present
             if (count($inputfieldKeys)) {
+
                 // add captcha field as last input field
                 if ($this->getCaptchaType() != 'none') {
                     // position in form fields array to insert
-                    $captchaPosition = array_key_last($inputfieldKeys) + 1;
+                    if($refKey){
+                        while(key($this->formElements) !== $refKey) next($this->formElements);
+                        $prev_val = prev($this->formElements);
+                        // and to get the key
+                        $prev_key = key($this->formElements);
+                        $captchaPosition = $prev_key;
+                    } else {
+                        $captchaPosition = array_key_last($inputfieldKeys) + 1;
+                    }
+
+
                     $captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
                     // insert the captcha input field after the last input field
-
-                    $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
-                        array($captchafield), array_slice($this->formElements, $captchaPosition));
+                    $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition, true),
+                        array($captchafield), array_slice($this->formElements, $captchaPosition, null,true));
                 }
+
+
+
 
                 // add honeypot on the random number field position
                 if ($this->frontendforms['input_useHoneypot']) {
