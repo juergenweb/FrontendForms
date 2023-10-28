@@ -773,6 +773,32 @@ This method will force JavaScript to redirect to another page - you only have to
   $form->setRedirectUrlAfterAjax('/blog/');
 ```
 
+### removeMultipleEntriesByClass() - delete all instances of a form element of a given class except the last one
+If you want to allow only 1 instance of a given form element inside a form, you can clean up the form element array by removing multiple instances of the given element except the last one.
+
+I have used it for the "Privacy" and the "PrivacyText" class, which are there to add a "Accept the privacy" checkbox or text before the submit button. It would not make sense to add multiple instances of these class elements to a form.
+
+If you try to add multiple instances to a form object, all instances except 1 will be deleted automatically. So this method is usefull for this rare case scenario, then for every day usage.
+
+```php
+  $form->removeMultipleEntriesByClass('Privacy'); // enter the class name without namespace
+```
+
+### formContainsElementByClass() - check if the form object contains at least one form element of the given class
+This method returns the number of objects of the given class found inside the form object or 0 if no one was found.
+
+```php
+  $form->formContainsElementByClass('Privacy'); // enter the class name without namespace
+```
+
+### getElementsbyClass() - get array of all form elements of the given class
+This method returns a numeric array of all form elements of a given class inside the form object.
+
+```php
+  $form->getElementsbyClass('Privacy'); // enter the class name without namespace
+```
+
+
 ## Input field methods
 
 For better understanding of methods explained afterwards, take a look of the anatomy of input fields first.
