@@ -484,13 +484,13 @@ It is up to you whether you use the "Privacy Accept" checkbox or the new Privacy
 
 This update consists of 3 new public methods, which will be used by the new functionality to add the "Accept the privacy checkbox" or the "Accept the privacy" text always before the submit button.
 
-Designed was this functionality, because til now, this problem especially occured, if the CAPTCHA was enabled.
+This functionality was designed, because til now, this problem has especially occurred, if CAPTCHA was enabled.
 
-The Captcha will be added automatically as the last element before the button element. This lead to that the privacy fields were always above the CAPTCHA and not next to the submit button, where they should be.
+The Captcha will be added automatically as the last element before the button element. This leads to that the privacy fields being always above the CAPTCHA and not next to the submit button, where they should be.
 
-For this reason, I have integrated this functionality. So this new functionality shifts all privacy fields (checkbox and/or text) to the last position, independend of the last position.
+For this reason, I have integrated this functionality. So this new functionality shifts all privacy fields (checkbox and/or text) to the last position, independent of the last position.
 
-The 3 new methods, that were created for this functionality, are public methods and can also be used for other use cases if needed. 
+The 3 new methods that were created for this functionality are public methods and can also be used for other cases if needed.
 
 * [removeMultipleEntriesByClass()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#removemultipleentriesbyclass---delete-all-instances-of-a-form-element-of-a-given-class-except-the-last-one) - delete all instances of a form element of a given class except the last one
 * [formContainsElementByClass()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#formcontainselementbyclass---check-if-the-form-object-contains-at-least-one-form-element-of-the-given-class) - check if the form object contains at least one form element of the given class
