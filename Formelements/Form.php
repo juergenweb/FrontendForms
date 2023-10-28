@@ -1684,7 +1684,7 @@
                     if ($key !== array_key_last($elements)) {
                         unset($this->formElements[key($e)]);
                     } else {
-                       $k = key($e);
+                        $k = key($e);
                     }
                 }
             }
@@ -1706,6 +1706,24 @@
                 });
             }
             return $elements;
+        }
+
+        /**
+         * Move an array item from one to another position
+         * @param array $array
+         * @param $key
+         * @param int $order
+         * @return void
+         * @throws \Exception
+         */
+        protected function repositionArrayElement(array &$array, $key, int $order): void
+        {
+            if (($a = array_search($key, array_keys($array))) === false) {
+                throw new \Exception("The {$key} cannot be found in the given array.");
+            }
+            $p1 = array_splice($array, $a, 1);
+            $p2 = array_splice($array, 0, $order);
+            $array = array_merge($p2, $p1, $array);
         }
 
         /**
@@ -1763,75 +1781,71 @@
             $tokenName = $this->wire('session')->CSRF->getTokenName();
             $tokenValue = $this->wire('session')->CSRF->getTokenValue();
 
-            // get keys of all input fields (excluding buttons, fieldsets, … only input fields that collect user data)
+            // remove all instances of form elements where only one instance per form is allowed, but there are multiple
+            $singleClassObjects = ['PrivacyText', 'Privacy'];
+            foreach ($singleClassObjects as $className) {
+                $this->removeMultipleEntriesByClass($className);
+            }
+
+            // reindex array
+            $this->formElements = array_values($this->formElements);
+
+            $buttons = $this->getElementsbyClass('Button');
+            // get first button
+            if ($buttons) {
+                $refKey = key($buttons[0]);
+
+                // add captcha field as last element before the button element
+                if ($this->getCaptchaType() != 'none') {
+                    // position in form fields array to insert
+                    $captchaPosition = $refKey;
+                    $captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
+                    // insert the captcha input field after the last input field
+                    $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
+                        array($captchafield), array_slice($this->formElements, $captchaPosition));
+
+                    $privacyElements = [];
+                    // put Privacy and PrivacyText after Captcha
+                    $privacyCheckbox = $this->getElementsbyClass('Privacy');
+                    if ($privacyCheckbox) {
+
+                        $privacyElements[] = key($privacyCheckbox[0]);
+                    }
+                    $privacyText = $this->getElementsbyClass('PrivacyText');
+                    if ($privacyText) {
+
+                        $privacyElements[] = key($privacyText[0]);
+                    }
+
+                    if ($privacyElements) {
+                        sort($privacyElements);
+                        $newPos = array_key_last($this->formElements) - 1;
+                        $this->repositionArrayElement($this->formElements, $privacyElements[0], $newPos);
+                        if (array_key_exists(1, $privacyElements)) {
+                            $newPos = array_key_last($this->formElements) - 1;
+                            $this->repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
+                        }
+                    }
+
+                }
+            }
+
+            // create new array of inputfields only to position the honepot field in between
             $inputfieldKeys = [];
 
-            foreach ($this->formElements as $key => $inputfield) {
-                if (is_subclass_of($inputfield, 'FrontendForms\Inputfields')) {
+            foreach ($this->formElements as $key => $element) {
+                if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
                     // exclude hidden input fields - add only visible fields
-                    if ($inputfield->className() !== 'InputHidden') {
+                    if ($element->className() !== 'InputHidden') {
                         $inputfieldKeys[] = $key;
                     }
                 }
             }
 
-
-            // remove all instances of form elements where only one instance per form is allowed, but there are multiple
-            $singleClassObjects = ['PrivacyText', 'Privacy'];
-            foreach ($singleClassObjects as $className) {
-                ${$className.'_key'} =$this->removeMultipleEntriesByClass($className);
-            }
-
-            // re-index the form elements
-            //$this->formElements = array_values($this->formElements);
-
-            $privacyFields = [$PrivacyText_key, $Privacy_key];
-
-            // remove all null values from the array
-            $privacyFields = array_filter($privacyFields, static function($var){return $var !== null;});
-
-            // set $refKey to false by default
-            $refKey = false;
-            if($privacyFields){
-                // get the lowest value inside this array
-                $min = min($privacyFields);
-                $index = array_search($min, $privacyFields);
-
-                // put the CAPTCHA before this key if using of CAPTCHA has been set
-                $refKey = $privacyFields[$index];
-            }
-
-            // Add honeypot field only if at least 1 input field is present
-            if (count($inputfieldKeys)) {
-
-                // add captcha field as last input field
-                if ($this->getCaptchaType() != 'none') {
-                    // position in form fields array to insert
-                    if($refKey){
-                        while(key($this->formElements) !== $refKey) next($this->formElements);
-                        $prev_val = prev($this->formElements);
-                        // and to get the key
-                        $prev_key = key($this->formElements);
-                        $captchaPosition = $prev_key;
-                    } else {
-                        $captchaPosition = array_key_last($inputfieldKeys) + 1;
-                    }
-
-
-                    $captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
-                    // insert the captcha input field after the last input field
-                    $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition, true),
-                        array($captchafield), array_slice($this->formElements, $captchaPosition, null,true));
-                }
-
-
-
-
-                // add honeypot on the random number field position
-                if ($this->frontendforms['input_useHoneypot']) {
-                    shuffle($inputfieldKeys);
-                    array_splice($this->formElements, $inputfieldKeys[0], 0, [$this->createHoneypot()]);
-                }
+            // add honeypot on the random number field position
+            if ($this->frontendforms['input_useHoneypot']) {
+                shuffle($inputfieldKeys);
+                array_splice($this->formElements, $inputfieldKeys[0], 0, [$this->createHoneypot()]);
             }
 
             // create hidden Ajax redirect input if set
