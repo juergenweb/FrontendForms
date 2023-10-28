@@ -480,11 +480,15 @@ You can also find this new class implemented in the [default examples](https://g
 It is up to you whether you use the "Privacy Accept" checkbox or the new PrivacyText class.
 
 ## [2.1.51] 2023-10-28
-3 new methods for the form object have been added and a new functionality to position the privacy checkbox or privacy text always after the CAPTCHA (if set).
+3 new methods for the form object have been added and a new functionality to position the privacy checkbox or privacy text always next to the submit button.
 
-This update consists of 3 new public methods, which will be used by the new functionality to add the "Accept the privacy checkbox" or the "Accept the privacy" always between the CAPTCHA (if set) and directly next to the submit button.
+This update consists of 3 new public methods, which will be used by the new functionality to add the "Accept the privacy checkbox" or the "Accept the privacy" text always before the submit button.
 
-Designed was this functionality, because til now, the CAPTCHA (if enabled) was always the last item before the submit button, but this did not made sense to me, because, I wanted the privacy element to be the very last element before the button element. For this reason, I have integrated this functionality. So this new functionality is only there if the CAPCHTA is enabled.
+Designed was this functionality, because til now, this problem especially occured, if the CAPTCHA was enabled.
+
+The Captcha will be added automatically as the last element before the button element. This lead to that the privacy fields were always above the CAPTCHA and not next to the submit button, where they should be.
+
+For this reason, I have integrated this functionality. So this new functionality shifts all privacy fields (checkbox and/or text) to the last position, independend of the last position.
 
 The 3 new methods, that were created for this functionality, are public methods and can also be used for other use cases if needed. 
 
