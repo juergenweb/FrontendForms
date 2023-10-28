@@ -480,15 +480,11 @@ You can also find this new class implemented in the [default examples](https://g
 It is up to you whether you use the "Privacy Accept" checkbox or the new PrivacyText class.
 
 ## [2.1.51] 2023-10-28
-3 new methods for the form object have been added and a new functionality to position the privacy checkbox or privacy text automatically before the submit button if set.
+3 new methods for the form object have been added and a new functionality to position the privacy checkbox or privacy text always after the CAPTCHA (if set).
 
-This update consists of 3 new public methods, which will be used by the new functionality to add the "Accept the privacy checkbox" or the "Accept the privacy" text directly next to the submit button, independent on the position where it was added.
+This update consists of 3 new public methods, which will be used by the new functionality to add the "Accept the privacy checkbox" or the "Accept the privacy" always between the CAPTCHA (if set) and directly next to the submit button.
 
-This means, if you are adding fe the privacy checkbox as the first form element, it would be rendered as the first element inside the form. This does not make sense in case of a privacy form element, because it has to be near the submit button and not on the top of the form.
-
-With this new functionality, privacy form fields (text or checkbox) will be always positioned after a CAPTCHA (if set) and before the submit button. This is the only position where it should be.
-
-Designed was this functionality, because til now, the CAPTCHA (if set) was always the last item before the submit button, but this did not made sense to me, because, I wanted the privacy element to be the very last element before the button element. For this reason, I have integrated this functionality.
+Designed was this functionality, because til now, the CAPTCHA (if enabled) was always the last item before the submit button, but this did not made sense to me, because, I wanted the privacy element to be the very last element before the button element. For this reason, I have integrated this functionality. So this new functionality is only there if the CAPCHTA is enabled.
 
 The 3 new methods, that were created for this functionality, are public methods and can also be used for other use cases if needed. 
 
