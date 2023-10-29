@@ -1793,6 +1793,7 @@
             $buttons = $this->getElementsbyClass('Button');
             // get first button
             if ($buttons) {
+
                 $refKey = key($buttons[0]);
 
                 // add captcha field as last element before the button element
@@ -1804,30 +1805,31 @@
                     $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
                         array($captchafield), array_slice($this->formElements, $captchaPosition));
 
-                    $privacyElements = [];
-                    // put Privacy and PrivacyText after Captcha
-                    $privacyCheckbox = $this->getElementsbyClass('Privacy');
-                    if ($privacyCheckbox) {
-
-                        $privacyElements[] = key($privacyCheckbox[0]);
-                    }
-                    $privacyText = $this->getElementsbyClass('PrivacyText');
-                    if ($privacyText) {
-
-                        $privacyElements[] = key($privacyText[0]);
-                    }
-
-                    if ($privacyElements) {
-                        sort($privacyElements);
-                        $newPos = array_key_last($this->formElements) - 1;
-                        $this->repositionArrayElement($this->formElements, $privacyElements[0], $newPos);
-                        if (array_key_exists(1, $privacyElements)) {
-                            $newPos = array_key_last($this->formElements) - 1;
-                            $this->repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
-                        }
-                    }
 
                 }
+
+                $privacyElements = [];
+                // put Privacy and PrivacyText after Captcha
+                $privacyCheckbox = $this->getElementsbyClass('Privacy');
+                if ($privacyCheckbox) {
+                    $privacyElements[] = key($privacyCheckbox[0]);
+                }
+                $privacyText = $this->getElementsbyClass('PrivacyText');
+                if ($privacyText) {
+                    $privacyElements[] = key($privacyText[0]);
+                }
+
+                if ($privacyElements) {
+                    sort($privacyElements);
+                    $newPos = array_key_last($this->formElements) - 1;
+
+                    $this->repositionArrayElement($this->formElements, $privacyElements[0], $newPos);
+                    if (array_key_exists(1, $privacyElements)) {
+                        $newPos = array_key_last($this->formElements) - 1;
+                        $this->repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
+                    }
+                }
+
             }
 
             // create new array of inputfields only to position the honepot field in between
