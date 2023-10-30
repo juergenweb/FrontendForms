@@ -1737,6 +1737,7 @@
 
             $out = '';
 
+
             // if Ajax submit was selected, add an aditional data attribute to the form tag
             if ($this->getSubmitWithAjax()) {
 
@@ -1777,6 +1778,7 @@
                 $this->setAttribute('method', 'post');
             }
 
+
             // get token for CSRF protection
             $tokenName = $this->wire('session')->CSRF->getTokenName();
             $tokenValue = $this->wire('session')->CSRF->getTokenValue();
@@ -1793,6 +1795,7 @@
             $buttons = $this->getElementsbyClass('Button');
             // get first button
             if ($buttons) {
+
                 $refKey = key($buttons[0]);
 
                 // add captcha field as last element before the button element
@@ -1804,34 +1807,36 @@
                     $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
                         array($captchafield), array_slice($this->formElements, $captchaPosition));
 
+
                 }
 
                 $privacyElements = [];
                 // put Privacy and PrivacyText after Captcha
                 $privacyCheckbox = $this->getElementsbyClass('Privacy');
                 if ($privacyCheckbox) {
-
                     $privacyElements[] = key($privacyCheckbox[0]);
                 }
                 $privacyText = $this->getElementsbyClass('PrivacyText');
                 if ($privacyText) {
-
                     $privacyElements[] = key($privacyText[0]);
                 }
 
                 if ($privacyElements) {
                     sort($privacyElements);
                     $newPos = array_key_last($this->formElements) - 1;
+
                     $this->repositionArrayElement($this->formElements, $privacyElements[0], $newPos);
                     if (array_key_exists(1, $privacyElements)) {
                         $newPos = array_key_last($this->formElements) - 1;
                         $this->repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
                     }
                 }
+
             }
 
             // create new array of inputfields only to position the honepot field in between
             $inputfieldKeys = [];
+
 
             foreach ($this->formElements as $key => $element) {
                 if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
@@ -1843,7 +1848,7 @@
             }
 
             // add honeypot on the random number field position
-            if ($this->frontendforms['input_useHoneypot']) {
+            if (($this->frontendforms['input_useHoneypot']) && ($inputfieldKeys)) {
                 shuffle($inputfieldKeys);
                 array_splice($this->formElements, $inputfieldKeys[0], 0, [$this->createHoneypot()]);
             }
