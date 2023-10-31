@@ -495,3 +495,6 @@ The 3 new methods that were created for this functionality are public methods an
 * [removeMultipleEntriesByClass()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#removemultipleentriesbyclass---delete-all-instances-of-a-form-element-of-a-given-class-except-the-last-one) - delete all instances of a form element of a given class except the last one
 * [formContainsElementByClass()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#formcontainselementbyclass---check-if-the-form-object-contains-at-least-one-form-element-of-the-given-class) - check if the form object contains at least one form element of the given class
 * [getElementsbyClass()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getelementsbyclass---get-array-of-all-form-elements-of-the-given-class) - get array of all form elements of the given class
+
+## [2.1.52] 2023-10-31
+Only some small bug fixes and code formatting optimizations taken
