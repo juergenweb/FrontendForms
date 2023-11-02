@@ -498,3 +498,9 @@ The 3 new methods that were created for this functionality are public methods an
 
 ## [2.1.52] 2023-10-31
 Only some small bug fixes and code formatting optimizations taken
+
+## [2.1.53] 2023-11-02
+Fixing bug in calculation of privacy field position.
+
+In update 2.1.51, a new functionality to position privacy fields always before the button element, was introduced. Unfortunately, there was an error copying this new functionality to GitHub. Locally, I have the changes on my computer, but for some reason, I have not copied it to GitHub.
+The result was a wrong position calculation of the privacy fields in certain cases. This update should fix this behavior and now the position of the Privacy fields should always be before the button element.
