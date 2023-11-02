@@ -1737,7 +1737,6 @@
 
             $out = '';
 
-
             // if Ajax submit was selected, add an aditional data attribute to the form tag
             if ($this->getSubmitWithAjax()) {
 
@@ -1754,7 +1753,8 @@
                 // add special div container for Ajax form submission
                 $out .= '<div id="' . $this->getID() . '-ajax-wrapper" data-validated="' . $this->validated . '">';
             }
-            /* Check if the form contains file upload fields, then add enctype attribute */
+
+            // Check if the form contains file upload fields, then add enctype attribute
             foreach ($this->formElements as $obj) {
                 if ($obj instanceof InputFile) {
                     $this->setAttribute('enctype', 'multipart/form-data');
@@ -1777,7 +1777,6 @@
             if (!in_array(strtolower($this->getAttribute('method')), Form::FORMMETHODS)) {
                 $this->setAttribute('method', 'post');
             }
-
 
             // get token for CSRF protection
             $tokenName = $this->wire('session')->CSRF->getTokenName();
@@ -1806,12 +1805,12 @@
                     // insert the captcha input field after the last input field
                     $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
                         array($captchafield), array_slice($this->formElements, $captchaPosition));
-
-
+                    // re-index the formElements array
+                    $this->formElements = array_values($this->formElements);
                 }
 
+                // sort the privacy elements that checkbox is before text, if both will be used
                 $privacyElements = [];
-                // put Privacy and PrivacyText after Captcha
                 $privacyCheckbox = $this->getElementsbyClass('Privacy');
                 if ($privacyCheckbox) {
                     $privacyElements[] = key($privacyCheckbox[0]);
@@ -1821,14 +1820,19 @@
                     $privacyElements[] = key($privacyText[0]);
                 }
 
-                if ($privacyElements) {
-                    sort($privacyElements);
-                    $newPos = array_key_last($this->formElements) - 1;
+                // get the position of the first button element
+                if($this->getElementsbyClass('Button')){
+                    $firstButtonPos = key($this->getElementsbyClass('Button')[0]);
 
-                    $this->repositionArrayElement($this->formElements, $privacyElements[0], $newPos);
-                    if (array_key_exists(1, $privacyElements)) {
-                        $newPos = array_key_last($this->formElements) - 1;
-                        $this->repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
+                    if ($privacyElements) {
+                        sort($privacyElements);
+                        $newPos = $firstButtonPos - 1;
+
+                        $this->repositionArrayElement($this->formElements, $privacyElements[0], $newPos);
+                        if (array_key_exists(1, $privacyElements)) {
+                            $newPos = array_key_last($this->formElements) - 1;
+                            $this->repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
+                        }
                     }
                 }
 
@@ -1836,7 +1840,6 @@
 
             // create new array of inputfields only to position the honepot field in between
             $inputfieldKeys = [];
-
 
             foreach ($this->formElements as $key => $element) {
                 if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
@@ -1901,7 +1904,6 @@
                     }
                 }
             }
-
 
             // Output the form markup
             $out .= $this->alert->___render();
@@ -1979,7 +1981,6 @@
 
                     $formElements .= $element->render() . PHP_EOL;
                 }
-
 
                 // add formElementsWrapper -> add the div container after the form tag
                 if ($this->frontendforms['input_wrapperFormElements']) {
