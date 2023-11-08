@@ -43,6 +43,7 @@
         // This url contains the commits for the passwords including the dates of the commits (used for last modification date)
         const LAST_PASSWORDS_MODIFICATION_URL = 'https://api.github.com/repos/danielmiessler/SecLists/commits?path=/Passwords/Common-Credentials/10-million-password-list-top-100.txt';
 
+        public static string $framework = '';
         protected string $temp_uploadPath = ''; // the path to the temporary upload folder
         // the validator object
         protected Validator $Validator;
@@ -261,6 +262,8 @@
 
             //get all classes from the currently loaded framework from the folder CSSClasses
             $this->defaultClasses = json_decode(file_get_contents($this->modulePath . 'CSSClasses/' . $this->input_framework));
+
+            self::$framework = str_replace('.json', '', $this->input_framework);
         }
 
 
