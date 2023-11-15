@@ -508,3 +508,5 @@ The result was a wrong position calculation of the privacy fields in certain cas
 ## 2023-11-08
 New static property $framework added. This property is needed for a new module that I am working on. It outputs the framework choosen in the backend configuration on the frontend.
 The property is static, so you have to call "FrontendForms::$framework" which leads fe to "uikit3","bootstrap5" or "none"
+
+Modifiying the addAssets() method to support the new FrontendComments module, which will be published in the future. This method now adds stylesheets and JavaScript files from this new module on demand to the frontend (only on pages, where a comment field is added).
