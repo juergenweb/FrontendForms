@@ -581,10 +581,11 @@
             $this->addHookBefore('Inputfield::render', $this, 'addLinkToNotes');
             $this->addHookBefore('Page::render', $this, 'downloadPasswords');
 
+
             // add CSS and JS to the backend
             $version = $this->getModuleInfo()['version'] . '-' . time();
-            $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version.'&time='.time());
-            $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version.'&time='.time());
+            $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version . '&time=' . time());
+            $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version . '&time=' . time());
 
             // add CSS and JS links to the frontend template
             $this->addHookAfter('Page::render', $this, 'addAssets');
@@ -948,6 +949,7 @@
             return false;
         }
 
+
         /**
          * Request GitHub once a month and download the top 100 passwords if file has been changed since the last
          * download To prevent downloading the whole list on every page request, the download will be taken only once
@@ -1094,12 +1096,63 @@
 
             $version = $this->getModuleInfo()['version'];
             if (!$this->input_removeJS) {
-                $js = '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '&time='.time().'"></script>' . PHP_EOL;
+                $js = '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '&time=' . time() . '"></script>' . PHP_EOL;
                 $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
             }
             if (!$this->input_removeCSS) {
-                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css?v=' . $version . '&time='.time().'"/>' . PHP_EOL;
+                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css?v=' . $version . '&time=' . time() . '"/>' . PHP_EOL;
                 $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
+            }
+            $modules = $this->wire('modules');
+            if ($modules->isInstalled('FieldtypeFrontendComments')) {
+
+                // get all comment fields
+                $fields = $this->wire('fields')->findByType('FieldtypeFrontendComments');
+                if (count($fields) == 0)
+                    return;
+                $fieldNames = array_keys($fields);
+
+                // check if the given page has a comment field
+                $commentFields = [];
+                foreach ($fieldNames as $fieldName) {
+                    if ($page->hasField($fieldName))
+                        $commentFields[] = $fieldName;
+                }
+                if (!$commentFields) // no comment fields at all on this page
+                    return;
+
+                // url to FrontendComments asset folder
+                $url = $this->wire('config')->urls->get('FieldtypeFrontendComments') . 'assets/';
+
+                // get module version
+                $moduleVersion = $this->wire('modules')->getModuleInfo('FieldtypeFrontendComments')['version'];
+
+                // add CSS files to the frontend
+                $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsmain.css?v=' . $moduleVersion . '&time=' . time() . '"/>' . PHP_EOL;
+                $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
+
+                // check which markup/framework is enabled
+                $framework = $this->moduleConfig['input_framework'];
+
+                if ($framework === 'none.json') {
+                    // add default CSS file
+                    $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsnone.css?v=' . $moduleVersion . '&time=' . time() . '"/>' . PHP_EOL;
+                    $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
+                }
+
+                // add default js to the frontend
+                $js = '<script src="' . $url . 'frontendcomments.js?v=' . $moduleVersion . '&time=' . time() . '"></script>' . PHP_EOL;
+                $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
+
+                // check if at least one comment field has star rating enabled and load it on demand
+                foreach ($commentFields as $field) {
+                    if ($this->wire('fields')->get($field)['input_fc_stars']) {
+                        // add star rating js to the frontend
+                        $js = '<script src="' . $url . 'star-rating.min.js?v=' . $moduleVersion . '&time=' . time() . '"></script>' . PHP_EOL;
+                        $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
+                        break;
+                    }
+                }
             }
         }
 
@@ -1488,12 +1541,12 @@
             $fieldset2->collapsed = 1;
             $fieldset2->icon = 'fa-code';
 
-                $ajaxformsubmission = $this->wire('modules')->get('InputfieldCheckbox');
-                $ajaxformsubmission->attr('name', 'input_ajaxformsubmission');
-                $ajaxformsubmission->attr('checked', $this->input_ajaxformsubmission == '1' ? 'checked' : '');
-                $ajaxformsubmission->label = $this->_('Submit forms via Ajax');
-                $ajaxformsubmission->description = $this->_('If the box is checked, every form and its form data will be submitted via Ajax. This means that there will be no page reload after submission.');
-                $ajaxformsubmission->notes = $this->_('Please note, if Javascript is not enabled, the form will be submitted with page reload, but this could cause problems under certain circumstances where no page reload is necessary. If Javascript is not enabled, the user will see a warning message above the form.');
+            $ajaxformsubmission = $this->wire('modules')->get('InputfieldCheckbox');
+            $ajaxformsubmission->attr('name', 'input_ajaxformsubmission');
+            $ajaxformsubmission->attr('checked', $this->input_ajaxformsubmission == '1' ? 'checked' : '');
+            $ajaxformsubmission->label = $this->_('Submit forms via Ajax');
+            $ajaxformsubmission->description = $this->_('If the box is checked, every form and its form data will be submitted via Ajax. This means that there will be no page reload after submission.');
+            $ajaxformsubmission->notes = $this->_('Please note, if Javascript is not enabled, the form will be submitted with page reload, but this could cause problems under certain circumstances where no page reload is necessary. If Javascript is not enabled, the user will see a warning message above the form.');
 
             $fieldset2->add($ajaxformsubmission, $inputfields);
 
