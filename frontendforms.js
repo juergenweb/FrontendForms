@@ -308,15 +308,20 @@ function ajaxSubmit(formid = null) {
  */
 function subAjax(form) {
 
+
+
     if (typeof (form) == 'string') {
         form = document.getElementById(form);
     }
 
+
+
     if (form) {
 
-        // add eventlistener to all forms which include the data-submit attribute
-        form.addEventListener('submit', function (e) {
 
+        // add eventlistener to all forms which include the submit attribute
+        form.addEventListener('submit', function (e) {
+            console.log('listen submit');
             e.preventDefault();
 
             let formid = form.dataset.submitajax;
@@ -385,6 +390,15 @@ function subAjax(form) {
                         ajaxSubmit();
                         // start counter
                         submitCounter();
+
+                        // addition for FrontendComments module
+                        // will be needed to make star rating working on Ajax requests
+                        let ratingStars = [...document.getElementsByClassName("star-rating")];
+                        if (ratingStars.length > 0) {
+                            if (typeof configRating === 'function') {
+                                configRating();
+                            }
+                        }
                     }
 
                 }
