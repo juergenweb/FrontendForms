@@ -505,7 +505,7 @@ Fixing bug in calculation of privacy field position.
 In update 2.1.51, a new functionality to position privacy fields always before the button element, was introduced. Unfortunately, there was an error copying this new functionality to GitHub. Locally, I have the changes on my computer, but for some reason, I have not copied it to GitHub.
 The result was a wrong position calculation of the privacy fields in certain cases. This update should fix this behavior and now the position of the Privacy fields should always be before the button element.
 
-## 2023-11-08
+## [2.1.54] 2023-11-08
 New static property $framework added. This property is needed for a new module that I am working on. It outputs the framework choosen in the backend configuration on the frontend.
 The property is static, so you have to call "FrontendForms::$framework" which leads fe to "uikit3","bootstrap5" or "none"
 
@@ -514,3 +514,5 @@ Modifiying the addAssets() method to support the new FrontendComments module, wh
 Modifying the frontendforms.js file to support star-rating of the new module on Ajax requests too.
 
 New Hook function inside ready() added to move a comment field (if present) inside a new tab called "Comments" in the backend. By default, the comments field is located inside the content tab (as all other fields), but moving it to an newly created extra tab seems to be a better approach.
+
+At least: The JavaScript maxCharsCounterReverse() function which is responsible to count the characters inside a textarea, if the character-counter is enabled, will be re-written to run only on textareas, which contain the data-attribute "data-charactercounter" and the value "1" and not on every textarea on the page.
