@@ -309,11 +309,9 @@ function ajaxSubmit(formid = null) {
 function subAjax(form) {
 
 
-
     if (typeof (form) == 'string') {
         form = document.getElementById(form);
     }
-
 
 
     if (form) {
@@ -321,7 +319,7 @@ function subAjax(form) {
 
         // add eventlistener to all forms which include the submit attribute
         form.addEventListener('submit', function (e) {
-            console.log('listen submit');
+
             e.preventDefault();
 
             let formid = form.dataset.submitajax;
@@ -390,6 +388,8 @@ function subAjax(form) {
                         ajaxSubmit();
                         // start counter
                         submitCounter();
+                        // textarea counter
+                        maxCharsCounterReverse();
 
                         // addition for FrontendComments module
                         // will be needed to make star rating working on Ajax requests
@@ -436,20 +436,30 @@ function jumpToAnchor() {
  * Count the letters inside a textarea and output the characters left
  */
 function maxCharsCounterReverse() {
-    const textarea = document.querySelector("textarea");
 
-    textarea.addEventListener("input", event => {
-        const target = event.currentTarget;
-        const maxLength = target.getAttribute("maxlength");
-        const currentLength = target.value.length;
-        const counterSpan = document.getElementById(target.id + '-char_count');
+    let textareas = document.querySelectorAll('[data-charactercounter="1"]')
 
-        // if max number of characters is reached, output a special info message
-        if (currentLength === maxLength) {
-            counterSpan.innerHTML = counterSpan.dataset.maxreached;
-        } else {
-            // change the current length inside span element
-            counterSpan.children[0].innerHTML = maxLength - currentLength;
+    if (textareas.length > 0) {
+        
+        for (let i = 0; i < textareas.length; i++) {
+
+            textareas[i].addEventListener("input", event => {
+                const target = event.currentTarget;
+                const maxLength = target.getAttribute("maxlength");
+                if (maxLength) {
+                    const currentLength = target.value.length;
+                    const counterSpan = document.getElementById(target.id + '-char_count');
+
+                    // if max number of characters is reached, output a special info message
+                    if (currentLength === maxLength) {
+                        counterSpan.innerHTML = counterSpan.dataset.maxreached;
+                    } else {
+                        // change the current length inside span element
+                        counterSpan.children[0].innerHTML = maxLength - currentLength;
+                    }
+                }
+            });
         }
-    });
+    }
+
 }
