@@ -511,7 +511,7 @@ The property is static, so you have to call "FrontendForms::$framework" which le
 
 Modifiying the addAssets() method to support the new FrontendComments module, which will be published in the future. This method now adds stylesheets and JavaScript files from this new module on demand to the frontend (only on pages, where a comment field is added).
 
-Modifying the frontendforms.js file to support star-rating of the new module on Ajax requests too.
+Modifying the frontendforms.js file to support star-rating of the new module on Ajax requests too (This is also for the new module).
 
 New Hook function inside ready() added to move a comment field (if present) inside a new tab called "Comments" in the backend. By default, the comments field is located inside the content tab (as all other fields), but moving it to an newly created extra tab seems to be a better approach.
 
