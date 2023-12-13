@@ -505,7 +505,7 @@ Fixing bug in calculation of privacy field position.
 In update 2.1.51, a new functionality to position privacy fields always before the button element, was introduced. Unfortunately, there was an error copying this new functionality to GitHub. Locally, I have the changes on my computer, but for some reason, I have not copied it to GitHub.
 The result was a wrong position calculation of the privacy fields in certain cases. This update should fix this behavior and now the position of the Privacy fields should always be before the button element.
 
-## [2.1.54] 2023-11-08
+## [2.1.54] 2023-12-13
 New static property $framework added. This property is needed for a new module that I am working on. It outputs the framework choosen in the backend configuration on the frontend.
 The property is static, so you have to call "FrontendForms::$framework" which leads fe to "uikit3","bootstrap5" or "none"
 
