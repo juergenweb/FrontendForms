@@ -50,6 +50,8 @@
         public function useCharacterCounter(bool $use = true): self
         {
             $this->useCharacterCounter = $use;
+            $counter = ($use) ? '1' : '0';
+            $this->setAttribute('data-charactercounter', $counter);
             return $this;
         }
 
