@@ -516,3 +516,6 @@ Modifying the frontendforms.js file to support star-rating of the new module on 
 New Hook function inside ready() added to move a comment field (if present) inside a new tab called "Comments" in the backend. By default, the comments field is located inside the content tab (as all other fields), but moving it to an newly created extra tab seems to be a better approach.
 
 At least: The JavaScript maxCharsCounterReverse() function which is responsible to count the characters inside a textarea, if the character-counter is enabled, will be re-written to run only on textareas, which contain the data-attribute "data-charactercounter" and the value "1" and not on every textarea on the page.
+
+## 2023-12-27
+Bug fixed on min time configuration input field (name attribute was missing)
