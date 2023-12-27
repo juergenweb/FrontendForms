@@ -1743,6 +1743,7 @@
             $minTime->label = $this->_('Min time before form submission');
             $minTime->description = $this->_('Please set the min time in seconds before a form should be submitted.');
             $minTime->notes = $this->_('If set to 0 then this feature is disabled. This feature measures the time between loading and submitting a form. If it is to fast (fe a spam bot) it will lead to a form error. ');
+            $minTime->attr('name', 'input_minTime');
             $minTime->attr('value', $this->input_minTime);
             $minTime->attr('min', 0);
             $minTime->attr('type', 'number');
