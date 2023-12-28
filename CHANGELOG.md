@@ -517,5 +517,13 @@ New Hook function inside ready() added to move a comment field (if present) insi
 
 At least: The JavaScript maxCharsCounterReverse() function which is responsible to count the characters inside a textarea, if the character-counter is enabled, will be re-written to run only on textareas, which contain the data-attribute "data-charactercounter" and the value "1" and not on every textarea on the page.
 
-## 2023-12-27
+## [2.1.55] 2023-12-28
+
 Bug fixed on min time configuration input field (name attribute was missing)
+
+Static function secondsToReadable() will be reverted to non-static. The static function leads to some problems under certain condition, so the best way was to revert it back to non-static (For more information please read the discussion in the support forum: https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=238088
+
+IMPORTANT: This has an impact on the FrontendLoginRegister module if you are using 2-factor-authentification, because this module uses the static function.
+If you are using the FrontendLoginRegister module, please update this module first (or at the same time with FrontendForms) to prevent problems.
+
+Thank you!
