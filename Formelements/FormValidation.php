@@ -97,14 +97,14 @@ class FormValidation extends Tag
 
                 $diff = $submit_Time - (int)$start_Time;
 
-                $submit_Time = self::secondsToReadable($diff);
+                $submit_Time = $this->secondsToReadable($diff);
                 // too fast
                 if ($this->form->getMinTime() && ($diff < $this->form->getMinTime())) {
                     $secondsLeft = $this->_('seconds left'); //plural
                     $secondLeft = $this->_('second left'); // singular
                     $text = sprintf($this->_('You have submitted the form within %s. This seems pretty fast for a human. Your behavior is more similar to a Spam bot. Please wait at least %s until you submit the form once more.'),
                             $submit_Time,
-                            '<span id="minTime" data-time="' . $this->form->getMinTime() . '" data-unit="' . $secondsLeft . ';' . $secondLeft . '">' . self::secondsToReadable($this->form->getMinTime())) . '</span><div id="timecounter"></div>';
+                            '<span id="minTime" data-time="' . $this->form->getMinTime() . '" data-unit="' . $secondsLeft . ';' . $secondLeft . '">' . $this->secondsToReadable($this->form->getMinTime())) . '</span><div id="timecounter"></div>';
                     $this->alert->setCSSClass('alert_warningClass');
                     $this->alert->setText($text);
                     return false;
@@ -112,7 +112,7 @@ class FormValidation extends Tag
                 //too slow
                 if ($this->form->getMaxTime() && ($diff > $this->form->getMaxTime())) {
                     $text = sprintf($this->_('You have submitted the form after %s. This seems pretty slow for a human. Your behavior is more similar to a Spam bot. Please submit the form within %s the next time. You are blocked now and you have to close the browser to unlock, open it again and visit this page once more.'),
-                        $submit_Time, self::secondsToReadable($this->form->getMaxTime()));
+                        $submit_Time, $this->secondsToReadable($this->form->getMaxTime()));
                     $this->alert->setText($text);
                     $this->wire('session')->set('blocked',
                         $submit_Time); // set session for blocked value is the submission time
@@ -129,6 +129,7 @@ class FormValidation extends Tag
      * @param int $ss - seconds
      * @return string
      */
+    /*
     public static function secondsToReadable(int $ss): string
     {
         $bit = [
@@ -172,8 +173,9 @@ class FormValidation extends Tag
         }
         return implode(' ', $ret);
     }
+    */
 
-    public function secondsToReadableCopy(int $ss): string
+    public function secondsToReadable(int $ss): string
     {
         $bit = [
             'month' => floor($ss / 2592000),
