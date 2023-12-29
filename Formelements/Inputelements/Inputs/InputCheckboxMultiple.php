@@ -23,6 +23,7 @@ class InputCheckboxMultiple extends Input
 
     protected array $checkboxes = [];// array to hold all InputCheckbox objects
     protected bool $directionHorizontal = true;// default checkbox orientation
+    protected TextElements $topLabel; // Top label Textelement object
 
     /**
      * @param string $id
