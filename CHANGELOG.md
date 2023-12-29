@@ -527,3 +527,6 @@ IMPORTANT: This has an impact on the FrontendLoginRegister module if you are usi
 If you are using the FrontendLoginRegister module, please update this module first (or at the same time with FrontendForms) to prevent problems.
 
 Thank you!
+
+## 2023-12-29
+Missing property declaration for Textelement $toplabel inside Multiplecheckbox.php added.
