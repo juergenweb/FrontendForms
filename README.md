@@ -773,8 +773,8 @@ This is an alias of the old setSubmitWithAjax() method.
 ```
 
 ## setRedirectURL() - Redirect to another page after form submission
-you can use this method to redirect to another page after the form has been validated and the code between the isValid() method has been executed.
-I does not matter if you are submitting the form via Ajax or not.
+You can use this method to redirect to another page after the form has been validated and the code between the isValid() condition has been executed.
+It does not matter if you are submitting the form via Ajax or not.
 
 ```php
   $form->setRedirectURL('path or url/to/the/redirect page'); // enter the path or the URL to the redirect page
