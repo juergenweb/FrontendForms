@@ -472,7 +472,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [render()](#render---output-the-markup-of-the-form)  | output the markup of the form  |
 | [setSubmitWithAjax()](#setsubmitwithajax---use-ajax-for-form-submission)  | Depricated!! Use Ajax to submit a form without page reload  |
 | [useAjax()](#useajax---use-ajax-for-form-submission)  | Use Ajax to submit a form without page reload  |
-| [setRedirectURL()](#setredirecturl---redirect-to-another-page-after-form-submission)  | Adds an redirect to the form submission  |
+| [setRedirectURL()](#setredirecturl---redirect-to-another-page-after-form-submission)  | Add a redirect URL to the form submission  |
 | [showProgressbar()](#showprogressbar---showhide-the-progress-bar-during-ajax-form-submission)  | Show or hide the progressbar during Ajax form submission  |
 | [setRedirectUrlAfterAjax()](#showprogressbar---showhide-the-progress-bar-during-ajax-form-submission)  | Redirect to another page after successfull form submission via Ajax  |
 | [removeMultipleEntriesByClass()](#removemultipleentriesbyclass---delete-all-instances-of-a-form-element-of-a-given-class-except-the-last-one)  | delete all instances of a form element of a given class except the last one  |
