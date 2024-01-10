@@ -1436,7 +1436,7 @@
                                             $v->rule('required',
                                                 $element->getAttribute('name'))->label($this->_('The captcha')); // captcha is always required
                                             $v->rule('checkCaptcha', $element->getAttribute('name'),
-                                                $this->wire('session')->get('captcha_' . $this->getID()))->label($this->_('The value entered from the captcha'));
+                                                $this->wire('session')->get('captcha_' . $this->getID()))->label($this->_('The CAPTCHA'));
                                         }
                                     }
                                     $this->setValues();
