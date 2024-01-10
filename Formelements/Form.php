@@ -69,6 +69,7 @@
         protected int|null $site_language_id = null; // internal property containing the current site language
         protected string|int|null|bool $submitAjax = 0; // whether to submit the form via Ajax (1) or not (0)
         protected string|null $ajaxRedirect = null; // redirect to this URL after a valid form has been submitted - only for Ajax submission
+        protected string $redirectURL = ''; // the URL for the redirect after successful for form validation
         protected string $validated = '0'; // the form is validated (1) or not (0)
         protected string|null|int|bool $showProgressbar = true;
 
@@ -213,6 +214,7 @@
         }
 
         /**
+         * THIS METHOD IS DEPRECATED - USE useAjax() METHOD INSTEAD
          * Enable/disable form submission via ajax
          * @param bool|int|null $ajax - true => form will be submitted via Ajax
          * @return $this
@@ -220,6 +222,17 @@
         public function setSubmitWithAjax(bool|int|null|string $ajax = true): self
         {
             $this->submitAjax = boolval($ajax);
+            return $this;
+        }
+
+        /**
+         * Submit a form via AJAX
+         * @param bool|int|string|null $ajax
+         * @return self
+         */
+        public function useAjax(bool|int|null|string $ajax = true): self
+        {
+            $this->setSubmitWithAjax($ajax);
             return $this;
         }
 
@@ -507,28 +520,6 @@
             $this->wire('session')->remove('templateloaded');
         }
 
-        /**
-         * To prevent double form submissions after the form was valid, this method redirects to the same page
-         * This only happens, if the form was validated and there were no errors
-         * @return void
-         * @throws WireException
-         * @throws WirePermissionException
-         */
-        protected function redirectAfterSubmission(): void
-        {
-            if ($this->wire('session')->get('valid')) {
-                $this->wire('session')->remove('valid');
-                $this->wire('session')->set('valid-message', '1');
-                $this->wire('session')->redirect($this->wire('page')->url);
-            }
-            if ($this->wire('session')->get('valid-message')) {
-                // output success msg
-                $this->alert->setCSSClass('alert_successClass');
-                $this->alert->setText($this->getSuccessMsg());
-                $this->showForm = $this->getShowForm();
-                $this->wire('session')->remove('valid-message');
-            }
-        }
 
         /**
          * Load a template file from the given path including php code and output it as a string
@@ -1654,6 +1645,28 @@
         }
 
         /**
+         * Set the URL for a redirect after successful form validation
+         * @param string $url - the URL, where the redirect should go to
+         * @return $this
+         */
+        public function setRedirectURL(string $url): self
+        {
+            $this->setRedirectUrlAfterAjax($url);
+            $this->redirectURL = $url;
+            return $this;
+        }
+
+        /**
+         * Get the URL for a redirect if set, otherwise NULL
+         * @return string|null
+         */
+        protected function getRedirectURL(): string|null
+        {
+            return $this->redirectURL;
+        }
+
+
+        /**
          * Check if the form contains an element from the given class
          * @param string $className
          * @return int -> the number of fields found
@@ -1734,6 +1747,11 @@
          */
         public function render(): string
         {
+
+            // redirect after successful form validation if set
+            if($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
+                $this->wire('session')->redirect($this->getRedirectURL());
+            }
 
             $out = '';
 
