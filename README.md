@@ -470,7 +470,8 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [showForm()](#showform---show-or-hide-the-rendering-of-the-form)  | show or hide the form  |
 | [getShowForm()](#getshowform---get-the-value-truefalse-if-the-value-should-be-displayed)  | Get the value, whether the form should be displayed or not  |
 | [render()](#render---output-the-markup-of-the-form)  | output the markup of the form  |
-| [setSubmitWithAjax()](#setsubmitwithajax---use-ajax-for-form-submission)  | Use Ajax to submit a form without page reload  |
+| [setSubmitWithAjax()](#setsubmitwithajax---use-ajax-for-form-submission)  | Depricated!! Use Ajax to submit a form without page reload  |
+| [useAjax()](#useajax---use-ajax-for-form-submission)  | Use Ajax to submit a form without page reload  |
 | [showProgressbar()](#showprogressbar---showhide-the-progress-bar-during-ajax-form-submission)  | Show or hide the progressbar during Ajax form submission  |
 | [setRedirectUrlAfterAjax()](#showprogressbar---showhide-the-progress-bar-during-ajax-form-submission)  | Redirect to another page after successfull form submission via Ajax  |
 | [removeMultipleEntriesByClass()](#removemultipleentriesbyclass---delete-all-instances-of-a-form-element-of-a-given-class-except-the-last-one)  | delete all instances of a form element of a given class except the last one  |
@@ -752,11 +753,21 @@ Render the form on the page.
   echo $form->render();
 ```
 ### setSubmitWithAjax() - use Ajax for form submission
+THIS METHOD STILL WORKS, BUT IT IS DEPRICATED. PLEASE USE THE NEW METHOD useAjax() INSTEAD!
 Enable/disable Ajax form submission by using this method. The global value is set inside the module configuration,
 but you can overwrite this value by using this method. Enter "true" to enable or "false" to disable Ajax support inside the parenthesis.
 
 ```php
   $form->setSubmitWithAjax(true); // true or false
+```
+
+### useAjax() - use Ajax for form submission
+Enable/disable Ajax form submission by using this method. The global value is set inside the module configuration,
+but you can overwrite this value by using this method. Enter "true" to enable or "false" to disable Ajax support inside the parenthesis.
+This is an alias of the old setSubmitWithAjax() method.
+
+```php
+  $form->useAjax(true); // true or false
 ```
 
 ### showProgressbar() - show/hide the progress bar during Ajax form submission
