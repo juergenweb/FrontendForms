@@ -1116,7 +1116,7 @@
                     '$form->appendLabelOnCheckboxes(true); // true, false',
                     '$form->appendLabelOnRadios(true); // true, false'
                 ],
-                'input_ajaxformsubmission' => ['$form->setSubmitWithAjax(true); // true, false'],
+                'input_ajaxformsubmission' => ['$form->useAjax(true); // true, false'],
                 'input_hideProgressBar' => ['$form->showProgressbar(true); // true, false'],
                 'input_emailTemplate' => ['$mail->mailTemplate("template_2.html"); // has to be added to the WireMail object not to the form'],
                 'input_useIPBan' => ['$form->useIPBan(false); // true, false',],
