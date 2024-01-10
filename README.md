@@ -474,7 +474,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [useAjax()](#useajax---use-ajax-for-form-submission)  | Use Ajax to submit a form without page reload  |
 | [setRedirectURL()](#setredirecturl---redirect-to-another-page-after-form-submission)  | Add a redirect URL to the form submission  |
 | [showProgressbar()](#showprogressbar---showhide-the-progress-bar-during-ajax-form-submission)  | Show or hide the progressbar during Ajax form submission  |
-| [setRedirectUrlAfterAjax()](#showprogressbar---showhide-the-progress-bar-during-ajax-form-submission)  | Redirect to another page after successfull form submission via Ajax  |
+| [setRedirectUrlAfterAjax()](#showprogressbar---showhide-the-progress-bar-during-ajax-form-submission)  |DEPRICATED!! Redirect to another page after successfull form submission via Ajax  |
 | [removeMultipleEntriesByClass()](#removemultipleentriesbyclass---delete-all-instances-of-a-form-element-of-a-given-class-except-the-last-one)  | delete all instances of a form element of a given class except the last one  |
 | [formContainsElementByClass()](#formcontainselementbyclass---check-if-the-form-object-contains-at-least-one-form-element-of-the-given-class)  | check if the form object contains at least one form element of the given class  |
 | [getElementsbyClass()](#getelementsbyclass---get-array-of-all-form-elements-of-the-given-class)  | get array of all form elements of the given class  |
@@ -789,6 +789,7 @@ but you can overwrite this value by using this method. Enter "true" to show or "
 ```
 
 ### setRedirectUrlAfterAjax() - redirect to another page after successful form submission via Ajax
+*THIS METHOD STILL WORKS, BUT IT IS DEPRICATED! PLEASE USE THE setRedirectURL() INSTEAD!!*
 If you are using Ajax to submit a form, a PHP session redirect will not work, if you want to redirect to another page after successful form submission. In this case, you have to do a JavaScript redirect. 
 This method will force JavaScript to redirect to another page - you only have to add the new page URL inside the parenthesis.
 
