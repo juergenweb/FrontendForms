@@ -534,7 +534,7 @@ Thank you!
 - Change CAPTCHA label for CAPTCHA validation message to fit better
 - New method setRedirectURL() added:
   
-  This method forces a redirect after the code inside the isValid() method has been executed. This can be used to redirect
+  This method forces a redirect after the form has been validated and the code between the isValid() condition has been executed. This can be used to redirect
   fe to a "Thank you" page after a contact form has been submitted ([read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#setredirecturl---redirect-to-another-page-after-form-submission)).
   
   It does not matter in this case if you are submitting the form via Ajax or not.
