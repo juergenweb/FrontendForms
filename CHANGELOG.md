@@ -528,7 +528,8 @@ If you are using the FrontendLoginRegister module, please update this module fir
 
 Thank you!
 
-## 2023-12-29
+## [2.1.56] 2024-01-10
+
 - Missing declaration for property $toplabel of type Textelement inside InputCheckboxMultiple.php added
 - Change CAPTCHA label for CAPTCHA validation message to fit better
 - New method setRedirectURL() added:
@@ -541,4 +542,4 @@ Thank you!
 
   The old method forces a form submission via Ajax. The name of the old method is too long, so I decided to create a method   with a better and shorter name.
   
-  So the old method still works, but for the future it will be better to use the new useAjax() method instead.
+  So the old method still works, but for the future it will be better to use the new useAjax() method instead ([read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#useajax---use-ajax-for-form-submission)).
