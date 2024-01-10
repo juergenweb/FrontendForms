@@ -754,7 +754,7 @@ Render the form on the page.
   echo $form->render();
 ```
 ### setSubmitWithAjax() - use Ajax for form submission
-THIS METHOD STILL WORKS, BUT IT IS DEPRICATED. PLEASE USE THE NEW METHOD useAjax() INSTEAD!
+**THIS METHOD STILL WORKS, BUT IT IS DEPRICATED. PLEASE USE THE NEW METHOD useAjax() INSTEAD!**
 Enable/disable Ajax form submission by using this method. The global value is set inside the module configuration,
 but you can overwrite this value by using this method. Enter "true" to enable or "false" to disable Ajax support inside the parenthesis.
 
@@ -789,7 +789,8 @@ but you can overwrite this value by using this method. Enter "true" to show or "
 ```
 
 ### setRedirectUrlAfterAjax() - redirect to another page after successful form submission via Ajax
-*THIS METHOD STILL WORKS, BUT IT IS DEPRICATED! PLEASE USE THE setRedirectURL() INSTEAD!!*
+**THIS METHOD STILL WORKS, BUT IT IS DEPRICATED! PLEASE USE THE setRedirectURL() INSTEAD!!**
+
 If you are using Ajax to submit a form, a PHP session redirect will not work, if you want to redirect to another page after successful form submission. In this case, you have to do a JavaScript redirect. 
 This method will force JavaScript to redirect to another page - you only have to add the new page URL inside the parenthesis.
 
