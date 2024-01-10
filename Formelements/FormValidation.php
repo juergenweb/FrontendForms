@@ -124,56 +124,6 @@ class FormValidation extends Tag
         return true;
     }
 
-    /**
-     * Convert seconds to human-readable format like 1 minute and 20 seconds instead of 80 seconds
-     * @param int $ss - seconds
-     * @return string
-     */
-    /*
-    public static function secondsToReadable(int $ss): string
-    {
-        $bit = [
-            'month' => floor($ss / 2592000),
-            'week' => floor(($ss % 2592000) / 604800),
-            'day' => floor(($ss % 604800) / 86400),
-            'hour' => floor(($ss % 86400) / 3600),
-            'minute' => floor(($ss % 3600) / 60),
-            'second' => $ss % 60
-        ];
-
-        $labelSingular = [
-            'month' => _('month'),
-            'week' => _('week'),
-            'day' => _('day'),
-            'hour' => _('hour'),
-            'minute' => _('minute'),
-            'second' => _('second')
-        ];
-
-        $labelPlural = [
-            'month' => _('months'),
-            'week' => _('weeks'),
-            'day' => _('days'),
-            'hour' => _('hours'),
-            'minute' => _('minutes'),
-            'second' => _('seconds')
-        ];
-
-        $ret = [];
-        foreach ($bit as $k => $v) {
-            $number = explode(' ', (string)$v);
-            if ($number[0] != 0) {
-                $label = _n($labelSingular[$k], $labelPlural[$k], $v);
-                $ret[] = $v . ' ' . $label;
-            }
-        }
-
-        if (count($ret) > 1) {
-            array_splice($ret, count($ret) - 1, 0, _('and'));
-        }
-        return implode(' ', $ret);
-    }
-    */
 
     public function secondsToReadable(int $ss): string
     {
