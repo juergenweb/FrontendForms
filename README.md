@@ -755,6 +755,7 @@ Render the form on the page.
 ```
 ### setSubmitWithAjax() - use Ajax for form submission
 **THIS METHOD STILL WORKS, BUT IT IS DEPRICATED. PLEASE USE THE NEW METHOD useAjax() INSTEAD!**
+
 Enable/disable Ajax form submission by using this method. The global value is set inside the module configuration,
 but you can overwrite this value by using this method. Enter "true" to enable or "false" to disable Ajax support inside the parenthesis.
 
