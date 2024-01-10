@@ -531,3 +531,11 @@ Thank you!
 ## 2023-12-29
 - Missing declaration for property $toplabel of type Textelement inside InputCheckboxMultiple.php added
 - Change CAPTCHA label for CAPTCHA validation message to fit better
+- New method setRedirectURL() added:
+  This method forces a redirect after the code inside the isValid() method has been executed. This can be used to redirect
+  fe to a "Thank you" page after a contact form has been submitted.
+  It does not matter in this case if you are submitting the form via Ajax or not.
+- New alias method useAjax() added: This method is an alias method for the setSubmitWithAjax() method. This old method
+  forces a form submission via Ajax. The name of the old method is too long, so I decided to create a method with a better
+  and shorter name.
+  So the old method still works, but for the future it will be better to use the new useAjax() method instead.
