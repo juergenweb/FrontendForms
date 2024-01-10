@@ -529,4 +529,5 @@ If you are using the FrontendLoginRegister module, please update this module fir
 Thank you!
 
 ## 2023-12-29
-Missing declaration for property $toplabel of type Textelement inside InputCheckboxMultiple.php added.
+- Missing declaration for property $toplabel of type Textelement inside InputCheckboxMultiple.php added
+- Change CAPTCHA label for CAPTCHA validation message to fit better
