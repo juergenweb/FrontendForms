@@ -472,6 +472,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [render()](#render---output-the-markup-of-the-form)  | output the markup of the form  |
 | [setSubmitWithAjax()](#setsubmitwithajax---use-ajax-for-form-submission)  | Depricated!! Use Ajax to submit a form without page reload  |
 | [useAjax()](#useajax---use-ajax-for-form-submission)  | Use Ajax to submit a form without page reload  |
+| [setRedirectURL()](#setredirecturl---redirect-to-another-page-after-form-submission)  | Adds an redirect to the form submission  |
 | [showProgressbar()](#showprogressbar---showhide-the-progress-bar-during-ajax-form-submission)  | Show or hide the progressbar during Ajax form submission  |
 | [setRedirectUrlAfterAjax()](#showprogressbar---showhide-the-progress-bar-during-ajax-form-submission)  | Redirect to another page after successfull form submission via Ajax  |
 | [removeMultipleEntriesByClass()](#removemultipleentriesbyclass---delete-all-instances-of-a-form-element-of-a-given-class-except-the-last-one)  | delete all instances of a form element of a given class except the last one  |
@@ -768,6 +769,14 @@ This is an alias of the old setSubmitWithAjax() method.
 
 ```php
   $form->useAjax(true); // true or false
+```
+
+## setRedirectURL() - Redirect to another page after form submission
+you can use this method to redirect to another page after the form has been validated and the code between the isValid() method has been executed.
+I does not matter if you are submitting the form via Ajax or not.
+
+```php
+  $form->setRedirectURL('path or url/to/the/redirect page'); // enter the path or the URL to the redirect page
 ```
 
 ### showProgressbar() - show/hide the progress bar during Ajax form submission
