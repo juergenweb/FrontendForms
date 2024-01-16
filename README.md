@@ -38,6 +38,7 @@ This module will work without GD-Library too, but you will not be able to use CA
 * [Hooking](#hooking)
 * [Multi-language](#multi-language)
 * [HTML email templates](#email-templates)
+* [Use forms in iframe]
 
 ## Installation and Quick-start guide
 The most simple way is to install it via the ProcessWire module manager in the administration area, but you can also install it manually following the steps afterwards:
@@ -1982,3 +1983,20 @@ BTW, if you want to show this value inside your template, you can use the placeh
 $mail = new WireMail();
 $mail->title('This is my title');
 ```
+
+## Use forms in iframe
+
+If you want to use a form inside an iframe, it works without problems if the form and the iframe are on the same domain.
+
+If you try to embed a form inside an iframe on a different domain, you will run into session problems, because the form submission uses various session to be able to work properly.
+
+In this rare case scenario, you will need to add an additional method to the form object to disable all form methods wich use session. This method is called useFormInCrossDomainIframe():
+
+```php
+$form->useFormInCrossDomainIframe();
+```
+
+The disadvantage of this method is that the usage of a CAPTCHA is no longer possible, because it only works with session.
+CSRF-Protection and the check for double form subission are also disabled, but this is the only way to use a form inside an iframe on another domain.
+
+
