@@ -201,6 +201,7 @@
             // create a new instance of the given module
             switch ($class) {
                 case('WireMailPostmark'):
+                case('WireMailPostmarkApp'):
                     return $this->wire('mail')->new();
                     break;
                 default:
