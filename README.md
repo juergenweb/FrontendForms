@@ -38,7 +38,7 @@ This module will work without GD-Library too, but you will not be able to use CA
 * [Hooking](#hooking)
 * [Multi-language](#multi-language)
 * [HTML email templates](#email-templates)
-* [Use forms in iframe]
+* [Use forms in iframe](#use-forms-in-iframe)
 
 ## Installation and Quick-start guide
 The most simple way is to install it via the ProcessWire module manager in the administration area, but you can also install it manually following the steps afterwards:
