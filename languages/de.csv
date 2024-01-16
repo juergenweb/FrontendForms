@@ -1,6 +1,7 @@
 en,de,description,file,hash
 "You have reached the maximum number of characters.","Sie haben die maximale Anzahl von Zeichen erreicht.",,site/modules/FrontendForms/Formelements/Inputelements/Textarea/Textarea.php,ef4384b98530cb2c2cdd7f9828d0ada2
 "You have %s characters left.","Sie haben noch %s Zeichen übrig.",,site/modules/FrontendForms/Formelements/Inputelements/Textarea/Textarea.php,c265a6b5fe0229c56cdf89d9ff9d7754
+en,de,description,file,hash
 "Click to load a new captcha","Bitte anklicken, um ein neues Captcha zu laden",,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,b52dc33684da9e3d394738b7d0dd2725
 "Reload image","Bild neu laden",,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,7c89feb583d9e778c3533017b111263d
 Captcha,=,,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,45d048c35e3cfd449dc0a1b503cd103a
@@ -162,6 +163,7 @@ and,und,,site/modules/FrontendForms/Formelements/FormValidation.php,be5d5d37542d
 en,de,description,file,hash
 "GD library is not installed/enabled. Please install/enable it to be able to use CAPTCHA images.","Die GD-Bibliothek ist nicht installiert/aktiviert. Bitte installieren/aktivieren Sie diese, um die CAPTCHA-Funktion verwenden zu können.",,site/modules/FrontendForms/FrontendForms.module,3f73c9dc2eed9de2758f0bf0c32893f4
 "Sorry, but the file including the password list could not be downloaded from GitHub.","Leider konnte die Datei, welche die Passwörter enthält, nicht von GitHub heruntergeladen werden.",,site/modules/FrontendForms/FrontendForms.module,0e482f9f5b5ee24fc1c79e192f3e775f
+Comments,Kommentare,"should be identical to the weird name/title above",site/modules/FrontendForms/FrontendForms.module,8413c683b4b27cc3f4dbd4c90329d8ba
 "The password blacklist has been updated manually.","Die Passwort-Blacklist wurde manuell aktualisiert.",,site/modules/FrontendForms/FrontendForms.module,8c1cf6d64804d4ace27e32e7328ba784
 "The IP address %s was added to the IP blacklist.","Die IP-Adresse %s wurde zur IP-Blacklist hinzugefügt.",,site/modules/FrontendForms/FrontendForms.module,3c9c17c611ca47bc9a610fff9ab8a41e
 "The IP address %s was removed from the IP blacklist.","Die IP-Adresse %s wurde von der IP-Blacklist entfernt.",,site/modules/FrontendForms/FrontendForms.module,b537ea59941fa9c24d70efa853c70b20
@@ -405,6 +407,10 @@ here,hier,,site/modules/FrontendForms/FrontendForms.module,6c92285fa6d3e827b198d
 "Logging of failed attempts is not enabled. If you want to use this feature, you need to enable it inside ""Measure 1: Restrict number of failed attempts"".","Die Protokollierung von Fehlversuchen ist nicht aktiviert. Wenn Sie diese Funktion nutzen möchten, müssen Sie diese in ""Maßnahme 1: Anzahl der Fehlversuche einschränken"" aktivieren.",,site/modules/FrontendForms/FrontendForms.module,33c59b12a511c6aa18139beefd6860cb
 """Max number of failed attempts"" must be higher than 0 and  the checkbox ""Log failed attempts"" must be enabled.","Die ""Maximale Anzahl der Fehlversuche"" muss größer als 0 sein und das Kontrollkästchen ""Fehlversuche protokollieren"" muss aktiviert sein.",,site/modules/FrontendForms/FrontendForms.module,5635cc4f8b96d3c90275341be0068233
 "Go to the settings to enable logging of failed attemtps","Gehen Sie zu den Einstellungen, um die Protokollierung fehlgeschlagener Versuche zu aktivieren",,site/modules/FrontendForms/FrontendForms.module,460d997b9205d3a198de11fdb0a23c14
+None,keine,default,site/modules/FrontendForms/FrontendForms.module,6adf97f83acf6453d4a6a4b1070f3754
+"Use Custom mail module","Verwendung von Custom-Mail-Modulen",,site/modules/FrontendForms/FrontendForms.module,1d0f09e611ab678bcef1e00af34c5d0f
+"Select your preferred module for sending mails.","Wählen Sie Ihre bevorzugtes Module zum Senden vom Mails aus.",,site/modules/FrontendForms/FrontendForms.module,3b56242115af067eb546fc11abd5c4e2
+"By default, all mails will be sent with WireMail, but you can select a custom module from this field for sending mails too.","Standardmäßig werden alle E-Mails mit WireMail versendet, aber Sie können in diesem Feld auch ein benutzerdefiniertes Modul für den Versand von E-Mails auswählen.",,site/modules/FrontendForms/FrontendForms.module,eac81cf85a218bdfa7a2b63d062fe715
 en,de,description,file,hash
 Gender,Anrede,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,019ec3132cdf8ee0f2e2a75cf5d3e459
 "Please select","Bitte auswählen",,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,992eda0d64a430fa5c7925d23ef9d0a3
