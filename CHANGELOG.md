@@ -543,3 +543,24 @@ Thank you!
   The old method forces a form submission via Ajax. The name of the old method is too long, so I decided to create a method   with a better and shorter name.
   
   So the old method still works, but for the future it will be better to use the new useAjax() method instead ([read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#useajax---use-ajax-for-form-submission)).
+
+## [2.1.57] 2024-01-16
+This update contains some new methods for support for forms in iframes on other domains and some internal methods for selecting custom modules for sending mails (for future usage in other modules based on this module):
+
+**New method useCSRFProtection(true/false) added:**
+
+With this method, you can enable/disable the CSRF-Protection on per form base if you want. This method is integrated in the next method and has been created to be able to use a form inside an iframe on another domain. Otherwise the form submission will not work.
+
+**New method useFormInCrossDomainIframe() added:**
+
+This method is the method, you need to use, if you want to use the form in an iframe on another domain (not on the same domain). The problem is that forms are using sessions to work and you cannot get this session values if you are integrating a form inside an iframe on another domain.
+
+This method disables CSRF-protection, the check for double form-submission and the CAPTCHA if set. Each of them uses sessions and cannot be used inside an iframe. If they will not be disabled, the form submission will not work.
+
+So using this method on the form object makes it possible to use a form inside an iframe on another domain. If the iframe is on the same domain, everything works as expected and you do not need to use this method. So this method is only for the rare case of crossdomain iframe usage.
+
+**Future preparation for using 3rd party mail modules**
+
+The last additions are only for internal technical reasons and not for users. Modules which send mails and are based on Frontendforms will get the possibility to use a 3rd party ProcessWire module for sending emails instead of using only the default WireMail class.
+
+For this reason some new static methods have been added, which are only for usage in other modules to make this possible.
