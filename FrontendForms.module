@@ -43,6 +43,8 @@
         // This url contains the commits for the passwords including the dates of the commits (used for last modification date)
         const LAST_PASSWORDS_MODIFICATION_URL = 'https://api.github.com/repos/danielmiessler/SecLists/commits?path=/Passwords/Common-Credentials/10-million-password-list-top-100.txt';
 
+        const SUPPORTEDMAILMODULES = ['WireMailPostmark', 'WireMailPostmarkApp']; // Supported modules for sending emails for other modules based on FrontendForms
+
         public static string $framework = '';
         protected string $temp_uploadPath = ''; // the path to the temporary upload folder
         // the validator object
@@ -265,6 +267,49 @@
 
             self::$framework = str_replace('.json', '', $this->input_framework);
         }
+
+        public static function createMailModuleOptions(Modules $modules): array
+        {
+            $list = [];
+            $list['none'] = __('None'); // default
+
+            foreach(FrontendForms::SUPPORTEDMAILMODULES as $className){
+                if($modules->getModuleID($className))
+                    $list[$className] = $className;
+            }
+
+            // combine WireMailPostmark and WireMailPostmarkApp if both are installed
+            $postmark = array_filter($list, function($key) {
+                return strpos($key, 'WireMailPostmark') === 0;
+            }, ARRAY_FILTER_USE_KEY);
+            if($postmark > 1){
+               foreach($postmark as $k => $v){
+                   unset($list[$k]) ;
+               }
+               $list['WireMailPostmark'] = implode('/', $postmark);
+            }
+            return $list;
+        }
+
+        /**
+         * Create an InputfieldSelect for choosing a custom mail module
+         * Internal method for modules, which are based on FrontendForms
+         * @return \ProcessWire\InputfieldSelect
+         */
+        public static function createMailModuleInputfield(Modules $modules, Module $module): InputfieldSelect
+        {
+            // select if you want to use a custom mail module for sending mails or not
+            $mailModuleSelect = $modules->get('InputfieldSelect');
+            $mailModuleSelect->label = __('Use Custom mail module');
+            $mailModuleSelect->attr('name', 'input_mailmodule');
+            $mailModuleSelect->addOptions(FrontendForms::createMailModuleOptions($modules));
+            $mailModuleSelect->attr('value', $module->input_mailmodule);
+            $mailModuleSelect->required = 1;
+            $mailModuleSelect->description = __('Select your preferred module for sending mails.');
+            $mailModuleSelect->notes = __('By default, all mails will be sent with WireMail, but you can select a custom module from this field for sending mails too.');
+            return $mailModuleSelect;
+        }
+
 
 
         /**
