@@ -478,6 +478,8 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [removeMultipleEntriesByClass()](#removemultipleentriesbyclass---delete-all-instances-of-a-form-element-of-a-given-class-except-the-last-one)  | delete all instances of a form element of a given class except the last one  |
 | [formContainsElementByClass()](#formcontainselementbyclass---check-if-the-form-object-contains-at-least-one-form-element-of-the-given-class)  | check if the form object contains at least one form element of the given class  |
 | [getElementsbyClass()](#getelementsbyclass---get-array-of-all-form-elements-of-the-given-class)  | get array of all form elements of the given class  |
+| [useCSRFProtection()](#useCSRFProtection---enable-or-disable-CSRF-protection)  | Enable or disable CSRF-Protection  |
+| [useFormInCrossDomainIframe()](#useFormInCrossDomainIframe---enable-or-disable-CSRF-protection)  | Method to prepare a form to be usable inside an iframe on another domain  |
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
@@ -824,6 +826,24 @@ This method returns a numeric array of all form elements of a given class inside
   $form->getElementsbyClass('Privacy'); // enter the class name without namespace
 ```
 
+### useCSRFProtection() - Enable/disable CSRF-Protection on form
+This method offers the possibility to disable the CSRF-Protection on a form if needed. By default this security check is always enabled.
+
+```php
+  $form->useCSRFProtection(false); // parameter false to disable CSRF-Protection
+```
+
+### useFormInCrossDomainIframe() - Use forms in an iframe on another domain
+
+This method is the method, you need to use, if you want to use the form in an iframe on another domain (not on the same domain). The problem is that forms are using sessions to work and you cannot get this session values if you are integrating a form inside an iframe on another domain (crossdomain session problem).
+
+This method disables CSRF-protection, the check for double form-submission and the CAPTCHA if set. Each of them uses sessions and cannot be used inside an iframe. If they will not be disabled, the form submission will not work.
+
+So using this method on the form object makes it possible to use a form inside an iframe on another domain. If the iframe is on the same domain, everything works as expected and you do not need to use this method. So this method is only for the rare case of crossdomain iframe usage.
+
+```php
+  $form->useFormInCrossDomainIframe(); // parameter false to disable CSRF-Protection
+```
 
 ## Input field methods
 
