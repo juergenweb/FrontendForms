@@ -282,7 +282,7 @@
             $postmark = array_filter($list, function($key) {
                 return strpos($key, 'WireMailPostmark') === 0;
             }, ARRAY_FILTER_USE_KEY);
-            if($postmark > 1){
+            if(count($postmark) > 1){
                foreach($postmark as $k => $v){
                    unset($list[$k]) ;
                }
@@ -292,12 +292,30 @@
         }
 
         /**
+         * Get the total number of installed 3rd party mail modules, which can be used with FrontendForms
+         * @param \ProcessWire\Modules $modules
+         * @return int
+         */
+        public static function getNumberOfMailModules(Modules $modules): int
+        {
+            $number = [];
+            foreach(FrontendForms::SUPPORTEDMAILMODULES as $className){
+                if($modules->getModuleID($className))
+                    $number[] = $className;
+            }
+            return count($number);
+        }
+
+
+        /**
          * Create an InputfieldSelect for choosing a custom mail module
          * Internal method for modules, which are based on FrontendForms
          * @return \ProcessWire\InputfieldSelect
          */
         public static function createMailModuleInputfield(Modules $modules, Module $module): InputfieldSelect
         {
+
+
             // select if you want to use a custom mail module for sending mails or not
             $mailModuleSelect = $modules->get('InputfieldSelect');
             $mailModuleSelect->label = __('Use Custom mail module');
