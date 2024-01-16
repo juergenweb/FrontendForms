@@ -1988,7 +1988,7 @@ $mail->title('This is my title');
 
 If you want to use a form inside an iframe, it works without problems if the form and the iframe are on the same domain.
 
-If you try to embed a form inside an iframe on a different domain, you will run into session problems, because the form submission uses various session to be able to work properly.
+If you try to embed a form inside an iframe on a different domain, you will run into session problems, because the form submission uses various sessions to be able to work properly.
 
 In this rare case scenario, you will need to add an additional method to the form object to disable all form methods wich use session. This method is called useFormInCrossDomainIframe():
 
