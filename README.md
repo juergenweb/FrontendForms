@@ -478,8 +478,8 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [removeMultipleEntriesByClass()](#removemultipleentriesbyclass---delete-all-instances-of-a-form-element-of-a-given-class-except-the-last-one)  | delete all instances of a form element of a given class except the last one  |
 | [formContainsElementByClass()](#formcontainselementbyclass---check-if-the-form-object-contains-at-least-one-form-element-of-the-given-class)  | check if the form object contains at least one form element of the given class  |
 | [getElementsbyClass()](#getelementsbyclass---get-array-of-all-form-elements-of-the-given-class)  | get array of all form elements of the given class  |
-| [useCSRFProtection()](#useCSRFProtection---enable-or-disable-CSRF-protection)  | Enable or disable CSRF-Protection  |
-| [useFormInCrossDomainIframe()](#useFormInCrossDomainIframe---enable-or-disable-CSRF-protection)  | Method to prepare a form to be usable inside an iframe on another domain  |
+| [useCSRFProtection()](usecsrfprotection---enabledisable-csrf-protection-on-form)  | Enable or disable CSRF-Protection  |
+| [useFormInCrossDomainIframe()](#useformincrossdomainiframe---use-forms-in-an-iframe-on-another-domain)  | Method to prepare a form to be usable inside an iframe on another domain  |
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
