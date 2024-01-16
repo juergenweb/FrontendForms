@@ -407,9 +407,9 @@ here,hier,,site/modules/FrontendForms/FrontendForms.module,6c92285fa6d3e827b198d
 "Logging of failed attempts is not enabled. If you want to use this feature, you need to enable it inside ""Measure 1: Restrict number of failed attempts"".","Die Protokollierung von Fehlversuchen ist nicht aktiviert. Wenn Sie diese Funktion nutzen möchten, müssen Sie diese in ""Maßnahme 1: Anzahl der Fehlversuche einschränken"" aktivieren.",,site/modules/FrontendForms/FrontendForms.module,33c59b12a511c6aa18139beefd6860cb
 """Max number of failed attempts"" must be higher than 0 and  the checkbox ""Log failed attempts"" must be enabled.","Die ""Maximale Anzahl der Fehlversuche"" muss größer als 0 sein und das Kontrollkästchen ""Fehlversuche protokollieren"" muss aktiviert sein.",,site/modules/FrontendForms/FrontendForms.module,5635cc4f8b96d3c90275341be0068233
 "Go to the settings to enable logging of failed attemtps","Gehen Sie zu den Einstellungen, um die Protokollierung fehlgeschlagener Versuche zu aktivieren",,site/modules/FrontendForms/FrontendForms.module,460d997b9205d3a198de11fdb0a23c14
-None,keine,default,site/modules/FrontendForms/FrontendForms.module,6adf97f83acf6453d4a6a4b1070f3754
+None,keines,default,site/modules/FrontendForms/FrontendForms.module,6adf97f83acf6453d4a6a4b1070f3754
 "Use Custom mail module","Verwendung von Custom-Mail-Modulen",,site/modules/FrontendForms/FrontendForms.module,1d0f09e611ab678bcef1e00af34c5d0f
-"Select your preferred module for sending mails.","Wählen Sie Ihre bevorzugtes Module zum Senden vom Mails aus.",,site/modules/FrontendForms/FrontendForms.module,3b56242115af067eb546fc11abd5c4e2
+"Select your preferred module for sending mails.","Wählen Sie Ihre bevorzugtes Modul zum Senden vom Mails aus.",,site/modules/FrontendForms/FrontendForms.module,3b56242115af067eb546fc11abd5c4e2
 "By default, all mails will be sent with WireMail, but you can select a custom module from this field for sending mails too.","Standardmäßig werden alle E-Mails mit WireMail versendet, aber Sie können in diesem Feld auch ein benutzerdefiniertes Modul für den Versand von E-Mails auswählen.",,site/modules/FrontendForms/FrontendForms.module,eac81cf85a218bdfa7a2b63d062fe715
 en,de,description,file,hash
 Gender,Anrede,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,019ec3132cdf8ee0f2e2a75cf5d3e459
