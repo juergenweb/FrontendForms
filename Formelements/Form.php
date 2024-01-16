@@ -27,7 +27,6 @@
     use ProcessWire\WireData;
     use ProcessWire\WireException;
     use ProcessWire\WireMail;
-    use ProcessWire\WirePermissionException;
     use Valitron\Validator;
     use function ProcessWire\wire as wire;
     use function ProcessWire\wirePopulateStringTags;
@@ -52,6 +51,7 @@
         protected string $captchaCategory = ''; // the category of the captcha (text or image)
         protected string $langAppendix = ''; // string, which will be appended to multi-lang config fields inside the db
         protected string|int $useDoubleFormSubmissionCheck = 1; // Enable checking of multiple submissions
+        protected string|int|bool $useCSRFProtection = 1; // Enable/disable CSRF-Protection
 
         // Mail properties - only needed if FrontendForms will be used to send emails
         protected array $mailPlaceholder = []; // associative array for usage in emails (['placeholdername' => 'text',...])
@@ -177,6 +177,35 @@
             $this->addHookBefore('WireMail::send', $this, 'renderTemplate');
             // add a hook method after sending the mail to remove the session variable "templateloaded"
             $this->addHookAfter('WireMail::send', $this, 'removeTemplateSession');
+
+        }
+
+        /**
+         * Create a new mail instance of a given custom mail module if set
+         * Otherwise a new WireMail object will be instantiated
+         * This method is only for other modules based on FrontendForms
+         * @param string|null $class
+         * @return \ProcessWire\WireMail|\FrontendForms\WireMailPostmark|\FrontendForms\WireMailPostmarkApp
+         * @throws \ProcessWire\WireException
+         */
+        protected function newMailInstance(string|null $class = null): WireMail|WireMailPostmark|WireMailPostmarkApp
+        {
+            // if $class is null, set WireMail() object by default
+            if (is_null($class))
+                return new WireMail();
+
+            // just to play safe - check if the given module is installed first
+            if (!$this->wire('modules')->getModuleID($class))
+                return new WireMail();
+
+            // create a new instance of the given module
+            switch ($class) {
+                case('WireMailPostmark'):
+                    return $this->wire('mail')->new();
+                    break;
+                default:
+                    return new WireMail();
+            }
         }
 
         /**
@@ -281,6 +310,34 @@
                 // remove the session if present
                 $this->wire('session')->remove('doubleSubmission-' . $this->getID());
             }
+        }
+
+        /**
+         * Enable/Disable CSRF-protection check
+         * @param int|string|bool $csrf
+         * @return void
+         */
+        public function useCSRFProtection(int|string|bool $csrf): void
+        {
+            $this->useCSRFProtection = $this->sanitizeValueToInt($csrf);
+        }
+
+        public function getCSRFProtection(): bool
+        {
+            return (bool)$this->useCSRFProtection;
+        }
+
+        /**
+         * Method to disable some methods if form is used inside an iframe on a different domain (crossdomain)
+         * @return void
+         * @throws \ProcessWire\WireException
+         */
+        public function useFormInCrossDomainIframe(): void
+        {
+            $this->useDoubleFormSubmissionCheck(false); // disable double submission check
+            $this->useCSRFProtection(false); // disable CSRF-Attack check
+            // disable the CAPTCHA because it does not work in crossdomain iframes
+            $this->disableCaptcha();
         }
 
         /**
@@ -415,7 +472,6 @@
                             $mail->email_template));
                     }
 
-
                     // add pre-header text (if present) right after the opening body tag
                     if ($mail->title) {
                         $doc = new DOMDocument();
@@ -519,7 +575,6 @@
         {
             $this->wire('session')->remove('templateloaded');
         }
-
 
         /**
          * Load a template file from the given path including php code and output it as a string
@@ -1311,7 +1366,6 @@
          */
         public function ___isValid(): bool
         {
-
             // set WireInput array depth to 2 because auf multiple file uploads
             $this->wire('config')->wireInputArrayDepth = 2;
             $formMethod = $this->getAttribute('method'); // grab the method (get or post)
@@ -1346,9 +1400,8 @@
                     if ($validation->checkMaxAttempts($this->wire('session')->attempts)) {
                         // 4) check for double form submission
                         if ($validation->checkDoubleFormSubmission($this, $this->useDoubleFormSubmissionCheck)) {
-
                             // 5) Check for CSRF attack
-                            if ($this->wire('session')->CSRF->hasValidToken()) {
+                            if ($validation->checkCSRFAttack($this->getCSRFProtection())) {
 
                                 /* START PROCESSING THE FORM */
 
@@ -1748,8 +1801,9 @@
         public function render(): string
         {
 
+
             // redirect after successful form validation if set
-            if($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
+            if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
                 $this->wire('session')->redirect($this->getRedirectURL());
             }
 
@@ -1817,9 +1871,12 @@
 
                 // add captcha field as last element before the button element
                 if ($this->getCaptchaType() != 'none') {
+
                     // position in form fields array to insert
                     $captchaPosition = $refKey;
+
                     $captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
+
                     // insert the captcha input field after the last input field
                     $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
                         array($captchafield), array_slice($this->formElements, $captchaPosition));
@@ -1839,7 +1896,7 @@
                 }
 
                 // get the position of the first button element
-                if($this->getElementsbyClass('Button')){
+                if ($this->getElementsbyClass('Button')) {
                     $firstButtonPos = key($this->getElementsbyClass('Button')[0]);
 
                     if ($privacyElements) {
