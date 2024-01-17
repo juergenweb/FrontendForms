@@ -568,3 +568,24 @@ So using this method on the form object makes it possible to use a form inside a
 The last additions are only for internal technical reasons and not for users. Modules which send mails and are based on Frontendforms will get the possibility to use a 3rd party ProcessWire module for sending emails instead of using only the default WireMail class.
 
 For this reason some new static methods have been added, which are only for usage in other modules to make this possible.
+
+## [2.1.58] 2024-01-16
+New validation rule added: uniqueFilenameInDir
+
+This new validation rule checks if a newly uploaded file has the same filename as a file inside the destination directory.
+
+In other words: If the filname of the uploaded file is textA.txt and inside the destination directory exists a file with the same name, this validator returns an error.
+
+Usage: $uploadfield->setRule(uniqueFilenameInDir); // Returns true or false
+
+So this validator is only useful, if you are storing files inside a folder. It is useless if you are sending files as attachements.
+
+As an addition you can set a parameter to force an overwrite of duplicate filenames.
+
+Usage: $uploadfield->setRule(uniqueFilenameInDir, true); // Returns always true but overwrites existing filenames
+
+If you add true as the second parameter, ever filename duplicate will be overwritten by adding the timestamp after the filename to make the filename unique.
+
+Example: testfile.text will be overwritten fe to testfile-95846567.txt if it exists inside the destination directory.
+
+In this case the validation rule returns always true.
