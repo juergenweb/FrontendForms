@@ -1280,7 +1280,7 @@ For more detailed explanation on each validation rule click the link at the vali
 | [dateWithinDaysRange](#datewithindaysrange)  | Checks if the entered date is within a given time range in days starting from a date set in another field     |
 | [dateOutsideOfDaysRange](#dateoutsideofdaysrange)  | Checks if the entered date is outside a given time range in days starting from a date set in another field    |
 | [firstAndLastname](#firstandlastname)  | Checks if first and lastname contains only allowed characters    |
-
+| [uniqueFilenameInDir](#uniqueFilenameInDir)  | Checks if a newly uploaded file has the same filename as a file inside the destination directory  |
 
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
@@ -1566,6 +1566,32 @@ The regex contains only allowed characters for international names. You can use 
 ```php
 $field->setRule('firstAndLastname');
 ```
+
+### uniqueFilenameInDir
+This validation rule checks if a newly uploaded file has the same filename as a file inside the destination directory.
+
+In other words: If the filname of the uploaded file is textA.txt and inside the destination directory exists a file with the same name, this validator returns an error.
+
+```php
+$field->setRule('uniqueFilenameInDir');// Returns true or false
+```
+So this validator is only useful, if you are storing files inside a folder. It is useless if you are sending files as attachements via mails.
+
+As an addition you can set a parameter to force an overwrite of duplicate filenames.
+
+```php
+$field->setRule('uniqueFilenameInDir', true);// Returns always true but overwrites existing filenames
+```
+
+If you add true as the second parameter, ever filename duplicate will be overwritten by adding the timestamp after the filename to make the filename unique.
+
+Example: testfile.text will be overwritten fe to testfile-95846567.txt if it exists inside the destination directory.
+
+In this case the validation rule returns always true.
+
+One thing to mention: Unfortunately, Valitron does not support the output of the value of the duplicate filename, so if you are having an multiple file upload field the user will get no information about, which filename is a duplication. 
+
+In this case it would be better to add true as second parameter and overwrite the filename.
 
 Maybe other custom validation rules will be added in the future. If you have an idea for an useful validator, please let me know.
 
