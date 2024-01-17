@@ -516,6 +516,8 @@
 
             $singleFile = (isset($value[0]) && is_array($value[0]));
             $filename = $singleFile ? $value[0]['name'] : $value['name'];
+            // sanitize filename
+            $filename = strtolower($this->wire('sanitizer')->filename($filename));
 
             $basename = pathinfo($filename, PATHINFO_FILENAME);
             $ext = pathinfo($filename, PATHINFO_EXTENSION);
