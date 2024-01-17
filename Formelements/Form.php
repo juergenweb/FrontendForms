@@ -1190,7 +1190,12 @@
                 // check if inputfield is a file upload field
                 $formElement = $this->getFormelementByName($key);
                 if ($formElement instanceof InputFile) {
-                    $values[$key] = $_FILES[$key]['name'];
+                    $files = [];
+                    foreach($_FILES[$key]['name'] as $filename){
+                        $files[] = strtolower($this->wire('sanitizer')->filename($filename));
+                    }
+                    $values[$key] = $files;
+                    //$values[$key] = $_FILES[$key]['name'];
                 } else {
                     if (array_key_exists($key, $this->values)) {
                         $values[$key] = $this->values[$key];
