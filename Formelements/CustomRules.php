@@ -524,7 +524,7 @@
             $exist = $this->wire('files')->exists($uploadPath . $filename);
 
             $storedFiles = $this->storedFiles;
-            if ($exist && isset($param) && $param[0] === true) {
+            if ($exist && $param && $param[0] === true) {
                 // overwrite the filename
                 $newFileNamePath = $uploadPath . $basename . '-' . time() . '.' . $ext;
                 $this->wire('files')->rename($uploadPath . $filename, $newFileNamePath);
