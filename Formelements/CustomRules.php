@@ -523,11 +523,15 @@
             $ext = pathinfo($filename, PATHINFO_EXTENSION);
             $exist = $this->wire('files')->exists($uploadPath . $filename);
 
+            $storedFiles = $this->storedFiles;
             if ($exist && isset($param) && $param[0] === true) {
                 // overwrite the filename
-                $this->wire('files')->rename($uploadPath . $filename, $uploadPath . $basename . '-' . time() . '.' . $ext);
+                $newFileNamePath = $uploadPath . $basename . '-' . time() . '.' . $ext;
+                $this->wire('files')->rename($uploadPath . $filename, $newFileNamePath);
+                array_push($this->storedFiles, $newFileNamePath);
                 return true;
             } else {
+                array_push($this->storedFiles, $uploadPath.$filename);
                 return !$exist;
             }
         }
