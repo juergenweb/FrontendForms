@@ -51,6 +51,7 @@ en,de,description,file,hash
 "must be within the allowed time range.","muss ein Datum innerhalb des erlaubten Zeitraumes sein.",,site/modules/FrontendForms/Formelements/CustomRules.php,265d89403b5c013461609c89ab268bc7
 "must be outside the forbidden time range.","muss ein Datum außerhalb des verbotenen Zeitraumes sein.",,site/modules/FrontendForms/Formelements/CustomRules.php,0f3f63f95068a11bfa7ad25ca209fedc
 "contains invalid characters for a name.","enthält ungültige Zeichen für einen Namen.",,site/modules/FrontendForms/Formelements/CustomRules.php,3218c4d1407f03ef0c210f61d3f5c19c
+"contains a file that has the same file name as a file stored in the destination directory.","beinhaltet eine Datei, welche den selben Dateinamen besitzt als eine Datei im Zielverzeichnis.",,site/modules/FrontendForms/Formelements/CustomRules.php,8eae7d44a736423d717bfe942ae4855a
 en,de,description,file,hash
 "Image captcha","Bild CAPTCHA",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,1e27db1c7a9a959ca4cd75964525fa2d
 "Assign the image to a category","Ordnen sie das Bild einer Kategorie zu",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,5972e22698d0e9faba6397ce1b6b6f74
