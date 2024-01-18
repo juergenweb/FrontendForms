@@ -40,6 +40,7 @@
         const FORMMETHODS = ['get', 'post']; // array that holds allowed action methods (get, post)
 
         /* properties */
+        protected array $storedFiles = []; // array that holds all files (including overwritten filenames)
         protected string $doubleSubmission = ''; // value hold by the double form submission session
         protected string $defaultRequiredTextPosition = 'top'; // the default required text position
         protected string $doNotReply = ''; // Text for do not reply to automatically generated emails
@@ -1190,7 +1191,25 @@
                 // check if inputfield is a file upload field
                 $formElement = $this->getFormelementByName($key);
                 if ($formElement instanceof InputFile) {
-                    $values[$key] = $_FILES[$key]['name'];
+                    $files = [];
+                    if($this->storedFiles){
+                        $pathFileArray = $this->storedFiles;
+                        $filesArray = [];
+                        foreach($pathFileArray as $path)
+                        {
+                            // output only the basename without the whole path
+                            $filesArray[] =  pathinfo($path, PATHINFO_BASENAME);
+                        }
+                        $values[$key] = $filesArray;
+                    } else {
+                        foreach($_FILES[$key]['name'] as $filename){
+                            $files[] = strtolower($this->wire('sanitizer')->filename($filename));
+                        }
+                        $values[$key] = $files;
+                        //$values[$key] = $_FILES[$key]['name'];
+                    }
+
+
                 } else {
                     if (array_key_exists($key, $this->values)) {
                         $values[$key] = $this->values[$key];
@@ -1501,6 +1520,12 @@
                                     // remove session added by matchUser or matchEmail validation rule if present
                                     $this->wire('session')->remove($this->getAttribute('id') . '-email');
                                     $this->wire('session')->remove($this->getAttribute('id') . '-username');
+
+                                    // finally add the files including the overwritten fielnames to the array
+                                    if($this->storedFiles){
+                                        $this->uploaded_files  = $this->storedFiles;
+                                    }
+
                                     return true;
                                 } else {
                                     // set error alert
