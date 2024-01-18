@@ -1786,7 +1786,7 @@ To keep the file after sending, you only have to add boolean true as the second 
 ```php
 $mail->sendAttachements($form, true);
 ```
-In this case, the files will be sent, but will be also stored inside a folder that was defined with the setUploadPath() method. There you can set a path to a folder.
+In this case, the files will be sent, but will be also stored inside a folder that was defined with the [setUploadPath()](https://github.com/juergenweb/FrontendForms/tree/main#setuploadpath---change-the-default-storage-location-for-uploaded-files) method. There you can set a path to a folder.
 
 If the upload path is not set explicitely, the folder of the page where the form is integrated will be taken instead.
 
@@ -1797,7 +1797,7 @@ If the upload form is integrated inside the page with the id 10, then the files 
 If you have defined a custom upload path (fe site/assets/files/customfolder) like this 
 
 ```php
-$form->sendUploadPath('site/assets/files/customfolder);
+$form->setUploadPath('site/assets/files/customfolder);
 ```
 then all files will be stored inside this folder.
 
