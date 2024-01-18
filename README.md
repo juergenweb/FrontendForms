@@ -1575,7 +1575,7 @@ In other words: If the filname of the uploaded file is textA.txt and inside the 
 ```php
 $field->setRule('uniqueFilenameInDir');// Returns true or false
 ```
-So this validator is only useful, if you are storing files inside a folder. It is useless if you are sending files as attachements via mails.
+*Be aware*: Use this validator only if you want to store a file inside a directory/folder. Do not add it if you are only sending files as attachements via mails, because it is possible that you will get an error if the validator finds a file with the same name inside the asset folder of the page the upload form belongs too.
 
 As an addition you can set a parameter to force an overwrite of duplicate filenames.
 
