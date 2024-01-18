@@ -570,7 +570,7 @@ The last additions are only for internal technical reasons and not for users. Mo
 For this reason some new static methods have been added, which are only for usage in other modules to make this possible.
 
 ## [2.1.58] 2024-01-16
-New validation rule added: uniqueFilenameInDir
+**New validation rule added: uniqueFilenameInDir**
 
 This new validation rule checks if a newly uploaded file has the same filename as a file inside the destination directory.
 
@@ -589,3 +589,14 @@ If you add true as the second parameter, ever filename duplicate will be overwri
 Example: testfile.text will be overwritten fe to testfile-95846567.txt if it exists inside the destination directory.
 
 In this case the validation rule returns always true.
+
+
+**Bug in getValues() method fixed**
+
+By default, the getValues() method has returned the original file names of uploaded files, not the sanitized one as stored inside the filesystem.
+
+Fe uploaded filename "Testfile.txt" has been sanitized to "testfile.txt", but inside the getValues() result the original filename "Testfile.txt" has been displayed.
+
+This could lead to problems if you are using this filename for other purposes, because it is not identical to the filename as stored inside the system.
+
+I have fixed this problem now to always show the "real" filename as stored inside the file system.
