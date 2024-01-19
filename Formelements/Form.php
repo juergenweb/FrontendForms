@@ -32,6 +32,7 @@
     use function ProcessWire\wirePopulateStringTags;
     use function ProcessWire\_n;
     use function ProcessWire\wireClassNamespace;
+    use function ProcessWire\wireMail;
 
     class Form extends CustomRules
     {
@@ -189,8 +190,9 @@
          * @return \ProcessWire\WireMail|\FrontendForms\WireMailPostmark|\FrontendForms\WireMailPostmarkApp
          * @throws \ProcessWire\WireException
          */
-        protected function newMailInstance(string|null $class = null): WireMail|WireMailPostmark|WireMailPostmarkApp
+        protected function newMailInstance(string|null $class = null): WireMail|WireMailPostmark|WireMailPostmarkApp|WireMailSmtp
         {
+
             // if $class is null, set WireMail() object by default
             if (is_null($class))
                 return new WireMail();
@@ -205,6 +207,8 @@
                 case('WireMailPostmarkApp'):
                     return $this->wire('mail')->new();
                     break;
+                case('WireMailSmtp'):
+                    return wireMail();
                 default:
                     return new WireMail();
             }
@@ -1322,6 +1326,7 @@
                                     // sanitize file name and convert it to lowercase to prevent problems on certain servers
                                     $filename = $this->wire('sanitizer')->filename($file['name'], true);
                                     $target_file = $this->uploadPath . strtolower($filename);
+
                                     $uploaded_files[] = $target_file;
                                     move_uploaded_file($file['tmp_name'], $target_file);
                                 }
