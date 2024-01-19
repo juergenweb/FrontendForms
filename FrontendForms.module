@@ -43,7 +43,7 @@
         // This url contains the commits for the passwords including the dates of the commits (used for last modification date)
         const LAST_PASSWORDS_MODIFICATION_URL = 'https://api.github.com/repos/danielmiessler/SecLists/commits?path=/Passwords/Common-Credentials/10-million-password-list-top-100.txt';
 
-        const SUPPORTEDMAILMODULES = ['WireMailPostmark', 'WireMailPostmarkApp']; // Supported modules for sending emails for other modules based on FrontendForms
+        const SUPPORTEDMAILMODULES = ['WireMailPostmark', 'WireMailPostmarkApp', 'WireMailSmtp']; // Supported modules for sending emails in other modules based on FrontendForms
 
         public static string $framework = '';
         protected string $temp_uploadPath = ''; // the path to the temporary upload folder
@@ -314,7 +314,6 @@
          */
         public static function createMailModuleInputfield(Modules $modules, Module $module): InputfieldSelect
         {
-
 
             // select if you want to use a custom mail module for sending mails or not
             $mailModuleSelect = $modules->get('InputfieldSelect');
