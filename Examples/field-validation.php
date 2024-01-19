@@ -336,6 +336,13 @@ $allowedFileExt->setDescription('Validator to check if the file is of one of the
 $allowedFileExt->setNotes('Valid extensions: jpg, doc');
 $form->add($allowedFileExt);
 
+$uniqueFileName = new \FrontendForms\InputFile('uniqueFilename');
+$uniqueFileName->setLabel('Validator uniqueFilenameInDir');
+$uniqueFileName->setRule('uniqueFilenameInDir');
+$uniqueFileName->setDescription('Validator to check if the file has the same name as a file inside the destination directory');
+$uniqueFileName->setNotes('If you want to force the filename to be overwritten, add "true" as the second parameter.');
+$form->add($uniqueFileName);
+
 $button = new \FrontendForms\Button('submit');
 $button->setAttribute('value', 'Send');
 $form->add($button);
