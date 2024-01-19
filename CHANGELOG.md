@@ -600,3 +600,11 @@ Fe uploaded filename "Testfile.txt" has been sanitized to "testfile.txt", but in
 This could lead to problems if you are using this filename for other purposes, because it is not identical to the filename as stored inside the system.
 
 I have fixed this problem now to always show the "real" filename as stored inside the file system.
+
+## [2.1.59] 2024-01-19
+
+**Support for WireMailSmtp added**
+
+This minor update is only useful for users of my other modules FrontendLoginRegister and FrontendContact.
+
+In addition to the last added feature of sending mails with the Postmark mail service, this little update brings support for sending mails with the PW-module WireMailSmtp to the children modules.
