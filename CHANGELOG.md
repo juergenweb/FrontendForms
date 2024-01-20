@@ -613,6 +613,6 @@ In addition to the last added feature of sending mails with the Postmark mail se
 
 **Return value on addHookMethod for "mailTemplate" changed (FrontendForms.module)**
 
-The custom WireMail method mailTemplate has a wrong return value and that was the reason, why this method was not chainable like all other WireMail methods. This is now fixed.
+The custom WireMail method mailTemplate had a wrong return value and that was the reason, why this method was not chainable like all other WireMail methods. This is now fixed.
 
 
