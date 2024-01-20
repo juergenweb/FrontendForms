@@ -608,3 +608,11 @@ I have fixed this problem now to always show the "real" filename as stored insid
 This minor update is only useful for users of my other modules FrontendLoginRegister and FrontendContact.
 
 In addition to the last added feature of sending mails with the Postmark mail service, this little update brings support for sending mails with the PW-module WireMailSmtp to the children modules.
+
+## [] 2024-01-20
+
+**Return value on addHookMethod for "mailTemplate" changed (FrontendForms.module)**
+
+The custom WireMail method mailTemplate has a wrong return value and that was the reason, why this method was not chainable like all other WireMail methods. This is now fixed.
+
+
