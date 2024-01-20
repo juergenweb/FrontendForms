@@ -594,7 +594,7 @@
                     // check if template exists and set it to $mail->email_template property
                     $this->setEmailTemplate($mail, $template);
                 }
-                return $mail;
+                $event->return = $mail;
             });
 
             /**
