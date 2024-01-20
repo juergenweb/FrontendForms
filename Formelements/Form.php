@@ -546,29 +546,33 @@
         {
             $mail = $event->object;
 
-            // set the placeholder for the title if present
-            $this->setMailPlaceholder('title', $mail->title);
+            // do not add a template if template is set to "none" or is null (not set)
+            if(($mail->email_template === 'none') || (!is_null($mail->email_template))){
+                // set the placeholder for the title if present
+                $this->setMailPlaceholder('title', $mail->title);
 
-            // set the placeholder for the body
-            if (($mail->bodyHTML) || ($mail->body)) {
+                // set the placeholder for the body
+                if (($mail->bodyHTML) || ($mail->body)) {
 
-                // set $mail->bodyHTML as preferred value
-                $content = $mail->bodyHTML ?: $mail->body;
-                $body = '';
-                if ($content) {
-                    $body = wirePopulateStringTags($content, $this->getMailPlaceholders(),
-                        ['tagOpen' => '[[', 'tagClose' => ']]']);
+                    // set $mail->bodyHTML as preferred value
+                    $content = $mail->bodyHTML ?: $mail->body;
+                    $body = '';
+                    if ($content) {
+                        $body = wirePopulateStringTags($content, $this->getMailPlaceholders(),
+                            ['tagOpen' => '[[', 'tagClose' => ']]']);
+                    }
+                    $this->setMailPlaceholder('body', $body);
+
+                    $mail->bodyHTML($body);
+                    $mail->body($body);
+
                 }
-                $this->setMailPlaceholder('body', $body);
-
-                $mail->bodyHTML($body);
-                $mail->body($body);
-
+                if ($this->wire('session')->get('templateloaded') != '1') {
+                    $this->includeMailTemplate($mail); // include/use mail template if set
+                    $this->wire('session')->set('templateloaded', '1');
+                }
             }
-            if ($this->wire('session')->get('templateloaded') != '1') {
-                $this->includeMailTemplate($mail); // include/use mail template if set
-                $this->wire('session')->set('templateloaded', '1');
-            }
+
             return $mail;
         }
 
