@@ -615,4 +615,6 @@ In addition to the last added feature of sending mails with the Postmark mail se
 
 The custom WireMail method mailTemplate had a wrong return value and that was the reason, why this method was not chainable like all other WireMail methods. This is now fixed.
 
+**Update renderTemplate() method (Form.php)**
 
+Previously, the default email template setting, as set in the module configuration, was added to any email where the email template setting was not set (null). This is not intentional. Now, if no email template setting has been made, no email template will be used.
