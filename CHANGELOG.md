@@ -609,7 +609,9 @@ This minor update is only useful for users of my other modules FrontendLoginRegi
 
 In addition to the last added feature of sending mails with the Postmark mail service, this little update brings support for sending mails with the PW-module WireMailSmtp to the children modules.
 
-## [] 2024-01-20
+## [2.1.60] 2024-01-21
+
+This update comes with 2 small bug fixes and one addition.
 
 **Return value on addHookMethod for "mailTemplate" changed (FrontendForms.module)**
 
@@ -618,3 +620,8 @@ The custom WireMail method mailTemplate had a wrong return value and that was th
 **Update renderTemplate() method (Form.php)**
 
 Previously, the default email template setting, as set in the module configuration, was added to any email where the email template setting was not set (null). This is not intentional. Now, if no email template setting has been made, no email template will be used.
+
+**Support for sending mails with the WireMailPHPMailer module**
+
+This new version includes some code changes and a new method to support FrontendLoginRegister and FrontendContact to send mails with the WireMailPHPMailer too. 
+The WireMailPHPMailer comes with own property names and ist therefore not compatible with other mail classes. That is the reason, why some code changes are necessary.
