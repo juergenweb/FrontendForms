@@ -28,6 +28,7 @@
     use ProcessWire\WireException;
     use ProcessWire\WireMail;
     use Valitron\Validator;
+
     use function ProcessWire\wire as wire;
     use function ProcessWire\wirePopulateStringTags;
     use function ProcessWire\_n;
@@ -190,7 +191,8 @@
          * @return \ProcessWire\WireMail|\FrontendForms\WireMailPostmark|\FrontendForms\WireMailPostmarkApp
          * @throws \ProcessWire\WireException
          */
-        protected function newMailInstance(string|null $class = null): WireMail|WireMailPostmark|WireMailPostmarkApp|WireMailSmtp
+        //protected function newMailInstance(string|null $class = null): WireMail|WireMailPostmark|WireMailPostmarkApp|WireMailSmtp|WireMailPHPMailer
+        protected function newMailInstance(string|null $class = null)
         {
 
             // if $class is null, set WireMail() object by default
@@ -209,6 +211,8 @@
                     break;
                 case('WireMailSmtp'):
                     return wireMail();
+                case('WireMailPHPMailer'):
+                    return wire("modules")->get("WireMailPHPMailer");
                 default:
                     return new WireMail();
             }
@@ -495,6 +499,7 @@
                     $placeholders = $this->getMailPlaceholders();
                     $body = wirePopulateStringTags($body, $placeholders, ['tagOpen' => '[[', 'tagClose' => ']]']);
                     // set the result as the bodyHTML of the email
+
                     $mail->bodyHTML($body);
                 }
             } else {
@@ -548,21 +553,26 @@
 
             // do not add a template if template is set to "none" or is null (not set)
             if (($mail->email_template !== 'none') && (!is_null($mail->email_template))) {
+
                 // set the placeholder for the title if present
                 $this->setMailPlaceholder('title', $mail->title);
 
                 // set the placeholder for the body
-                if (($mail->bodyHTML) || ($mail->body)) {
+                if (($mail->bodyHTML) || ($mail->bodyHtml) || ($mail->body)) {
 
-                    // set $mail->bodyHTML as preferred value
-                    $content = $mail->bodyHTML ?: $mail->body;
-                    $body = '';
-                    if ($content) {
-                        $body = wirePopulateStringTags($content, $this->getMailPlaceholders(),
-                            ['tagOpen' => '[[', 'tagClose' => ']]']);
+                    // set HTML as preferred value
+                    if ($mail->bodyHTML) {
+                        $content = $mail->bodyHTML;
+                    } else if ($mail->bodyHtml) {
+                        $content = $mail->bodyHtml;
+                    } else {
+                        $content = $mail->body;
                     }
-                    $this->setMailPlaceholder('body', $body);
 
+                    $body = wirePopulateStringTags($content, $this->getMailPlaceholders(),
+                        ['tagOpen' => '[[', 'tagClose' => ']]']);
+
+                    $this->setMailPlaceholder('body', $body);
                     $mail->bodyHTML($body);
                     $mail->body($body);
 
@@ -574,6 +584,23 @@
             }
 
             return $mail;
+        }
+
+        /**
+         * Set the mail body property depending on the custom mail module set
+         * @param $mail
+         * @param string|null $body
+         * @return void
+         */
+        public static function setBody($mail, string|null $body, string $mailModule): void
+        {
+            if (is_null($body)) $body = '';
+            // add support for WireMailPHPMailer - has other property name
+            if ($mailModule === 'WireMailPHPMailer') {
+                $mail->bodyHtml = $body;
+            } else {
+                $mail->bodyHTML($body);
+            }
         }
 
         /**
@@ -1200,17 +1227,16 @@
                 $formElement = $this->getFormelementByName($key);
                 if ($formElement instanceof InputFile) {
                     $files = [];
-                    if($this->storedFiles){
+                    if ($this->storedFiles) {
                         $pathFileArray = $this->storedFiles;
                         $filesArray = [];
-                        foreach($pathFileArray as $path)
-                        {
+                        foreach ($pathFileArray as $path) {
                             // output only the basename without the whole path
-                            $filesArray[] =  pathinfo($path, PATHINFO_BASENAME);
+                            $filesArray[] = pathinfo($path, PATHINFO_BASENAME);
                         }
                         $values[$key] = $filesArray;
                     } else {
-                        foreach($_FILES[$key]['name'] as $filename){
+                        foreach ($_FILES[$key]['name'] as $filename) {
                             $files[] = strtolower($this->wire('sanitizer')->filename($filename));
                         }
                         $values[$key] = $files;
@@ -1531,8 +1557,8 @@
                                     $this->wire('session')->remove($this->getAttribute('id') . '-username');
 
                                     // finally add the files including the overwritten fielnames to the array
-                                    if($this->storedFiles){
-                                        $this->uploaded_files  = $this->storedFiles;
+                                    if ($this->storedFiles) {
+                                        $this->uploaded_files = $this->storedFiles;
                                     }
 
                                     return true;
