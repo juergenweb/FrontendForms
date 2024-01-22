@@ -551,7 +551,7 @@
         {
             $mail = $event->object;
 
-            // do not add a template if template is set to "none" or is null (not set)
+            // do not add a template if template is set to "none"
             if ($mail->email_template !== 'none') {
 
                 // set the placeholder for the title if present
