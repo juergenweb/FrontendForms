@@ -625,3 +625,7 @@ Previously, the default email template setting, as set in the module configurati
 
 This new version includes some code changes and a new method to support FrontendLoginRegister and FrontendContact to send mails with the WireMailPHPMailer too. 
 The WireMailPHPMailer comes with own property names and ist therefore not compatible with other mail classes. That is the reason, why some code changes are necessary.
+
+## 2024-01-31
+
+New CAPTCHA images added
