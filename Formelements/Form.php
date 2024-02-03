@@ -183,6 +183,7 @@
 
         }
 
+
         /**
          * Create a new mail instance of a given custom mail module if set
          * Otherwise a new WireMail object will be instantiated
@@ -447,6 +448,12 @@
          * Special general methods for sending emails
          */
 
+        public static function checkForPath(string $pathfilename): bool
+        {
+            $pathInfo = pathinfo($pathfilename);
+            if($pathInfo['dirname'] !== '.') return true;
+            return false;
+        }
 
         /**
          * Include the template in the mail if it was set in the configuration or directly on the WireMail object
@@ -472,6 +479,11 @@
                     $mail->email_template = $this->frontendforms['input_emailTemplate'];
                 }
                 if ($mail->email_template != 'none') {
+
+                    // check if template name or template path has been added
+                    if(self::checkForPath($mail->email_template)){
+                        $this->emailTemplatesDirPath = $this->emailCustomTemplatesDirPath = '';
+                    }
 
                     if ($this->wire('files')->exists($this->emailTemplatesDirPath . $mail->email_template)) {
                         $body = $this->loadTemplate($this->emailTemplatesDirPath . $mail->email_template);
