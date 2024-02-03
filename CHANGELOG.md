@@ -648,6 +648,6 @@ The WireMailPHPMailer comes with own property names and ist therefore not compat
   
   Now you can add a complete path tho the method too: 
   
-  `$mail->mailTemplate('/site/assets/mycustomfolder/myNewTemplate.html'); // add this to the mail object` 
+  `$mail->mailTemplate($config->paths->site.'mycustomfolder/myNewTemplate.html'); // add this to the mail object` 
   
   The given template from this custom folder will be used to send the mail.
