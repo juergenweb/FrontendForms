@@ -33,6 +33,7 @@
     wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/avatar');
 
     use Exception;
+    use FrontendForms\Form;
     use Valitron\Validator;
 
     class FrontendForms extends WireData implements Module, ConfigurableModule
@@ -273,20 +274,20 @@
             $list = [];
             $list['none'] = __('None'); // default
 
-            foreach(FrontendForms::SUPPORTEDMAILMODULES as $className){
-                if($modules->getModuleID($className))
+            foreach (FrontendForms::SUPPORTEDMAILMODULES as $className) {
+                if ($modules->getModuleID($className))
                     $list[$className] = $className;
             }
 
             // combine WireMailPostmark and WireMailPostmarkApp if both are installed
-            $postmark = array_filter($list, function($key) {
+            $postmark = array_filter($list, function ($key) {
                 return strpos($key, 'WireMailPostmark') === 0;
             }, ARRAY_FILTER_USE_KEY);
-            if(count($postmark) > 1){
-               foreach($postmark as $k => $v){
-                   unset($list[$k]) ;
-               }
-               $list['WireMailPostmark'] = implode('/', $postmark);
+            if (count($postmark) > 1) {
+                foreach ($postmark as $k => $v) {
+                    unset($list[$k]);
+                }
+                $list['WireMailPostmark'] = implode('/', $postmark);
             }
             return $list;
         }
@@ -299,8 +300,8 @@
         public static function getNumberOfMailModules(Modules $modules): int
         {
             $number = [];
-            foreach(FrontendForms::SUPPORTEDMAILMODULES as $className){
-                if($modules->getModuleID($className))
+            foreach (FrontendForms::SUPPORTEDMAILMODULES as $className) {
+                if ($modules->getModuleID($className))
                     $number[] = $className;
             }
             return count($number);
@@ -326,7 +327,6 @@
             $mailModuleSelect->notes = __('By default, all mails will be sent with WireMail, but you can select a custom module from this field for sending mails too.');
             return $mailModuleSelect;
         }
-
 
 
         /**
@@ -406,11 +406,28 @@
             if ($templateName === 'inherit') {
                 $templateName = $this->input_emailTemplate; //  use the template from the FrontendForms config
             } else {
+
+                $customPath = false;
+                if (Form::checkForPath($templateName)) {
+                    $customPath = true;
+                    $path_parts = pathinfo($templateName);
+                    if (!file_exists($path_parts['dirname'])) {
+                        throw new Exception(sprintf('The directory that should contain your email template under the given path %s/ does not exist. Please check your path once more.', $path_parts['dirname']));
+                    }
+                    $this->emailTemplates = $this->wire('files')->find($path_parts['dirname'], ['extensions' => 'html']);
+                }
+
                 if (!in_array($templateName, $this->emailTemplates)) {
                     //  check if an email template with this name exists
-                    throw new Exception(sprintf('Email template with the name %s does not exist. Possible templates are: %s',
-                        $templateName, implode(', ', $this->emailTemplates)));
+                    $msg = sprintf('Email template with the name %s does not exist. Possible templates are: %s',
+                        $templateName, implode(', ', $this->emailTemplates));
+                    if($customPath){
+                        $msg = sprintf('Email template under the given path %s does not exist. Possible templates are: %s',
+                            $templateName, implode(', ', $this->emailTemplates));
+                    }
+                    throw new Exception($msg);
                 }
+
             }
             // add a new property to the mail class
             $mail->email_template = $templateName;
