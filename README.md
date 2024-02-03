@@ -1885,6 +1885,10 @@ If you want to use your own custom email templates, an extra folder called **"fr
 
 Please put all your own custom email templates inside this folder and not in the default email templates folder as described in the previous point. Otherwise your custom email templates will get lost after an update.
 
+If you want to use another folder than the mentioned folder **"frontendforms-custom-templates"**, you can also create this folder manually and put all your custom templates inside. 
+
+In this case you have to add the complete path to the mail templates to the mailTemplate() method (see the next point).
+
 To create your own custom templates, I recommend you to study the templates inside the email templates folder and adapt them to your needs.
 The custom email templates folder will be created during the install process automatically. If it is not there, please create it manually.
 
@@ -1899,6 +1903,13 @@ If you want to overwrite the global setting for the template on per form base yo
 ```php
 $mail = new WireMail();
 $mail->mailTemplate('template_1.html'); // this adds the template with the file template_1.html to the email
+```
+
+If you have stored your custom mail templates inside a custom folder as written in the point before you have to add the complete path to the file as the method parameter:
+
+```php
+$mail = new WireMail();
+$mail->mailTemplate($config->paths->site.'assets/mycustomfolder/mytemplate.html'); // this adds the template under the given path to the mail
 ```
 
 Every template file contains placeholders for your content. You will find more information about placeholders [here](#placeholder-variables-for-usage-in-email-templates).
