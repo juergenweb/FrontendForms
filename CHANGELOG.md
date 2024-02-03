@@ -634,7 +634,7 @@ The WireMailPHPMailer comes with own property names and ist therefore not compat
 
 - **Support for setting custom path inside mailTemplate() method added**
 
-  Until now the WireMail method mailTemplate() has only supported the name attribute of a given HTML email template     including the extension HTML
+  Until now the WireMail method mailTemplate() has only supported the name attribute of a given HTML email template     including the extension HTML.
   
   `$mail->mailTemplate('myTemplate.html');`
   
