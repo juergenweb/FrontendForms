@@ -626,6 +626,28 @@ Previously, the default email template setting, as set in the module configurati
 This new version includes some code changes and a new method to support FrontendLoginRegister and FrontendContact to send mails with the WireMailPHPMailer too. 
 The WireMailPHPMailer comes with own property names and ist therefore not compatible with other mail classes. That is the reason, why some code changes are necessary.
 
-## 2024-01-31
+## 2024-02-03
 
-New CAPTCHA images added
+- **New CAPTCHA images added**
+
+  Some new animal and tree images have been added.
+
+- **Support for setting custom path inside mailTemplate() method added**
+
+Until now the WireMail method mailTemplate() has only supported the name attribute of a given HTML email template including the extension HTML
+
+`$mail->mailTemplate('myTemplate.html');`
+
+Due to a user request from Donatas, where he asked for support of adding a path to a custom template folder to this method too, I have added this feature now.
+
+Usecase: If you do not want to use the default custom template folder under */site/frontendforms-custom-templates/*, you can now add a path to another folder including the name of the template.
+
+Example: 
+
+Your new folder is located under */site/assets/mycustomfolder/* and the name of your email template file is called *myNewTemplate.html*.
+
+Now you can add a complete path tho the method too: 
+
+`$mail->mailTemplate('/site/assets/mycustomfolder/myNewTemplate.html'); // add this to the mail object` 
+
+The given template from this custom folder will be used to send the mail.
