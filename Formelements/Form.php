@@ -508,15 +508,49 @@
                         }
                     }
 
-                    $placeholders = $this->getMailPlaceholders();
-                    $body = wirePopulateStringTags($body, $placeholders, ['tagOpen' => '[[', 'tagClose' => ']]']);
+
+                    // if bodyHTML is set, set a body placeholder by default out of the content
+                    switch($mail->className()){
+                        case('WireMailPHPMailer'):
+                            $this->setMailPlaceholder('body', $mail->Body);
+                            break;
+                        default:
+                            // default WireMail class used
+                            $this->setMailPlaceholder('body', $mail->bodyHTML);
+                    }
+
+                    // render [[BODY]] placeholder if it is present and convert all placeholders inside it
+                    if($this->getMailPlaceholder('body')){
+                        $bodyPlaceholder = $this->getMailPlaceholder('body');
+                        $bodyPlaceholder = wirePopulateStringTags($bodyPlaceholder, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
+                        $this->setMailPlaceholder('body', $bodyPlaceholder);
+                    }
+
+                    $body = wirePopulateStringTags($body, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
                     // set the result as the bodyHTML of the email
 
-                    $mail->bodyHTML($body);
+
+                    // if bodyHTML is set, set a body placeholder by default out of the content
+                    switch($mail->className()){
+                        case('WireMailPHPMailer'):
+                            $mail->Body = $body;
+                            break;
+                        default:
+                            // default WireMail class used
+                            $mail->bodyHTML($body);
+                    }
                 }
             } else {
                 // add invisible div with email pre-header to the top of the email body
-                $mail->bodyHTML($this->generateEmailPreHeader($mail) . $mail->bodyHTML);
+                switch($mail->className()){
+                    case('WireMailPHPMailer'):
+                        $mail->Body = $this->generateEmailPreHeader($mail) . $mail->Body;
+                        break;
+                    default:
+                        // default WireMail class used
+                        $mail->bodyHTML($this->generateEmailPreHeader($mail) . $mail->bodyHTML);
+                }
+
             }
         }
 
@@ -593,6 +627,17 @@
                     $this->includeMailTemplate($mail); // include/use mail template if set
                     $this->wire('session')->set('templateloaded', '1');
                 }
+            } else {
+                // populate Placeholders even if no template is used to send emails
+                switch($mail->className()){
+                    case('WireMailPHPMailer'):
+                        $mail->Body = wirePopulateStringTags($mail->bodyHTML, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
+                        break;
+                    default:
+                        // default WireMail class used
+                        $mail->bodyHTML(wirePopulateStringTags($mail->bodyHTML, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']));
+                }
+
             }
 
             return $mail;
@@ -607,9 +652,9 @@
         public static function setBody($mail, string|null $body, string $mailModule): void
         {
             if (is_null($body)) $body = '';
-            // add support for WireMailPHPMailer - has other property name
+            // add support for WireMailPHPMailer - has a different name for the bodyHTML property
             if ($mailModule === 'WireMailPHPMailer') {
-                $mail->bodyHtml = $body;
+                $mail->Body = $body;
             } else {
                 $mail->bodyHTML($body);
             }
