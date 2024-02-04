@@ -652,7 +652,7 @@ The WireMailPHPMailer comes with own property names and ist therefore not compat
   
   The given template from this custom folder will be used to send the mail.
 
-  ## [2.1.62] 2024-02-05
+## [2.1.62] 2024-02-05
 
 This update comes with mail sending modifications only: A general addition is to use placeholders without using an email template and special additions for sending mail with the PHPMailer class.
 
