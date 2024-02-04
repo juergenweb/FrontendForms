@@ -117,7 +117,7 @@ if ($form->isValid()) {
 
 
     if (!$m->send()) {
-        $this->generateEmailSentErrorAlert(); // generates an error message if something went wrong during the sending process
+        $form->generateEmailSentErrorAlert(); // generates an error message if something went wrong during the sending process
     }
 
 }
