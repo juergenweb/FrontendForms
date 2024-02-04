@@ -654,10 +654,18 @@ The WireMailPHPMailer comes with own property names and ist therefore not compat
 
   ## [2.1.62] 2024-02-05
 
-This update comes with mail sending modifications only: A general addition to use placeholders without using an email template and special additions for sending mails with the PHPMailer class.
+This update comes with mail sending modifications only: A general addition is to use placeholders without using an email template and special additions for sending mail with the PHPMailer class.
 
 - **Use placeholders even if you do not use an email template**
 
-  Placeholders have been designed for usage with HTML mail templates, but it was not possible to use it without an template until now. This is now fixed and you can use placeholders even if you set mailTemplate() to none.
+  Placeholders have been designed for use with HTML mail templates, but it was not possible to use them without an HTML template until now. This is now fixed, and you can use placeholders even if you set mailTemplate() to *none*.
 
-  If you do not know, what placeholders are and how that they can be used inside the mail body 
+  If you do not know what placeholders are and how they can be used inside the mail body, take a look inside the [docs](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#placeholder-variables-for-usage-in-email-templates).
+
+- **Problem on sending attachments if WireMailPHPMailer is used is fixed now**
+
+  This module supports sending mail via 3rd party mail services, but I have discovered a problem with sending attachments if you are using the WireMailPHPMailer module.
+
+  This module has its own property names, and therefore a problem occurs when sending attachments. This problem is fixed now. By using other supported 3rd party modules, there is no problem.
+
+  To show how to send mail via WireMailPHPMail, WireMailSMTP and PostmarkApp I have added 3 new example files inside the Examples folder. These files contain full-functionable contact forms, including a file upload field by using these external modules.
