@@ -651,3 +651,13 @@ The WireMailPHPMailer comes with own property names and ist therefore not compat
   `$mail->mailTemplate($config->paths->site.'assets/mycustomfolder/myNewTemplate.html'); // add this to the mail object` 
   
   The given template from this custom folder will be used to send the mail.
+
+  ## [2.1.62] 2024-02-05
+
+This update comes with mail sending modifications only: A general addition to use placeholders without using an email template and special additions for sending mails with the PHPMailer class.
+
+- **Use placeholders even if you do not use an email template**
+
+  Placeholders have been designed for usage with HTML mail templates, but it was not possible to use it without an template until now. This is now fixed and you can use placeholders even if you set mailTemplate() to none.
+
+  If you do not know, what placeholders are and how that they can be used inside the mail body 
