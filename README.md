@@ -1920,8 +1920,12 @@ It is recommended to take a look at the email templates which are shipped with t
 example on how to write your own email templates (or download free templates from the internet and add the placeholders
 by yourself).
 
-If you have created a template on your own, add it to the the custom folder **"frontendforms-custom-template"** and not inside the "email_templates"!!
+If you have created a template on your own, add it to the the custom folder **"frontendforms-custom-template"** or inside another folder that you have created and not inside the "email_templates"!!
 Now you can go to the module configuration and under the email settings tab you can select your custom email template.
+
+**Just note:**
+
+Templates, which are not stored inside the **"frontendforms-custom-template"** or the **"email_templates"** folder cannot be selected as the global template inside module configuration. 
 
 ### Images inside email templates
 You can also use images in your email templates, but be aware to use the absolute URL to this image (not relative).
@@ -1930,20 +1934,24 @@ at this template file how to include images in email templates.
 
 #### Storage place for images for email templates
 This module creates a new folder inside the site/assets/files folder of ProcessWire called FrontendForms during the module
-installation. This folder intended to be used for images that you want to use within the email templates. This folder has public readability
-and can be reached from outside. This is absolutely necessary to be able to view images inside the emails.
+installation. This folder is intended to be used for images that you want to use within the email templates. This folder has public readability and can be reached from outside. This is absolutely necessary to be able to view images inside the emails!!!
+
 Before the module will be installed, there is also a folder called assets inside this module. It contains images for the
 ready to use email templates.
+
 During the installation process, these images will be copied from the assets folder inside the module to the newly
 created FrontedForms directory. The assets folder inside the module directory will be deleted afterwards.
+
 If you uninstall the module, the assets folder will be copied back to the module folder. Afterwards the FrontendForms
 folder will be removed from the site/assets directory.
-So if you are creating your own email template, please put the images inside the FrontendForms
+
+If you are creating your own email template, please put the images inside the FrontendForms
 folder. It is recommended to use a separate folder for each template (fe. site/assets/FrontendForms/mytemplateFolder).
 
 You can find an example of using a local stored image inside the ["template_3.html"](https://github.com/juergenweb/FrontendForms/blob/main/email_templates/template_3.html#L365) file. So take a look there how to accomplish this.
 Please note: If you are running your site on a local server (XAMPP, WAMPP,..), local stored images will not be displayed
 inside the emails because they are locally and therefore not reachable via the internet.
+
 After you have transferred your site to a live server, the images should be displayed properly inside the emails.
 
 ### Placeholder variables for usage in email templates
