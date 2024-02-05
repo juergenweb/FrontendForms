@@ -1293,11 +1293,17 @@
                         }
                         $values[$key] = $filesArray;
                     } else {
-                        foreach ($_FILES[$key]['name'] as $filename) {
-                            $files[] = strtolower($this->wire('sanitizer')->filename($filename));
+                        if(is_array($_FILES[$key]['name'])){
+                            // multiple upload field
+                            foreach ($_FILES[$key]['name'] as $filename) {
+                                $files[] = strtolower($this->wire('sanitizer')->filename($filename));
+                            }
+                            $values[$key] = $files;
+                        } else {
+                            // single upload field
+                            $values[$key] = $_FILES[$key]['name'];
                         }
-                        $values[$key] = $files;
-                        //$values[$key] = $_FILES[$key]['name'];
+
                     }
 
 
