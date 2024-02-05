@@ -158,7 +158,7 @@
                 'summary' => 'Create forms and validate them using the Valitron library.',
                 'author' => "Jürgen Kern",
                 'href' => 'https://github.com/juergenweb/FrontendForms',
-                'version' => '2.1.61',
+                'version' => '2.1.62',
                 'singular' => true,
                 'autoload' => true,
                 'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
@@ -416,6 +416,8 @@
                         throw new Exception(sprintf('The directory that should contain your email template under the given path %s/ does not exist. Please check your path once more.', $path_parts['dirname']));
                     }
                     $this->emailTemplates = $this->wire('files')->find($path_parts['dirname'], ['extensions' => 'html']);
+                } else {
+                    $this->setEmailTemplates();
                 }
 
                 if (!in_array($templateName, $this->emailTemplates)) {
@@ -570,7 +572,6 @@
 
                 $form = $event->arguments(0);
 
-
                 // check if temp_uploads folder exists - otherwise create it
                 if (!$this->wire('files')->exists($this->temp_uploadPath)) {
                     $this->wire('files')->mkdir($this->temp_uploadPath);
@@ -600,6 +601,7 @@
                         }
                     }
                 }
+                $event->return = $mail;
                 return $mail;
             });
 
@@ -618,6 +620,7 @@
                     $this->setEmailTemplate($mail, $template);
                 }
                 $event->return = $mail;
+                return $mail;
             });
 
             /**
@@ -629,6 +632,7 @@
                 $mail = $event->object;
                 $title = $event->arguments(0);
                 $mail['title'] = trim((string)$title);
+                $event->return = $mail;
                 return $mail;
             });
 
