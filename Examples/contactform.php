@@ -78,6 +78,10 @@ $accept->setRule('required')->setCustomMessage('You have to accept the data priv
 $accept->setRule('accepted');
 $form->add($accept);
 
+$sendcopy = new \FrontendForms\InputCheckbox('sendcopy');
+$sendcopy->setLabel('Send a copy to me');
+$form->add($sendcopy);
+
 // you can also add text elements to the form - not only input fields
 $text = new \FrontendForms\TextElements();
 $text->setContent('This is a text.');
@@ -89,18 +93,7 @@ $form->add($button);
 
 if ($form->isValid()) {
 
-    // send the form with wireMail
-    $m = wireMail();
-    $m->to('myemail@example.com');// please change this email address to your own
-    if($form->getValue('sendcopy')){
-        // send copy to sender
-        $m->to($form->getValue('email'));
-    }
-    $m->from($form->getValue('email'));
-    $m->subject($form->getValue('subject'));
-    $m->title('<h1>A new message via contact form</h1>'); // this is a new property from this module
-
-    /** You can grab the values with the getValue() method - this is the default way */
+    /** You can grab the values with the getValue() method - this is the default (old) way */
     /*
     $body = $m->title;
     $body .= '<p>'.'Sender: '.$form->getValue('gender').' '. $form->getValue('firstname').' '.$form->getValue('lastname').'</p>';
@@ -109,13 +102,12 @@ if ($form->isValid()) {
     $body .= '<p>'.'Message: '.$form->getValue('message').'</p>';
     */
 
-    /** NEW: or you can use placeholders for the labels and the values of the form fields
-     * This is the new way - only available at version 2.1.9 or higher
+    /** You can use placeholders for the labels and the values of the form fields
+     * This is the modern way - only available at version 2.1.9 or higher
      * Big advantage: The placeholders can be easier integrated in HTML as PHP code
      * But it is up to you, if you want to use placeholders or do it the old way
      * If you want to use the placeholder, please read the doc first ;-)
      */
-
     $body = '<p>[[TITLE]]</p><ul>
             <li>[[GENDERLABEL]]: [[GENDERVALUE]]</li>
             <li>[[FIRSTNAMELABEL]]: [[FIRSTNAMEVALUE]]</li>
@@ -125,8 +117,21 @@ if ($form->isValid()) {
             <li>[[MESSAGELABEL]]: [[MESSAGEVALUE]]</li>
           </ul>';
 
-    $m->bodyHTML($body);
-    $m->sendAttachments($form, true);
+    // send the form with wireMail
+    $m = wireMail();
+
+    // send a copy to the sender if set
+    if($form->getValue('sendcopy')){
+        // send copy to sender
+        $m->to($form->getValue('email'));
+    }
+
+    $m->to('myemail@example.com')// please change this email address to your own
+    ->from($form->getValue('email'))
+        ->subject($form->getValue('subject'))
+        ->title('<h1>A new message via contact form</h1>') // this is a new property for the mail object from this module
+        ->bodyHTML($body)
+        ->sendAttachments($form, true);
 
     if (!$m->send())
     {
