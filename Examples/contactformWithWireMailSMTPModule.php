@@ -73,15 +73,7 @@ $form->add($button);
 
 if ($form->isValid()) {
 
-    /** Sending the mail with the custom WireMailSMTP module */
-    $mail = wireMail(); // instantiate the WireMailSMTP object
-    $mail->from($form->getValue('email'))
-        ->fromName($form->getValue('name'))
-        ->to('myemail@example.com') // please change this to your recipient email address
-        ->subject($form->getValue('subject'))
-        ->title('New message');
-
-    // Using placeholders in this case, but you can also use $form->getValue('fieldname') to populate the values
+    // Using placeholders for the body text in this case, but you can also use $form->getValue('fieldname') to populate the values
     $body = '<p>[[TITLE]]</p><ul>
             <li>[[GENDERLABEL]]: [[GENDERVALUE]]</li>
             <li>[[FIRSTNAMELABEL]]: [[FIRSTNAMEVALUE]]</li>
@@ -91,8 +83,15 @@ if ($form->isValid()) {
             <li>[[MESSAGELABEL]]: [[MESSAGEVALUE]]</li>
           </ul>';
 
-    $mail->bodyHTML($body);
-    $mail->sendAttachments($form);  // send attachments with my custom method and do not use the attachment() method from the WireMailSMTP class
+    /** Sending the mail with the custom WireMailSMTP module */
+    $mail = wireMail(); // instantiate the WireMailSMTP object
+    $mail->from($form->getValue('email'))
+        ->fromName($form->getValue('name'))
+        ->to('myemail@example.com') // please change this to your recipient email address
+        ->subject($form->getValue('subject'))
+        ->title('New message')
+        ->bodyHTML($body)
+        ->sendAttachments($form);  // send attachments with my custom method and do not use the attachment() method from the WireMailSMTP class
 
     if (!$mail->send())
     {
