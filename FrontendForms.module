@@ -422,7 +422,7 @@
                     //  check if an email template with this name exists
                     $msg = sprintf('Email template with the name %s does not exist. Possible templates are: %s',
                         $templateName, implode(', ', $this->emailTemplates));
-                    if($customPath){
+                    if ($customPath) {
                         $msg = sprintf('Email template under the given path %s does not exist. Possible templates are: %s',
                             $templateName, implode(', ', $this->emailTemplates));
                     }
@@ -565,8 +565,7 @@
              * Usage: $mail->sendAttachments();
              * $mail is the WireMail object
              */
-            wire()->addHookMethod('WireMail::sendAttachments', function ($event)
-            {
+            wire()->addHookMethod('WireMail::sendAttachments', function ($event) {
                 $mail = $event->object;
 
                 $form = $event->arguments(0);
@@ -585,7 +584,7 @@
                         // move the files to the tmp folder
                         $file_name = pathinfo($path, PATHINFO_BASENAME);
                         $this->wire('files')->copy($path, $this->temp_uploadPath);
-                        if($mail->className() === 'WireMailPHPMailer'){
+                        if ($mail->className() === 'WireMailPHPMailer') {
                             $mail->addAttachment($this->temp_uploadPath . $file_name);
                         } else {
                             $mail->attachment($this->temp_uploadPath . $file_name);
@@ -737,14 +736,7 @@
             $this->addHookAfter('InputfieldInteger::render', $this, 'inputfieldIntegerRenderAfter');
             // outputs examples how to overwrite global settings
             $this->addHookAfter('Inputfield::render', $this, 'overwriteExamplesNotes');
-
             $this->addHookBefore('WireMail::send', $this, 'convertMailProperties');
-
-
-
-
-
-
             // remove uploaded attachments after successful sending
             $this->addHookAfter('WireMail::send', $this, 'deleteUploadedFilesAfterSending');
             // if an image captcha is selected than set the height of the image to 2/3 of the width
@@ -1163,7 +1155,6 @@
             }
         }
 
-
         /**
          * @param \ProcessWire\HookEvent $event
          * @return void
@@ -1173,8 +1164,8 @@
             $mail = $event->object;
             $className = $mail->className();
 
-            if($className === 'WireMailPHPMailer'){
-                if($mail['bodyHTML']){
+            if ($className === 'WireMailPHPMailer') {
+                if ($mail['bodyHTML']) {
                     $mail->Body = $mail['bodyHTML'];
                 }
             }
