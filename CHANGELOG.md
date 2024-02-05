@@ -680,4 +680,10 @@ This update comes with mail sending modifications only: A general addition is to
 
 - **Problem on custom path setting fixed if the mail template has been set outside the isValid() method**
 
-  I have discovered a problem if you are using more than one form on a page and you have set a custom template path and the $mail-mailTemplate() method has been written outside the isValid() method (fe inside the constructor). This has been led to an error, but it is fixed now. 
+  I have discovered a problem if you are using more than one form on a page and you have set a custom template path and the $mail-mailTemplate() method has been written outside the isValid() method (fe inside the constructor). This has been led to an error, but it is fixed now.
+
+## 2024-02-05
+
+- **Bug inside getValues() method in Form.php fixed**
+
+  There was a little bug concerning uploading files at the foreach loop inside this function. There was a missing differentation between single and multifile upload, which leads to an error if a single file (string) has been passed to the foreach loop, which needs an array as value and not a string.
