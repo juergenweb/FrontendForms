@@ -669,3 +669,11 @@ This update comes with mail sending modifications only: A general addition is to
   This module has its own property names, and therefore a problem occurs when sending attachments. This problem is fixed now. By using other supported 3rd party modules, there is no problem.
 
   To show how to send mail via WireMailPHPMail, WireMailSMTP and PostmarkApp I have added 3 new example files inside the [Examples folder](https://github.com/juergenweb/FrontendForms/tree/main/Examples). These files contain full-functionable contact forms, including a file upload field by using these external modules.
+
+  - [Contact form using SMTPMailer](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactformWithWireMailSMTPModule.php)
+  - [Contact form using PostmarkApp](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactformWithWireMailPostmarkAppModule.php)
+  - [Contact form using WireMailPHPMailer](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactformWithPHPMailerModule.php)
+ 
+- **Making some custom methods chainable**
+
+    The following custom methods for the mail object are now chainable: $mail->title, $mail->sendAttachment() and $mail-mailTemplate().
