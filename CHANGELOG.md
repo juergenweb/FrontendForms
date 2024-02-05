@@ -677,3 +677,7 @@ This update comes with mail sending modifications only: A general addition is to
 - **Making some custom methods chainable**
 
     The following custom methods for the mail object are now chainable: $mail->title, $mail->sendAttachment() and $mail-mailTemplate().
+
+- **Problem on custom path setting fixed if the mail template has been set outside the isValid() method**
+
+  I have discovered a problem if you are using more than one form on a page and you have set a custom template path and the $mail-mailTemplate() method has been written outside the isValid() method (fe inside the constructor). This has been led to an error, but it is fixed now. 
