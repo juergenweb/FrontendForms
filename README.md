@@ -1236,7 +1236,7 @@ $field->geCharacterCounter();
 ```
 
 #### addHorizontalRule() - add a hr tag to select input fields to help visually break up the options for a better user experience. 
-This is a relatively new option for single select input fields as described [here](https://developer.chrome.com/blog/hr-in-select).
+This is a relatively new option for select input fields as described [here](https://developer.chrome.com/blog/hr-in-select).
 
 With this rule you add a horizontal rule to the options of a select to divide the content for better visibility. 
 
