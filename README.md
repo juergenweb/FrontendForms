@@ -1097,7 +1097,7 @@ These methods can only be used on certain input fields and not at all.
 | [getClearLink()](#getclearlink---get-the-link-object-described-in-the-previous-method-for-further-manipulations)  | get the link object for the clear input link for further manipulations  |
 | [useCharacterCounter()](#usecharactercounter---add-a-reverse-character-counter-below-a-textarea-if-maxlength-validator-is-set)  | add a character counter to a textarea if lengthMax validator is set  |
 | [getCharacterCounter()](#getcharactercounter---get-the-character-counter-object-described-in-the-previous-method-for-further-manipulations)  | get the character counter object for further manipulations  |
-| [addHorizontalRule()](#addhorizontalrule---add-a-hr-tag-to-a-single-select-input-field-to-help-visually-break-up-the-options-for-a-better-user-experience)  | add hr tag to input select single for visually break up the options for a better user experience  |
+| [addHorizontalRule()](#addhorizontalrule---add-a-hr-tag-to-select-input-fields-to-help-visually-break-up-the-options-for-a-better-user-experience)  | add hr tag to input selects for visually break up the options for a better user experience  |
 
 #### alignVertical() - set the alignment for checkboxes and radio buttons
 This is only a method for multiple checkboxes and radio buttons to align them vertical instead of horizontal (default).
@@ -1235,12 +1235,10 @@ If you want to manipulate the character counter (fe adding an additional styling
 $field->geCharacterCounter(); 
 ```
 
-#### addHorizontalRule() - add a hr tag to a single select input field to help visually break up the options for a better user experience. 
+#### addHorizontalRule() - add a hr tag to select input fields to help visually break up the options for a better user experience. 
 This is a relatively new option for single select input fields as described [here](https://developer.chrome.com/blog/hr-in-select).
 
-With this rule you add a horizontal rule to the options of a single select to divide the content for better visibility. 
-
-*Just note:* This only works on single select and not on multi-select. If you add this rule to a multi-select input field it will be ignored, because it is only allowed on single slect fields.
+With this rule you add a horizontal rule to the options of a select to divide the content for better visibility. 
 
 To add a horizontal rule to the options you only have insert it like this:
 
