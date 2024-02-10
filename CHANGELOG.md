@@ -682,7 +682,7 @@ This update comes with mail sending modifications only: A general addition is to
 
   I have discovered a problem if you are using more than one form on a page and you have set a custom template path and the $mail-mailTemplate() method has been written outside the isValid() method (fe inside the constructor). This has been led to an error, but it is fixed now.
 
-## 2024-02-05
+## [2.1.63] 2024-02-10
 
 - **Bug inside getValues() method in Form.php fixed**
 
