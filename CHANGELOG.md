@@ -687,3 +687,15 @@ This update comes with mail sending modifications only: A general addition is to
 - **Bug inside getValues() method in Form.php fixed**
 
   There was a little bug concerning uploading files at the foreach loop inside this function. There was a missing differentation between single and multifile upload, which leads to an error if a single file (string) has been passed to the foreach loop, which needs an array as value and not a string.
+
+- **New method addHorizontalRule() to the "Select" class added**
+
+  As pointed out in the latest ProcessWire news "InputfieldSelect and InputfieldSelectMultiple now accept horizontal rules" I added this feature now to select inputs of FrontendForms too.
+
+   You can read more about this new browser feature [here](https://developer.chrome.com/blog/hr-in-select).
+
+  *Short description:*
+
+  Now, you can add "hr" (horizontal rule) elements into the list of select options and they will appear as separators to help visually break up the options for a better user experience.
+
+  For more information and how to use it inside FrontendForms, please read the description inside the [docs](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#addhorizontalrule---add-a-hr-tag-to-a-single-select-input-field-to-help-visually-break-up-the-options-for-a-better-user-experience).
