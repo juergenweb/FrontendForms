@@ -48,6 +48,20 @@ trait TraitOption
     }
 
     /**
+     * Add hr tag to the options to help visually break up the options for a better user experience
+     * https://developer.chrome.com/blog/hr-in-select
+     * Not supported in all browsers - so please check it if it works
+     * @return \FrontendForms\Option
+     */
+    public function addHorizontalRule(): TextElements
+    {
+        $hr = new TextElements();
+        $hr->setTag('hr');
+        $this->options = array_merge($this->options, [$hr]);
+        return $hr;
+    }
+
+    /**
      * This method deletes all options
      * @return void
      */
