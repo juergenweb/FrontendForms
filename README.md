@@ -1097,7 +1097,7 @@ These methods can only be used on certain input fields and not at all.
 | [getClearLink()](#getclearlink---get-the-link-object-described-in-the-previous-method-for-further-manipulations)  | get the link object for the clear input link for further manipulations  |
 | [useCharacterCounter()](#usecharactercounter---add-a-reverse-character-counter-below-a-textarea-if-maxlength-validator-is-set)  | add a character counter to a textarea if lengthMax validator is set  |
 | [getCharacterCounter()](#getcharactercounter---get-the-character-counter-object-described-in-the-previous-method-for-further-manipulations)  | get the character counter object for further manipulations  |
-| [addHorizontalRule()](#addHorizontalRuler---get-the-character-counter-object-described-in-the-previous-method-for-further-manipulations)  | add hr tag to input select for visually break up the options for a better user experience  |
+| [addHorizontalRule()](#addhorizontalrule---add-a-hr-tag-to-a-single-select-input-field-to-help-visually-break-up-the-options-for-a-better-user-experience)  | add hr tag to input select single for visually break up the options for a better user experience  |
 
 #### alignVertical() - set the alignment for checkboxes and radio buttons
 This is only a method for multiple checkboxes and radio buttons to align them vertical instead of horizontal (default).
