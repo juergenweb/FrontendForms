@@ -54,13 +54,21 @@ class Select extends Inputfields
         if ($this->options) {
             $options = '';
             foreach ($this->options as $option) {
-                if (in_array($option->getAttribute('value'), $this->getDefaultValue())) {
-                    $option->setAttribute('selected');
+                // check if option element is hr element
+                if($option instanceof TextElements) {
+                    // add hr tag only to Select, but not to SelectMultiple
+                    if($option->getTag() === 'hr'){
+                        $options .= $option->renderSelfclosingTag($option->getTag());
+                    }
+                } else {
+                    if (in_array($option->getAttribute('value'), $this->getDefaultValue())) {
+                        $option->setAttribute('selected');
+                    }
+                    if (in_array($option->getAttribute('value'), (array)$this->getPostValue())) {
+                        $option->setAttribute('selected');
+                    }
+                    $options .= $option->render();
                 }
-                if (in_array($option->getAttribute('value'), (array)$this->getPostValue())) {
-                    $option->setAttribute('selected');
-                }
-                $options .= $option->render();
             }
             $this->setContent($options);
             $out = $this->renderNonSelfclosingTag($this->getTag());
