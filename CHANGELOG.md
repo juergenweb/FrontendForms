@@ -690,7 +690,7 @@ This update comes with mail sending modifications only: A general addition is to
 
 - **New method addHorizontalRule() to the "Select" class added**
 
-  As pointed out in the latest ProcessWire news "InputfieldSelect and InputfieldSelectMultiple now accept horizontal rules" I added this feature now to select inputs of FrontendForms too.
+  As pointed out in the latest ProcessWire news "InputfieldSelect and InputfieldSelectMultiple now accept horizontal rules" [read more](https://weekly.pw/issue/508/) I added this feature now to select inputs of FrontendForms too.
 
    You can read more about this new browser feature [here](https://developer.chrome.com/blog/hr-in-select).
 
