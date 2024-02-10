@@ -1238,7 +1238,7 @@ $field->geCharacterCounter();
 #### addHorizontalRule() - add a hr tag to select input fields to help visually break up the options for a better user experience. 
 This is a relatively new option for select input fields as described [here](https://developer.chrome.com/blog/hr-in-select).
 
-With this rule you add a horizontal rule to the options of a select to divide the content for better visibility. 
+With this method you add a horizontal rule to the options of a select to divide the content for better visibility. 
 
 To add a horizontal rule to the options you only have insert it like this:
 
@@ -1260,8 +1260,8 @@ $selectfield->addOption($this->_('Excellent'), '5');
 $selectfield->addHorizontalRule()->setAttribute('class', 'test'); // hr added to the other options
 $selectfield->addOption($this->_('Very Good'), '4');
 $selectfield->addOption($this->_('Average'), '3');
-$selectfield->stars->addOption($this->_('Poor'), '2');
-$selectfield->stars->addOption($this->_('Terrible'), '1');
+$selectfield->addOption($this->_('Poor'), '2');
+$selectfield->addOption($this->_('Terrible'), '1');
 ```
 
 ## Form validation
