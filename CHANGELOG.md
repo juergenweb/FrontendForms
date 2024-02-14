@@ -699,3 +699,7 @@ This update comes with mail sending modifications only: A general addition is to
   Now, you can add "hr" (horizontal rule) elements into the list of select options and they will appear as separators to help visually break up the options for a better user experience.
 
   For more information and how to use it inside FrontendForms, please read the description inside the [docs](https://github.com/juergenweb/FrontendForms/blob/main/README.md#addhorizontalrule---add-a-hr-tag-to-select-input-fields-to-help-visually-break-up-the-options-for-a-better-user-experience).
+
+## 2024-02-14
+
+- **2 new CAPTCHA images added**
