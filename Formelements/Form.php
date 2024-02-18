@@ -55,6 +55,7 @@
         protected string $langAppendix = ''; // string, which will be appended to multi-lang config fields inside the db
         protected string|int $useDoubleFormSubmissionCheck = 1; // Enable checking of multiple submissions
         protected string|int|bool $useCSRFProtection = 1; // Enable/disable CSRF-Protection
+        protected string $general_desc_position = 'afterInput'; // The position of the input field description -> beforeLabel, afterLabel or afterInput
 
         // Mail properties - only needed if FrontendForms will be used to send emails
         protected array $mailPlaceholder = []; // associative array for usage in emails (['placeholdername' => 'text',...])
@@ -176,11 +177,30 @@
             // create and set all general placeholder variables
             $this->createGeneralPlaceholders();
 
+            // set global description position according to the module configuration
+
+            if (array_key_exists('input_descPosition', $this->frontendforms)) {
+                $this->general_desc_position = $this->frontendforms['input_descPosition'];
+            }
+
             // add a hook method to render mail templates before sending the mail
             $this->addHookBefore('WireMail::send', $this, 'renderTemplate');
             // add a hook method after sending the mail to remove the session variable "templateloaded"
             $this->addHookAfter('WireMail::send', $this, 'removeTemplateSession');
 
+        }
+
+        /**
+         * Set the description position on per form base
+         * @param string $pos
+         * @return $this
+         */
+        public function setDescPosition(string $pos): self
+        {
+            if (in_array($pos, ['beforeLabel', 'afterLabel', 'afterInput'])) {
+                $this->general_desc_position = $pos; // set new position property
+            }
+            return $this;
         }
 
 
@@ -451,7 +471,7 @@
         public static function checkForPath(string $pathfilename): bool
         {
             $pathInfo = pathinfo($pathfilename);
-            if($pathInfo['dirname'] !== '.') return true;
+            if ($pathInfo['dirname'] !== '.') return true;
             return false;
         }
 
@@ -481,7 +501,7 @@
                 if ($mail->email_template != 'none') {
 
                     // check if template name or template path has been added
-                    if(self::checkForPath($mail->email_template)){
+                    if (self::checkForPath($mail->email_template)) {
                         $this->emailTemplatesDirPath = $this->emailCustomTemplatesDirPath = '';
                     }
 
@@ -510,7 +530,7 @@
 
 
                     // if bodyHTML is set, set a body placeholder by default out of the content
-                    switch($mail->className()){
+                    switch ($mail->className()) {
                         case('WireMailPHPMailer'):
                             $this->setMailPlaceholder('body', $mail->Body);
                             break;
@@ -520,7 +540,7 @@
                     }
 
                     // render [[BODY]] placeholder if it is present and convert all placeholders inside it
-                    if($this->getMailPlaceholder('body')){
+                    if ($this->getMailPlaceholder('body')) {
                         $bodyPlaceholder = $this->getMailPlaceholder('body');
                         $bodyPlaceholder = wirePopulateStringTags($bodyPlaceholder, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
                         $this->setMailPlaceholder('body', $bodyPlaceholder);
@@ -531,7 +551,7 @@
 
 
                     // if bodyHTML is set, set a body placeholder by default out of the content
-                    switch($mail->className()){
+                    switch ($mail->className()) {
                         case('WireMailPHPMailer'):
                             $mail->Body = $body;
                             break;
@@ -542,7 +562,7 @@
                 }
             } else {
                 // add invisible div with email pre-header to the top of the email body
-                switch($mail->className()){
+                switch ($mail->className()) {
                     case('WireMailPHPMailer'):
                         $mail->Body = $this->generateEmailPreHeader($mail) . $mail->Body;
                         break;
@@ -629,7 +649,7 @@
                 }
             } else {
                 // populate Placeholders even if no template is used to send emails
-                switch($mail->className()){
+                switch ($mail->className()) {
                     case('WireMailPHPMailer'):
                         $mail->Body = wirePopulateStringTags($mail->bodyHTML, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
                         break;
@@ -1293,7 +1313,7 @@
                         }
                         $values[$key] = $filesArray;
                     } else {
-                        if(is_array($_FILES[$key]['name'])){
+                        if (is_array($_FILES[$key]['name'])) {
                             // multiple upload field
                             foreach ($_FILES[$key]['name'] as $filename) {
                                 $files[] = strtolower($this->wire('sanitizer')->filename($filename));
@@ -1925,7 +1945,6 @@
         public function render(): string
         {
 
-
             // redirect after successful form validation if set
             if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
                 $this->wire('session')->redirect($this->getRedirectURL());
@@ -2130,8 +2149,18 @@
                         $element->setAttribute('name', $tokenName);
                     }
 
-                    // Label (Only on input fields)
+                    // Label and description (Only on input fields)
                     if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
+
+                        // set the description position on per form base if description text is present
+                        if ($element->getDescription()->getText()) {
+                            // set position from form setting if no individual position has been set
+                            if (is_null($element->getDescription()->getPosition())) {
+                                $element->getDescription()->setPosition($this->general_desc_position);
+                            }
+                        }
+
+
                         // add unique id to the field-wrapper if present
                         $element->getFieldWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-fieldwrapper');
                         // add unique id to the input-wrapper if present
