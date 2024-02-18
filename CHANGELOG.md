@@ -707,7 +707,7 @@ This update comes with mail sending modifications only: A general addition is to
   
   Due to a user request to add the possibility to change the field description on demand before the input field I have added this feature now.
 
-  You can position the description now to the following positions:
+  You can position the description now to the following 3 positions:
 
   * before the label
   * after the label
