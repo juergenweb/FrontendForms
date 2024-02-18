@@ -481,6 +481,8 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [getElementsbyClass()](#getelementsbyclass---get-array-of-all-form-elements-of-the-given-class)  | get array of all form elements of the given class  |
 | [useCSRFProtection()](#usecsrfprotection---enabledisable-csrf-protection-on-form)  | Enable or disable CSRF-Protection  |
 | [useFormInCrossDomainIframe()](#useformincrossdomainiframe---use-forms-in-an-iframe-on-another-domain)  | Method to prepare a form to be usable inside an iframe on another domain  |
+| [setDescPosition()](#setdescposition---change-the-position-of-field-descriptions)  | Set the position of the field description text  |
+
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
