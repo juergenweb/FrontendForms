@@ -846,6 +846,18 @@ So using this method on the form object makes it possible to use a form inside a
   $form->useFormInCrossDomainIframe(); // parameter false to disable CSRF-Protection
 ```
 
+### setDescPosition() - Change the position of field descriptions
+
+With this method you can change the position of each input field description on the form. This will overwrite the global settings from the module configuration.
+
+* beforeLabel: The description will be displayed above (before) the label
+* afterLabel: The description will be displayed below (after) the label
+* afterInput: The description will be displayed below (after) the input field
+
+```php
+  $form->setDescPosition('afterLabel'); // possible parameters: beforeLabel, afterLabel, afterInput
+```
+
 ## Input field methods
 
 For better understanding of methods explained afterwards, take a look of the anatomy of input fields first.
