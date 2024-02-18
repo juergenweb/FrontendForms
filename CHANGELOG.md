@@ -720,6 +720,6 @@ This update comes with mail sending modifications only: A general addition is to
   * [setDescPosition()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#setdescposition---change-the-position-of-field-descriptions): With this method you can overwrite the description position on **per form base**
   * [setPosition()](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#setposition---change-the-position-of-field-description-directly-at-the-input-field): With this method you can overwrite the description position **on the input field directly**
  
-    The recommended way ist to set your prefered description position inside the module configuration first. You will find this new configuration field under *Markup and styling settings for the forms -> Settings for the markup and styling of the form and the input fields -> set the position of the field description*
+    The recommended way ist to set your prefered description position inside the module configuration first. You will find this new configuration field under *Markup and styling settings for the forms -> Settings for the markup and styling of the form and the input fields -> Set the position of the field description*
 
-    Afterwards you can use the previous mentioned method to overwrite the global settings.
+    Afterwards you can use the previous mentioned methods to overwrite the global settings.
