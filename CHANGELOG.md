@@ -700,7 +700,7 @@ This update comes with mail sending modifications only: A general addition is to
 
   For more information and how to use it inside FrontendForms, please read the description inside the [docs](https://github.com/juergenweb/FrontendForms/blob/main/README.md#addhorizontalrule---add-a-hr-tag-to-select-input-fields-to-help-visually-break-up-the-options-for-a-better-user-experience).
 
-## 2024-02-14
+## [2.1.63] 2024-02-18
 
 - **2 new CAPTCHA images added**
 - **New feature to render the field description on different positions added**
@@ -717,5 +717,9 @@ This update comes with mail sending modifications only: A general addition is to
 
   2 new additional methods have been added:
 
-  * [setDescPosition()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#setdescposition---change-the-position-of-field-descriptions): With this method you can overwrite the description position on per form base
-  * [setPosition()](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#setposition---change-the-position-of-field-description-directly-at-the-input-field): With this method you can overwrite the description position on the input field directly
+  * [setDescPosition()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#setdescposition---change-the-position-of-field-descriptions): With this method you can overwrite the description position on **per form base**
+  * [setPosition()](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#setposition---change-the-position-of-field-description-directly-at-the-input-field): With this method you can overwrite the description position **on the input field directly**
+ 
+    The recommended way ist to set your prefered description position inside the module configuration first. You will find this new configuration field under *Markup and styling settings for the forms -> Settings for the markup and styling of the form and the input fields -> set the position of the field description*
+
+    Afterwards you can use the previous mentioned method to overwrite the global settings.
