@@ -81,6 +81,7 @@
         protected string|int $input_wrapperFormElements = 0; // add extra div over all form elements
         protected string $input_wrapperFormElementsCSSClass = ''; // the CSS class for the wrapperFormElements div
         protected string $input_framework = 'none.json'; // default framework selection
+        protected string $input_descPosition = 'afterInput'; // default input field description position
         protected string|int $input_showasterisk = 1; // show asterisk on required fields
         protected string|int $input_ajaxformsubmission = 0; // submit forms via Ajax (1) or not (0)
         protected string|int $input_hideProgressBar = 0; // Hide the progressbar during form submission (1) or not (0)
@@ -183,6 +184,7 @@
                 'input_removeJS' => 0,
                 'input_removeCSS' => 0,
                 'input_framework' => 'none.json',
+                'input_descPosition' => 'afterInput',
                 'input_appendLabel' => [],
                 'input_ajaxformsubmission' => 0,
                 'input_hideProgressBar' => 0,
@@ -1222,6 +1224,10 @@
                     '$form->appendLabelOnCheckboxes(true); // true, false',
                     '$form->appendLabelOnRadios(true); // true, false'
                 ],
+                'input_descPosition' => [
+                    '$form->setDescPosition("beforeLabel"); // beforeLabel, afterLabel, afterInput (overwrite on per form base)',
+                    '$myField->setDescription("My field description")->setPosition("beforeLabel"); // beforeLabel, afterLabel, afterInput (overwrite on per field base)',
+                ],
                 'input_ajaxformsubmission' => ['$form->useAjax(true); // true, false'],
                 'input_hideProgressBar' => ['$form->showProgressbar(true); // true, false'],
                 'input_emailTemplate' => ['$mail->mailTemplate("template_2.html"); // has to be added to the WireMail object not to the form'],
@@ -1648,6 +1654,20 @@
             $appendLabels->addOption('appendcheckbox', $this->_('Append label on checkboxes'));
             $appendLabels->addOption('appendradio', $this->_('Append label on radio buttons'));
             $fieldsetMarkup->add($appendLabels, $inputfields);
+
+            // Set global position of the input field description
+            $descPosition = $this->wire('modules')->get('InputfieldSelect');
+            $descPosition->label = $this->_('Set the position of the field description');
+            $descPosition->description = $this->_('By default, the field description will be displayed after the input field. If you want you can display the description before or after the label too.');
+            $descPosition->notes = $this->_('Can be overwritten on each form and even on each input field.');
+            $descPosition->attr('name', 'input_descPosition');
+            $descPosition->attr('value', $this->input_descPosition);
+            $descPosition->required = 1;
+            $descPosition->defaultValue = 'afterInput';
+            $descPosition->addOption('beforeLabel', $this->_('Before the field label'));
+            $descPosition->addOption('afterLabel', $this->_('After the field label'));
+            $descPosition->addOption('afterInput', $this->_('After the input field'));
+            $fieldsetMarkup->add($descPosition, $inputfields);
 
             $fieldsetStyle = $this->wire('modules')->get('InputfieldFieldset');
             $fieldsetStyle->label = $this->_('Custom CSS classes');
