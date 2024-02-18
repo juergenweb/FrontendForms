@@ -703,3 +703,19 @@ This update comes with mail sending modifications only: A general addition is to
 ## 2024-02-14
 
 - **2 new CAPTCHA images added**
+- **New feature to render the field description on different positions added**
+  
+  Due to a user request to add the possibility to change the field description on demand before the input field I have added this feature now.
+
+  You can position the description now to the following positions:
+
+  * before the label
+  * after the label
+  * after the input field (default)
+ 
+  You can make your settings globally inside the module configuration, on per form base or individually on per input field.
+
+  2 new additional methods have been added:
+
+  * setDescPosition(): With this method you can overwrite the description position on per form base
+  * setPosition(): With this method you can overwrite the description position on the input field directly
