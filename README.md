@@ -1100,14 +1100,29 @@ echo $field->render();
 
 With this method you can change the position of the input field description directly on the input field. This will overwrite the global and form settings.
 
-This method has been added to the Description object!!
+You can choose between 3 different positions as parameter:
 
 * beforeLabel: The description will be displayed above (before) the label
 * afterLabel: The description will be displayed below (after) the label
 * afterInput: The description will be displayed below (after) the input field
 
+This method has been added to the Description object, so please chain it directly to it after you have set the description text:
+
 ```php
-  $field->getDescription()->setPosition('afterLabel'); // possible parameters: beforeLabel, afterLabel, afterInput
+  $field->setDescription('My field description')->setPosition('afterLabel'); // possible parameters: beforeLabel, afterLabel, afterInput
+```
+
+Here is a complete real world example:
+
+```
+$file1 = new \FrontendForms\InputFile('fileupload1');
+$file1->showClearLink(true); // show an link to empty the input field under the input field
+$file1->setLabel('Multiple files upload');
+$file1->setDescription('Description fileupload1')->setPosition('afterInput'); // This is how you add the position directyl to the Description object
+$file1->setRule('allowedFileSize', '60000');
+$file1->setRule('allowedFileExt', ['jpg','pdf']);
+...
+...
 ```
 
 ### Special Methods for special input fields
