@@ -700,7 +700,7 @@ This update comes with mail sending modifications only: A general addition is to
 
   For more information and how to use it inside FrontendForms, please read the description inside the [docs](https://github.com/juergenweb/FrontendForms/blob/main/README.md#addhorizontalrule---add-a-hr-tag-to-select-input-fields-to-help-visually-break-up-the-options-for-a-better-user-experience).
 
-## [2.1.63] 2024-02-18
+## [2.1.64] 2024-02-18
 
 - **2 new CAPTCHA images added**
 - **New feature to render the field description on different positions added**
