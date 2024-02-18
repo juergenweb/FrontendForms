@@ -22,19 +22,21 @@ $form->setSuccessMsg('Congratulation! There are no errors.');
 $file1 = new \FrontendForms\InputFile('fileupload1');
 $file1->showClearLink(true); // show an link to empty the input field under the input field
 $file1->setLabel('Multiple files upload');
+$file1->setDescription('Description fileupload1')->setPosition('afterInput');
 $file1->setRule('allowedFileSize', '60000');
 $file1->setRule('allowedFileExt', ['jpg','pdf']);
-
 
 $form->add($file1);
 
 $file2 = new \FrontendForms\InputFile('fileupload2');
 $file2->setLabel('Single file upload');
+$file2->setDescription('Description fileupload2');
 $file2->setRule('allowedFileExt', ['jpg']);
 $form->add($file2);
 
 $datalist = new \FrontendForms\Datalist('datalist');
 $datalist->setLabel('Browsers');
+$datalist->setDescription('Description datalist');
 $datalist->addOption('Edge', 'Edge');
 $datalist->addOption('Firefox', 'Firefox');
 $datalist->addOption('Chrome', 'Chrome');
@@ -47,6 +49,7 @@ $form->add($datalist);
 
 $checkboxmultiarray = new \FrontendForms\InputCheckboxMultiple('multicheckboxhorizontalarray');
 $checkboxmultiarray->setLabel('Multiple checkboxes horizontal with default value as array');
+$checkboxmultiarray->setDescription('Description multicheckboxhorizontalarray');
 $checkboxmultiarray->addOption('Checkbox 1', '1');
 $checkboxmultiarray->addOption('Checkbox 2', '2');
 $checkboxmultiarray->addOption('Checkbox 3', '3');
@@ -56,6 +59,7 @@ $form->add($checkboxmultiarray);
 
 $checkboxmultistring = new \FrontendForms\InputCheckboxMultiple('multicheckboxhorizontalstring');
 $checkboxmultistring->setLabel('Multiple checkboxes horizontal with default value as string');
+$checkboxmultistring->setDescription('Description multicheckboxhorizontalstring');
 $checkboxmultistring->addOption('Checkbox 1', '1');
 $checkboxmultistring->addOption('Checkbox 2', '2');
 $checkboxmultistring->addOption('Checkbox 3', '3');
@@ -65,12 +69,14 @@ $form->add($checkboxmultistring);
 
 $inputCheckbox = new \FrontendForms\InputCheckbox('checkbox');
 $inputCheckbox->setLabel('Single checkbox');
+$inputCheckbox->setDescription('Description checkbox');
 $inputCheckbox->setAttribute('value', 'single');
 $inputCheckbox->setRule('required');
 $form->add($inputCheckbox);
 
 $inputCheckbox2 = new \FrontendForms\InputCheckbox('checkbox2');
 $inputCheckbox2->setLabel('Single checkbox');
+$inputCheckbox2->setDescription('Description checkbox2');
 $inputCheckbox2->setAttribute('value', 'single');
 $inputCheckbox2->setAttribute('checked');
 $inputCheckbox2->setRule('required');
@@ -78,6 +84,7 @@ $form->add($inputCheckbox2);
 
 $checkboxmulti = new \FrontendForms\InputCheckboxMultiple('multicheckboxhorizontal');
 $checkboxmulti->setLabel('Multiple checkboxes horizontal');
+$checkboxmulti->setDescription('Description multicheckboxhorizontal');
 $checkboxmulti->addOption('Checkbox 1', 1)->setChecked();
 $checkboxmulti->addOption('Checkbox 2', 2)->setChecked();
 $checkboxmulti->addOption('Checkbox 3', 3);
@@ -86,6 +93,7 @@ $form->add($checkboxmulti);
 
 $checkboxmultivertical = new \FrontendForms\InputCheckboxMultiple('multicheckboxvertical');
 $checkboxmultivertical->setLabel('Multiple checkboxes vertical');
+$checkboxmultivertical->setDescription('Description checkboxmultivertical');
 $checkboxmultivertical->alignVertical();
 $checkboxmultivertical->addOption('Checkbox 1', 1);
 $checkboxmultivertical->addOption('Checkbox 2', 2)->setChecked();
@@ -95,12 +103,14 @@ $form->add($checkboxmultivertical);
 
 $inputcolor = new \FrontendForms\InputColor('color');
 $inputcolor->setLabel('Input Color');
+$inputcolor->setDescription('Description color');
 $inputcolor->setAttribute('value', '#990000');
 $inputcolor->setRule('required');
 $form->add($inputcolor);
 
 $inputDate = new \FrontendForms\InputDate('date');
 $inputDate->setLabel('Input Date');
+$inputDate->setDescription('Description date');
 $inputDate->setAttribute('min', '018-01-01');
 $inputDate->setAttribute('max', '2018-12-31');
 $inputDate->setRule('required');
@@ -108,30 +118,35 @@ $form->add($inputDate);
 
 $inputDateTime = new \FrontendForms\InputDateTime('datetime');
 $inputDateTime->setLabel('Input Datetime');
+$inputDateTime->setDescription('Description dateTime');
 $inputDateTime->setAttribute('value', '2022-06-08T09:00');
 $inputDateTime->setRule('required');
 $form->add($inputDateTime);
 
 $inputemail = new \FrontendForms\InputEmail('email');
 $inputemail->setLabel('Input Email');
+$inputemail->setDescription('Description email');
 $inputemail->setAttribute('value', 'test@gmx.at');
 $inputemail->setRule('required');
 $form->add($inputemail);
 
 $inputmonth = new \FrontendForms\InputMonth('month');
 $inputmonth->setLabel('Input Month');
+$inputmonth->setDescription('Description month');
 //$inputmonth->setAttribute('value', '2018-05');
 $inputmonth->setRule('required');
 $form->add($inputmonth);
 
 $inputnumber = new \FrontendForms\InputNumber('number');
 $inputnumber->setLabel('Input Number');
+$inputnumber->setDescription('Description number');
 $inputnumber->setAttribute('value', '2');
 $inputnumber->setRule('required');
 $form->add($inputnumber);
 
 $password = new \FrontendForms\InputPassword('pass');
 $password->setLabel('Password');
+$password->setDescription('Description pass');
 $password->setRule('required');
 $password->setRule('safePassword');
 $password->showPasswordRequirements();
@@ -140,6 +155,7 @@ $form->add($password);
 
 $singleRadio = new \FrontendForms\InputRadio('single');
 $singleRadio->setLabel('Single radio button');
+$singleRadio->setDescription('Description single');
 $singleRadio->setAttribute('value', 'single');
 $singleRadio->setRule('required');
 $singleRadio->setNotes('This field makes no sense');
@@ -147,6 +163,7 @@ $form->add($singleRadio);
 
 $gender = new \FrontendForms\InputRadioMultiple('gender');
 $gender->setLabel('Gender')->setAttribute('class', 'myextralabelclass');
+$gender->setDescription('Description gender');
 //$gender->setDefaultValue('Male');
 $gender->addOption('Male', 'Male')->setAttribute('class','male');
 $gender->addOption('Female', 'Female')->setAttribute('class','female');
@@ -156,6 +173,7 @@ $form->add($gender);
 
 $inputRange = new \FrontendForms\InputRange('range');
 $inputRange->setLabel('Input Range');
+$inputRange->setDescription('Description range');
 $inputRange->setAttribute('min', '0');
 $inputRange->setAttribute('max', '10');
 $inputRange->setAttribute('value', '5');
@@ -164,16 +182,19 @@ $form->add($inputRange);
 
 $inputRange2 = new \FrontendForms\InputRange('range2');
 $inputRange2->setLabel('Input Range 2');
+$inputRange2->setDescription('Description range2');
 $inputRange2->setDefaultValue('100');
 $form->add($inputRange2);
 
 $inputSearch = new \FrontendForms\InputSearch('search');
 $inputSearch->setLabel('Input Search');
+$inputSearch->setDescription('Description search');
 $inputSearch->setRule('required');
 $form->add($inputSearch);
 
 $inputPhone = new \FrontendForms\InputTel('phone');
 $inputPhone->setLabel('Phone');
+$inputPhone->setDescription('Description phone');
 $inputPhone->setRule('required');
 $inputPhone->setRule('integer');
 $inputPhone->getFieldWrapper()->removeAttributeValue('class', 'uk-margin');
@@ -181,33 +202,39 @@ $form->add($inputPhone);
 
 $inputText = new \FrontendForms\InputText('text');
 $inputText->setLabel('Input Text');
+$inputText->setDescription('Description text');
 $inputText->setRule('time');
 //$inputText->setRule('required');
 $form->add($inputText);
 
 $inputTime = new \FrontendForms\InputTime('time');
 $inputTime->setLabel('Input Time');
+$inputTime->setDescription('Description time');
 $inputTime->setRule('required');
 $form->add($inputTime);
 
 $inputURL = new \FrontendForms\InputUrl('url');
 $inputURL->setLabel('Input URL');
+$inputURL->setDescription('Description url');
 $inputURL->setRule('required');
 $form->add($inputURL);
 
 $inputWeek = new \FrontendForms\InputWeek('week');
 $inputWeek->setLabel('Input Week');
+$inputWeek->setDescription('Description week');
 $inputWeek->setAttribute('value', '2017-W01');
 $inputWeek->setRule('required');
 $form->add($inputWeek);
 
 $textarea = new \FrontendForms\Textarea('textarea');
 $textarea->setLabel('Textarea');
+$textarea->setDescription('Description textarea');
 $textarea->setRule('required');
 $form->add($textarea);
 
 $php = new \FrontendForms\Select('php');
 $php->setLabel('My preferred PHP version is');
+$php->setDescription('Description php');
 //$php->setDefaultValue('PHP 8');
 $php->addEmptyOption();
 $php->addOption('PHP 6', 'PHP 6');
@@ -218,6 +245,7 @@ $form->add($php);
 
 $php2 = new \FrontendForms\Select('php2');
 $php2->setLabel('My preferred PHP version is');
+$php2->setDescription('Description php2');
 $php->setDefaultValue('PHP 8');
 $php2->addEmptyOption();
 $php2->addOption('PHP 6', 'PHP 6');
@@ -228,6 +256,7 @@ $form->add($php2);
 
 $css = new \FrontendForms\SelectMultiple('css');
 $css->setLabel('I have knowledge in');
+$css->setDescription('Description css');
 $css->addEmptyOption();
 $css->addOption('CSS 1', 'CSS 1');
 $css->addOption('CSS 2', 'CSS 2');
@@ -239,6 +268,7 @@ $form->add($css);
 
 $sel2 = new \FrontendForms\SelectMultiple('sel2');
 $sel2->setLabel('I have knowledge in (Default values as array)');
+$sel2->setDescription('Description sel2');
 $sel2->addEmptyOption();
 $sel2->addOption('CSS 1', 'CSS 1');
 $sel2->addOption('CSS 2', 'CSS 2');
@@ -251,6 +281,7 @@ $form->add($sel2);
 
 $sel3 = new \FrontendForms\SelectMultiple('sel3');
 $sel3->setLabel('I have knowledge in (Default values as comma separated string)');
+$sel3->setDescription('Description sel3');
 $sel3->addEmptyOption();
 $sel3->addOption('CSS 1', 'CSS 1');
 $sel3->addOption('CSS 2', 'CSS 2');
