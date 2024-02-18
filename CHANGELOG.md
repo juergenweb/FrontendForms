@@ -713,7 +713,7 @@ This update comes with mail sending modifications only: A general addition is to
   * after the label
   * after the input field (default)
  
-  You can make your settings globally inside the module configuration, on per form base or individually on per input field.
+  You can make your settings globally inside the module configuration, on per form base or individually directly at each input field. With these options you have the largest flexibility to render your field descriptions in your desired position on each input field.
 
   2 new additional methods have been added:
 
