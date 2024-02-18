@@ -717,5 +717,5 @@ This update comes with mail sending modifications only: A general addition is to
 
   2 new additional methods have been added:
 
-  * setDescPosition(): With this method you can overwrite the description position on per form base
+  * [setDescPosition()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#setdescposition---change-the-position-of-field-descriptions): With this method you can overwrite the description position on per form base
   * setPosition(): With this method you can overwrite the description position on the input field directly
