@@ -759,20 +759,6 @@ Render the form on the page.
   echo $form->render();
 ```
 
-### setPosition() - Change the position of field description directly at the input field
-
-With this method you can change the position of the input field description directly on the input field. This will overwrite the global and form settings.
-
-This method has been added to the Description object!!
-
-* beforeLabel: The description will be displayed above (before) the label
-* afterLabel: The description will be displayed below (after) the label
-* afterInput: The description will be displayed below (after) the input field
-
-```php
-  $field->getDescription()->setPosition('afterLabel'); // possible parameters: beforeLabel, afterLabel, afterInput
-```
-
 ### setSubmitWithAjax() - use Ajax for form submission
 **THIS METHOD STILL WORKS, BUT IT IS DEPRICATED. PLEASE USE THE NEW METHOD useAjax() INSTEAD!**
 
@@ -1106,6 +1092,20 @@ Method to render an input field. You do not need this method until you want to r
 
 ```php
 echo $field->render();
+```
+
+### setPosition() - Change the position of field description directly at the input field
+
+With this method you can change the position of the input field description directly on the input field. This will overwrite the global and form settings.
+
+This method has been added to the Description object!!
+
+* beforeLabel: The description will be displayed above (before) the label
+* afterLabel: The description will be displayed below (after) the label
+* afterInput: The description will be displayed below (after) the input field
+
+```php
+  $field->getDescription()->setPosition('afterLabel'); // possible parameters: beforeLabel, afterLabel, afterInput
 ```
 
 ### Special Methods for special input fields
