@@ -912,6 +912,8 @@ These methods can be used on each input field independent of the input type.
 | [setDefaultValue()](#setdefaultvalue---set-a-default-value-for-an-input-field-on-page-load)  |     set a default value for an input field on page load  |
 | [setChecked()](#setchecked---set-default-value-for-single-checkboxes-without-values)  |     set default value for single checkboxes without values  |
 | [render() ](#render---output-the-markup-of-an-input-field)  |     output the markup of an input field  |
+| [setPosition() ](#setposition---change-the-position-of-field-description-directly-at-the-input-field)  |     change the description text position directly at the input field
+
 
 ### getFieldWrapper() - get the most outer container of a formfield object
 Get the fieldwrapper object for form fields for further manipulations
