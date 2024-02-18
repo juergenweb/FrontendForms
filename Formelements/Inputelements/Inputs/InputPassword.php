@@ -39,8 +39,8 @@
             $this->passwordField = $this->wire('fields')->get($this->passwordFieldName);
             $this->passwordModule = $this->wire('modules')->get('InputfieldPassword');
             $this->minLength = $this->getMinLength();
-            // add meetsPasswordConditions Validator by default
-            $this->setRule('meetsPasswordConditions');
+            $this->setRule('meetsPasswordConditions');// add meetsPasswordConditions Validator by default
+            $this->setDescription($this->renderPasswordRequirements());
         }
 
         /**
@@ -104,13 +104,14 @@
          */
         public function ___renderInputPassword(): string
         {
+
+            // add the description to the password requirement text
             if ($this->showPasswordRequirements) {
-                if ($this->getDescription()) {
+                if (($this->getDescription()->getText()) && ($this->getDescription()->getText() != $this->renderPasswordRequirements())) {
                     $this->setDescription($this->renderPasswordRequirements() . '<br>' . $this->getDescription()->getText());
-                } else {
-                    $this->setDescription($this->renderPasswordRequirements());
                 }
             }
+
             if ($this->showPasswordToggle) {
                 $this->append($this->createPasswordToggle()->___render());
             }
