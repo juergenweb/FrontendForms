@@ -723,3 +723,12 @@ This update comes with mail sending modifications only: A general addition is to
     The recommended way ist to set your prefered description position inside the module configuration first. You will find this new configuration field under *Markup and styling settings for the forms -> Settings for the markup and styling of the form and the input fields -> Set the position of the field description*
 
     Afterwards you can use the previous mentioned methods to overwrite the global settings.
+
+## [2.1.65] 2024-02-22
+
+- **Change CAPTCHA font-family path from absolute to relative**
+
+  Thanks to Donatas from the PW-support-forum for reporting the issue, that the paths for the font-family files have been strored as absolute paths inside the database. This leads to problems, if you are migrating your site (fe. with RockMigration) to another server, because the font-files cannot be found any longer because the paths is no longer valid after the migration.
+
+  I have fixed this problem now, by storing relative paths instead of absolute paths for the font-files inside the database.
+    Thansk
