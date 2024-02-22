@@ -728,7 +728,7 @@ This update comes with mail sending modifications only: A general addition is to
 
 - **Change CAPTCHA font-family path from absolute to relative**
 
-  Thanks to Donatas from the PW-support-forum for reporting the issue, that the paths for the font-family files have been strored as absolute paths inside the database. This leads to problems, if you are migrating your site (fe. with RockMigration) to another server, because the font-files cannot be found any longer because the paths is no longer valid after the migration.
+  Thanks to Donatas from the PW-support-forum for reporting the issue, that the paths for the font-family files have been strored as absolute paths inside the database. This leads to problems, if you are migrating your site (fe. with RockMigration) to another server, because the font-files cannot be found any longer. The reason for this is that the paths are no longer valid after the migration.
 
   I have fixed this problem now, by storing relative paths instead of absolute paths for the font-files inside the database.
     Thansk
