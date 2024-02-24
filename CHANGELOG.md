@@ -741,4 +741,5 @@ This update comes with mail sending modifications only: A general addition is to
 ## 2024-02-24
 
 - **2 new CAPTCHA images added**
+  
   A new tree and a new house image for usage with the image CAPTCHA option have been added.
