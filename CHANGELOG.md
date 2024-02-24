@@ -731,5 +731,10 @@ This update comes with mail sending modifications only: A general addition is to
   Thanks to Donatas from the PW-support-forum for reporting the issue, that the paths for the font-family files have been strored as absolute paths inside the database. This leads to problems, if you are migrating your site (fe. with RockMigration) to another server, because the font-files cannot be found any longer. The reason for this is that the paths are no longer valid after the migration.
 
   I have fixed this problem now, by changing the code a little bit to store relative paths instead of absolute paths for the font-files inside the database.
-  To save the relative paths, please push the save button on the module configuration page. Afterwards the relative paths are stored inside the database.
+
+  **IMPORTANT:**
+
+  The following steps are neccessary, if you update the module (not necessary on a fresh install):
+  
+  To save the relative paths, please press the "Refresh all fontfiles" button below the Font-select input field first and then press the save button of the module configuration page to save the configuration data once more. Afterwards the relative paths are stored inside the database.
   
