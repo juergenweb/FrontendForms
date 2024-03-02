@@ -1338,7 +1338,7 @@
          * @param string $unit
          * @return void
          */
-        protected function addUnitToLabel(HookEvent $event, string $fieldname, string $unit): void
+        public static function addUnitToLabel(HookEvent $event, string $fieldname, string $unit): void
         {
             $inputfield = $event->object;
             if ($inputfield->name === $fieldname) {
@@ -1354,15 +1354,15 @@
          */
         protected function inputfieldIntegerRenderAfter(HookEvent $event): void
         {
-            $this->addUnitToLabel($event, 'input_minTime', $this->_('Seconds'));
-            $this->addUnitToLabel($event, 'input_maxTime', $this->_('Seconds'));
-            $this->addUnitToLabel($event, 'input_captchaWidth', 'px');
-            $this->addUnitToLabel($event, 'input_captchaHeight', 'px');
-            $this->addUnitToLabel($event, 'input_captchaFontsize', 'px');
-            $this->addUnitToLabel($event, 'input_maxAttempts', $this->_('Attempts'));
-            $this->addUnitToLabel($event, 'input_bgnumberOfColors', $this->_('Colors'));
-            $this->addUnitToLabel($event, 'input_numberOfColorsOfLines', $this->_('Colors'));
-            $this->addUnitToLabel($event, 'input_captchaNumberOfLines', $this->_('Lines'));
+            self::addUnitToLabel($event, 'input_minTime', $this->_('Seconds'));
+            self::addUnitToLabel($event, 'input_maxTime', $this->_('Seconds'));
+            self::addUnitToLabel($event, 'input_captchaWidth', 'px');
+            self::addUnitToLabel($event, 'input_captchaHeight', 'px');
+            self::addUnitToLabel($event, 'input_captchaFontsize', 'px');
+            self::addUnitToLabel($event, 'input_maxAttempts', $this->_('Attempts'));
+            self::addUnitToLabel($event, 'input_bgnumberOfColors', $this->_('Colors'));
+            self::addUnitToLabel($event, 'input_numberOfColorsOfLines', $this->_('Colors'));
+            self::addUnitToLabel($event, 'input_captchaNumberOfLines', $this->_('Lines'));
         }
 
         /**
