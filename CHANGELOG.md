@@ -743,3 +743,7 @@ This update comes with mail sending modifications only: A general addition is to
 - **2 new CAPTCHA images added**
   
   A new tree image and 2 new house images for usage with the image CAPTCHA option have been added.
+
+- **Change method addUnitToLabel() from protected to static public**
+  
+  To be able to use this methods in other modules too, which are based on this module, I have changed the method now from *protected* to *public static*. This change has no effect for users of this module, it is only an improvement for me as developer ;-), so I can use this method in other modules too without duplication of code.
