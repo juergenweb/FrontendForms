@@ -740,9 +740,9 @@ This update comes with mail sending modifications only: A general addition is to
   
 ## 2024-02-24
 
-- **2 new CAPTCHA images added**
+- **9 new CAPTCHA images added**
   
-  A new tree image and 2 new house images for usage with the image CAPTCHA option have been added.
+  A new tree image and 2 new house images, 1 car image, 1 animal image and 4 flower images for usage with the image CAPTCHA option have been added.
 
 - **Change method addUnitToLabel() from protected to static public**
   
