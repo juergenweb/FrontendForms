@@ -747,3 +747,8 @@ This update comes with mail sending modifications only: A general addition is to
 - **Change method addUnitToLabel() from protected to static public**
   
   To be able to use this methods in other modules too, which are based on this module, I have changed the method now from *protected* to *public static*. This change has no effect for users of this module, it is only an improvement for me as developer ;-), so I can use this method in other modules too without duplication of code.
+
+  
+- **Support for FrontendComments added**
+  
+  I have added support for upcoming FrontendComments module to inject the CSS and JS files of this new module on demand, if this module is installed. At the moment, I do not now the publishing of this module. It needs more testing and fixing some bugs. This addition is only for dev purposes and has no effect to FrontenForms users.
