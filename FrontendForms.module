@@ -1316,6 +1316,7 @@
 
                 // check if at least one comment field has star rating enabled and load it on demand
                 foreach ($commentFields as $field) {
+
                     if ($this->wire('fields')->get($field)['input_fc_stars']) {
 
                         // add star rating css to the frontend
@@ -1324,6 +1325,9 @@
 
                         // add star rating js to the frontend
                         $js = '<script src="' . $url . 'star-rating.min.js?v=' . $moduleVersion . '&time=' . time() . '"></script>' . PHP_EOL;
+
+                        //comments-stars
+                        $js .= "<script>var stars = new StarRating('.star-rating');</script>" . PHP_EOL;
                         $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
                         break;
                     }
