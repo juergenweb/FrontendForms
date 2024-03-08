@@ -1991,6 +1991,7 @@
                 $captchaWidth->attr('type', 'number');
                 $captchaWidth->attr('value', $this->input_captchaWidth);
                 $captchaWidth->attr('min', 10);
+                $captchaWidth->attr('max', 900); // images are 900*600px, so set max width to 900px
                 $width = ($this->input_captchaType == 'image') ? 50 : 33;
                 $captchaWidth->columnWidth = $width;
                 $captchaWidth->required = 1;
