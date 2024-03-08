@@ -751,7 +751,7 @@ This update comes with mail sending modifications only: A general addition is to
   
 - **Support for FrontendComments added**
   
-  I have added support for upcoming FrontendComments module to inject the CSS and JS files of this new module on demand, if this module is installed. At the moment, I do not now the publishing of this module. It needs more testing and fixing some bugs. This addition is only for dev purposes and has no effect to FrontenForms users.
+  I have added support for upcoming FrontendComments module to inject the CSS and JS files of this new module on demand, if this module is installed. At the moment, I do not know when I publish this module. It needs more testing and fixing some bugs. This addition is only for dev purposes and has no effect to FrontenForms users.
 
 - **CAPTCHA image width set to max value of 900px**
   
