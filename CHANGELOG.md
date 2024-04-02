@@ -756,3 +756,6 @@ This update comes with mail sending modifications only: A general addition is to
 - **CAPTCHA image width set to max value of 900px**
   
   The CAPTCHA images provided by this module have a size of 900x600px. In the module configuration you can set the size of the CAPTCHA image by adding a width value. To prevent setting a width larger than 900px, I have added a max value of 900px to this configuration input field. If you try to set a higher level an error message will be displayed, that a higher value than 900px is not allowed.
+
+- **Missing closing div tag added**
+  If you are using the image captcha, then you can run into layout problems, because a closing div tag has not been rendered. This bug is fixed now.
