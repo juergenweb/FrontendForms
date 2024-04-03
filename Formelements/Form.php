@@ -2019,7 +2019,6 @@
                     $captchaPosition = $refKey;
 
                     $captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
-
                     // insert the captcha input field after the last input field
                     $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
                         array($captchafield), array_slice($this->formElements, $captchaPosition));
@@ -2165,7 +2164,12 @@
                         $element->getFieldWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-fieldwrapper');
                         // add unique id to the input-wrapper if present
                         $element->getInputWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-inputwrapper');
-                        $element->getLabel()->setAttribute('for', $element->getAttribute('id'));
+
+                        // do not set for attribute on CAPTCHA top label element
+                        if($element->getAttribute('id') != $this->getID().'-captcha') {
+                            $element->getLabel()->setAttribute('for', $element->getAttribute('id'));
+                        }
+
                     }
                     $name = $element->getAttribute('id');
 
