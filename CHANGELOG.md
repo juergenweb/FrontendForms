@@ -738,7 +738,7 @@ This update comes with mail sending modifications only: A general addition is to
   
   To save the relative paths, please press the "Refresh all fontfiles" button below the Font-select input field first and then press the save button of the module configuration page to save the configuration data once more. Afterwards the relative paths are stored inside the database.
   
-## 2024-04-02
+## [2.1.66] 2024-04-02
 
 - **16 new CAPTCHA images added**
   
@@ -762,3 +762,6 @@ This update comes with mail sending modifications only: A general addition is to
 
 - **Remove trailing slash from CSS link**
   The trailing slash from the CSS-link has been removed, because it is no longer valid and the HTML validator complains about it (Message: Trailing slash on void elements has no effect and interacts badly with unquoted attribute values).
+
+- **Remove wrong for attribute from CAPTCHA label**
+  There was a wrong for attribute at the top label of the CAPTCHA, which has been removed now.
