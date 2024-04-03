@@ -1270,7 +1270,7 @@
                 $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
             }
             if (!$this->input_removeCSS) {
-                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css?v=' . $version . '&time=' . time() . '"/>' . PHP_EOL;
+                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css?v=' . $version . '&time=' . time() . '">' . PHP_EOL;
                 $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
             }
             $modules = $this->wire('modules');
