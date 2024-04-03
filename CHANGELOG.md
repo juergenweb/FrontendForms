@@ -760,5 +760,5 @@ This update comes with mail sending modifications only: A general addition is to
 - **Missing closing div tag added**
   If you are using the image captcha, then you can run into layout problems, because a closing div tag has not been rendered. This bug is fixed now.
 
-- **Remove closing Backslash from CSS link**
-  The closing backslash from the CSS-link has been removed, because it is no longer valid and the HTML validator complains about it.
+- **Remove trailing slash from CSS link**
+  The trailing slash from the CSS-link has been removed, because it is no longer valid and the HTML validator complains about it (Message: Trailing slash on void elements has no effect and interacts badly with unquoted attribute values).
