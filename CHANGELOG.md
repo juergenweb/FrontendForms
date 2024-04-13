@@ -765,3 +765,9 @@ This update comes with mail sending modifications only: A general addition is to
 
 - **Remove wrong for attribute from CAPTCHA label**
   There was a wrong for attribute at the top label of the CAPTCHA, which has been removed now.
+
+## 2024-04-13
+
+- **2 new CAPTCHA images added**
+  
+  1 new tree image and 1 new flower image for usage with the image CAPTCHA option have been added.
