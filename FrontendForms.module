@@ -1266,11 +1266,11 @@
 
             $version = $this->getModuleInfo()['version'];
             if (!$this->input_removeJS) {
-                $js = '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '&time=' . time() . '" defer></script>' . PHP_EOL;
+                $js = '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '" defer></script>' . PHP_EOL;
                 $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
             }
             if (!$this->input_removeCSS) {
-                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css?v=' . $version . '&time=' . time() . '">' . PHP_EOL;
+                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css?v=' . $version .'">' . PHP_EOL;
                 $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
             }
             $modules = $this->wire('modules');
