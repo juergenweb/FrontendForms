@@ -771,3 +771,6 @@ This update comes with mail sending modifications only: A general addition is to
 - **2 new CAPTCHA images added**
   
   1 new tree image and 1 new flower image for usage with the image CAPTCHA option have been added.
+
+- **"Defer" attribute to Javascript tag added**
+  To prevent blocking on rendering, the defer attribute has been added to the FrontendForms Javascript tag.
