@@ -774,3 +774,6 @@ This update comes with mail sending modifications only: A general addition is to
 
 - **"Defer" attribute to Javascript tag added**
   To prevent blocking on rendering, the defer attribute has been added to the FrontendForms Javascript tag.
+
+  - **Time querystring from CSS and JS link removed**
+  To be able to cache these static resources, the time query string parameters have been removed from the file path.
