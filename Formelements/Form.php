@@ -748,7 +748,12 @@
             $dateTime = (is_null($dateTime)) ? time() : $dateTime;
             // get user language
             if ($this->wire('languages')) {
-                $langID = '__' . $this->user->language->id;
+                if(count($this->wire('languages')) > 1){
+                    $langID = '__' . $this->user->language->id;
+                } else {
+                    // only a single language is used
+                    $langID = '';
+                }
             } else {
                 $langID = '';
             }
@@ -769,7 +774,12 @@
             $dateTime = (is_null($dateTime)) ? time() : $dateTime;
             // get user language
             if ($this->wire('languages')) {
-                $langID = '__' . $this->user->language->id;
+                if(count($this->wire('languages')) > 1){
+                    $langID = '__' . $this->user->language->id;
+                } else {
+                    // only a single language is used
+                    $langID = '';
+                }
             } else {
                 $langID = '';
             }
