@@ -777,3 +777,6 @@ This update comes with mail sending modifications only: A general addition is to
 
   - **Time querystring from CSS and JS link removed**
   To be able to cache these static resources, the time query string parameters have been removed from the file path.
+
+ - **Bug in getTime() and getDate() method fixed**
+   If you have installed the language module, but you use only a single language (not multilanguage), then the date and time format for emails as set inside the module configuration will not be taken into account. This bug is fixed now and the configured date and time format will be used to format date and time strings inside email templates.
