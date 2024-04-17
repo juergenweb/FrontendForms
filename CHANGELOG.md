@@ -766,7 +766,7 @@ This update comes with mail sending modifications only: A general addition is to
 - **Remove wrong for attribute from CAPTCHA label**
   There was a wrong for attribute at the top label of the CAPTCHA, which has been removed now.
 
-## 2024-04-13
+## [2.1.67] 2024-04-17
 
 - **2 new CAPTCHA images added**
   
@@ -780,3 +780,6 @@ This update comes with mail sending modifications only: A general addition is to
 
  - **Bug in getTime() and getDate() method fixed**
    If you have installed the language module, but you use only a single language (not multilanguage), then the date and time format for emails as set inside the module configuration will not be taken into account. This bug is fixed now and the configured date and time format will be used to format date and time strings inside email templates.
+
+ - **New default inputfield "Phone" added**
+   In addition to other pre-defined input field a new inputfield for adding a phone number has been added. You will find it inside Formelements/Inputelements/Inputs/defaults.
