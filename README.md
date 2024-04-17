@@ -1774,6 +1774,7 @@ These are:
 * Email (Input text to enter an email address - class name: Email)
 * Name (Input text to enter a name - class name: Name)
 * Surname (Input text to enter a surname - class name: Surname)
+* Phone (Input text to enter a phone number - class name: Phone)
 * Password (Input password to enter a password - class name: Password)
 * Password confirmation (Input password to enter the password confirmation - class name: PasswordConfirmation)
 * Privacy (Checkbox to accept the data privacy - class name: Privacy)
