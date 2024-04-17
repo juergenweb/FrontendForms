@@ -519,3 +519,4 @@ en,de,description,file,hash
 Username,Benutzername,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Username.php,f6039d44b29456b20f8f373155ae4973
 "By submitting this form you agree to our %s.","Durch das Absenden des Formulars stimmen sie unseren %s zu.",,site/modules/FrontendForms/Formelements/Textelements/Defaults/PrivacyText.php,2c34ad3fc22ef60c91a73189e7f26e8e
 "Terms of use and Privacy Policy","Bedingungen und Datenschutzbestimmungen",,site/modules/FrontendForms/Formelements/Textelements/Defaults/PrivacyText.php,953a9a5b5747639204478270493a532d
+"Phone","Telefon",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Phone.php,bcc254b55c4a1babdf1dcb82c207506b
