@@ -783,3 +783,14 @@ This update comes with mail sending modifications only: A general addition is to
 
  - **New default inputfield "Phone" added**
    In addition to other pre-defined input field a new inputfield for adding a phone number has been added. You will find it inside Formelements/Inputelements/Inputs/defaults.
+
+## [2.1.68] 2024-04-17
+
+This update contains some little additions, which are necessary for the next update of the FrontendContact module, which contains 2 new fields with JS animations (show/hide). 
+
+- **New method useCustomWrapper() added**
+  
+  This new method adds a custom wrapper to an inputfield, and will be used for showing and hiding the new phone field in the upcoming update of the FrontendContact module via Javascript.
+
+ - **Some Javascript functions added**
+  The frontendforms.js got also some new functions for the FrontendContact module. Due to performance reasons I have added this JS code to the frontendforms.js instead of loading an extrea JS file for the FrontendContact module.
