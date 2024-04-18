@@ -913,7 +913,7 @@ These methods can be used on each input field independent of the input type.
 | [setChecked()](#setchecked---set-default-value-for-single-checkboxes-without-values)  |     set default value for single checkboxes without values  |
 | [render() ](#render---output-the-markup-of-an-input-field)  |     output the markup of an input field  |
 | [setPosition() ](#setposition---change-the-position-of-field-description-directly-at-the-input-field)  |     change the description text position directly at the input field
-
+| [useCustomWrapper() ](#usecustomwrapper---add-a- customwrapper-to-an-inputfield)  |     add a custom wrapper to an inputfield  |
 
 ### getFieldWrapper() - get the most outer container of a formfield object
 Get the fieldwrapper object for form fields for further manipulations
@@ -1123,6 +1123,24 @@ $file1->setRule('allowedFileSize', '60000');
 $file1->setRule('allowedFileExt', ['jpg','pdf']);
 ...
 ...
+```
+ 
+ ### useCustomWrapper() - Add a custom wrapper to an inputfield
+
+With this method you can add an extra wrapper container to an inputfield. This container is the most outer container and can be used to for styling purposes or for detection with Javascript.
+
+Inside the parenthesis you can add boolean values (true, false). If you add true or nothing, then the wrapper will be added. On the other side, if you add false, then the custom wrapper will be removed, if it has been added before.
+
+```
+$field = new \FrontendForms\InputText('text1');
+$field->useCustomWrapper(); // this adds the custom wrapper, if you add false inside the parenthesis, then the custom wrapper will be removed
+```
+
+The custom wrapper is a div container with no attributes by default, but you can add attributes too by chaining them after this method:
+
+```
+$field = new \FrontendForms\InputText('text2');
+$field->useCustomWrapper()->setAttribute('id', 'custom')->setAttribute('class', 'mycustomclass'); 
 ```
 
 ### Special Methods for special input fields
