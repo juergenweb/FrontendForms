@@ -25,6 +25,8 @@
         protected Notes $notes; // Object of class Notes
         protected Description $description; // Object of class Description
         protected Errormessage $errormessage; // Object of class error message
+        protected Wrapper $customWrapper; // A custom wrapper object for certain use cases
+        protected bool $useCustomWrapper = false;
         protected FieldWrapper $fieldWrapper; // the wrapper object for the complete form input
         protected InputWrapper $inputWrapper; // the wrapper object for the input element
         protected Validator $validator; // the validator object (instantiated via setRule() method)
@@ -50,6 +52,7 @@
         {
             parent::__construct($name); //$this->setAttribute('id', $name);// set ID if input field will be rendered manually without the form class
             $this->setAttribute('name', $name);// set name attribute
+            $this->customWrapper = new Wrapper(); // instantiate the custom wrapper object
             $this->fieldWrapper = new FieldWrapper();// instantiate the field wrapper object
             $this->inputWrapper = new InputWrapper();// instantiate the input wrapper object
             $this->label = new Label();// instantiate the label object
@@ -64,6 +67,27 @@
             // get form id after submission
             $this->form_id_submitted = $this->getFormIDFromRequest($_REQUEST);
 
+        }
+
+        /**
+         * Create a custom wrapper as the most outer container of a form field
+         * This wrapper can be added on per input field base and can be used fe for JavaScript manipulations
+         * @return \FrontendForms\Wrapper
+         */
+        public function useCustomWrapper(bool $use = true): Wrapper
+        {
+            $this->useCustomWrapper = $use;
+            return $this->customWrapper;
+        }
+
+
+        /**
+         * Get the custom wrapper object for further manipulations if needed
+         * @return \FrontendForms\Wrapper
+         */
+        public function getCustomWrapper(): Wrapper
+        {
+            return $this->customWrapper;
         }
 
 
@@ -418,6 +442,12 @@
                     $this->fieldWrapper->setContent($content);
                     $out .= $this->fieldWrapper->___render() . PHP_EOL;
                 }
+
+            }
+            // check if custom wrapper was added an render it as the most outer container
+            if($this->useCustomWrapper){
+                $this->customWrapper->setContent($out);
+                $out = $this->customWrapper->___render() . PHP_EOL;
             }
             return $out;
         }
@@ -457,7 +487,7 @@
          * Get the label object (if present)
          * @return Label
          */
-        protected function getLabel(): Label
+        public function getLabel(): Label
         {
             return $this->label;
         }
@@ -500,7 +530,7 @@
          * Get the Description object
          * @return Description
          */
-        protected function getDescription(): Description
+        public function getDescription(): Description
         {
             return $this->description;
         }
@@ -520,7 +550,7 @@
          * Get the Notes object
          * @return Notes
          */
-        protected function getNotes(): Notes
+        public function getNotes(): Notes
         {
             return $this->notes;
         }
