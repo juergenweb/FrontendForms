@@ -784,7 +784,7 @@ This update comes with mail sending modifications only: A general addition is to
  - **New default inputfield "Phone" added**
    In addition to other pre-defined input field a new inputfield for adding a phone number has been added. You will find it inside Formelements/Inputelements/Inputs/defaults.
 
-## [2.1.68] 2024-04-17
+## [2.1.68] 2024-04-18
 
 This update contains some little additions, which are necessary for the next update of the FrontendContact module, which contains 2 new fields with JS animations (show/hide). 
 
