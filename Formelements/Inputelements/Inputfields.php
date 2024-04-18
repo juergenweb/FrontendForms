@@ -72,6 +72,7 @@
         /**
          * Create a custom wrapper as the most outer container of a form field
          * This wrapper can be added on per input field base and can be used fe for JavaScript manipulations
+         * @param bool $use
          * @return \FrontendForms\Wrapper
          */
         public function useCustomWrapper(bool $use = true): Wrapper
