@@ -159,7 +159,7 @@
                 'summary' => 'Create forms and validate them using the Valitron library.',
                 'author' => "Jürgen Kern",
                 'href' => 'https://github.com/juergenweb/FrontendForms',
-                'version' => '2.1.67',
+                'version' => '2.1.68',
                 'singular' => true,
                 'autoload' => true,
                 'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
@@ -1266,7 +1266,7 @@
 
             $version = $this->getModuleInfo()['version'];
             if (!$this->input_removeJS) {
-                $js = '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '" defer></script>' . PHP_EOL;
+                $js = '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version .'" defer></script>' . PHP_EOL;
                 $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
             }
             if (!$this->input_removeCSS) {
