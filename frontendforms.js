@@ -39,6 +39,42 @@ window.onload = function () {
 
 }
 
+
+/** Javascript code for the FrontendContact module
+ * This code shows and hide the phone number field depending on the
+ * checkbox status
+ * **/
+
+const callbacks = document.getElementsByClassName("fc-callback");
+
+if (callbacks.length) {
+    let checkboxStatus = function () {
+
+        let phoneID = this.getAttribute("data-phone-id");
+        let descID = this.getAttribute("data-callbackdesc-id");
+        let phoneWrapper = document.getElementById(phoneID + '-customwrapper');
+        let descField = document.getElementById(descID);
+        let phoneField = document.getElementById(phoneID);
+
+        if (this.checked) {
+            phoneWrapper.style = null;
+            descField.style.display = 'none';
+            phoneField.required = true;
+        } else {
+            phoneWrapper.style.display = 'none';
+            descField.style = null;
+            phoneField.required = false;
+        }
+
+    };
+
+    for (let i = 0; i < callbacks.length; i++) {
+        callbacks[i].addEventListener('click', checkboxStatus, false);
+    }
+
+}
+
+
 /*
 Show or hide the password in the password field by checking/unchecking the show/hide checkbox below the input field
 */
@@ -440,7 +476,7 @@ function maxCharsCounterReverse() {
     let textareas = document.querySelectorAll('[data-charactercounter="1"]')
 
     if (textareas.length > 0) {
-        
+
         for (let i = 0; i < textareas.length; i++) {
 
             textareas[i].addEventListener("input", event => {
@@ -463,3 +499,5 @@ function maxCharsCounterReverse() {
     }
 
 }
+
+
