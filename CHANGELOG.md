@@ -794,3 +794,9 @@ This update contains some little additions, which are necessary for the next upd
 
  - **Some Javascript functions added**
   The frontendforms.js got also some new functions for the FrontendContact module. Due to performance reasons I have added this JS code to the frontendforms.js instead of loading an extrea JS file for the FrontendContact module.
+
+## 2024-05-05
+
+- **1 new CAPTCHA image added**
+  
+  1 new animal image for usage with the image CAPTCHA option have been added.
