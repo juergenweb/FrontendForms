@@ -795,8 +795,14 @@ This update contains some little additions, which are necessary for the next upd
  - **Some Javascript functions added**
   The frontendforms.js got also some new functions for the FrontendContact module. Due to performance reasons I have added this JS code to the frontendforms.js instead of loading an extrea JS file for the FrontendContact module.
 
-## 2024-05-05
+## [2.1.69] 2024-05-05
 
-- **1 new CAPTCHA image added**
+- **5 new CAPTCHA image added**
   
-  1 new animal image for usage with the image CAPTCHA option have been added.
+  1 new animal image and 4 new mountain images for usage with the image CAPTCHA option have been added.
+
+- **Bug with missing IP in modal fixed**
+
+Thanks to Andy from forum, who reported this issue under https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/8/#comment-241264
+
+There was an error by trying to view the detail page, who results from a missing IP inside the modal. This error is fixed now.
