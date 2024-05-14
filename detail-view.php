@@ -54,10 +54,9 @@ $out .= '<style>
 
 </head>
 <body>';
-$out .= $this->executeWhoisLookUp($event->arguments('ip'));
-$out .= $this->executeViewDetailsTable($event->arguments('ip'));
+$url = strtok($_SERVER["REQUEST_URI"], '?');
+$ip = basename($url);
+$out .= $this->executeWhoisLookUp($ip);
+$out .= $this->executeViewDetailsTable($ip);
 $out .= '</body>
 </html>';
-
-
-
