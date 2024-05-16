@@ -75,7 +75,6 @@ $form->add($file2);
 $accept = new \FrontendForms\InputCheckbox('accept');
 $accept->setLabel('I accept the data privacy');
 $accept->setRule('required')->setCustomMessage('You have to accept the data privacy');
-$accept->setRule('accepted');
 $form->add($accept);
 
 $sendcopy = new \FrontendForms\InputCheckbox('sendcopy');
