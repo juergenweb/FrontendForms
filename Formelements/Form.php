@@ -57,6 +57,7 @@
         protected string|int|bool $useCSRFProtection = 1; // Enable/disable CSRF-Protection
         protected string $general_desc_position = 'afterInput'; // The position of the input field description -> beforeLabel, afterLabel or afterInput
 
+        protected string|int|bool $useAriaAttributes = false; // use accessibility attributes
         // Mail properties - only needed if FrontendForms will be used to send emails
         protected array $mailPlaceholder = []; // associative array for usage in emails (['placeholdername' => 'text',...])
         protected string $defaultDateFormat = 'Y-m-d'; // the default format for date strings
@@ -189,6 +190,20 @@
             $this->addHookAfter('WireMail::send', $this, 'removeTemplateSession');
 
         }
+
+        /**
+         * Enable or disable the usage of ARIA attributes on form elements
+         * Can be true/empty or false
+         * If set to true then ARIA attributes will be added to input tags
+         * @param bool $use
+         * @return $this
+         */
+        public function useAriaAttributes(bool $use = true): self
+        {
+            $this->useAriaAttributes = $use;
+            return $this;
+        }
+
 
         /**
          * Set the description position on per form base
@@ -748,12 +763,7 @@
             $dateTime = (is_null($dateTime)) ? time() : $dateTime;
             // get user language
             if ($this->wire('languages')) {
-                if(count($this->wire('languages')) > 1){
-                    $langID = '__' . $this->user->language->id;
-                } else {
-                    // only a single language is used
-                    $langID = '';
-                }
+                $langID = '__' . $this->user->language->id;
             } else {
                 $langID = '';
             }
@@ -774,12 +784,7 @@
             $dateTime = (is_null($dateTime)) ? time() : $dateTime;
             // get user language
             if ($this->wire('languages')) {
-                if(count($this->wire('languages')) > 1){
-                    $langID = '__' . $this->user->language->id;
-                } else {
-                    // only a single language is used
-                    $langID = '';
-                }
+                $langID = '__' . $this->user->language->id;
             } else {
                 $langID = '';
             }
@@ -1592,6 +1597,7 @@
 
                                 foreach ($formElements as $element) {
                                     // run validation only if there is at least one validation rule set
+
                                     if (count($element->getRules()) > 0) {
                                         // add required validation to be the first
                                         $rules = $this->putRequiredOnTop($element->getRules());
@@ -1659,6 +1665,7 @@
                                     // set error alert
                                     $this->wire('session')->set('errors', '1');
                                     $this->formErrors = $v->errors();
+
                                     $this->alert->setCSSClass('alert_dangerClass');
                                     $this->alert->setText($this->getErrorMsg());
 
@@ -1955,10 +1962,12 @@
         public function render(): string
         {
 
+
             // redirect after successful form validation if set
             if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
                 $this->wire('session')->redirect($this->getRedirectURL());
             }
+
 
             $out = '';
 
@@ -1978,6 +1987,7 @@
                 // add special div container for Ajax form submission
                 $out .= '<div id="' . $this->getID() . '-ajax-wrapper" data-validated="' . $this->validated . '">';
             }
+
 
             // Check if the form contains file upload fields, then add enctype attribute
             foreach ($this->formElements as $obj) {
@@ -2029,6 +2039,7 @@
                     $captchaPosition = $refKey;
 
                     $captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
+
                     // insert the captcha input field after the last input field
                     $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
                         array($captchafield), array_slice($this->formElements, $captchaPosition));
@@ -2174,12 +2185,7 @@
                         $element->getFieldWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-fieldwrapper');
                         // add unique id to the input-wrapper if present
                         $element->getInputWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-inputwrapper');
-
-                        // do not set for attribute on CAPTCHA top label element
-                        if($element->getAttribute('id') != $this->getID().'-captcha') {
-                            $element->getLabel()->setAttribute('for', $element->getAttribute('id'));
-                        }
-
+                        $element->getLabel()->setAttribute('for', $element->getAttribute('id'));
                     }
                     $name = $element->getAttribute('id');
 
@@ -2216,9 +2222,19 @@
 
                     if (array_key_exists($name, $this->formErrors)) {
                         $element->setCSSClass('input_errorClass');
+                        // add Aria attributes
+                        if(($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json')){
+                            $element->setAttribute('aria-invalid','true');
+                            $element->setAttribute('aria-errormessage',$element->getID().'-errormsg');
+                        }
+
                         // set error class for input element
-                        $element->setErrorMessage($this->formErrors[$name][0]);
+                        $element->setErrorMessage($this->formErrors[$name][0])->setAttribute('id', $element->getID().'-errormsg');
                         //get a first error message
+                    } else {
+                        if(($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json') && $this->isSubmitted()){
+                            $element->setAttribute('aria-invalid','false');
+                        }
                     }
 
                     $formElements .= $element->render() . PHP_EOL;
