@@ -836,3 +836,5 @@ This new addition was inspired by the Pico CMS framework, where they use to disp
 To use this method, please add it to the inputfield in the way like this:
 
 $myField->setSuccessMessage('This value is correct');
+
+You will find more information at https://github.com/juergenweb/FrontendForms/blob/main/README.md#setsuccessmessage---display-a-message-after-form-submission-and-the-entered-field-value-is-valid
