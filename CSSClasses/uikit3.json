@@ -15,6 +15,7 @@
 	"success_messageClass": "uk-text-success",
 	"field_wrapperClass": "uk-margin",
 	"field_wrapper_errorClass": "error",
+	"field_wrapper_successClass": "success",
 	"fieldsetClass": "uk-fieldset",
 	"formClass": "uk-form",
 	"inputClass": "uk-input",
