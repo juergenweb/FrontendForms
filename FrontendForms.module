@@ -2479,8 +2479,24 @@
             $rootFile = $this->wire('config')->paths->root . 'captchaimage.php';
             $from = $install ? $moduleFile : $rootFile;
             $to = $install ? $rootFile : $moduleFile;
-            $this->wire('files')->copy($from, $to);
-            $this->wire('files')->unlink($from);
+
+            if($this->wire('files')->copy($from, $to)){
+                if(!is_writable($to) && $install)  {
+                    // captcha file could not be copied to the root folder
+                    $warning_text[] = sprintf($this->_('The captchaimage.php file could not be copied to the root directory (%s), because the root directory is not writeable.'), $this->wire('config')->paths->root);
+                    $warning_text[] = sprintf($this->_('Do not be worry! To fix this issue, please move the file from "/site/modules/FrontendForms/Formelements/Captcha/captchaimage.php" to "%s" by yourself.'), $to);
+                    $warning_text[] = $this->_('Otherwise you will get an error if you try to use the CAPTCHA on your forms.');
+                    $this->wire('session')->warning(implode('<br>', $warning_text), Notice::allowMarkup);
+                }
+            }
+            // try to unlink the file on uninstall
+            try {
+                // unlink the captcha.php file
+                $this->wire('files')->unlink($from);
+            } catch (Exception $ex) {
+                $this->wire('session')->warning($ex);
+            }
+
         }
 
         /**
