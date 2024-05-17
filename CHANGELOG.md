@@ -820,3 +820,19 @@ This is especially the case if a user sets the file permission to read only on t
 The module has been updated to support Pico CSS framework beside Uikit and Bootstrap. This is the 3rd framework that is supported. Thanks to Andi from the support forum for informing me about this framework.
 
 You will find more information about Pico at https://picocss.com/.
+
+- **New method for form fields added**
+
+I have added a new method for form field: setSuccessMessage()
+
+This is the opposite of setErrorMessage() and output a text after form submission and the value enteres for an inputfield is valid. 
+
+So for example a user enters a correct value inside an inputfield, then a success message like "This value is ok" can be displayed after form submission under the input field.
+
+I do not think the a lot of users will use this possibility, but if you want...you have the possiblity now.
+
+This new addition was inspired by the Pico CMS framework, where they use to display a notice for valid fields too.
+
+To use this method, please add it to the inputfield.
+
+$myField->setSuccessMessage('This value is correct');
