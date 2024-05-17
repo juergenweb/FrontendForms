@@ -806,3 +806,11 @@ This update contains some little additions, which are necessary for the next upd
 Thanks to Andy from forum, who reported this issue under https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/8/#comment-241264
 
 There was an error by trying to view the detail page, who results from a missing IP inside the modal. This error is fixed now.
+
+## 2024-05-05
+
+- **Add warning if root is not writeable**
+  
+The captchaimage.php will be installed inside the root directory, but this is only possible, if this directory is writeable. If not, the user will get a warning with further instructions on module install.
+
+This is especially the case if a user sets the file permission to read only on the root for security reasons.
