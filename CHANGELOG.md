@@ -807,10 +807,16 @@ Thanks to Andy from forum, who reported this issue under https://processwire.com
 
 There was an error by trying to view the detail page, who results from a missing IP inside the modal. This error is fixed now.
 
-## 2024-05-05
+## [2.2.0] 2024-05-05
 
 - **Add warning if root is not writeable**
   
 The captchaimage.php will be installed inside the root directory, but this is only possible, if this directory is writeable. If not, the user will get a warning with further instructions on module install.
 
 This is especially the case if a user sets the file permission to read only on the root for security reasons.
+
+- **Support for Pico CSS framework added**
+
+The module has been updated to support Pico CSS framework beside Uikit and Bootstrap. This is the 3rd framework that is supported. Thanks to Andi from the support forum for informing me about this framework.
+
+You will find more information about Pico at https://picocss.com/.
