@@ -15,6 +15,7 @@
 	"success_messageClass": "valid",
 	"field_wrapperClass": "fieldwrapper",
 	"field_wrapper_errorClass": "error",
+	"field_wrapper_successClass": "success",
 	"fieldsetClass": "fieldset",
 	"formClass": "form",
 	"inputClass": "input",
