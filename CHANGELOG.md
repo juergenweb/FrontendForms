@@ -825,14 +825,14 @@ You will find more information about Pico at https://picocss.com/.
 
 I have added a new method for form field: setSuccessMessage()
 
-This is the opposite of setErrorMessage() and output a text after form submission and the value enteres for an inputfield is valid. 
+This is the opposite of setErrorMessage() and outputs a text after form submission if the value entered inside an inputfield is valid. 
 
-So for example a user enters a correct value inside an inputfield, then a success message like "This value is ok" can be displayed after form submission under the input field.
+For example a user enters a correct value inside an inputfield, then a success message like "This value is ok" can be displayed after form submission under the input field.
 
-I do not think the a lot of users will use this possibility, but if you want...you have the possiblity now.
+I do not think so that a lot of users will use this possibility, but if you want...you have the possiblity now.
 
 This new addition was inspired by the Pico CMS framework, where they use to display a notice for valid fields too.
 
-To use this method, please add it to the inputfield.
+To use this method, please add it to the inputfield in the way like this:
 
 $myField->setSuccessMessage('This value is correct');
