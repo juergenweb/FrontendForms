@@ -355,6 +355,7 @@ General methods are methods that can be used on each object: form, input field, 
 | [prepend(), append()](#prepend-append---prepend-or-append-a-string-to-an-object-field-form-button)  | prepend or append a string to an object (field, form, button,..)  |
 | [removePrepend(), removeAppend()](#removeprepend-removeappend---remove-a-markup-previously-added-to-an-object-field-form-button)  | remove a previously set markup from an object (field, form, button,..)  |
 | [removeAttributeValue()](#removeattributevalue---remove-specific-value-of-an-attribute)  | remove specific value of an attribute  |
+| [setSuccessMessage()](#setsuccessmessage---display-a-message-after-form-submission-and-the-entered-field-value-is-valid)  | display a successmessage under an inputfield if the value entered is correct after form submission a  |
 
 
 ### setAttribute() - add a single attribute to a tag
