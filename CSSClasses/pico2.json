@@ -12,6 +12,7 @@
   "datalistClass": "datalist",
   "descriptionClass": "description",
   "error_messageClass": "error",
+  "success_messageClass": "valid",
   "field_wrapperClass": "fieldwrapper",
   "field_wrapper_errorClass": "error",
   "fieldsetClass": "fieldset",
