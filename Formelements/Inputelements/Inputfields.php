@@ -25,6 +25,7 @@
         protected Notes $notes; // Object of class Notes
         protected Description $description; // Object of class Description
         protected Errormessage $errormessage; // Object of class error message
+        protected Successmessage $successmessage; // Object of class success message
         protected Wrapper $customWrapper; // A custom wrapper object for certain use cases
         protected bool $useCustomWrapper = false;
         protected FieldWrapper $fieldWrapper; // the wrapper object for the complete form input
@@ -57,6 +58,7 @@
             $this->inputWrapper = new InputWrapper();// instantiate the input wrapper object
             $this->label = new Label();// instantiate the label object
             $this->errormessage = new Errormessage();// instantiate the error message object
+            $this->successmessage = new Successmessage();// instantiate the success message object
             $this->notes = new Notes();// instantiate the notes object
             $this->description = new Description();// instantiate the description object
             $this->markupType = $this->frontendforms['input_framework'];//grab the markup type (fe uikit, none, bootstrap,...) and save it to a variable
@@ -385,6 +387,17 @@
                     } else {
                         $errormsg = '';
                     }
+
+                // success message and success class
+                if ($this->getSuccessmessage()->getText()) {
+                    $successmsg = $this->successmessage->___render() . PHP_EOL;
+                    //add success message for validation
+                    $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
+                    // add success class to the wrapper container
+                } else {
+                    $successmsg = '';
+                }
+
                     if (!$this->useInputWrapper) {
                         $content .= $label . $errormsg;
                     } else {
@@ -419,12 +432,24 @@
                         $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getErrorClass());
                         // add error class to the wrapper container
                     }
+
+                    $successmsg = '';
+
+
+                    if ($this->getSuccessmessage()->getText()) {
+                        bd('gaga');
+                        $successmsg = $this->successmessage->___render() . PHP_EOL;
+                        //add success message after validation
+                        $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
+                        // add success class to the wrapper container
+                    }
+
                     // add input-wrapper
                     if ($this->useInputWrapper) {
-                        $this->inputWrapper->setContent($input . $errormsg);
+                        $this->inputWrapper->setContent($input . $errormsg.$successmsg);
                         $content .= $this->inputWrapper->___render() . PHP_EOL;
                     } else {
-                        $content .= $input . $errormsg;
+                        $content .= $input . $errormsg.$successmsg;
                     }
             }
             // Add label and wrapper divs, error messages,... to all elements except hidden inputs
@@ -525,6 +550,29 @@
         {
             $this->errormessage->setText($errorMessage);
             return $this->errormessage;
+        }
+
+        /**
+         * Get the Successmessage object
+         * You can use this to manipulate attributes of the sucess message on per field base
+         * Example $field->getSuccessMessage()->setAttribute('class', 'myErrorClass');
+         * @return Successmessage
+         */
+        public function getSuccessMessage(): Successmessage
+        {
+            return $this->successmessage;
+        }
+
+        /**
+         * Set the success message text
+         * Will be set during processing of the form, not by the user
+         * @param string $successMessage
+         * @return Successmessage
+         */
+        protected function setSuccessMessage(string $successMessage): Successmessage
+        {
+            $this->successmessage->setText($successMessage);
+            return $this->successmessage;
         }
 
         /**
