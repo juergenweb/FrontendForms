@@ -37,4 +37,9 @@ class FieldWrapper extends Wrapper
         return $this->getCSSClass('field_wrapper_errorClass');
     }
 
+    protected function getSuccessClass(): string
+    {
+        return $this->getCSSClass('field_wrapper_successClass');
+    }
+
 }
