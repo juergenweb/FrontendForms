@@ -2232,9 +2232,24 @@
                         $element->setErrorMessage($this->formErrors[$name][0])->setAttribute('id', $element->getID().'-errormsg');
                         //get a first error message
                     } else {
-                        if(($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json') && $this->isSubmitted()){
-                            $element->setAttribute('aria-invalid','false');
+                        if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
+
+                            if($this->isSubmitted()){
+                                if(($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json') && $this->isSubmitted()){
+                                    // run only on input elements
+                                    $element->setAttribute('aria-invalid','false');
+                                    $element->setAttribute('aria-described-by',$element->getID().'-successmsg');
+                                    $element->getSuccessMessage()->setAttribute('id', $element->getID().'-successmsg');
+                                }
+                            } else {
+                                // disable the success message if form was not submitted
+                                $element->setSuccessMessage('');
+                            }
+
                         }
+
+
+
                     }
 
                     $formElements .= $element->render() . PHP_EOL;
