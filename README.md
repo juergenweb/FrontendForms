@@ -1142,7 +1142,17 @@ The custom wrapper is a div container with no attributes by default, but you can
 $field = new \FrontendForms\InputText('text2');
 $field->useCustomWrapper()->setAttribute('id', 'custom')->setAttribute('class', 'mycustomclass'); 
 ```
+ ### setSuccessMessage() - Display a message after form submission and the entered field value is valid
 
+ This is the opposite of the error message and will be displayed under the inputfield too. So if you define a success message for an inputfield and the entered value is valid after form submission, you can show a success message under the inputfield.
+
+ ```
+$field = new \FrontendForms\InputText('text2');
+$field->setSuccessMessage('This value is valid'); 
+```
+
+Please note: This message will only be displayed after form submission, not on page load.
+ 
 ### Special Methods for special input fields
 These methods can only be used on certain input fields and not at all.
 
