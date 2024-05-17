@@ -12,6 +12,7 @@
 	"datalistClass": "",
 	"descriptionClass": "description",
 	"error_messageClass": "uk-text-danger",
+	"success_messageClass": "uk-text-success",
 	"field_wrapperClass": "uk-margin",
 	"field_wrapper_errorClass": "error",
 	"fieldsetClass": "uk-fieldset",
