@@ -28,6 +28,8 @@ class Errormessage extends TextElements
         $this->setCSSClass('error_messageClass');
         if ($this->frontendforms['input_framework'] === 'bootstrap5.json')
             $this->setTag('div');
+        if ($this->frontendforms['input_framework'] === 'pico2.json')
+            $this->setTag('small');
     }
 
 }
