@@ -17,6 +17,7 @@
 	"success_messageClass": "valid-feedback",
 	"field_wrapperClass": "mb-3",
 	"field_wrapper_errorClass": "error",
+	"field_wrapper_successClass": "success",
 	"fieldsetClass": "",
 	"formClass": "",
 	"inputClass": "form-control",
