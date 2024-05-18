@@ -807,19 +807,21 @@ Thanks to Andy from forum, who reported this issue under https://processwire.com
 
 There was an error by trying to view the detail page, who results from a missing IP inside the modal. This error is fixed now.
 
-## [2.2.0] 2024-05-05
+## [2.1.70] 2024-05-18
 
-- **Add warning if root is not writeable**
+- **Display warning if root is not writeable**
   
-The captchaimage.php will be installed inside the root directory, but this is only possible, if this directory is writeable. If not, the user will get a warning with further instructions on module install.
+The captchaimage.php will be installed inside the root directory, but this is only possible, if this directory is writeable. If not, the user will get a warning now with further instructions on module install. Until now, the user has not been informed about this problem. 
 
-This is especially the case if a user sets the file permission to read only on the root for security reasons.
+This is especially the case if a user sets the file permission on the root directory to "read only" for security reasons.
 
 - **Support for Pico CSS framework added**
 
-The module has been updated to support Pico CSS framework beside Uikit and Bootstrap. This is the 3rd framework that is supported. Thanks to Andi from the support forum for informing me about this framework.
+The module has been updated to support Pico CSS framework beside Uikit and Bootstrap. This is the 3rd framework that is supported by this module. Thanks to Andi from the support forum for informing me about this framework.
 
 You will find more information about Pico at https://picocss.com/.
+
+In detail, the error message, the success message and the field notes will be displayed with tag "small" in this case and the appropriate Aria attributes will be added to these items too in this case.
 
 - **New method for form fields added**
 
@@ -831,7 +833,7 @@ For example a user enters a correct value inside an inputfield, then a success m
 
 I do not think so that a lot of users will use this possibility, but if you want...you have the possiblity now.
 
-This new addition was inspired by the Pico CMS framework, where they use to display a notice for valid fields too.
+This new addition was inspired by the Pico CMS framework, which also displays an indication of valid fields.
 
 To use this method, please add it to the inputfield in the way like this:
 
