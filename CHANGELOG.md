@@ -850,3 +850,5 @@ You will find more information at https://github.com/juergenweb/FrontendForms/bl
 - **Bug on displaying success message without value fixed**
   
 The new method setSuccessMessage() has displayed the success message even no value has been entered in the inputfield. This has been fixed now and the message will only be displayed if the user has entered a value.
+
+The aria attributes aria-invalid and aria-errormessage will be also not added if the there is no value and no error.
