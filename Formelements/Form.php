@@ -2223,24 +2223,26 @@
                     if (array_key_exists($name, $this->formErrors)) {
                         $element->setCSSClass('input_errorClass');
                         // add Aria attributes
-                        if(($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json')){
-                            $element->setAttribute('aria-invalid','true');
-                            $element->setAttribute('aria-errormessage',$element->getID().'-errormsg');
+                        if (($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json')) {
+                            $element->setAttribute('aria-invalid', 'true');
+                            $element->setAttribute('aria-errormessage', $element->getID() . '-errormsg');
                         }
 
                         // set error class for input element
-                        $element->setErrorMessage($this->formErrors[$name][0])->setAttribute('id', $element->getID().'-errormsg');
+                        $element->setErrorMessage($this->formErrors[$name][0])->setAttribute('id', $element->getID() . '-errormsg');
                         //get a first error message
                     } else {
                         if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
 
-                            if($this->isSubmitted()){
-                                if(($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json') && $this->isSubmitted()){
-                                    // run only on input elements
-                                    $element->setAttribute('aria-invalid','false');
-                                    $element->setAttribute('aria-described-by',$element->getID().'-successmsg');
-                                    $element->getSuccessMessage()->setAttribute('id', $element->getID().'-successmsg');
-                                    if(empty($element->getAttribute('value'))){
+                            if ($this->isSubmitted()) {
+                                if (($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json') && $this->isSubmitted()) {
+                                    // run only on input elements with values
+                                    if (!empty($element->getAttribute('value'))) {
+                                        $element->setAttribute('aria-invalid', 'false');
+                                        $element->setAttribute('aria-described-by', $element->getID() . '-successmsg');
+                                        $element->getSuccessMessage()->setAttribute('id', $element->getID() . '-successmsg');
+                                    } else {
+                                        // disable the display of the success message
                                         $element->setSuccessMessage('');
                                     }
                                 }
@@ -2250,7 +2252,6 @@
                             }
 
                         }
-
 
 
                     }
