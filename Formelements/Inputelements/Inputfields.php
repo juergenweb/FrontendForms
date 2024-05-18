@@ -436,7 +436,7 @@
                     $successmsg = '';
                     // show succesmessage only if form is submitted and there are no errors
                     if ($this->getSuccessmessage()->getText() && (empty($this->getErrormessage()->getText()))) {
-                        if ($this->isSubmitted()) {
+                        if ($this->isSubmitted() && $this->getAttribute('value')) {
                             $successmsg = $this->successmessage->___render() . PHP_EOL;
                             //add success message after validation
                             $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
