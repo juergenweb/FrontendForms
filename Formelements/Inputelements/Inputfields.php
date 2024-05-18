@@ -357,7 +357,7 @@
                             $this->label->setCSSClass('checklabelClass');
                             $label = $input . $this->label->render() . PHP_EOL;
                             break;
-                        default: // uikit3.json, none
+                        default: // uikit3.json, pico.json, none
                             // render label and input different on single checkbox and single radio
                             $this->label->removeAttributeValue('class', $this->getCSSClass('checklabel'));
                             if ($this->appendLabel) {
@@ -388,15 +388,15 @@
                         $errormsg = '';
                     }
 
-                // success message and success class
-                if ($this->getSuccessmessage()->getText()) {
-                    $successmsg = $this->successmessage->___render() . PHP_EOL;
-                    //add success message for validation
-                    $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
-                    // add success class to the wrapper container
-                } else {
-                    $successmsg = '';
-                }
+                    // success message and success class
+                    if ($this->getSuccessmessage()->getText()) {
+                        $successmsg = $this->successmessage->___render() . PHP_EOL;
+                        //add success message for validation
+                        $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
+                        // add success class to the wrapper container
+                    } else {
+                        $successmsg = '';
+                    }
 
                     if (!$this->useInputWrapper) {
                         $content .= $label . $errormsg;
@@ -434,22 +434,22 @@
                     }
 
                     $successmsg = '';
-
-
-                    if ($this->getSuccessmessage()->getText()) {
-                        bd('gaga');
-                        $successmsg = $this->successmessage->___render() . PHP_EOL;
-                        //add success message after validation
-                        $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
-                        // add success class to the wrapper container
+                    // show succesmessage only if form is submitted and there are no errors
+                    if ($this->getSuccessmessage()->getText() && (empty($this->getErrormessage()->getText()))) {
+                        if ($this->isSubmitted()) {
+                            $successmsg = $this->successmessage->___render() . PHP_EOL;
+                            //add success message after validation
+                            $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
+                            // add success class to the wrapper container
+                        }
                     }
 
                     // add input-wrapper
                     if ($this->useInputWrapper) {
-                        $this->inputWrapper->setContent($input . $errormsg.$successmsg);
+                        $this->inputWrapper->setContent($input . $errormsg . $successmsg);
                         $content .= $this->inputWrapper->___render() . PHP_EOL;
                     } else {
-                        $content .= $input . $errormsg.$successmsg;
+                        $content .= $input . $errormsg . $successmsg;
                     }
             }
             // Add label and wrapper divs, error messages,... to all elements except hidden inputs
@@ -471,7 +471,7 @@
 
             }
             // check if custom wrapper was added an render it as the most outer container
-            if($this->useCustomWrapper){
+            if ($this->useCustomWrapper) {
                 $this->customWrapper->setContent($out);
                 $out = $this->customWrapper->___render() . PHP_EOL;
             }
