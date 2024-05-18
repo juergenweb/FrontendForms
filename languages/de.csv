@@ -1,7 +1,4 @@
 en,de,description,file,hash
-"You have reached the maximum number of characters.","Sie haben die maximale Anzahl von Zeichen erreicht.",,site/modules/FrontendForms/Formelements/Inputelements/Textarea/Textarea.php,ef4384b98530cb2c2cdd7f9828d0ada2
-"You have %s characters left.","Sie haben noch %s Zeichen übrig.",,site/modules/FrontendForms/Formelements/Inputelements/Textarea/Textarea.php,c265a6b5fe0229c56cdf89d9ff9d7754
-en,de,description,file,hash
 "Click to load a new captcha","Bitte anklicken, um ein neues Captcha zu laden",,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,b52dc33684da9e3d394738b7d0dd2725
 "Reload image","Bild neu laden",,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,7c89feb583d9e778c3533017b111263d
 Captcha,=,,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,45d048c35e3cfd449dc0a1b503cd103a
@@ -414,6 +411,9 @@ here,hier,,site/modules/FrontendForms/FrontendForms.module,6c92285fa6d3e827b198d
 "Logging of failed attempts is not enabled. If you want to use this feature, you need to enable it inside ""Measure 1: Restrict number of failed attempts"".","Die Protokollierung von Fehlversuchen ist nicht aktiviert. Wenn Sie diese Funktion nutzen möchten, müssen Sie diese in ""Maßnahme 1: Anzahl der Fehlversuche einschränken"" aktivieren.",,site/modules/FrontendForms/FrontendForms.module,33c59b12a511c6aa18139beefd6860cb
 """Max number of failed attempts"" must be higher than 0 and  the checkbox ""Log failed attempts"" must be enabled.","Die ""Maximale Anzahl der Fehlversuche"" muss größer als 0 sein und das Kontrollkästchen ""Fehlversuche protokollieren"" muss aktiviert sein.",,site/modules/FrontendForms/FrontendForms.module,5635cc4f8b96d3c90275341be0068233
 "Go to the settings to enable logging of failed attemtps","Gehen Sie zu den Einstellungen, um die Protokollierung fehlgeschlagener Versuche zu aktivieren",,site/modules/FrontendForms/FrontendForms.module,460d997b9205d3a198de11fdb0a23c14
+"The captchaimage.php file could not be copied to the root directory (%s), because the root directory is not writeable.","Die captchaimage.php Datei konnte nicht in das Stammverzeichnis (%s) kopiert werden, da das Stammverzeichnis nicht beschreibbar ist.",,site/modules/FrontendForms/FrontendForms.module,df8fab9f40e065403f37075117b2a501
+"Do not be worry! To fix this issue, please move the file from ""/site/modules/FrontendForms/Formelements/Captcha/captchaimage.php"" to ""%s"" by yourself.","Machen Sie sich keine Sorgen! Um dieses Problem zu beheben, verschieben Sie die Datei bitte selbst von ""/site/modules/FrontendForms/Formelements/Captcha/captchaimage.php"" nach ""%s"".",,site/modules/FrontendForms/FrontendForms.module,891175e69759b61ded4cced3cd78c7f3
+"Otherwise you will get an error if you try to use the CAPTCHA on your forms.","Andernfalls erhalten Sie eine Fehlermeldung, wenn Sie versuchen, das CAPTCHA in Ihren Formularen zu verwenden.",,site/modules/FrontendForms/FrontendForms.module,eab3c0ee882228e43d1bf3acf4e8dd25
 None,keines,default,site/modules/FrontendForms/FrontendForms.module,6adf97f83acf6453d4a6a4b1070f3754
 "Use Custom mail module","Verwendung von Custom-Mail-Modulen",,site/modules/FrontendForms/FrontendForms.module,1d0f09e611ab678bcef1e00af34c5d0f
 "Select your preferred module for sending mails.","Wählen Sie Ihre bevorzugtes Modul zum Senden vom Mails aus.",,site/modules/FrontendForms/FrontendForms.module,3b56242115af067eb546fc11abd5c4e2
@@ -455,38 +455,6 @@ en,de,description,file,hash
 "The password must be at least %s characters and must contain characters of the following categories: %s.","Das Passwort muss mindestes %s Zeichen lang sein und folgende Zeichen enthalten: %s.",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,8bc6641f570b88866300ca703223bf6b
 "The password must be at least %s characters.","Das Passwort muss mindestes %s Zeichen lang sein.",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,3d55c273179acb11e30d1a53f8d8625e
 en,de,description,file,hash
-"No action",Nichts,,site/modules/JkPublishPages/JkPublishPages.module,fa46ea6f6f6623fdd7039b5f1a8f3940
-"Move page to trash","Seite in den Mülleimer verschieben",,site/modules/JkPublishPages/JkPublishPages.module,7abd7277f9a10193f5586acbe6eb428f
-"Move page as a child of another page","Verschiebe die Seite als Kind zu einer anderen Seite",,site/modules/JkPublishPages/JkPublishPages.module,0a799a1d0fa08efbe84aa4fc51ead413
-"Delete page permanently","Seite dauerhaft löschen",,site/modules/JkPublishPages/JkPublishPages.module,95ed993384ff8861b2c4493878dc041e
-"Un/check all","Alle markieren/leeren",,site/modules/JkPublishPages/JkPublishPages.module,d6dc9d4a5a6ad2541a3fd0372484f2e9
-"Publish until date must be after publish from date.","Das Veröffentlichungsenddatum muss nach dem Veröffentlichungstartsdatum liegen.",,site/modules/JkPublishPages/JkPublishPages.module,b619cc9fe8a83660b592d8dabb93e0bb
-"Every 30 seconds","Alle 30 Sekunden",,site/modules/JkPublishPages/JkPublishPages.module,9f600621e6189e66c7b80aee8153741f
-"Every minute","Jede Minute",,site/modules/JkPublishPages/JkPublishPages.module,5f86190bddaffe634153c40721b41544
-"Every %s minutes","Alle %s Minuten",,site/modules/JkPublishPages/JkPublishPages.module,643bd9766a482fed97aff60a7a4f1b3b
-"Every hour","Jede Stunde",,site/modules/JkPublishPages/JkPublishPages.module,02fd27d2951d00b83f111f63611ea863
-"Every %s hours","Alle %s Stunden",,site/modules/JkPublishPages/JkPublishPages.module,328310001266fb48df9ecb2de2a16b95
-"Every day","Jeden Tag",,site/modules/JkPublishPages/JkPublishPages.module,48bf14c419a1d441412510faf39c326d
-"Every %s days","Alle %s Tage",,site/modules/JkPublishPages/JkPublishPages.module,2cd5f78b02d861b6e32f39e777f8e442
-"Every week","Jede Woche",,site/modules/JkPublishPages/JkPublishPages.module,64863d871b7d8ecb1eb689ceb3595cb5
-"Every %s weeks","Alle %s Wochen",,site/modules/JkPublishPages/JkPublishPages.module,1438c7b7a539ccb061c084fc74933902
-"Cron Interval","Cron Intervall",,site/modules/JkPublishPages/JkPublishPages.module,d5e0cb70b623ef0f97d6dec1cf425a06
-"Please select the interval at which a page should be checked for publication options.","Bitte wählen Sie das Intervall aus, in dem eine Seite auf Veröffentlichungsmöglichkeiten geprüft werden soll.",,site/modules/JkPublishPages/JkPublishPages.module,61f5923da1288f535721d7fe521002ab
-"Add fields to templates","Felder zu den Vorlagen hinzufügen",,site/modules/JkPublishPages/JkPublishPages.module,ee1a44c6d1ecb6becd7014968837a6a6
-"If a template is checked, than the publishing fields are present in this template or will be added to this template after pressing the save button. On all other templates these fields are not present or will be removed after pressing the save button.","Wenn eine Vorlage ausgewählt ist, sind die Veröffentlichungsfelder in dieser Vorlage vorhanden oder werden dieser Vorlage hinzugefügt, nachdem Sie diese Seite gespeichert haben. Bei allen anderen Vorlagen sind diese Felder nicht vorhanden oder werden nach dem Speichern entfernt.",,site/modules/JkPublishPages/JkPublishPages.module,751e47c1a673fa74452a88133c913f84
-"Please select all templates where you want to add the publishing fields and press the save button afterwards. Only to mention: The homepage template is excluded!","Bitte wählen Sie alle Vorlagen aus, denen Sie die Veröffentlichungsfelder hinzufügen möchten, und speichern Sie anschließend diese Seite. Hinweis: Die Homepage-Vorlage ist ausgeschlossen und kann daher nicht ausgewählt werden!",,site/modules/JkPublishPages/JkPublishPages.module,c7467ebe25d55b4d1d62e6a3d1e13851
-"Show parent page name beside the page name","Name der Elternseite neben dem Seitennamen anzeigen",,site/modules/JkPublishPages/JkPublishPages.module,4c2c658b408cbc825b8f6f01e58dbe95
-"If you check the box, then the parent page name will be displayed beside the page name which will be set as new parent after publishing time has been expired.","Wenn Sie das Kontrollkästchen aktivieren, wird der Name der Elternseite neben dem Seitennamen angezeigt, der nach Ablauf der Veröffentlichungszeit als neue Elternseit festgelegt wird.",,site/modules/JkPublishPages/JkPublishPages.module,94a428021c6c24149ed63d8eb95e29d5
-"This could be useful, especially if you are running a multi-domain-site containing pages with same page name. Adding the parent page name will give you the possibility to distinguish pages with same page name.","Dies kann insbesondere dann nützlich sein, wenn Sie eine Multi-Domain-Site betreiben, welche Seiten mit demselben Seitennamen enthält. Wenn Sie den Namen der Elternseite hinzufügen, haben Sie die Möglichkeit, Seiten mit demselben Seitennamen zu unterscheiden.",,site/modules/JkPublishPages/JkPublishPages.module,ef35046698ee770346416a1b0d28676a
-"Publish From Date","Veröffentlichung Beginn",,site/modules/JkPublishPages/JkPublishPages.module,a2d71c977c434a7b426a4cbf3e7b05e1
-"Publish Until Date","Veröffentlichung Ende",,site/modules/JkPublishPages/JkPublishPages.module,99397fcb121478a9d2dce819d0b4d34e
-"Action after publication has ended","Aktion nach Beendigung der Veröffentlichung",,site/modules/JkPublishPages/JkPublishPages.module,0931aed1b5a509439888b27a717c79b1
-"Decide what should happen with this page after the publish end date has been reached.","Entscheiden Sie, was mit dieser Seite passieren soll, nachdem das Enddatum der Veröffentlichung erreicht wurde.",,site/modules/JkPublishPages/JkPublishPages.module,85ae32bf6d430cf5bb5bd92a88f85c28
-"Parent page",Elternseite,,site/modules/JkPublishPages/JkPublishPages.module,70a4bc2672e2e3912e6476a2bd7ba29b
-"Select the page which should be the new parent page for this page.","Wählen Sie die Seite aus, welche als neue Elternseite für diese Seite dienen soll.",,site/modules/JkPublishPages/JkPublishPages.module,174825143efe547a7f036e3969faff89
-"The homepage is not allowed to be the new parent, so it will not be displayed inside the select drop-down.","Die Startseite kann nicht als neue Elternseite ausgewählt werden, daher wird sie auch nicht im Auswahlfeld angezeigt.",,site/modules/JkPublishPages/JkPublishPages.module,8fe32f00f8b4c008f955bbe290d42c29
-"Publishing options",Veröffentlichungsoptionen,,site/modules/JkPublishPages/JkPublishPages.module,220216efb889c070dcc6a023571fbc5b
-en,de,description,file,hash
 Language,Sprache,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Language.php,4994a8ffeba4ac3140beb89e8d41f174
 en,de,description,file,hash
 "To the page","Zur Seite",,site/modules/FrontendForms/Formelements/Textelements/Link.php,bea7931fd2f2e37616d0be40dd825860
@@ -499,10 +467,15 @@ Password,Passwort,"set default label",site/modules/FrontendForms/Formelements/In
 en,de,description,file,hash
 "Password Confirmation","Passwort Bestätigung","set default label",site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/PasswordConfirmation.php,c2b7527a6421ad4a0c0089d87290d1cd
 en,de,description,file,hash
+Phone,Telefon,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Phone.php,bcc254b55c4a1babdf1dcb82c207506b
+en,de,description,file,hash
 "I accept the privacy policy","Ich akzeptiere die Datenschutzrichtlinien",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Privacy.php,28f678f8feb29d236b6dfcb02190ba21
 "You have to accept our privacy policy","Sie müssen die Datenschutzrichtlinien akzeptieren",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Privacy.php,9a5b98e025ebe5fd1adbddccc94ad638
 "Privacy Policy",Datenschutz-Richtlinien,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Privacy.php,fa2ead697d9998cbc65c81384e6533d5
 "To the Privacy Policy page","Zur Seite mit den Datenschutz-Richtlininen",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Privacy.php,2b91037b0240c93155085ce8c0768cb9
+en,de,description,file,hash
+"By submitting this form you agree to our %s.","Durch das Absenden des Formulars stimmen sie unseren %s zu.",,site/modules/FrontendForms/Formelements/Textelements/Defaults/PrivacyText.php,2c34ad3fc22ef60c91a73189e7f26e8e
+"Terms of use and Privacy Policy","Bedingungen und Datenschutzbestimmungen",,site/modules/FrontendForms/Formelements/Textelements/Defaults/PrivacyText.php,953a9a5b5747639204478270493a532d
 en,de,description,file,hash
 "Reverse string captcha","Umgekehrter Text Captcha",,site/modules/FrontendForms/Formelements/Captcha/variants/ReverseTextCaptcha.php,d8c8728824019c0866b958d0b2562edd
 "Enter the text from the image in reverse order into the input field (from right to left).","Geben Sie den Text aus dem Bild in umgekehrter Reihenfolge (von rechts nach links) in das Eingabefeld ein.",,site/modules/FrontendForms/Formelements/Captcha/variants/ReverseTextCaptcha.php,167b8554feab7647d47863b05a0da92f
@@ -516,7 +489,7 @@ Subject,Betreff,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/de
 en,de,description,file,hash
 Surname,Nachname,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Surname.php,8e55577a8ed3b20bff65d23c000280d4
 en,de,description,file,hash
+"You have reached the maximum number of characters.","Sie haben die maximale Anzahl von Zeichen erreicht.",,site/modules/FrontendForms/Formelements/Inputelements/Textarea/Textarea.php,ef4384b98530cb2c2cdd7f9828d0ada2
+"You have %s characters left.","Sie haben noch %s Zeichen übrig.",,site/modules/FrontendForms/Formelements/Inputelements/Textarea/Textarea.php,c265a6b5fe0229c56cdf89d9ff9d7754
+en,de,description,file,hash
 Username,Benutzername,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Username.php,f6039d44b29456b20f8f373155ae4973
-"By submitting this form you agree to our %s.","Durch das Absenden des Formulars stimmen sie unseren %s zu.",,site/modules/FrontendForms/Formelements/Textelements/Defaults/PrivacyText.php,2c34ad3fc22ef60c91a73189e7f26e8e
-"Terms of use and Privacy Policy","Bedingungen und Datenschutzbestimmungen",,site/modules/FrontendForms/Formelements/Textelements/Defaults/PrivacyText.php,953a9a5b5747639204478270493a532d
-"Phone","Telefon",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Phone.php,bcc254b55c4a1babdf1dcb82c207506b
