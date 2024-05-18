@@ -844,3 +844,9 @@ To use this method, please add it to the inputfield in the way like this:
 $myField->setSuccessMessage('This value is correct');
 
 You will find more information at https://github.com/juergenweb/FrontendForms/blob/main/README.md#setsuccessmessage---display-a-message-after-form-submission-and-the-entered-field-value-is-valid
+
+## [2.1.71] 2024-05-18
+
+- **Bug on displaying success message without value fixed**
+  
+The new method setSuccessMessage() has displayed the success message even no value has been entered in the inputfield. This has been fixed now and the message will only be displayed if the user has entered a value.
