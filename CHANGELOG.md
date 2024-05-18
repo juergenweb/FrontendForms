@@ -845,7 +845,7 @@ $myField->setSuccessMessage('This value is correct');
 
 You will find more information at https://github.com/juergenweb/FrontendForms/blob/main/README.md#setsuccessmessage---display-a-message-after-form-submission-and-the-entered-field-value-is-valid
 
-## [2.1.71] 2024-05-18
+## [2.1.71 + 2.1.72] 2024-05-18
 
 - **Bug on displaying success message without value fixed**
   
