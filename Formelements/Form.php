@@ -2236,23 +2236,16 @@
 
                             if ($this->isSubmitted()) {
                                 if (($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json') && $this->isSubmitted()) {
-                                    // run only on input elements with values
+                                    // add only on input elements with values
                                     if (!empty($element->getAttribute('value'))) {
                                         $element->setAttribute('aria-invalid', 'false');
                                         $element->setAttribute('aria-described-by', $element->getID() . '-successmsg');
                                         $element->getSuccessMessage()->setAttribute('id', $element->getID() . '-successmsg');
-                                    } else {
-                                        // disable the display of the success message
-                                        $element->setSuccessMessage('');
                                     }
                                 }
-                            } else {
-                                // disable the success message if form was not submitted
-                                $element->setSuccessMessage('');
                             }
 
                         }
-
 
                     }
 
