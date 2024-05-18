@@ -2240,6 +2240,9 @@
                                     $element->setAttribute('aria-invalid','false');
                                     $element->setAttribute('aria-described-by',$element->getID().'-successmsg');
                                     $element->getSuccessMessage()->setAttribute('id', $element->getID().'-successmsg');
+                                    if(empty($element->getAttribute('value'))){
+                                        $element->setSuccessMessage('');
+                                    }
                                 }
                             } else {
                                 // disable the success message if form was not submitted
