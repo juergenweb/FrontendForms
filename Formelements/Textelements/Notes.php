@@ -26,6 +26,8 @@ class Notes extends TextElements
     {
         parent::__construct();
         $this->setCSSClass('notesClass');
+        if ($this->frontendforms['input_framework'] === 'pico2.json')
+            $this->setTag('small');
     }
 
 }
