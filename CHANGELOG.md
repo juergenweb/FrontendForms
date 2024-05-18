@@ -829,7 +829,7 @@ Thanks to Andi from the support forum for informing me about this framework.
 
 - **New method for form fields added**
 
-I have added a new method for form field: setSuccessMessage()
+I have added a new method for an inputfield: setSuccessMessage()
 
 This is the opposite of setErrorMessage() and outputs a text after form submission if the value entered inside an inputfield is valid. 
 
