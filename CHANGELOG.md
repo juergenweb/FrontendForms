@@ -813,6 +813,8 @@ There was an error by trying to view the detail page, who results from a missing
   
 The captchaimage.php will be installed inside the root directory, but this is only possible, if this directory is writeable. If not, the user will get a warning now with further instructions on module install. Until now, the user has not been informed about this problem. 
 
+Special thanks to Andy for reporting this issue.
+
 This is especially the case if a user sets the file permission on the root directory to "read only" for security reasons.
 
 - **Support for Pico CSS framework added**
