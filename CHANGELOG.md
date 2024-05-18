@@ -813,17 +813,19 @@ There was an error by trying to view the detail page, who results from a missing
   
 The captchaimage.php will be installed inside the root directory, but this is only possible, if this directory is writeable. If not, the user will get a warning now with further instructions on module install. Until now, the user has not been informed about this problem. 
 
-Special thanks to Andy for reporting this issue.
-
 This is especially the case if a user sets the file permission on the root directory to "read only" for security reasons.
+
+Special thanks to Andy for reporting this issue.
 
 - **Support for Pico CSS framework added**
 
-The module has been updated to support Pico CSS framework beside Uikit and Bootstrap. This is the 3rd framework that is supported by this module. Thanks to Andi from the support forum for informing me about this framework.
+The module has been updated to support Pico CSS framework beside Uikit and Bootstrap. This is the 3rd framework that is supported by this module.
 
 You will find more information about Pico at https://picocss.com/.
 
 In detail, the error message, the success message and the field notes will be displayed with tag "small" in this case and the appropriate Aria attributes will be added to these items too in this case.
+
+Thanks to Andi from the support forum for informing me about this framework.
 
 - **New method for form fields added**
 
