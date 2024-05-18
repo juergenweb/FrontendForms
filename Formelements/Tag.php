@@ -19,7 +19,13 @@ use ProcessWire\WirePermissionException;
 
 abstract class Tag extends Wire
 {
-    const MULTIVALUEATTR = ['class', 'rel', 'style']; // array of all attributes that can have more than 1 value
+    const MULTIVALUEATTR = [
+        'class',
+        'rel',
+        'style',
+        'aria-describedby',
+        'aria-labelledby'
+    ]; // array of all attributes that can have more than 1 value
     const BOOLEANATTR = [   // array of all boolean attributes
         'allowfullscreen',
         'allowpaymentrequest',
@@ -241,6 +247,7 @@ abstract class Tag extends Wire
                 }
             }
             if (in_array($key, self::MULTIVALUEATTR)) {
+
                 //get all values from this attributes
                 $oldValues = $this->getAttributes()[$key] ?? [];
                 if (is_string($value)) {
@@ -248,6 +255,7 @@ abstract class Tag extends Wire
                 }
                 $multiValues = array_unique(array_merge($oldValues, $value));
                 $this->attributes = array_merge($this->getAttributes(), [$key => $multiValues]);
+
             } else {
                 $this->attributes = array_merge($this->getAttributes(), [$key => $value]);
             }
@@ -458,6 +466,7 @@ abstract class Tag extends Wire
         if (count($allAttributes)) {
             foreach ($allAttributes as $name => $value) {
                 if (is_array($value)) {
+
 
                     // if value is assoc array than chain the values without whitespace as separator
                     if ($this->isAssoc($value)) {
