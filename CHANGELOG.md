@@ -861,7 +861,7 @@ To make the form more accessible for screen readers, I have added the following 
 
 * aria-selected: will be added to selected option elements
 * aria-describedby: will be added to the inputfield and links to the description, notes and success messages
-* aria-invalid: will be added to the input field with status true or false
+* aria-invalid: will be added to the input field with status true or false after form submission
 * aria-errormsg: will be added to inputfield to link to the error message element
 
 I think these are all Aria attributes that are not covered by semantic HTML elements, but if you think something is missing, please post your suggestion in the support forum.
