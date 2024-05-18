@@ -823,7 +823,7 @@ The module has been updated to support Pico CSS framework beside Uikit and Boots
 
 You will find more information about Pico at https://picocss.com/.
 
-In detail, the error message, the success message and the field notes will be displayed with tag "small" in this case and the appropriate Aria attributes will be added to these items too in this case.
+In detail, the error message, the success message and the field notes will be displayed with tag "small" in this case and the appropriate Aria attributes will be added to these items too.
 
 Thanks to Andi from the support forum for informing me about this framework.
 
