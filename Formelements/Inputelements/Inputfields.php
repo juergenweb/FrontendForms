@@ -350,7 +350,7 @@
             }
 
             // success message and success class
-            if ($this->getSuccessmessage()->getText()) {
+            if ($this->getPostValue() && $this->getSuccessmessage()->getText() && !$this->getErrormessage()->getText()) {
                 $successmsg = $this->successmessage->___render() . PHP_EOL;
                 //add success message for validation
                 $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
@@ -387,6 +387,8 @@
                                     // pico does not accept an asterisk inside a tag, so every tag must be removed from the asterisk
                                     $asterisk = ($this->frontendforms['input_showasterisk']) ? strip_tags($this->getLabel()->___renderAsterisk()) : '';
                                     // add the asterisk directly after the label text, but before the error message
+                                    $msg = '';
+
                                     $this->label->setContent($input . $this->getLabel()->getText().$asterisk.$errormsg.$successmsg);
                                     // disable the asterisk, so it will not be rendered again afterwards
                                     $this->getLabel()->disableAsterisk();
@@ -408,8 +410,6 @@
                             $label = $label . PHP_EOL . $this->description->___render() . PHP_EOL;
                         }
                     }
-
-
 
                     if (!$this->useInputWrapper) {
                         if($this->markupType === 'pico2.json'){
@@ -445,32 +445,9 @@
                         $content .= $this->description->___render() . PHP_EOL;
                     }
 
-                    /*
-                    // Error message
-                    $errormsg = '';
-
-                    if ($this->getErrormessage()->getText()) {
-                        $errormsg = $this->errormessage->___render() . PHP_EOL;
-                        //add error message for validation
-                        $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getErrorClass());
-                        // add error class to the wrapper container
-                    }
-
-                    $successmsg = '';
-                    // show succesmessage only if form is submitted and there are no errors
-                    if ($this->getSuccessmessage()->getText() && (empty($this->getErrormessage()->getText()))) {
-                        if ($this->isSubmitted() && $this->getAttribute('value')) {
-                            $successmsg = $this->successmessage->___render() . PHP_EOL;
-                            //add success message after validation
-                            $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
-                            // add success class to the wrapper container
-                        }
-                    }
-                    */
-
                     // add input-wrapper
                     if ($this->useInputWrapper) {
-                        if($this->markupType === 'pico2.json'){
+                        if(($this->markupType === 'pico2.json') && ($className == 'InputCheckbox') && ($className == 'InputCheckRadio')){
                             $this->inputWrapper->setContent($input);
                         } else {
                             $this->inputWrapper->setContent($input . $errormsg . $successmsg);
@@ -478,7 +455,7 @@
 
                         $content .= $this->inputWrapper->___render() . PHP_EOL;
                     } else {
-                        if($this->markupType === 'pico2.json'){
+                        if(($this->markupType === 'pico2.json') && ($className == 'InputCheckbox') && ($className == 'InputCheckRadio')){
                             $content .= $input;
                         } else {
                             $content .= $input . $errormsg . $successmsg;
