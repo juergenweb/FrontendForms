@@ -865,3 +865,23 @@ To make the form more accessible for screen readers, I have added the following 
 * aria-errormsg: will be added to inputfield to link to the error message element
 
 I think these are all Aria attributes that are not covered by semantic HTML elements, but if you think something is missing, please post your suggestion in the support forum.
+
+*Example:*
+
+```html
+<div class="fieldwrapper" id="inputfieldtest-php-fieldwrapper">
+  <label class="label required" for="inputfieldtest-php">My preferred PHP version is<span class="asterisk">*</span></label>
+  <div class="inputwrapper" id="inputfieldtest-php-inputwrapper">
+    <select id="inputfieldtest-php" name="inputfieldtest-php" class="select" required="" aria-invalid="false" aria- describedby="inputfieldtest-php-successmsg inputfieldtest-php-desc">
+    <option value="">-</option>
+    <option value="PHP 6" selected="" aria-selected="true">PHP 6</option>
+    <option value="PHP 7">PHP 7</option>
+    <option value="PHP 8">PHP 8</option>
+    </select>
+  </div>
+  <p class="description afterInput-desc" id="inputfieldtest-php-desc">Description for this select field</p>
+</div>
+```
+
+As you can see, a lot of ARIA attributes will be added to the markup.
+
