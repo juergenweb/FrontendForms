@@ -29,6 +29,7 @@ class SelectMultiple extends Select
         $this->setAttribute('multiple');
         $this->removeSanitizers('text');
         $this->setSanitizer('arrayVal');
+
     }
 
     /**
