@@ -40,6 +40,7 @@ class InputCheckboxMultiple extends Input
         $this->multipleWrapper = new Wrapper();
         $this->topLabel = new TextElements();
         $this->topLabel->setTag('div');
+
     }
 
     /**
