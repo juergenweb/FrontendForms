@@ -83,7 +83,6 @@
             return $this->customWrapper;
         }
 
-
         /**
          * Get the custom wrapper object for further manipulations if needed
          * @return \FrontendForms\Wrapper
@@ -92,7 +91,6 @@
         {
             return $this->customWrapper;
         }
-
 
         /**
          * Get the id of the form
@@ -341,6 +339,26 @@
                 $this->setNotes(implode('<br>', $texts));
             }
 
+            // error message and error class
+            if ($this->getErrormessage()->getText()) {
+                $errormsg = $this->errormessage->___render() . PHP_EOL;
+                //add error message for validation
+                $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getErrorClass());
+                // add error class to the wrapper container
+            } else {
+                $errormsg = '';
+            }
+
+            // success message and success class
+            if ($this->getSuccessmessage()->getText()) {
+                $successmsg = $this->successmessage->___render() . PHP_EOL;
+                //add success message for validation
+                $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
+                // add success class to the wrapper container
+            } else {
+                $successmsg = '';
+            }
+
             $out = $content = '';
             $className = $this->className();
             $inputfield = 'render' . $className;
@@ -365,8 +383,19 @@
                             if ($this->appendLabel) {
                                 $label = $input . $this->label->render() . PHP_EOL;
                             } else {
-                                $this->label->setContent($input . $this->getLabel()->getText());
+                                if($this->markupType === 'pico2.json') {
+                                    // pico does not accept an asterisk inside a tag, so every tag must be removed from the asterisk
+                                    $asterisk = ($this->frontendforms['input_showasterisk']) ? strip_tags($this->getLabel()->___renderAsterisk()) : '';
+                                    // add the asterisk directly after the label text, but before the error message
+                                    $this->label->setContent($input . $this->getLabel()->getText().$asterisk.$errormsg.$successmsg);
+                                    // disable the asterisk, so it will not be rendered again afterwards
+                                    $this->getLabel()->disableAsterisk();
+                                } else {
+                                    $this->label->setContent($input . $this->getLabel()->getText());
+                                }
+
                                 $label = $this->label->render() . PHP_EOL;
+
                             }
                     }
 
@@ -380,30 +409,21 @@
                         }
                     }
 
-                    // error message and error class
-                    if ($this->getErrormessage()->getText()) {
-                        $errormsg = $this->errormessage->___render() . PHP_EOL;
-                        //add error message for validation
-                        $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getErrorClass());
-                        // add error class to the wrapper container
-                    } else {
-                        $errormsg = '';
-                    }
 
-                    // success message and success class
-                    if ($this->getSuccessmessage()->getText()) {
-                        $successmsg = $this->successmessage->___render() . PHP_EOL;
-                        //add success message for validation
-                        $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
-                        // add success class to the wrapper container
-                    } else {
-                        $successmsg = '';
-                    }
 
                     if (!$this->useInputWrapper) {
-                        $content .= $label . $errormsg;
+                        if($this->markupType === 'pico2.json'){
+                            $content .= $label;
+                        } else {
+                            $content .= $label . $errormsg;
+                        }
                     } else {
-                        $this->inputWrapper->setContent($label . $errormsg);
+                        if($this->markupType === 'pico2.json'){
+                            $this->inputWrapper->setContent($label);
+                        } else {
+                            $this->inputWrapper->setContent($label . $errormsg);
+                        }
+
                         // set class to input-wrapper
                         if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
                             $this->inputWrapper->setAttribute('class', 'form-check');
@@ -425,6 +445,7 @@
                         $content .= $this->description->___render() . PHP_EOL;
                     }
 
+                    /*
                     // Error message
                     $errormsg = '';
 
@@ -445,13 +466,24 @@
                             // add success class to the wrapper container
                         }
                     }
+                    */
 
                     // add input-wrapper
                     if ($this->useInputWrapper) {
-                        $this->inputWrapper->setContent($input . $errormsg . $successmsg);
+                        if($this->markupType === 'pico2.json'){
+                            $this->inputWrapper->setContent($input);
+                        } else {
+                            $this->inputWrapper->setContent($input . $errormsg . $successmsg);
+                        }
+
                         $content .= $this->inputWrapper->___render() . PHP_EOL;
                     } else {
-                        $content .= $input . $errormsg . $successmsg;
+                        if($this->markupType === 'pico2.json'){
+                            $content .= $input;
+                        } else {
+                            $content .= $input . $errormsg . $successmsg;
+                        }
+
                     }
             }
             // Add label and wrapper divs, error messages,... to all elements except hidden inputs
