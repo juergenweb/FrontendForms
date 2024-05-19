@@ -17,6 +17,7 @@ class Button extends Element
     protected bool $showNoContent = false;
     protected bool $showAttributeValue = false;
     protected string|null $alternativeValue = null;
+    protected string|int|bool $useAriaAttr = true; // whether to render area attributes or not
 
     public function __construct($name = 'submit')
     {
@@ -85,6 +86,17 @@ class Button extends Element
     }
 
     /**
+     * Method to enable/disable the usage of area attributes for better accessibility
+     * @param bool $ariaAttr
+     * @return $this
+     */
+    public function useAriaAttributes(bool $ariaAttr): self
+    {
+        $this->useAriaAttr = $ariaAttr;
+        return $this;
+    }
+
+    /**
      * Render the button
      * Use the value attribute as button text
      * @return string
@@ -103,5 +115,3 @@ class Button extends Element
     }
 
 }
-
-
