@@ -885,3 +885,7 @@ I think these are all Aria attributes that are not covered by semantic HTML elem
 
 As you can see, a lot of ARIA attributes will be added to the markup.
 
+- **Correct Markup of radios and checkboxes for Pico CMS framework**
+
+When using checkboxes and radios, error and success messages must be inside the label tag if you are using the Pico framework. This is an unusual display, but this is how Pico has defined its markup. 
+Until now, the error and success messages were displayed below the input field, but not within the label tag. For the Pico markup, I have now corrected this and the markup is now displayed as described in the Pico documentation.
