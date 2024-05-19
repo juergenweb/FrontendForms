@@ -40,7 +40,7 @@
         protected array $defaultValue = []; // array of all default values
         protected array $notes_array = []; // property that holds multiple notes as an array - needed for some fields internally
         protected string $form_id_submitted = ''; // get the id of the form after form submission - needed for some validation rules
-
+        protected string|int|bool $useAriaAttr = true; // whether to render area attributes or not
         /**
          * Every input field must have a name, so the name is required as parameter in the constructor
          * The id will be created out of the name of the input field and the id of the form - can be overwritten
@@ -322,6 +322,8 @@
          */
         public function ___render(): string
         {
+            // Add Aria attributes if set
+            $this->addAriaAttributes();
 
             if ($this->hasRule('required')) {
                 $this->label->setRequired();
@@ -460,6 +462,8 @@
                 }
                 // Notes
                 if ($this->getNotes()->getText()) {
+                    $this->setAttribute('aria-describedby', $this->getID().'-notes');
+
                     $content .= $this->notes->___render() . PHP_EOL;
                 }
                 if (!$this->useFieldWrapper) {
@@ -1620,5 +1624,32 @@
             $this->removeAttribute('max');
         }
 
+        /**
+         * Method to enable/disable the usage of area attributes for better accessibility
+         * @param bool $ariaAttr
+         * @return $this
+         */
+        public function useAriaAttributes(bool $ariaAttr): self
+        {
+            $this->useAriaAttr = $ariaAttr;
+            return $this;
+        }
+
+        /**
+         * Set various Aria attributes for the input element
+         * @return void
+         */
+        protected function addAriaAttributes(): void
+        {
+            if($this->useAriaAttr){
+
+                // aria describedby for description
+                if($this->getDescription()->getText()) $this->setAttribute('aria-describedby', $this->getID().'-desc');
+
+                // aria describedby for notes
+                if($this->getNotes()->getText()) $this->setAttribute('aria-describedby', $this->getID().'-notes');
+
+            }
+        }
 
     }
