@@ -63,9 +63,11 @@ class Select extends Inputfields
                 } else {
                     if (in_array($option->getAttribute('value'), $this->getDefaultValue())) {
                         $option->setAttribute('selected');
+                        if($this->useAriaAttr) $option->setAttribute('aria-selected', 'true');
                     }
                     if (in_array($option->getAttribute('value'), (array)$this->getPostValue())) {
                         $option->setAttribute('selected');
+                        if($this->useAriaAttr) $option->setAttribute('aria-selected', 'true');
                     }
                     $options .= $option->render();
                 }
