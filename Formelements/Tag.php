@@ -23,8 +23,7 @@ abstract class Tag extends Wire
         'class',
         'rel',
         'style',
-        'aria-describedby',
-        'aria-labelledby'
+        'aria-describedby'
     ]; // array of all attributes that can have more than 1 value
     const BOOLEANATTR = [   // array of all boolean attributes
         'allowfullscreen',
