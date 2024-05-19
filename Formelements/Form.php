@@ -57,7 +57,7 @@
         protected string|int|bool $useCSRFProtection = 1; // Enable/disable CSRF-Protection
         protected string $general_desc_position = 'afterInput'; // The position of the input field description -> beforeLabel, afterLabel or afterInput
 
-        protected string|int|bool $useAriaAttributes = false; // use accessibility attributes
+        protected string|int|bool $useAriaAttributes = true; // use accessibility attributes
         // Mail properties - only needed if FrontendForms will be used to send emails
         protected array $mailPlaceholder = []; // associative array for usage in emails (['placeholdername' => 'text',...])
         protected string $defaultDateFormat = 'Y-m-d'; // the default format for date strings
@@ -2081,6 +2081,7 @@
 
             foreach ($this->formElements as $key => $element) {
                 if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
+
                     // exclude hidden input fields - add only visible fields
                     if ($element->className() !== 'InputHidden') {
                         $inputfieldKeys[] = $key;
@@ -2169,6 +2170,9 @@
                         $element->setAttribute('name', $tokenName);
                     }
 
+                    // enable/disable usage of Aria attributes
+                    $element->useAriaAttributes($this->useAriaAttributes);
+
                     // Label and description (Only on input fields)
                     if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
 
@@ -2234,13 +2238,18 @@
                     } else {
                         if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
 
+                            // ids to description, notes, successmessage for Aria attributes
+                            $element->getSuccessMessage()->setAttribute('id', $element->getID() . '-successmsg');
+                            $element->getDescription()->setAttribute('id', $element->getID() . '-desc');
+                            $element->getNotes()->setAttribute('id', $element->getID() . '-notes');
+
                             if ($this->isSubmitted()) {
                                 if (($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json') && $this->isSubmitted()) {
                                     // add only on input elements with values
                                     if (!empty($element->getAttribute('value'))) {
                                         $element->setAttribute('aria-invalid', 'false');
-                                        $element->setAttribute('aria-described-by', $element->getID() . '-successmsg');
-                                        $element->getSuccessMessage()->setAttribute('id', $element->getID() . '-successmsg');
+                                        $element->setAttribute('aria-describedby', $element->getID() . '-successmsg');
+
                                     }
                                 }
                             }
