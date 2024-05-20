@@ -853,7 +853,7 @@ The new method setSuccessMessage() has displayed the success message even no val
 
 The aria attributes aria-invalid and aria-errormessage will be also not added if the there is no value and no error.
 
-## 2024-05-18
+## [2.1.73] 2024-05-20
 
 - **Aria attributes added for better accessibility**
 
