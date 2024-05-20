@@ -889,3 +889,7 @@ As you can see, a lot of ARIA attributes will be added to the markup.
 
 When using checkboxes and radios, error and success messages must be inside the label tag if you are using the Pico framework. This is an unusual display, but this is how Pico has defined its markup. 
 Until now, the error and success messages were displayed below the input field, but not within the label tag. For the Pico markup, I have now corrected this and the markup is now displayed as described in the Pico documentation.
+
+- **Form markup updated to Bootstrap 5.3**
+
+I have discovered some changes from previous versions of the Bootstrap framework until now. Now I have added some additions to make the rendered form markup working with Bootstrap 5.3 CSS framework.
