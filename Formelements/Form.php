@@ -1519,6 +1519,9 @@
          */
         public function ___isValid(): bool
         {
+            // add a validatio class to the form after it was submitted
+            $this->setCSSClass('formClassValidated'); // add the CSS class
+
             // set WireInput array depth to 2 because auf multiple file uploads
             $this->wire('config')->wireInputArrayDepth = 2;
             $formMethod = $this->getAttribute('method'); // grab the method (get or post)
@@ -2234,6 +2237,7 @@
 
                         // set error class for input element
                         $element->setErrorMessage($this->formErrors[$name][0])->setAttribute('id', $element->getID() . '-errormsg');
+
                         //get a first error message
                     } else {
                         if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
