@@ -102,16 +102,30 @@ class InputCheckboxMultiple extends Input
 
         if ($this->checkboxes) {
             $out .= $this->topLabel->render();
+
             // set post value as value if present
             $this->setAttribute('value', $this->getPostValue());
+
             foreach ($this->checkboxes as $key => $checkbox) {
                 //Set unique ID for each radio button
                 $checkbox->setAttribute('id', $this->getAttribute('name') . '-' . $key);
 
                 switch ($this->markupType) {
                     case ('bootstrap5.json'):
-                        $checkbox->prepend('<div class="' . $this->getCSSClass('checkinputClass') . '">');
+                        $class = $this->getCSSClass('checkinputClass');
+                        if($this->directionHorizontal) $class = $this->getCSSClass('checkbox_horizontalClass');
+                        $checkbox->prepend('<div class="' . $class . '">');
                         $checkbox->getLabel()->append('</div>');
+                        break;
+                    case ('pico2.json'):
+                        if($this->directionHorizontal){
+                            // horizontal
+                            $this->appendLabel(true);
+                            //$this->setAppendLabel(true);
+                        } else {
+                            //$this->setAppendLabel(false);
+                            $this->appendLabel(false);
+                        }
                         break;
                     default:
                         if (!$this->directionHorizontal) {
@@ -134,8 +148,10 @@ class InputCheckboxMultiple extends Input
                     $out .= $checkbox->render();
                 }
             }
+
             // add additional wrapper over multiple checkboxes
-            $out .= $this->setCheckBoxRadioAlignmentClass($this->markupType, $this);
+            $out = $this->setCheckBoxRadioAlignmentClass($this->markupType, $this, $out);
+
         }
 
         return $out;
