@@ -34,5 +34,7 @@
 	"textareaClass": "uk-textarea",
 	"input_fileClass": "uk-file",
 	"reloadLinkClass": "reload",
-	"captchaClass": "captcha"
+	"captchaClass": "captcha",
+	"verticalWrapperClass": "vertical-align-wrapper",
+	"horizontalWrapperClass": "horizontal-align-wrapper"
 }
