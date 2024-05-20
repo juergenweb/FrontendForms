@@ -36,5 +36,7 @@
 	"textareaClass": "form-control",
 	"input_fileClass": "form-control",
 	"reloadLinkClass": "reload",
-	"captchaClass": "captcha"
+	"captchaClass": "captcha",
+	"verticalWrapperClass": "vertical-align-wrapper",
+	"horizontalWrapperClass": "horizontal-align-wrapper"
 }
