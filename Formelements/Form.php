@@ -155,6 +155,7 @@
             $this->setAttribute('autocomplete', 'off'); // set autocomplete off by default
             $this->setTag('form'); // set the form tag
             $this->setCSSClass('formClass'); // add the CSS class
+            $this->removeCSSClass('formClassValidated'); // remove the "is validated" form class by default
             $this->setSuccessMsg($this->getLangValueOfConfigField('input_alertSuccessText'));
             $this->setErrorMsg($this->getLangValueOfConfigField('input_alertErrorText'));
             $this->setRequiredTextPosition($this->frontendforms['input_requiredHintPosition']); // set the position for the required text
@@ -1519,8 +1520,6 @@
          */
         public function ___isValid(): bool
         {
-            // add a validatio class to the form after it was submitted
-            $this->setCSSClass('formClassValidated'); // add the CSS class
 
             // set WireInput array depth to 2 because auf multiple file uploads
             $this->wire('config')->wireInputArrayDepth = 2;
@@ -1550,6 +1549,8 @@
 
             // 1) check if this form was submitted and no other form on the same page
             if ($validation->thisFormSubmitted()) {
+                // add a validation class to the form after it was submitted
+                $this->setCSSClass('formClassValidated'); // add the CSS class
                 // 2) check if form was submitted in time range
                 if ($validation->checkTimeDiff($formElements)) {
                     // 3) check if max attempts were reached
