@@ -66,24 +66,21 @@ trait TraitCheckboxesAndRadiosMultiple
      * @param InputCheckboxMultiple|InputRadioMultiple $input
      * @return string
      */
-    protected function setCheckBoxRadioAlignmentClass(string $markupType, InputCheckboxMultiple|InputRadioMultiple $input): string
+    protected function setCheckBoxRadioAlignmentClass(string $markupType, InputCheckboxMultiple|InputRadioMultiple $input, string $out): string
     {
-        $out = '';
-        switch ($markupType) {
-            case ('bootstrap5.json'):
-                break;
-            default:
+
                 $wrapper = $input->getMultipleWrapper();
                 if ($input->directionHorizontal) {
-                    $class = 'checkbox_horizontalClass';
+                    $class = 'horizontalWrapperClass';
                 } else {
-                    $class = 'checkbox_verticalClass';
+                    $class = 'verticalWrapperClass';
                 }
+
                 $wrapper->setCSSClass($class);
                 $wrapper->setContent($out);
-                $out = $wrapper->___render();
-        }
-        return $out;
+
+                return $wrapper->___render();
+
     }
 
 }
