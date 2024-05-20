@@ -41,6 +41,7 @@
         protected array $notes_array = []; // property that holds multiple notes as an array - needed for some fields internally
         protected string $form_id_submitted = ''; // get the id of the form after form submission - needed for some validation rules
         protected string|int|bool $useAriaAttr = true; // whether to render area attributes or not
+
         /**
          * Every input field must have a name, so the name is required as parameter in the constructor
          * The id will be created out of the name of the input field and the id of the form - can be overwritten
@@ -313,20 +314,19 @@
             return $this->___render();
         }
 
-        /**
-         * Render the input field including wrappers, notes, description, prepend markup, append markup and error
-         * message
-         * @return string
-         */
+
         public function ___render(): string
         {
+
             // Add Aria attributes if set
             $this->addAriaAttributes();
 
+            // set required to label to display asterisk if set
             if ($this->hasRule('required')) {
                 $this->label->setRequired();
             }
 
+            // Set notes to inputfield if present
             if ($this->notes->getContent() && $this->notes_array) {
                 // add this value at the beginning of the note_array
                 $this->notes_array = ['notes' => ['text' => $this->notes->getContent()]] + $this->notes_array;
@@ -339,150 +339,63 @@
                 $this->setNotes(implode('<br>', $texts));
             }
 
-            // error message and error class
-            if ($this->getErrormessage()->getText()) {
-                $errormsg = $this->errormessage->___render() . PHP_EOL;
-                //add error message for validation
-                $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getErrorClass());
-                // add error class to the wrapper container
-            } else {
-                $errormsg = '';
-            }
-
-            // success message and success class
-            if ($this->getPostValue() && $this->getSuccessmessage()->getText() && !$this->getErrormessage()->getText()) {
-                $successmsg = $this->successmessage->___render() . PHP_EOL;
-                //add success message for validation
-                $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
-                // add success class to the wrapper container
-            } else {
-                $successmsg = '';
-            }
-
-            $out = $content = '';
             $className = $this->className();
             $inputfield = 'render' . $className;
             $input = $this->$inputfield();
-            switch ($className) {
-                case ('InputHidden'):
-                    $this->removeAttribute('class');// we need no class attribute for styling on hidden fields
-                    $out .= $this->renderInputHidden() . PHP_EOL;// we do not need label, wrapper divs,... only the input element
-                    break;
-                case ('InputCheckbox'):
-                case ('InputRadio'):
-                case ('Privacy'):
-                case ('SendCopy'):
-                    switch ($this->markupType) {
-                        case ('bootstrap5.json'):
-                            $this->label->setCSSClass('checklabelClass');
-                            $label = $input . $this->label->render() . PHP_EOL;
-                            break;
-                        default: // uikit3.json, pico.json, none
-                            // render label and input different on single checkbox and single radio
-                            $this->label->removeAttributeValue('class', $this->getCSSClass('checklabel'));
-                            if ($this->appendLabel) {
-                                $label = $input . $this->label->render() . PHP_EOL;
-                            } else {
-                                if($this->markupType === 'pico2.json') {
-                                    // pico does not accept an asterisk inside a tag, so every tag must be removed from the asterisk
-                                    $asterisk = ($this->frontendforms['input_showasterisk']) ? strip_tags($this->getLabel()->___renderAsterisk()) : '';
-                                    // add the asterisk directly after the label text, but before the error message
-                                    $msg = '';
+            $out = '';
 
-                                    $this->label->setContent($input . $this->getLabel()->getText().$asterisk.$errormsg.$successmsg);
-                                    // disable the asterisk, so it will not be rendered again afterwards
-                                    $this->getLabel()->disableAsterisk();
-                                } else {
-                                    $this->label->setContent($input . $this->getLabel()->getText());
-                                }
+            // add error class to the wrapper container
+            if ($this->getErrormessage()->getText()) {
+                $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getErrorClass());
 
-                                $label = $this->label->render() . PHP_EOL;
-
-                            }
-                    }
-
-                    // add the description before the label
-                    if ($this->getDescription()->getText()) {
-                        if ($this->description->getPosition() === 'beforeLabel') {
-                            $label = $this->description->___render() . PHP_EOL . $label . PHP_EOL;
-                        } else if ($this->description->getPosition() === 'afterLabel') {
-                            // add the description after the label (before the input)
-                            $label = $label . PHP_EOL . $this->description->___render() . PHP_EOL;
-                        }
-                    }
-
-                    if (!$this->useInputWrapper) {
-                        if($this->markupType === 'pico2.json'){
-                            $content .= $label;
-                        } else {
-                            $content .= $label . $errormsg;
-                        }
-                    } else {
-                        if($this->markupType === 'pico2.json'){
-                            $this->inputWrapper->setContent($label);
-                        } else {
-                            $this->inputWrapper->setContent($label . $errormsg);
-                        }
-
-                        // set class to input-wrapper
-                        if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
-                            $this->inputWrapper->setAttribute('class', 'form-check');
-                        }
-                        $content .= $this->inputWrapper->___render() . PHP_EOL;
-                    }
-                    break;
-                default:
-
-                    // add the description before the label
-                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
-                        $content .= $this->description->___render() . PHP_EOL;
-                    }
-                    if ($this->getLabel()->getText()) {
-                        $content .= $this->label->render() . PHP_EOL;
-                    }
-                    // add the description after the label
-                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
-                        $content .= $this->description->___render() . PHP_EOL;
-                    }
-
-                    // add input-wrapper
-                    if ($this->useInputWrapper) {
-                        if(($this->markupType === 'pico2.json') && ($className == 'InputCheckbox') && ($className == 'InputCheckRadio')){
-                            $this->inputWrapper->setContent($input);
-                        } else {
-                            $this->inputWrapper->setContent($input . $errormsg . $successmsg);
-                        }
-
-                        $content .= $this->inputWrapper->___render() . PHP_EOL;
-                    } else {
-                        if(($this->markupType === 'pico2.json') && ($className == 'InputCheckbox') && ($className == 'InputCheckRadio')){
-                            $content .= $input;
-                        } else {
-                            $content .= $input . $errormsg . $successmsg;
-                        }
-
-                    }
             }
-            // Add label and wrapper divs, error messages,... to all elements except hidden inputs
+
+            // add success class to the wrapper container
+            if ($this->getPostValue() && $this->getSuccessmessage()->getText() && !$this->getErrormessage()->getText()) {
+                $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
+            } else {
+                // remove the success message
+                $this->setSuccessMessage('');
+            }
+
+            // Add ARIA attributes to description and notes ... for all elements except hidden inputs
             if ($className != 'InputHidden') {
+
                 // Description
-                if (($this->getDescription()->getText()) && ($this->description->getPosition() === 'afterInput')) {
-                    $content .= $this->description->___render() . PHP_EOL;
+                if ($this->getDescription()->getText()) {
+                    $this->setAttribute('aria-describedby', $this->getID() . '-desc');
                 }
                 // Notes
                 if ($this->getNotes()->getText()) {
-                    $this->setAttribute('aria-describedby', $this->getID().'-notes');
-
-                    $content .= $this->notes->___render() . PHP_EOL;
+                    $this->setAttribute('aria-describedby', $this->getID() . '-notes');
                 }
+
+            }
+
+            // create frame work switcher to display different markups according to the choosen framework
+            switch ($this->markupType) {
+                case ('bootstrap5.json'):
+                    $content = $this->___renderBootstrap5($className, $input);
+                    break;
+                case ('pico2.json'):
+                    $content = $this->___renderPico2($className, $input);
+                    break;
+                default:
+                    $content = $this->___renderDefault($className, $input);
+            }
+
+            // Add fieldwrapper ... to all elements except hidden inputs
+            if ($className != 'InputHidden') {
                 if (!$this->useFieldWrapper) {
                     $out .= $content;
                 } else {
                     $this->fieldWrapper->setContent($content);
                     $out .= $this->fieldWrapper->___render() . PHP_EOL;
                 }
-
+            } else {
+                $out .= $content;
             }
+
             // check if custom wrapper was added an render it as the most outer container
             if ($this->useCustomWrapper) {
                 $this->customWrapper->setContent($out);
@@ -490,6 +403,269 @@
             }
             return $out;
         }
+
+        /**
+         *  Render the input field including wrappers, notes, description, prepend markup, append markup and error
+         *  message
+         * @param string $className
+         * @param $input
+         * @param string $errormsg
+         * @param string $successmsg
+         * @return string
+         */
+        public function ___renderDefault(string $className, $input): string
+        {
+
+            $out = '';
+            $description = $this->description->___render() . PHP_EOL;
+            $successmsg = $this->getSuccessMessage()->___render() . PHP_EOL;
+            $errormsg = $this->getErrorMessage()->___render() . PHP_EOL;
+
+            switch ($className) {
+                case ('InputHidden'):
+                    $this->removeAttribute('class');// we need no class attribute for styling on hidden fields
+                    $input_markup = $input;
+                    break;
+                case ('InputCheckbox'):
+                case ('InputRadio'):
+                case ('Privacy'):
+                case ('SendCopy'):
+
+                    // add the description before the label
+                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
+                        $out .= $this->getDescription()->___render();
+                    }
+
+                    /** Special treatment for label markup */
+                    // render label and input different on single checkbox and single radio
+                    $this->label->removeAttributeValue('class', $this->getCSSClass('checklabel'));
+                    $this->label->setContent($input . $this->getLabel()->getText());
+                    $out .= $this->label->render() . PHP_EOL;
+
+                    // add the description after the label
+                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
+                        $out .= $this->getDescription()->___render();
+                    }
+                    $input_markup = $errormsg . $successmsg;
+
+                    break;
+                default:
+
+                    // add the description before the label
+                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
+                        $out .= $this->getDescription()->___render();
+                    }
+                    if ($this->getLabel()->getText()) {
+                        $out .= $this->getLabel()->render() . PHP_EOL;
+                    }
+                    // add the description after the label
+                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
+                        $out .= $this->getDescription()->___render();
+                    }
+                    $input_markup = $input . $errormsg . $successmsg;
+
+            }
+
+            // add input-wrapper if set
+            if ($this->useInputWrapper) {
+                $this->inputWrapper->setContent($input_markup);
+                $out .= $this->inputWrapper->___render() . PHP_EOL;
+            } else {
+                $out .= $input_markup;
+            }
+
+            // add notes afterwards
+            $out .= $this->getNotes()->render();
+
+            return $out;
+
+        }
+
+        /**
+         *  Render the input field including wrappers, notes, description, prepend markup, append markup and error
+         *  message
+         * Markup rendering for Bootstrap 5
+         * @param string $className
+         * @param $input
+         * @param string $errormsg
+         * @param string $successmsg
+         * @return string
+         */
+        public function ___renderBootstrap5(string $className, $input)
+        {
+
+            $out = $content = '';
+            $description = $this->description->___render() . PHP_EOL;
+            $successmsg = $this->getSuccessMessage()->___render() . PHP_EOL;
+            $errormsg = $this->getErrorMessage()->___render() . PHP_EOL;
+
+
+            // add is-valid or is-invalid class to the label tag
+            if ($this->getErrorMessage()->getText()) {
+                $this->getLabel()->setCSSClass('input_errorClass');
+            } else {
+                $this->getLabel()->setCSSClass('input_successClass');
+            }
+
+            switch ($className) {
+                case ('InputHidden'):
+                    $this->removeAttribute('class');// we need no class attribute for styling on hidden fields
+                    $input_markup = $input;
+                    break;
+                case ('InputCheckbox'):
+                case ('InputRadio'):
+                case ('Privacy'):
+                case ('SendCopy'):
+
+
+                    // add the description before the label
+                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
+                        $content .= $this->getDescription()->___render();
+                    }
+
+                    /** Special treatment for label markup */
+                    // render label and input different on single checkbox and single radio
+                    $this->label->removeAttributeValue('class', $this->getCSSClass('labelClass'));
+                    $this->label->setCSSClass('checklabelClass');
+                    $content .= $input . $this->label->render() . PHP_EOL;
+
+                    // add the description after the label
+                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
+                        $content .= $this->getDescription()->___render();
+                    }
+
+                    $input_markup = $content . $errormsg . $successmsg;
+
+                    break;
+                default:
+
+                    // add the description before the label
+                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
+                        $content .= $this->getDescription()->___render();
+                    }
+
+                    if ($this->getLabel()->getText()) {
+
+                        if (($className === 'InputRadioMultiple') || ($className === 'InputCheckboxMultiple')) {
+                            if ($this->getErrorMessage()->getText()) {
+                                $this->getLabel()->setCSSClass('input_errorClass');
+                            } else {
+                                $this->getLabel()->setCSSClass('input_successClass');
+                            }
+                        }
+
+                        $content .= $this->getLabel()->render() . PHP_EOL;
+                    }
+
+                    $content .= $input;
+                    // add the description after the label
+                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
+                        $content .= $this->getDescription()->___render();
+                    }
+                    $input_markup = $content . $errormsg . $successmsg;
+
+            }
+
+            // add input-wrapper if set
+            if ($this->useInputWrapper) {
+                $this->inputWrapper->setContent($input_markup);
+                $out .= $this->inputWrapper->___render() . PHP_EOL;
+            } else {
+                $out .= $input_markup;
+            }
+
+            // add notes afterwards
+            $out .= $this->getNotes()->render();
+
+            return $out;
+
+        }
+
+        /**
+         *  Render the input field including wrappers, notes, description, prepend markup, append markup and error
+         *  message
+         * Markup rendering for Pico 2
+         * @param string $className
+         * @param $input
+         * @param string $errormsg
+         * @param string $successmsg
+         * @return string
+         */
+        public function ___renderPico2(string $className, $input)
+        {
+
+            $out = '';
+            $description = $this->description->___render() . PHP_EOL;
+            $successmsg = $this->getSuccessMessage()->___render() . PHP_EOL;
+            $errormsg = $this->getErrorMessage()->___render() . PHP_EOL;
+
+            switch ($className) {
+                case ('InputHidden'):
+                    $this->removeAttribute('class');// we need no class attribute for styling on hidden fields
+                    $input_markup = $input;
+                    break;
+                case ('InputCheckbox'):
+                case ('InputRadio'):
+                case ('Privacy'):
+                case ('SendCopy'):
+
+                    // add the description before the label
+                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
+                        $out .= $this->getDescription()->___render();
+                    }
+
+                    /** Special treatment for label markup */
+
+                    // pico does not accept an asterisk inside a tag, so every tag must be removed from the asterisk first
+                    $asterisk = ($this->frontendforms['input_showasterisk']) ? strip_tags($this->getLabel()->___renderAsterisk()) : '';
+
+                    // add the asterisk directly after the label text, but before the error message
+                    // the label must also contain success and error message
+                    $this->label->setContent($input . $this->getLabel()->getText() . $asterisk . $errormsg . $successmsg);
+
+                    // disable the asterisk, so it will not be rendered again afterwards
+                    $this->getLabel()->disableAsterisk();
+                    $out .= $this->label->render() . PHP_EOL;
+
+                    // add the description after the label
+                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
+                        $out .= $this->getDescription()->___render();
+                    }
+                    $input_markup = '';
+
+                    break;
+                default:
+
+                    // add the description before the label
+                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
+                        $out .= $this->getDescription()->___render();
+                    }
+                    if ($this->getLabel()->getText()) {
+                        $out .= $this->getLabel()->render() . PHP_EOL;
+                    }
+                    // add the description after the label
+                    if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
+                        $out .= $this->getDescription()->___render();
+                    }
+                    $input_markup = $input . $errormsg . $successmsg;
+
+            }
+
+            // add input-wrapper if set
+            if ($this->useInputWrapper) {
+                $this->inputWrapper->setContent($input_markup);
+                $out .= $this->inputWrapper->___render() . PHP_EOL;
+            } else {
+                $out .= $input_markup;
+            }
+
+            // add notes afterwards
+            $out .= $this->getNotes()->render();
+
+            return $out;
+
+        }
+
 
         /**
          * Check if element has a specific validator
@@ -1650,13 +1826,13 @@
          */
         protected function addAriaAttributes(): void
         {
-            if($this->useAriaAttr){
+            if ($this->useAriaAttr) {
 
                 // aria describedby for description
-                if($this->getDescription()->getText()) $this->setAttribute('aria-describedby', $this->getID().'-desc');
+                if ($this->getDescription()->getText()) $this->setAttribute('aria-describedby', $this->getID() . '-desc');
 
                 // aria describedby for notes
-                if($this->getNotes()->getText()) $this->setAttribute('aria-describedby', $this->getID().'-notes');
+                if ($this->getNotes()->getText()) $this->setAttribute('aria-describedby', $this->getID() . '-notes');
 
             }
         }
