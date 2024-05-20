@@ -94,7 +94,7 @@ class InputRadioMultiple extends Input
     {
         $out = '';
         if ($this->radios) {
-            $out .= $this->topLabel->render();
+
             $checked = [];
             //array to hold checked radios
             foreach ($this->radios as $key => $radio) {
@@ -109,6 +109,9 @@ class InputRadioMultiple extends Input
                             $radio->prepend('<div class="' . $this->getCSSClass('checkinputClass') . '">');
                             $radio->getLabel()->append('</div>');
                             break;
+                        case ('pico2.json'):
+                            $this->appendLabel(false);
+                            break;
                         default:
                             // add br tag if checkboxes should be aligned vertically
                             $radio->getLabel()->append('<br>');
@@ -118,6 +121,9 @@ class InputRadioMultiple extends Input
                         case ('bootstrap5.json'):
                             $radio->prepend('<div class="' . $this->getCSSClass('checkbox_horizontalClass') . '">');
                             $radio->getLabel()->append('</div>');
+                            break;
+                        case ('pico2.json'):
+                            $this->appendLabel(true);
                             break;
                         default:
                     }
@@ -147,7 +153,8 @@ class InputRadioMultiple extends Input
                     $out .= $radio->render();
                 }
             }
-            $out .= $this->setCheckBoxRadioAlignmentClass($this->markupType, $this);
+
+            $out = $this->setCheckBoxRadioAlignmentClass($this->markupType, $this, $out);
 
         }
         return $out;
