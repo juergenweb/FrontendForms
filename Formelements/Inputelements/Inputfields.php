@@ -372,18 +372,14 @@
 
             }
 
-            // create frame work switcher to display different markups according to the choosen framework
-            switch ($this->markupType) {
-                case ('bootstrap5.json'):
-                    $content = $this->___renderBootstrap5($className, $input);
-                    break;
-                case ('pico2.json'):
-                    $content = $this->___renderPico2($className, $input);
-                    break;
-                default:
-                    $content = $this->___renderDefault($className, $input);
+            // generate the render method name out of the markup type
+            $methodName = '___render'.ucfirst(pathinfo($this->markupType, PATHINFO_FILENAME));
+            if(method_exists($this,$methodName)) {
+                $content = $this->$methodName($className, $input);
+            } else {
+                $content = $this->___renderDefault($className, $input);
             }
-
+            
             // Add fieldwrapper ... to all elements except hidden inputs
             if ($className != 'InputHidden') {
                 if (!$this->useFieldWrapper) {
@@ -504,7 +500,8 @@
             if ($this->getErrorMessage()->getText()) {
                 $this->getLabel()->setCSSClass('input_errorClass');
             } else {
-                $this->getLabel()->setCSSClass('input_successClass');
+                if($_POST)
+                    $this->getLabel()->setCSSClass('input_successClass');
             }
 
             switch ($className) {
