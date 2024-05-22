@@ -893,3 +893,9 @@ Until now, the error and success messages were displayed below the input field, 
 - **Form markup updated to Bootstrap 5.3**
 
 I have discovered some changes from previous versions of the Bootstrap framework until now. Now I have added some additions to make the rendered form markup working with Bootstrap 5.3 CSS framework.
+
+## [2.1.74] 2024-05-22
+
+- **Bug fix for useAriaAttributes() on text elements**
+
+This is only small bugfix, to prevent the running of the new useAriaAttributes() methods on non input elements which leads to an error. Thanks to elvina from the support forum for reporting this issue.
