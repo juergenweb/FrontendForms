@@ -2175,7 +2175,8 @@
                     }
 
                     // enable/disable usage of Aria attributes
-                    $element->useAriaAttributes($this->useAriaAttributes);
+                    if(method_exists($element, 'useAttributes'))
+                        $element->useAriaAttributes($this->useAriaAttributes);
 
                     // Label and description (Only on input fields)
                     if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
