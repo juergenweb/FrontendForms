@@ -934,3 +934,11 @@ More information about it: [https://github.com/juergenweb/FrontendForms/tree/mai
 As the name mentioned, this validator is for checking a piece of text against different texts. It was primarly designed for the simple question CAPTCHA, but it can also be used for all other text input fields too.
 
 More information about it: https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#comparetexts
+
+## [2.1.76] 2024-05-23
+
+This is a small update to fix 2 small bugs.
+
+* The first bug was a copy and past mistake. If you have chosen the image captcha, the random text captcha has been displayed instead, because the wrong class name was copied. This is fixed now.
+* The second small bug was a missing translation in the captcha radio select for the image captcha. Now the translation will be displayed.
+
