@@ -72,7 +72,7 @@
                     $factory = new TextCaptchaFactory();
                     break;
                 case(AbstractCaptchaFactory::IMAGECAPTCHA):
-                    $factory = new TextCaptchaFactory();
+                    $factory = new ImageCaptchaFactory();
                     break;
                 case(AbstractCaptchaFactory::QUESTIONCAPTCHA):
                     $factory = new QuestionCaptchaFactory();
