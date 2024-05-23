@@ -499,7 +499,32 @@
                 return false;
             }, $this->_('contains a file that has the same file name as a file stored in the destination directory.'));
 
+            /**
+             * 31) Check if text is inside an array of various texts
+             */
+            V::addRule('compareTexts', function ($field, $value, $params) {
+
+                // check if value is array first
+                if(!is_array($params[0]))
+                    throw new \Exception($this->_('Please add only an array as second parameter.'));
+
+                if($params[0]) {
+
+                    $answers = array_map('strtolower', $params[0]);
+                    // convert the value to lowercase too
+                    $value = strtolower($value);
+                    if(in_array($value, $answers)){
+                     return true;
+                }
+                    return false;
+                }
+                return true;
+            }, $this->_('contains not the correct answer.'));
+
+
         }
+
+
 
         /**
          * Check if a file with the same name exists in the destination directory
