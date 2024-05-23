@@ -49,6 +49,8 @@ en,de,description,file,hash
 "must be outside the forbidden time range.","muss ein Datum außerhalb des verbotenen Zeitraumes sein.",,site/modules/FrontendForms/Formelements/CustomRules.php,0f3f63f95068a11bfa7ad25ca209fedc
 "contains invalid characters for a name.","enthält ungültige Zeichen für einen Namen.",,site/modules/FrontendForms/Formelements/CustomRules.php,3218c4d1407f03ef0c210f61d3f5c19c
 "contains a file that has the same file name as a file stored in the destination directory.","beinhaltet eine Datei, welche den selben Dateinamen besitzt als eine Datei im Zielverzeichnis.",,site/modules/FrontendForms/Formelements/CustomRules.php,8eae7d44a736423d717bfe942ae4855a
+"Please add only an array as second parameter.","Bitte geben Sie nur eine Array als zweiten Parameter ein.",,site/modules/FrontendForms/Formelements/CustomRules.php,53948e8d9415688d2cc9a14f2d39e32f
+"contains not the correct answer.","enthält nicht die richtige Antwort.",,site/modules/FrontendForms/Formelements/CustomRules.php,344c4c52e2af19e1a0b9a78d95b46bd4
 en,de,description,file,hash
 "Image captcha","Bild CAPTCHA",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,1e27db1c7a9a959ca4cd75964525fa2d
 "Assign the image to a category","Ordnen sie das Bild einer Kategorie zu",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,5972e22698d0e9faba6397ce1b6b6f74
@@ -116,6 +118,7 @@ Browser,=,,site/modules/FrontendForms/Formelements/Form.php,ef15fd2f45e6bb5ce575
 "All fields marked with (*) are mandatory and must be completed.","Alle Felder, welche mit (*) markiert sind, stellen Pflichtfelder dar und müssen in jeden Fall ausgefüllt werden.",,site/modules/FrontendForms/Formelements/Form.php,feaed8b52507d421a9953e0a9ec9a687
 "Thank you for your message.","Vielen Dank für Ihre Nachricht.",,site/modules/FrontendForms/Formelements/Form.php,a0e0f33630289d49200c61cac7900200
 "Sorry, some errors occur. Please check your inputs once more.","Es sind leider Fehler aufgetreten. Bitte überprüfen Sie Ihre Eingaben noch einmal.",,site/modules/FrontendForms/Formelements/Form.php,552663e8ba6eb0a7c5c16727f8d19bcc
+"The answer is wrong!","Die Antwort ist falsch!",,site/modules/FrontendForms/Formelements/Form.php,a3d9ae2d065e5a27c531a7dacd1735a4
 "Please do not fill out this field","Bitte dieses Feld nicht ausfüllen",,site/modules/FrontendForms/Formelements/Form.php,e02d8cd38e0f708a9633f46793e31a27
 "The captcha","Das Captcha","captcha is always required",site/modules/FrontendForms/Formelements/Form.php,db41a5e06772ec7af38969d41547cf7d
 "The CAPTCHA",CAPTCHA,,site/modules/FrontendForms/Formelements/Form.php,d057415baac33355d5a125df279bd512
@@ -125,6 +128,9 @@ attempt,Versuch,,site/modules/FrontendForms/Formelements/Form.php,1db222fece0e74
 "This is failed attempt number %s. This is your last attempt to send the form. After that you will be blocked due to security reasons.","Dies ist Fehlversuch %s. Sie haben noch einen Versuch das Formular erfolgreich abzusenden. Danach werden Sie aus Sicherheitsgründen gesperrt.",,site/modules/FrontendForms/Formelements/Form.php,47ad76bd199affac60644bad8dcb8061
 "You do not have Javascript enabled. This could cause problems. Please enable Javascript to submit the form without any problems.","Sie haben Javascript nicht aktiviert. Dies könnte zu Problemen führen. Bitte aktivieren Sie Javascript, um das Formular problemlos absenden zu können.",,site/modules/FrontendForms/Formelements/Form.php,8f42b5d8ad7d0119ad65510e26fa715c
 "We are sorry, but your IP address %s is on the list of forbidden IP addresses. Therefore the form will not be displayed. If you think your IP address is mistakenly on the list, please contact the administrator of the site.","Es tut uns leid, aber Ihre IP-Adresse %s steht auf der Liste der verbotenen IP-Adressen. Daher wird das Formular nicht angezeigt. Wenn Sie glauben, dass Ihre IP-Adresse fälschlicherweise auf der Liste steht, wenden Sie sich bitte an den Administrator der Website.",,site/modules/FrontendForms/Formelements/Form.php,092284a62a0f8c62fa528c0cfd3d157c
+"You have not added a question for your question CAPTCHA!","Sie haben keine Frage für Ihre Fragen-CAPTCHA hinzugefügt!",,site/modules/FrontendForms/Formelements/Form.php,1bb62f28bc5d389b36a0e42b2a2d6a63
+"You have not added some answers for your question CAPTCHA!","Sie haben keine Antworten für Ihre Fragen-CAPTCHA hinzugefügt!",,site/modules/FrontendForms/Formelements/Form.php,1661e10f0e3721d8a4c907fee18e6425
+"If you do not correct this error, you cannot use the simple question CAPTCHA and the Captcha will not be displayed.","Wenn Sie diesen Fehler nicht korrigieren, können Sie dieses Fragen-CAPTCHA nicht verwenden und es wird auch nicht angezeigt.",,site/modules/FrontendForms/Formelements/Form.php,7101c396b133aa31a4ddfc686b2c093a
 "You have reached the max. number of allowed attempts and therefore you cannot submit the form once more. To reset the blocking and to submit the form anyway you have to close this browser, open it again and visit this page once more.","Sie haben die max. Anzahl von Versuchen erreicht und aus diesem Grund können Sie das Formular nun nicht mehr absenden. Um die Sperrung aufzuheben und das Formular dennoch abzusenden schließen Sie bitte den Browser, öffnen ihn erneut und besuchen Sie diese Seite noch einmal.",,site/modules/FrontendForms/Formelements/Form.php,9604672fb8882c926b1fcf42c89576d7
 "Please be patient... the form will be validated!","Bitte haben Sie etwas Geduld... Das Formular wird geprüft!",,site/modules/FrontendForms/Formelements/Form.php,e4e8a61a31a079875c2721207825142e
 year,Jahr,,site/modules/FrontendForms/Formelements/Form.php,84cdc76cabf41bd7c961f6ab12f117d8
@@ -310,6 +316,14 @@ Details,=,,site/modules/FrontendForms/FrontendForms.module,3ec365dd533ddb7ef3d1c
 "Please enter the width of the CAPTCHA image.","Bitte geben Sie die Breite des CAPTCHA-Bildes ein.",,site/modules/FrontendForms/FrontendForms.module,d3d1465e3f3487c41ab326e01b1af0f5
 "Please enter the height of the CAPTCHA image.","Bitte geben Sie die Höhe des CAPTCHA-Bildes ein.",,site/modules/FrontendForms/FrontendForms.module,31ae3fed05208e141c7d53e5ba81f7b3
 "Image height",Bildhöhe,,site/modules/FrontendForms/FrontendForms.module,2aa3aa9d021c7cfffb5afa08f52fbc51
+"Please enter a simple question.","Bitte geben Sie eine einfache Frage ein.",,site/modules/FrontendForms/FrontendForms.module,43741f6690a2e9fdfeb31bec1256a6e3
+Question,Frage,,site/modules/FrontendForms/FrontendForms.module,a97ea56b0e00b2379736ae60869ff66a
+"The question should be as simple as possible.","Die Frage sollte so einfach wie möglich zu beantworten sein.",,site/modules/FrontendForms/FrontendForms.module,26deae250b75041ac95356308282b3cd
+"For example: What color has a green apple?","Zum Beispiel: Welche Farbe hat ein grüner Apfel",,site/modules/FrontendForms/FrontendForms.module,9ab98b4c1aeeff244bb72c7c32a24bb3
+"Please enter various accepted answers (each on a separate line!!).","Bitte geben Sie verschiedene akzeptierte Antworten ein (jede in eine eigene Zeile!!).",,site/modules/FrontendForms/FrontendForms.module,2a7d24a0ec9fd2aa89bf61daf2cfd703
+"Accepted answers","Akzeptierte Antworten",,site/modules/FrontendForms/FrontendForms.module,cce75deb233360295f6767182c938f32
+"You can enter as many possible answers as you want, but at least one. You do not have to pay attention to upper and lower case letters (For example: ""Green"" ist the same as ""green"").","Sie können so viele Antworten eingeben, wie Sie möchten, aber mindestens eine muss eingegeben werden. Sie müssen nicht auf Groß- und Kleinschreibung achten (zum Beispiel: ""Grün"" ist dasselbe wie ""grün"").",,site/modules/FrontendForms/FrontendForms.module,0a21b20cae23f15cb9670eaa9a43c176
+"Enter serveral answers (each on a new line) that will be accepted. For example: green, color green, is green","Geben Sie mehrere Antworten ein, die akzeptiert werden (jede in einer neuen Zeile). Zum Beispiel: grün, Farbe grün, ist grün",,site/modules/FrontendForms/FrontendForms.module,718ff6327d50b46b85385ef573e025b9
 "Image background settings","Einstellungen für den Bildhintergrund",,site/modules/FrontendForms/FrontendForms.module,ee19916811cfab5d6de311e94d3c49a9
 "Set the styling of the background for the CAPTCHA image.","Legen Sie das Design des Hintergrunds für das CAPTCHA-Bild fest.",,site/modules/FrontendForms/FrontendForms.module,1d44ca6ef8dd52497b29a9c37f76eaf2
 "Random or custom colors","Zufällige oder benutzerdefinierte Farben",,site/modules/FrontendForms/FrontendForms.module,f25c9776cc2d89abe89e9fa7f2281652
@@ -493,3 +507,6 @@ en,de,description,file,hash
 "You have %s characters left.","Sie haben noch %s Zeichen übrig.",,site/modules/FrontendForms/Formelements/Inputelements/Textarea/Textarea.php,c265a6b5fe0229c56cdf89d9ff9d7754
 en,de,description,file,hash
 Username,Benutzername,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Username.php,f6039d44b29456b20f8f373155ae4973
+en,de,description,file,hash
+"Simple question Captcha (Free text)","Einfache-Frage-Captcha (Freitext)",,site/modules/FrontendForms/Formelements/Captcha/variants/SimpleQuestionCaptcha.php,7f8c93e381be10c3cb9bebaa31387873
+"Please answer the question.","Bitte beantworten Sie die Frage",,site/modules/FrontendForms/Formelements/Captcha/variants/SimpleQuestionCaptcha.php,dd037cafd7ea6b996985f42b3598e6d6
