@@ -1751,6 +1751,16 @@ Inside the folder 'examples' you will find examples of the usage of validation r
 Take a look at these examples on how to write and add validation rules to your input fields.
 You can use as many validators to a field as you need.
 
+### compareTexts
+This validation rule checks if a text entered in an inputfield is present in an array of texts.
+
+This validator has been created for the simple question CAPTCHA in the first instance, but it can also be used for all other text inputs too.
+
+What it does, is to compare a text, which was entered in an input field with several texts inside an array. If one of the texts inside the array matches the entered text, than it returns true, otherwise false.
+
+To make all texts comparable, they will be transformed to lowercase to prevent differences in upper case and lower case letters inside the comparison.
+
+
 ## Customization of validation
 For each validator rule exists an error message as a translatable string. This is ok for most cases, but
 sometimes you need to show another error message than the translated one. For these cases you can customize your error
