@@ -877,6 +877,35 @@ With this method you can change the position of each input field description on 
   $form->setDescPosition('afterLabel'); // possible parameters: beforeLabel, afterLabel, afterInput
 ```
 
+### setSecurityQuestion() - Change the Question and answer of a question CAPTCHA on per form base
+This is a special method, which could be only used in conjunction with the simple question CAPTCHA. It allows you to overwrite the question and the answers for this CAPTCHA method on per form base.
+
+```php
+  $form->setSecurityQuestion('What color has a green apple?', ['green', 'green color', 'it is green']);
+```
+
+The first parameter is the question and the second contains the accepted answers as an array.
+
+
+### setSecurityQuestion() - Change the Question and answer of a question CAPTCHA on per form base
+This is a special method, which could be only used in conjunction with the simple question CAPTCHA. It allows you to overwrite the question and the answers for this CAPTCHA method on per form base.
+
+```php
+  $form->setSecurityQuestion('What color has a green apple?', ['green', 'green color', 'it is green']);
+```
+
+The first parameter is the question and the second contains the accepted answers as an array.
+
+### setCaptchaSuccessMsg() - Add a success message under the CAPTCHA field
+The Captcha field will be added automatically to the form if set. For this reason you have no possiblity to add or remove attributes or markup by yourself by default.
+
+To offer the possibility to output a success message info after the form input for the CAPTCHA if the CAPTCHA value was correct, you can use this method.
+
+```php
+  $form->setCaptchaSuccessMsg('Well done!');
+```
+This success message is the opposite of an error message and was introduced to input elements in version 2.1.70. With this method you can add it to CAPTCHA inputs as well, if you want.
+
 ## Input field methods
 
 For better understanding of methods explained afterwards, take a look of the anatomy of input fields first.
