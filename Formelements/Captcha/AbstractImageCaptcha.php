@@ -24,8 +24,8 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
     protected string $randomImage = ''; // path to the random image
     protected array $catOptions = []; // array of all captcha categories (car, ship, house,..)
 
-    protected string $title = ''; // the title of the image CAPTCHA
-    protected string $desc = ''; // the description of the image CAPTCHA
+    public string $title = ''; // the title of the image CAPTCHA
+    public string $desc = ''; // the description of the image CAPTCHA
     public function __construct()
     {
         parent::__construct();
