@@ -899,3 +899,32 @@ I have discovered some changes from previous versions of the Bootstrap framework
 - **Bug fix for useAriaAttributes() on text elements**
 
 This is only small bugfix, to prevent the running of the new useAriaAttributes() methods on non input elements which leads to an error. Thanks to elvina from the support forum for reporting this issue.
+
+## [2.1.75] 2024-05-23
+
+This version comes with a new CAPTCHA and 2 new methods.
+
+- **Simple question CAPTCHA added**
+
+As the name mentioned, this CAPTCHA contains a simple question, that the user has to answer. It does not contain pre-defined answers as fe. radio buttons. Instead, the user has to write the answer into a text input field (free text), which makes it extremly difficult for SPAM bots to solve this CAPTCHA.
+This means, that you have to define all possible answers in an array. Please note: Make the question as simple as possible.
+
+Thanks to Andi from the support forum, for this suggestions. Andi has a lot of experience with this kind of CAPTCHA over the years and had no problems with SPAM. Now this type can also be used with FrontendForms.
+
+Please select the new CAPTCHA in the module configuration and enter a simple question and the according answers and your done.
+
+You get a little bit more information about it here: https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#simple-question-captcha
+
+- **1 new method for this "Simple question CAPTCHA" added**
+
+By default, a single question and the appropriate answers will be defined in the backend.
+
+To be more flexible, you can overwrite the question and the answerse with a new method on per form base: **setSecurityQuestion()**.
+
+More information about it: https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setsecurityquestion---change-the-question-and-answer-of-a-question-captcha-on-per-form-base
+
+- **1 new method for all CAPTCHAs added**
+
+As introduced in FF 2.1.70, you can add a success message in addition to error messages to every input field. The CAPTCHA field is a system field in this case and is not reachable for manipulation by the user. To be able to add this success message to the CAPTCHA field too, I have added this new method: **setCaptchaSuccessMsg()**. 
+
+More information about it: [https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setsecurityquestion---change-the-question-and-answer-of-a-question-captcha-on-per-form-base](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchasuccessmsg---add-a-success-message-under-the-captcha-field)
