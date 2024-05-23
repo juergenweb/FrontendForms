@@ -1764,7 +1764,7 @@ To make all texts comparable, they will be transformed to lowercase to prevent d
 ```php
 $field->setRule('comparetexts', ['green','is green', 'has color green']);
 ```
-You need to add as parameter all the texts or text snippets as an arry to the validator. The value entered will be compared to these texts and returns true if a match was found, otherwise false.
+You need to add all the texts or text snippets as an array to the validator. The value entered will be compared to these texts and returns true if a match was found, otherwise false.
 
 ## Customization of validation
 For each validator rule exists an error message as a translatable string. This is ok for most cases, but
