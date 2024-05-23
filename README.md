@@ -498,6 +498,8 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [useCSRFProtection()](#usecsrfprotection---enabledisable-csrf-protection-on-form)  | Enable or disable CSRF-Protection  |
 | [useFormInCrossDomainIframe()](#useformincrossdomainiframe---use-forms-in-an-iframe-on-another-domain)  | Method to prepare a form to be usable inside an iframe on another domain  |
 | [setDescPosition()](#setdescposition---change-the-position-of-field-descriptions)  | Set the position of the field description text  |
+| [setSecurityQuestion()](#setsecurityquestion---change-the-question-and-answer-of-a-question-captcha-on-per-form-base)  | Change the Question and answer of a question CAPTCHA on per form base  |
+| [setCaptchaSuccessMsg()](#setcaptchasuccessmsg---add-a-success-message-under-the-captcha-field)  | Add a success message under the CAPTCHA field  |
 
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
