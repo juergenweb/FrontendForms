@@ -266,6 +266,22 @@ In the backend, there are a lot of configuration settings to adapt the CAPTCHA t
 design. The settings are self explaining, so I do not want to go into detail.
 The configuration is global and cannot be changed on per form base.
 
+#### Simple Question CAPTCHA
+
+This CAPTCHA contains a simple question, that the user has to answer as free text and not as pre-defined answers. You can define the question and the accepted answers by yourself in the backend, but this can be overwritten on each form.
+This CAPTCHA does not use a session to work, so it can be used in forms which will be loaded on another domain inside an iframe.
+
+Example for such a CAPTCHA: 
+
+Question: What color has a green apple?
+
+Possible answers:
+* green
+* it is green
+* green color
+
+This CAPTCHA can be used if you want to make a CAPTCHA more personally by asking something about the company or a person.
+
 ### Measure 6: Password blacklist
 If you are dealing with user login/registration on your site, there is always a risk, that clients use unsafe passwords
 and this could be a serious security issue for an account to be hacked.
