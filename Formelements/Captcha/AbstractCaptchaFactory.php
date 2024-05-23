@@ -1,72 +1,87 @@
 <?php
-declare(strict_types=1);
+    declare(strict_types=1);
 
-/*
- * Base abstract factory class for building a captcha
- *
- * Created by Jürgen K.
- * https://github.com/juergenweb 
- * File name: AbstractCaptchaFactory.php
- * Created: 05.08.2022 
- */
-
-namespace FrontendForms;
-
-use ProcessWire\Wire as Wire;
-
-abstract class AbstractCaptchaFactory extends Wire
-{
-
-    // captcha types
-    const TEXTCAPTCHA = 'text';
-    const IMAGECAPTCHA = 'image';
-
-    // Text captcha variants of text captcha
-    const DEFAULTTEXTCAPTCHA = 'DefaultTextCaptcha';
-    const REVERSETEXTCAPTCHA = 'ReverseTextCaptcha';
-    const EVENTEXTCAPTCHA = 'EvenCharacterTextCaptcha';
-    const SIMPLEMATHCAPTCHA = 'SimpleMathTextCaptcha';
-
-    protected function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
-     * Extract the type of the captcha from its class name
-     * @param string $variant
-     * @return string
+    /*
+     * Base abstract factory class for building a captcha
+     *
+     * Created by Jürgen K.
+     * https://github.com/juergenweb
+     * File name: AbstractCaptchaFactory.php
+     * Created: 05.08.2022
      */
-    public static function getCaptchaTypeFromClass(string $variant): string
-    {
-        return str_ends_with($variant, 'TextCaptcha') ? self::TEXTCAPTCHA : self::IMAGECAPTCHA;
-    }
 
-    /**
-     * Build a new class depending on the captcha type chosen
-     * @param string $captchaVariant
-     * @return mixed
-     */
-    protected function build(string $captchaVariant): mixed
-    {
-        return $this->selectCaptcha($captchaVariant);
-    }
+    namespace FrontendForms;
 
-    /**
-     * @param string $captchaType
-     * @param string $captchaVariant
-     * @return mixed
-     */
-    public static function make(string $captchaType, string $captchaVariant): mixed
+    use ProcessWire\Wire as Wire;
+
+    abstract class AbstractCaptchaFactory extends Wire
     {
-        if ($captchaType == AbstractCaptchaFactory::TEXTCAPTCHA) {
-            $factory = new TextCaptchaFactory();
-        } else {
-            $factory = new ImageCaptchaFactory();
+
+        // captcha types
+        const TEXTCAPTCHA = 'text';
+        const IMAGECAPTCHA = 'image';
+        const QUESTIONCAPTCHA = 'question';
+
+        // Text captcha variants of text captcha
+        const DEFAULTTEXTCAPTCHA = 'DefaultTextCaptcha';
+        const REVERSETEXTCAPTCHA = 'ReverseTextCaptcha';
+        const EVENTEXTCAPTCHA = 'EvenCharacterTextCaptcha';
+        const SIMPLEMATHCAPTCHA = 'SimpleMathTextCaptcha';
+        const SIMPLEQUESTIONCAPTCHA = 'SimpleTextCaptcha';
+
+        protected function __construct()
+        {
+            parent::__construct();
         }
-        return $factory->build($captchaVariant);
+
+        /**
+         * Extract the type of the captcha from its class name
+         * @param string $variant
+         * @return string
+         */
+        public static function getCaptchaTypeFromClass(string $variant): string
+        {
+            if (str_ends_with($variant, 'TextCaptcha')) {
+                return self::TEXTCAPTCHA;
+            } else if (str_ends_with($variant, 'ImageCaptcha')) {
+                return self::IMAGECAPTCHA;
+            }
+            return self::QUESTIONCAPTCHA;
+        }
+
+        /**
+         * Build a new class depending on the captcha type chosen
+         * @param string $captchaVariant
+         * @return mixed
+         */
+        protected function build(string $captchaVariant): mixed
+        {
+            return $this->selectCaptcha($captchaVariant);
+        }
+
+        /**
+         * @param string $captchaType
+         * @param string $captchaVariant
+         * @return mixed
+         */
+        public static function make(string $captchaType, string $captchaVariant): mixed
+        {
+
+            switch ($captchaType) {
+                case(AbstractCaptchaFactory::TEXTCAPTCHA);
+                    $factory = new TextCaptchaFactory();
+                    break;
+                case(AbstractCaptchaFactory::IMAGECAPTCHA):
+                    $factory = new TextCaptchaFactory();
+                    break;
+                case(AbstractCaptchaFactory::QUESTIONCAPTCHA):
+                    $factory = new QuestionCaptchaFactory();
+                    break;
+            }
+
+            return $factory->build($captchaVariant);
+        }
+
+        protected abstract function selectCaptcha(string $captchaVariant);
+
     }
-
-    protected abstract function selectCaptcha(string $captchaVariant);
-
-}
