@@ -1433,7 +1433,7 @@ For more detailed explanation on each validation rule click the link at the vali
 | [dateOutsideOfDaysRange](#dateoutsideofdaysrange)  | Checks if the entered date is outside a given time range in days starting from a date set in another field    |
 | [firstAndLastname](#firstandlastname)  | Checks if first and lastname contains only allowed characters    |
 | [uniqueFilenameInDir](#uniquefilenameindir)  | Checks if a newly uploaded file has the same filename as a file inside the destination directory  |
-| [compareTexts](#comparetextsr)  | Checks if a text entered in an inputfield is present in an array of texts.  |
+| [compareTexts](#comparetexts)  | Checks if a text entered in an inputfield is present in an array of texts.  |
 
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
