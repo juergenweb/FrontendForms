@@ -902,7 +902,7 @@ This is only small bugfix, to prevent the running of the new useAriaAttributes()
 
 ## [2.1.75] 2024-05-23
 
-This version comes with a new CAPTCHA and 2 new methods.
+This version comes with a new CAPTCHA and 2 new methods and 1 new validator.
 
 - **Simple question CAPTCHA added**
 
@@ -928,3 +928,9 @@ More information about it: https://github.com/juergenweb/FrontendForms/tree/main
 As introduced in FF 2.1.70, you can add a success message in addition to error messages to every input field. The CAPTCHA field is a system field in this case and is not reachable for manipulation by the user. To be able to add this success message to the CAPTCHA field too, I have added this new method: **setCaptchaSuccessMsg()**. 
 
 More information about it: [https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setsecurityquestion---change-the-question-and-answer-of-a-question-captcha-on-per-form-base](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchasuccessmsg---add-a-success-message-under-the-captcha-field)
+
+- **1 new validator added: comparetexts**
+
+As the name mentioned, this validator is for checking a piece of text against different texts. It was primarly designed for the simple question CAPTCHA, but it can also be used for all other text input fields too.
+
+More information about it: https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#comparetexts
