@@ -34,6 +34,7 @@
     use function ProcessWire\_n;
     use function ProcessWire\wireClassNamespace;
     use function ProcessWire\wireMail;
+    use function ProcessWire\wireClassName;
 
     class Form extends CustomRules
     {
@@ -56,7 +57,12 @@
         protected string|int $useDoubleFormSubmissionCheck = 1; // Enable checking of multiple submissions
         protected string|int|bool $useCSRFProtection = 1; // Enable/disable CSRF-Protection
         protected string $general_desc_position = 'afterInput'; // The position of the input field description -> beforeLabel, afterLabel or afterInput
+        protected string $captcha_value = '';
 
+        // properties for the simple question Captcha
+        protected string|null $question = ''; // the question as string
+        protected array|null $answers = []; // all acceptable answers as an array
+        protected string|null $captchaSuccessMsg = ''; // set a success message for the captcha field
         protected string|int|bool $useAriaAttributes = true; // use accessibility attributes
         // Mail properties - only needed if FrontendForms will be used to send emails
         protected array $mailPlaceholder = []; // associative array for usage in emails (['placeholdername' => 'text',...])
@@ -77,6 +83,7 @@
         protected string $redirectURL = ''; // the URL for the redirect after successful for form validation
         protected string $validated = '0'; // the form is validated (1) or not (0)
         protected string|null|int|bool $showProgressbar = true;
+
 
         /* objects */
         protected Alert $alert; // alert box
@@ -191,6 +198,37 @@
             $this->addHookAfter('WireMail::send', $this, 'removeTemplateSession');
 
         }
+
+        /**
+         * Overwrite the question and the answers of a simple question captcha on per form base
+         * @param string|null $question
+         * @param array|null $answers
+         * @return $this
+         */
+        public function setSecurityQuestion(string|null $question, array|null $answers): self
+        {
+            // add question sign if it is not present in the question
+            if (!is_null($question)) {
+                if (substr($question, -1) != '?') {
+                    $question = $question . '?';
+                }
+            }
+            $this->answers = $answers;
+            $this->question = $question;
+            return $this;
+        }
+
+        /**
+         * Add a success message to the Captcha after successful validation
+         * @param string $successmsg
+         * @return $this
+         */
+        public function setCaptchaSuccessMsg(string $successmsg): self
+        {
+            $this->captchaSuccessMsg = $successmsg;
+            return $this;
+        }
+
 
         /**
          * Enable or disable the usage of ARIA attributes on form elements
@@ -1568,8 +1606,26 @@
                                 }
                                 //add captcha to the array because it will be rendered afterwards
                                 if ($this->getCaptchaType() !== 'none') {
-                                    $formElements[] = $this->getCaptcha()->createCaptchaInputField($this->getID());
+
+                                    $captchaField = $this->getCaptcha()->createCaptchaInputField($this->getID());
+
+                                    // special treatment for SimpleQuestionCaptcha
+                                    if (wireClassName($this->captcha) === 'SimpleQuestionCaptcha') {
+
+                                        // add custom answers if present
+                                        if ($this->answers)
+                                            $this->getCaptcha()->setCaptchaValidValue($this->answers);
+
+                                        // set the appropriate validator
+                                        if ($this->getCaptcha()->getCaptchaValidValue()) {
+                                            $captchaField->setRule('compareTexts', $this->getCaptcha()->getCaptchaValidValue())->setCustomMessage($this->_('The answer is wrong!'));
+                                        }
+
+                                    }
+
+                                    $formElements[] = $captchaField;
                                 }
+
 
                                 // Get only input field for user inputs (no fieldsets, buttons,..)
                                 $formElements = $validation->getRealInputFields($formElements);
@@ -1590,7 +1646,6 @@
                                         } else {
                                             $sanitizedValues[$element->getAttribute('name')] = $validation->sanitizePostValue($element);
                                         }
-                                        //$sanitizedValues[$element->getAttribute('name')] = $validation->sanitizePostValue($element);
                                     } else {
                                         // remove all validation rules from this element
                                         $element->removeAllRules();
@@ -1637,8 +1692,13 @@
                                         if ($element->getAttribute('name') == $this->createElementName('captcha')) {
                                             $v->rule('required',
                                                 $element->getAttribute('name'))->label($this->_('The captcha')); // captcha is always required
-                                            $v->rule('checkCaptcha', $element->getAttribute('name'),
-                                                $this->wire('session')->get('captcha_' . $this->getID()))->label($this->_('The CAPTCHA'));
+
+                                            // exclude this CAPTCHA types from using the checkCaptcha rule
+                                            $nonCheckCaptchaTypes = ['SimpleQuestionCaptcha'];
+                                            if (!in_array($this->getCaptchaType(), $nonCheckCaptchaTypes)) {
+                                                $v->rule('checkCaptcha', $element->getAttribute('name'),
+                                                    $this->wire('session')->get('captcha_' . $this->getID()))->label($this->_('The CAPTCHA'));
+                                            }
                                         }
                                     }
                                     $this->setValues();
@@ -1666,9 +1726,19 @@
 
                                     return true;
                                 } else {
+
                                     // set error alert
                                     $this->wire('session')->set('errors', '1');
                                     $this->formErrors = $v->errors();
+
+                                    // if Captcha value was valid -> add it to the captcha_value property
+                                    if ($this->getCaptchaType() === 'SimpleQuestionCaptcha') {
+                                        $captchaName = $this->getID() . '-captcha';
+                                        if (!in_array($captchaName, $this->formErrors)) {
+                                            if (isset($sanitizedValues[$captchaName]))
+                                                $this->captcha_value = $sanitizedValues[$captchaName];
+                                        }
+                                    }
 
                                     $this->alert->setCSSClass('alert_dangerClass');
                                     $this->alert->setText($this->getErrorMsg());
@@ -1966,7 +2036,6 @@
         public function render(): string
         {
 
-
             // redirect after successful form validation if set
             if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
                 $this->wire('session')->redirect($this->getRedirectURL());
@@ -2041,14 +2110,52 @@
 
                     // position in form fields array to insert
                     $captchaPosition = $refKey;
-
                     $captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
 
-                    // insert the captcha input field after the last input field
-                    $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
-                        array($captchafield), array_slice($this->formElements, $captchaPosition));
-                    // re-index the formElements array
-                    $this->formElements = array_values($this->formElements);
+                    // if value of Captcha field was correct and this field is type of QuestionCaptcha ->
+                    // add the value again to the inputfield
+
+                    if (wireClassName($this->captcha) === 'SimpleQuestionCaptcha') {
+
+                        // add custom question as label if present
+                        if ($this->question)
+                            $captchafield->setLabel($this->question);
+
+                        // check if a question and accepted answers have been set
+                        $missing_msg = [];
+                        // output a warning message if question for question CAPTCHA is missing
+                        if (!$captchafield->getLabel()->getText()) {
+                            $missing_msg[] = $this->_('You have not added a question for your question CAPTCHA!');
+                        }
+                        // output a warning message if answers for question CAPTCHA are missing
+                        if (!$this->getCaptcha()->getCaptchaValidValue()) {
+                            $missing_msg[] = $this->_('You have not added some answers for your question CAPTCHA!');
+                        }
+
+                        if ($missing_msg) {
+                            $missing_msg[] = $this->_('If you do not correct this error, you cannot use the simple question CAPTCHA and the Captcha will not be displayed.');
+                            $missingtext = implode('<br>', $missing_msg);
+                            $this->alert->setCSSClass('alert_warningClass');
+                            $this->alert->setText($missingtext);
+                        }
+
+                        if (!empty($this->captcha_value)) {
+                            $captchafield->setAttribute('value', $this->captcha_value);
+                            // add success message if set
+                            if ($this->captchaSuccessMsg)
+                                $captchafield->setSuccessMessage($this->captchaSuccessMsg);
+                        }
+                    }
+
+                    if (((wireClassName($this->captcha) === 'SimpleQuestionCaptcha') && (!$missing_msg)) || (wireClassName($this->captcha) !== 'SimpleQuestionCaptcha')) {
+                        // insert the captcha input field after the last input field
+                        $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
+                            array($captchafield), array_slice($this->formElements, $captchaPosition));
+                        // re-index the formElements array
+                        $this->formElements = array_values($this->formElements);
+
+                    }
+
                 }
 
                 // sort the privacy elements that checkbox is before text, if both will be used
@@ -2175,7 +2282,7 @@
                     }
 
                     // enable/disable usage of Aria attributes
-                    if(method_exists($element, 'useAttributes'))
+                    if (method_exists($element, 'useAttributes'))
                         $element->useAriaAttributes($this->useAriaAttributes);
 
                     // Label and description (Only on input fields)
