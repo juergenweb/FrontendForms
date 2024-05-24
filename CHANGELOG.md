@@ -942,3 +942,8 @@ This is a small update to fix 2 small bugs.
 * The first bug was a copy and past mistake. If you have chosen the image captcha, the random text captcha has been displayed instead, because the wrong class name was copied. This is fixed now.
 * The second small bug was a missing translation in the captcha radio select for the image captcha. Now the translation will be displayed.
 
+## 2024-05-24
+
+- **Add requiredIf condition to simple question CAPTCHA config fields**
+
+The fields to enter a simple question and several accepted answers were set to required only. This has been changed now to **requiredIf** this CAPTCHA has been selected. Otherwise they are not required any longer.
