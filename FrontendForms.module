@@ -2016,7 +2016,7 @@
                 $captchaHeight->attr('value', $this->input_captchaHeight);
                 $captchaHeight->attr('min', 10);
                 $captchaHeight->columnWidth = 33;
-                $captchaHeight->required = 1;
+                $captchaHeight->requiredIf = "input_captchaType=SimpleQuestionCaptcha";
                 $captchaHeight->showIf = "input_captchaType!=none|DefaultImageCaptcha|SimpleQuestionCaptcha";
                 $fieldsetbasic->add($captchaHeight, $inputfields);
 
@@ -2024,17 +2024,18 @@
                 $question = $this->wire('modules')->get('InputfieldText');
                 $question->description = $this->_('Please enter a simple question.');
                 $question->label = $this->_('Question');
-                $question->question = $this->_('The question should be as simple as possible.');
+                $question->notes = $this->_('The question should be as simple as possible.');
                 $question->placeholder = $this->_('For example: What color has a green apple?');
                 $question->attr('name', 'input_question');
                 $question->attr('value', $this->input_question);
                 $question->columnWidth = 50;
-                $question->required = 1;
                 $question->useLanguages = true;
                 $question->showIf = "input_captchaType=SimpleQuestionCaptcha";
+                $question->required = 1;
+                $question->requiredIf = "input_captchaType=SimpleQuestionCaptcha";
                 $fieldsetbasic->add($question, $inputfields);
 
-                // set the question field
+                // set the answer field
                 $answers = $this->wire('modules')->get('InputfieldTextArea');
                 $answers->description = $this->_('Please enter various accepted answers (each on a separate line!!).');
                 $answers->label = $this->_('Accepted answers');
@@ -2044,6 +2045,7 @@
                 $answers->attr('value', $this->input_answers);
                 $answers->columnWidth = 50;
                 $answers->required = 1;
+                $answers->requiredIf = "input_captchaType=SimpleQuestionCaptcha";
                 $answers->useLanguages = true;
                 $answers->showIf = "input_captchaType=SimpleQuestionCaptcha";
                 $fieldsetbasic->add($answers, $inputfields);
