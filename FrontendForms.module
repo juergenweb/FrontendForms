@@ -718,6 +718,7 @@
             {
                 $this->password_field->requirements = ['letter', 'digit'];
             }
+
             $this->password_object->requirements = $this->password_field->requirements;
             $this->default_dateformat = $this->wire('config')->dateFormat;
             $this->passwordList = $this->createArrayOfTxtFile($this->passwordPath);
@@ -2337,11 +2338,24 @@
             // get password requirements
             $hintText .= '<h3>' . $this->_('Current password requirements settings:') . '</h3>';
             $hintText .= '<p>' . $this->_('A password must contain at least one of the following characters:') . '</p><ul>';
-            foreach ($this->password_object->getSetting('requirements') as $value => $label) {
-                if (in_array($value, $this->password_field->requirements)) {
-                    $hintText .= '<li>' . $label . '</li>';
+
+            if ($this->password_field->requirements) {
+
+
+                if (!$this->password_field->requirementsLabels) {
+                    $requirementsLabels = wire('modules')->get('InputfieldPassword')->requirementsLabels;
+                } else {
+                    $requirementsLabels = $this->password_field->requirementsLabels;
                 }
+
+                foreach ($this->password_field->requirements as $value => $label) {
+                    if (array_key_exists($label, $requirementsLabels))
+                        $hintText .= '<li>' . $requirementsLabels[$label] . '</li>';
+                }
+            } else {
+                $hintText .= '<li>' . $this->_('No password requirements have been set!') . '</li>';
             }
+
             $hintText .= '</ul>';
             $link = '<a title="' . $this->_('To the password field edit page') . '" href="' . $this->password_field->editUrl() . '">';
             $link .= $this->_('here') . '</a>';
