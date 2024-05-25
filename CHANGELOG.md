@@ -947,3 +947,7 @@ This is a small update to fix 2 small bugs.
 - **Add requiredIf condition to simple question CAPTCHA config fields**
 
 The fields to enter a simple question and several accepted answers were set to required only. This has been changed now to **requiredIf** this CAPTCHA has been selected. Otherwise they are not required any longer.
+
+- **Missing display of password requirements fixed**
+
+Inside the security tab for the password, the password requirements, which has been set, were not displayed. This has been fixed now.
