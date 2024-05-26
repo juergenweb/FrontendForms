@@ -929,7 +929,7 @@ As introduced in FF 2.1.70, you can add a success message in addition to error m
 
 More information about it: [https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setsecurityquestion---change-the-question-and-answer-of-a-question-captcha-on-per-form-base](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchasuccessmsg---add-a-success-message-under-the-captcha-field)
 
-- **1 new validator added: comparetexts**
+- **1 new validator added: compareTexts**
 
 As the name mentioned, this validator is for checking a piece of text against different texts. It was primarly designed for the simple question CAPTCHA, but it can also be used for all other text input fields too.
 
