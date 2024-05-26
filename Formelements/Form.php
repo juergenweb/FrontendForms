@@ -64,6 +64,7 @@
         protected array|null $answers = []; // all acceptable answers as an array
         protected array|null $captchaPosition = null; // array that holds the reference field as key and the position as value
         protected string|null $captchaSuccessMsg = ''; // set a success message for the captcha field
+        protected string|null $simpleQuestionCaptchaErrorMsg = null; // overwrite the error message of the compareTexts validation of the simple question captcha
         protected string|int|bool $useAriaAttributes = true; // use accessibility attributes
         // Mail properties - only needed if FrontendForms will be used to send emails
         protected array $mailPlaceholder = []; // associative array for usage in emails (['placeholdername' => 'text',...])
@@ -1293,6 +1294,17 @@
         }
 
         /**
+         * Method to overwrite the error message for the compareTexts validator for the simple question Captcha
+         * @param string $errormsg
+         * @return $this
+         */
+        public function setSimpleQuestionCaptchaErrorMsg(string $errormsg): self
+        {
+            $this->simpleQuestionCaptchaErrorMsg = $errormsg;
+            return $this;
+        }
+
+        /**
          * Set the error message if errors occur after form submission
          * Can be used to overwrite the default error message
          * @param string $errorMsg
@@ -1646,7 +1658,8 @@
 
                                         // set the appropriate validator
                                         if ($this->getCaptcha()->getCaptchaValidValue()) {
-                                            $captchaField->setRule('compareTexts', $this->getCaptcha()->getCaptchaValidValue())->setCustomMessage($this->_('The answer is wrong!'));
+                                            $cterrormsg = $this->simpleQuestionCaptchaErrorMsg ?? $this->_('The answer is wrong!');
+                                            $captchaField->setRule('compareTexts', $this->getCaptcha()->getCaptchaValidValue())->setCustomMessage($cterrormsg);
                                         }
 
                                     }
