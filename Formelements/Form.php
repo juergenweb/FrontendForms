@@ -64,7 +64,7 @@
         protected array|null $answers = []; // all acceptable answers as an array
         protected array|null $captchaPosition = null; // array that holds the reference field as key and the position as value
         protected string|null $captchaSuccessMsg = ''; // set a success message for the captcha field
-        protected string|null $simpleQuestionCaptchaErrorMsg = null; // overwrite the error message of the compareTexts validation of the simple question captcha
+        protected string|null $captchaErrorMsg = ''; // overwrite the default error message for the CAPTCHA validation
         protected string|int|bool $useAriaAttributes = true; // use accessibility attributes
         // Mail properties - only needed if FrontendForms will be used to send emails
         protected array $mailPlaceholder = []; // associative array for usage in emails (['placeholdername' => 'text',...])
@@ -1294,13 +1294,13 @@
         }
 
         /**
-         * Method to overwrite the error message for the compareTexts validator for the simple question Captcha
+         * Method to overwrite the default CAPTCHA error message
          * @param string $errormsg
          * @return $this
          */
-        public function setSimpleQuestionCaptchaErrorMsg(string $errormsg): self
+        public function setCustomCaptchaErrorMsg(string $errormsg): self
         {
-            $this->simpleQuestionCaptchaErrorMsg = $errormsg;
+            $this->captchaErrorMsg = $errormsg;
             return $this;
         }
 
@@ -1658,7 +1658,7 @@
 
                                         // set the appropriate validator
                                         if ($this->getCaptcha()->getCaptchaValidValue()) {
-                                            $cterrormsg = $this->simpleQuestionCaptchaErrorMsg ?? $this->_('The answer is wrong!');
+                                            $cterrormsg = $this->errormsg ?? $this->_('The answer is wrong!');
                                             $captchaField->setRule('compareTexts', $this->getCaptcha()->getCaptchaValidValue())->setCustomMessage($cterrormsg);
                                         }
 
@@ -1737,8 +1737,14 @@
                                             // exclude this CAPTCHA types from using the checkCaptcha rule
                                             $nonCheckCaptchaTypes = ['SimpleQuestionCaptcha'];
                                             if (!in_array($this->getCaptchaType(), $nonCheckCaptchaTypes)) {
-                                                $v->rule('checkCaptcha', $element->getAttribute('name'),
-                                                    $this->wire('session')->get('captcha_' . $this->getID()))->label($this->_('The CAPTCHA'));
+                                                // check if custom error message has been set
+                                                if ($this->captchaErrorMsg) {
+                                                    $v->rule('checkCaptcha', $element->getAttribute('name'),
+                                                        $this->wire('session')->get('captcha_' . $this->getID()))->message($this->captchaErrorMsg);
+                                                } else {
+                                                    $v->rule('checkCaptcha', $element->getAttribute('name'),
+                                                        $this->wire('session')->get('captcha_' . $this->getID()))->label($this->_('The CAPTCHA'));
+                                                }
                                             }
                                         }
                                     }
@@ -2148,7 +2154,8 @@
 
                 // add captcha field as last element before the button element
                 if ($this->getCaptchaType() != 'none') {
-
+                    // set custom error message
+                    $this->getCaptcha()->setErrorMsg('Shit');
                     // position in form fields array to insert
                     $captchaPosition = $refKey;
 
