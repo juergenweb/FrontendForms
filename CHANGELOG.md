@@ -958,7 +958,7 @@ The CAPTCHA is a so called "system field", which means, that it will be added by
 
 With the new method setCaptchaPosition(), you are now able to position the CAPTCHA on every position inside the form by defining a reference field and the position attribute "before" or "after".
 
-The method must be applied to the form object and must contain as first parameter the name of the reference field (fe. name) and as second parameter the attribute "before" or "after".
+The method must be applied to the form object and must contain as first parameter the name of the reference field (fe. email) and as second parameter the attribute "before" or "after".
 
 ``$form->setCaptchaPosition('email', 'after');``
 
