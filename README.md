@@ -1433,7 +1433,7 @@ For more detailed explanation on each validation rule click the link at the vali
 | [dateOutsideOfDaysRange](#dateoutsideofdaysrange)  | Checks if the entered date is outside a given time range in days starting from a date set in another field    |
 | [firstAndLastname](#firstandlastname)  | Checks if first and lastname contains only allowed characters    |
 | [uniqueFilenameInDir](#uniquefilenameindir)  | Checks if a newly uploaded file has the same filename as a file inside the destination directory  |
-| [compareTexts](#comparetexts)  | Checks if a text entered in an inputfield is present in an array of texts.  |
+| [compareTexts](#compareTexts)  | Checks if a text entered in an inputfield is present in an array of texts.  |
 
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
@@ -1762,7 +1762,7 @@ What it does, is to compare a text, which was entered in an input field with sev
 To make all texts comparable, they will be transformed to lowercase to prevent differences in upper case and lower case letters inside the comparison.
 
 ```php
-$field->setRule('comparetexts', ['green','is green', 'has color green']);
+$field->setRule('compareTexts', ['green','is green', 'has color green']);
 ```
 You need to add all the texts or text snippets as an array to the validator. The value entered will be compared to these texts and returns true if a match was found, otherwise false.
 
