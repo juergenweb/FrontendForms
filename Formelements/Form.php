@@ -62,6 +62,7 @@
         // properties for the simple question Captcha
         protected string|null $question = ''; // the question as string
         protected array|null $answers = []; // all acceptable answers as an array
+        protected array|null $captchaPosition = null; // array that holds the reference field as key and the position as value
         protected string|null $captchaSuccessMsg = ''; // set a success message for the captcha field
         protected string|int|bool $useAriaAttributes = true; // use accessibility attributes
         // Mail properties - only needed if FrontendForms will be used to send emails
@@ -216,6 +217,33 @@
             $this->answers = $answers;
             $this->question = $question;
             return $this;
+        }
+
+        /**
+         * Method to change the position of the CAPTCHA inside the form
+         * @param string $ref_field_name -> the name attribute of the reference field
+         * @param string $pos -> the position relative to the reference field: could be before or after
+         * @return $this
+         */
+        public function setCaptchaPosition(string $ref_field_name, string $pos = 'after'): self
+        {
+            $pos = (in_array($pos, ['before', 'after'])) ? $pos : 'after'; // only before and after is allowed
+            $this->captchaPosition = [$ref_field_name => $pos];
+            return $this;
+        }
+
+        /**
+         * Get the CAPTCHA position if a valid reference field was set
+         * @return array|null
+         */
+        protected function getCaptchaPosition(): array|null
+        {
+            if ($this->captchaPosition) {
+                // check if a field with the given name exists inside the form object, otherwise return null
+                if (!$this->getFormelementByName(array_key_first($this->captchaPosition)))
+                    return null;
+            }
+            return $this->captchaPosition;
         }
 
         /**
@@ -2110,6 +2138,7 @@
 
                     // position in form fields array to insert
                     $captchaPosition = $refKey;
+
                     $captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
 
                     // if value of Captcha field was correct and this field is type of QuestionCaptcha ->
@@ -2182,6 +2211,30 @@
                             $newPos = array_key_last($this->formElements) - 1;
                             $this->repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
                         }
+                    }
+
+                    // change the position of the CAPTCHA, if position change was set via API
+                    $customizeCaptchaPosition = $this->getCaptchaPosition();
+                    if (($this->getCaptchaType() != 'none') && ($customizeCaptchaPosition)) {
+
+                        // get the position of the reference field inside the field object array
+                        $ref_field_name = array_key_first($customizeCaptchaPosition);
+                        $ref_field = $this->getFormelementByName($ref_field_name);
+
+                        foreach ($this->formElements as $key => $element) {
+                            if ($this->getID() . '-' . $ref_field_name == $element->getAttribute('name')) {
+                                $ref_position = $key;
+                            }
+                            if ($this->getID() . '-captcha' == $element->getAttribute('name')) {
+                                $current_position = $key;
+                            }
+                        }
+
+                        // add correction for the "before" position, if the reference object is the last item in array
+                        $before_pos = ($ref_position != array_key_last($this->formElements)) ? $ref_position : $ref_position - 1;
+
+                        $new_pos = (reset($customizeCaptchaPosition) === 'before') ? $before_pos : $ref_position + 1;
+                        $this->repositionArrayElement($this->formElements, $captchaPosition, $new_pos);
                     }
                 }
 
@@ -2370,7 +2423,6 @@
                         }
 
                     }
-
                     $formElements .= $element->render() . PHP_EOL;
                 }
 
