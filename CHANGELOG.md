@@ -951,3 +951,15 @@ The fields to enter a simple question and several accepted answers were set to r
 - **Missing display of password requirements fixed**
 
 Inside the security tab for the password, the password requirements, which has been set, were not displayed. This has been fixed now.
+
+- **New method added to be able to change the CAPTCHA position inside forms**
+
+The CAPTCHA is a so called "system field", which means, that it will be added by the module and not by the user. By default, the CAPTCHA will be placed before the submit button. This is fine in most cases, but if you want to position the CAPTCHA on another position, there were no possibility until now.
+
+With the new method setCaptchaPosition(), you are now able to position the CAPTCHA on every position inside the form by defining a reference field and the position attribute "before" or "after".
+
+The method must be applied to the form object and must contain as first parameter the name of the reference field (fe. name) and as second parameter the attribute "before" or "after".
+
+``$form->setCaptchaPosition('email', 'after');``
+
+This example places the CAPTCHA **after** the field with the name attribute "**email**".
