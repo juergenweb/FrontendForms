@@ -966,10 +966,10 @@ This example places the CAPTCHA **after** the field with the name attribute "**e
 
 ## 2024-05-24
 
-- **New method setSimpleQuestionCaptchaErrorMsg added**
+- **New method setCustomCaptchaErrorMsg added**
 
-This method is for overwriting the default error message for the simple question captcha, that will be displayed if the value entered is not inside the list of accepted answers. 
+This method is for overwriting the default error message for the captcha validation, that will be displayed if the value entered is not correct. 
 
-The default error message is "The answer is wrong!", but if you want to change this message to another one, you can use this method to overwrite the default error message.
+Which error message will be displayed as the default error message depends on the CAPTCHA choosen. This method works with all CAPTCHA types and let you customize this error message
 
-``$form->setSimpleQuestionCaptchaErrorMsg('The value you have entered is not correct!');``
+``$form->setCustomCaptchaErrorMsg('The value you have entered is not correct!');``
