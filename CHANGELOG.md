@@ -942,7 +942,7 @@ This is a small update to fix 2 small bugs.
 * The first bug was a copy and past mistake. If you have chosen the image captcha, the random text captcha has been displayed instead, because the wrong class name was copied. This is fixed now.
 * The second small bug was a missing translation in the captcha radio select for the image captcha. Now the translation will be displayed.
 
-## 2024-05-24
+## [2.1.77] 2024-05-24
 
 - **Add requiredIf condition to simple question CAPTCHA config fields**
 
@@ -963,3 +963,13 @@ The method must be applied to the form object and must contain as first paramete
 ``$form->setCaptchaPosition('email', 'after');``
 
 This example places the CAPTCHA **after** the field with the name attribute "**email**".
+
+## 2024-05-24
+
+- **New method setSimpleQuestionCaptchaErrorMsg added**
+
+This method is for overwriting the default error message for the simple question captcha, that will be displayed if the value entered is not inside the list of accepted answers. 
+
+The default error message is "The answer is wrong!", but if you want to change this message to another one, you can use this method to overwrite the default error message.
+
+``$form->setSimpleQuestionCaptchaErrorMsg('The value you have entered is not correct!');``
