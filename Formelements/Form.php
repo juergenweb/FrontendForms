@@ -1658,7 +1658,7 @@
 
                                         // set the appropriate validator
                                         if ($this->getCaptcha()->getCaptchaValidValue()) {
-                                            $cterrormsg = $this->errormsg ?? $this->_('The answer is wrong!');
+                                            $cterrormsg = $this->captchaErrorMsg ?? $this->_('The answer is wrong!');
                                             $captchaField->setRule('compareTexts', $this->getCaptcha()->getCaptchaValidValue())->setCustomMessage($cterrormsg);
                                         }
 
