@@ -2155,7 +2155,6 @@
                 // add captcha field as last element before the button element
                 if ($this->getCaptchaType() != 'none') {
                     // set custom error message
-                    $this->getCaptcha()->setErrorMsg('Shit');
                     // position in form fields array to insert
                     $captchaPosition = $refKey;
 
