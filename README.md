@@ -500,7 +500,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setDescPosition()](#setdescposition---change-the-position-of-field-descriptions)  | Set the position of the field description text  |
 | [setSecurityQuestion()](#setsecurityquestion---change-the-question-and-answer-of-a-question-captcha-on-per-form-base)  | Change the Question and answer of a question CAPTCHA on per form base  |
 | [setCaptchaSuccessMsg()](#setcaptchasuccessmsg---add-a-success-message-under-the-captcha-field)  | Add a success message under the CAPTCHA field  |
-| [setCustomCaptchaErrorMsg()](#setcustomcaptchaerrormsg---overwrite-the-default-error-message-of-the-captcha-validation-ruled)  | Overwrite the default error message of the CAPTCHA validation rule  |
+| [setCustomCaptchaErrorMsg()](#setcustomcaptchaerrormsg---overwrite-the-default-error-message-of-the-captcha-validation-rule)  | Overwrite the default error message of the CAPTCHA validation rule  |
 | [setCaptchaPosition()](#setcaptchaposition---place-the-captcha-on-a-position-of-your-choice-inside-the-form)  | Output the CAPTCHA at another position inside the form  |
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
