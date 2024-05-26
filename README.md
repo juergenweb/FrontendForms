@@ -908,6 +908,16 @@ To offer the possibility to output a success message info after the form input f
 ```
 This success message is the opposite of an error message and was introduced to input elements in version 2.1.70. With this method you can add it to CAPTCHA inputs as well, if you want.
 
+### setCustomCaptchaErrorMsg() - Overwrite the default error message of the CAPTCHA validation rule 
+
+This method is for overwriting the default error message for the captcha validation, that will be displayed if the value entered is not correct. 
+
+Which error message will be displayed as the default error message depends on the CAPTCHA choosen. This method works with all CAPTCHA types and let you customize this error message
+
+```php
+$form->setCustomCaptchaErrorMsg('The value you have entered is not correct!');
+```
+
 ### setCaptchaPosition() - Place the CAPTCHA on a position of your choice inside the form
 
 The CAPTCHA is a so called "system field", which means, that it will be added by the module and not by the user. By default, the CAPTCHA will be placed before the submit button. This is fine in most cases, but if you want to position the CAPTCHA on another position, you can use this method.
