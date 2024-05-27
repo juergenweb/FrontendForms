@@ -918,6 +918,19 @@ Which error message will be displayed as the default error message depends on th
 ```php
 $form->setCaptchaErrorMsg('The value you have entered is not correct!');
 ```
+### setCaptchaNotes() - Overwrite the default notes of the CAPTCHA input field
+This method is the same as the setNotes() method for input fields, but in this case especially for the CAPTCHA inputfield. It allows you to overwrite the default notes text with your own.
+
+```php
+$form->setCaptchaNotes('This is my CAPTCHA notes text.');
+```
+
+### setCaptchaDescription() - Add a description to the CAPTCHA input field
+This method is the same as the setDescription() method for input fields, but in this case especially for the CAPTCHA inputfield. It allows you to add a description text to the CAPTCHA input field.
+
+```php
+$form->setCaptchaDescription('This is my CAPTCHA description text.');
+```
 
 ### setCaptchaPosition() - Place the CAPTCHA on a position of your choice inside the form
 
