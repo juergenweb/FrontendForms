@@ -955,6 +955,66 @@ The method must be applied to the form object and must contain as first paramete
 
 This example places the CAPTCHA **after** the field with the name attribute "**email**".
 
+### setSimpleQuestionCaptchaRandomRotation() - Showing multiple questions randomly instead of a single question with the simple question CAPTCHA
+Please note: This method is for usage with the simple question CAPTCHA only!
+
+By default, the simple question CAPTCHA supports only 1 single question to be displayed. This method extends the CAPTCHA for using multiple questions, that will be displayed randomly on page load.
+
+All the questions have to be defined inside an multidimensional assoc. array.
+
+Here is an example of such a multi-question array:
+
+``
+$questions = [
+        [
+            'question' => 'How many eyes have a human?',
+            'answers' => ['2', 'two', '2 eyes', 'two eyes'],
+            'errorMsg' => 'Unfortunately not the right answer! Take a look at the mirror ;-).',
+            'successMsg' => 'Perfect! You know how humans look like.'
+        ],
+        [
+            'question' => 'How many legs have a dog?',
+            'answers' => ['4', 'four', '4 legs', 'four legs'],
+            'notes' => 'Tip: A dog has more than 3 but less than 5 legs',
+            'description' => 'This is a custom description for the dog question.',
+            'successMsg' => 'Yes you are absolute right! (Most) Dogs have 4 legs.',
+            'errorMsg' => 'Not really! It seems that you do not have seen a dog before ;-).',
+            'descriptionPosition' => 'beforeLabel'
+        ],
+        [
+            'question' => 'What is the name of the last day in a week?',
+            'answers' => ['Sunday', 'its Sunday', 'it is Sunday'],
+            'notes' => 'A little tip: S**day',
+            'errorMsg' => 'No! Not really. A look at a calendar would probably help ;-).',
+            'successMsg' => 'It is Sunday! Absolut correct!'
+        ],
+        [
+            'question' => 'How many halves make a whole',
+            'answers' => ['2', 'two', '2 halves', 'two halves']
+        ],
+
+    ];
+``
+
+Each question is an extra array inside the array and must have at least the **question** and the **answers** key as the minimum requirements.
+
+The following keys are optional and can be set or not:
+
+* errorMsg: define a custom error message for this question
+* successMsg: define a custom success message for this question
+* notes: define a custom notes text for this question
+* description: define a custom description text for this question
+* descriptionPosition: define an individual position for the description for this question (beforeLabel, afterLabel, afterInput)
+
+The array containing the questions has to be entered as the parameter inside this function:
+
+``$form`->setSimpleQuestionCaptchaRandomRotation($questions);``
+
+You will find a working example inside the example folder: [https://github.com/juergenweb/FrontendForms/blob/main/Examples/randomsimplequestioncaptcha.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/randomsimplequestioncaptcha.php)
+
+Maybe someday an UI for entering the questions will be added to this module.
+
+
 ## Input field methods
 
 For better understanding of methods explained afterwards, take a look of the anatomy of input fields first.
