@@ -964,12 +964,10 @@ The method must be applied to the form object and must contain as first paramete
 
 This example places the CAPTCHA **after** the field with the name attribute "**email**".
 
-## 2024-05-24
+## 2024-05-27
 
-- **New method setCustomCaptchaErrorMsg added**
+- **New method setCaptchaErrorMsg added**
 
 This method is for overwriting the default error message for the captcha validation, that will be displayed if the value entered is not correct. 
 
-Which error message will be displayed as the default error message depends on the CAPTCHA choosen. This method works with all CAPTCHA types and let you customize this error message
-
-``$form->setCustomCaptchaErrorMsg('The value you have entered is not correct!');``
+More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchaerrormsg---overwrite-the-default-error-message-of-the-captcha-validation-rule)
