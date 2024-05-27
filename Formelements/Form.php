@@ -43,6 +43,10 @@
         const FORMMETHODS = ['get', 'post']; // array that holds allowed action methods (get, post)
 
         /* properties */
+        protected int|null $random_question = null;
+        protected array|null $random_question_array = null;
+        protected array|null $question_array = null;
+
         protected $load_time = ''; // the time, when the form was loaded
         protected array $storedFiles = []; // array that holds all files (including overwritten filenames)
         protected string $doubleSubmission = ''; // value hold by the double form submission session
@@ -1358,42 +1362,48 @@
          * @return void
          * @throws \ProcessWire\WireException
          */
-        public function setSimpleQuestionCaptchaRandomRotation(array $questions): void
+        public function setSimpleQuestionCaptchaRandomRotation(array $questions)
         {
             // check if chosen CAPTCHA type is simpe question CAPTCHA
-            if($this->getCaptchaType() == 'SimpleQuestionCaptcha'){
+            if ($this->getCaptchaType() == 'SimpleQuestionCaptcha') {
 
-            $random_question = $questions[array_rand($questions)];
-            $question_array = [];
-            // only set a random question if at least the question and the answer keys are present
-            if ($random_question['question'] && $random_question['answers']) {
-                // only set a random question if question is a string and the answers is an array
-                if (is_string($random_question['question']) && is_array($random_question['answers'])) {
-                    $this->setSecurityQuestion($random_question['question'], $random_question['answers']);
+                $random_question = array_rand($questions);
+                $random_question_array = $questions[$random_question];
 
-                    $question_array['question'] = $random_question['question'];
-                    $question_array['answers'] = $random_question['answers'];
-                    // unset the question and the answers keys from the array
-                    unset($random_question['question']);
-                    unset($random_question['answers']);
+                // only set a random question if at least the question and the answer keys are present
+                if ($random_question_array['question'] && $random_question_array['answers']) {
+                    // only set a random question if question is a string and the answers is an array
+                    if (is_string($random_question_array['question']) && is_array($random_question_array['answers'])) {
+                        $this->setSecurityQuestion($random_question_array['question'], $random_question_array['answers']);
 
-                    // get all other array keys if there are some left
-                    if ($questions) {
+                        $question_array_array['question'] = $random_question_array['question'];
+                        $question_array_array['answers'] = $random_question_array['answers'];
+                        // unset the question and the answers keys from the array
+                        unset($random_question_array['question']);
+                        unset($random_question_array['answers']);
+                        // unset values that will be displayed only after post
+                        unset($random_question_array['successMsg']);
+                        unset($random_question_array['errorMsg']);
 
-                        // set additional properties if present
-                        foreach ($random_question as $name => $value) {
-                            $methodName = 'setCaptcha' . ucfirst($name);
-                            if (method_exists($this, $methodName)) {
-                                $this->$methodName($value);
-                                $question_array[$name] = $value;
+                        // get all other array keys if there are some left
+                        if ($questions) {
+
+                            // set additional properties if present
+                            foreach ($random_question_array as $name => $value) {
+                                $methodName = 'setCaptcha' . ucfirst($name);
+                                if (method_exists($this, $methodName)) {
+                                    $this->$methodName($value);
+                                }
                             }
-                        }
 
+                        }
                     }
                 }
-            }
-            // create session to store all values for later usage after form validation
-            $this->wire('session')->set('randomquestion-' . $this->load_time, $question_array);
+
+                $this->random_question = $random_question;
+                $this->random_question_array = $random_question_array;
+                $this->question_array = $questions;
+
             }
 
         }
@@ -1755,17 +1765,20 @@
                                             $validValue = $this->getCaptcha()->getCaptchaValidValue();
 
                                             // overwrite the default value with the one from the session for random question if present
-                                            if (array_key_exists($this->getID() . '-load_time', $_POST)) {
-
-                                                $old_ts = self::encryptDecrypt((string)$_POST[$this->getID() . '-load_time'], 'decrypt');
-                                                if (isset($this->wire('session')->get('randomquestion-' . $old_ts)['errorMsg'])) {
-                                                    $this->captchaErrorMsg = $this->wire('session')->get('randomquestion-' . $old_ts)['errorMsg'];
+                                            if (array_key_exists($this->getID() . '-random_key', $_POST)) {
+                                                $prev_question = $this->question_array[$_POST[$this->getID() . '-random_key']];
+                                                $validValue = $prev_question['answers'];
+                                                if (array_key_exists('errorMsg', $prev_question)) {
+                                                    // set the custom error message
+                                                    $errormsg = $prev_question['errorMsg'];
                                                     // set the valid values from the session
-                                                    $validValue = $this->wire('session')->get('randomquestion-' . $old_ts)['answers'];
+
+                                                } else {
+                                                    $errormsg = $this->captchaErrorMsg ?? $this->_('The answer is wrong!');
                                                 }
                                             }
-                                            $cterrormsg = $this->captchaErrorMsg ?? $this->_('The answer is wrong!');
-                                            $captchaField->setRule('compareTexts', $validValue)->setCustomMessage($cterrormsg);
+
+                                            $captchaField->setRule('compareTexts', $validValue)->setCustomMessage($errormsg);
                                         }
 
                                     }
@@ -1883,6 +1896,7 @@
                                     // set error alert
                                     $this->wire('session')->set('errors', '1');
                                     $this->formErrors = $v->errors();
+                                    bd($this->formErrors);
 
                                     // if Captcha value was valid -> add it to the captcha_value property
                                     if ($this->getCaptchaType() === 'SimpleQuestionCaptcha') {
@@ -2196,7 +2210,6 @@
                 $this->wire('session')->redirect($this->getRedirectURL());
             }
 
-
             $out = '';
 
             // if Ajax submit was selected, add an aditional data attribute to the form tag
@@ -2215,7 +2228,6 @@
                 // add special div container for Ajax form submission
                 $out .= '<div id="' . $this->getID() . '-ajax-wrapper" data-validated="' . $this->validated . '">';
             }
-
 
             // Check if the form contains file upload fields, then add enctype attribute
             foreach ($this->formElements as $obj) {
@@ -2305,302 +2317,302 @@
 
                             // add the value back to this field if there is only a single question set (not an array)
                             $captchafield->setAttribute('value', $this->captcha_value);
-                            $old_question = '';
 
-                            $old_ts = self::encryptDecrypt((string)$_POST[$this->getID() . '-load_time'], 'decrypt');
-                            if (isset($this->wire('session')->get('randomquestion-' . $old_ts)['successMsg'])) {
-                                $this->captchaSuccessMsg = $this->wire('session')->get('randomquestion-' . $old_ts)['successMsg'];
-                                $old_question = $this->wire('session')->get('randomquestion-' . $old_ts)['question'];
-                            }
-                            // add success message if set
-                            if ($this->captchaSuccessMsg)
-                                $captchafield->setSuccessMessage($this->captchaSuccessMsg);
-                            // check if the current question is the same before -> otherwise remove the CAPTCHA value
-                            if ($old_question != $this->question)
-                                $captchafield->setAttribute('value', '');
+                            if (array_key_exists($this->getID() . '-random_key', $_POST)) {
 
-                        } else {
+                                $prev_question = $this->question_array[$_POST[$this->getID() . '-random_key']];
+                                if (array_key_exists('successMsg', $prev_question)) {
+                                    $this->captchaSuccessMsg = $prev_question['successMsg'];
+                                }
 
-                            // overwrite the default value with the one from the session for random question if present
-                            if (array_key_exists($this->getID() . '-load_time', $_POST)) {
-                                // remove the value again, because it is a multi question CAPTCHA
-                                $captchafield->setAttribute('value', '');
-                            }
-                        }
-                    }
+                                // add success message if set
+                                if ($this->captchaSuccessMsg)
+                                    $captchafield->setSuccessMessage($this->captchaSuccessMsg);
+                                // check if the current question is the same before -> otherwise remove the CAPTCHA value
+                                if ($prev_question['question'] != $this->question)
+                                    $captchafield->setAttribute('value', '');
 
-                    if (((wireClassName($this->captcha) === 'SimpleQuestionCaptcha') && (!$missing_msg)) || (wireClassName($this->captcha) !== 'SimpleQuestionCaptcha')) {
-                        // insert the captcha input field after the last input field
-                        $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
-                            array($captchafield), array_slice($this->formElements, $captchaPosition));
-                        // re-index the formElements array
-                        $this->formElements = array_values($this->formElements);
+                            } else {
 
-                    }
-
-                }
-
-                // sort the privacy elements that checkbox is before text, if both will be used
-                $privacyElements = [];
-                $privacyCheckbox = $this->getElementsbyClass('Privacy');
-                if ($privacyCheckbox) {
-                    $privacyElements[] = key($privacyCheckbox[0]);
-                }
-                $privacyText = $this->getElementsbyClass('PrivacyText');
-                if ($privacyText) {
-                    $privacyElements[] = key($privacyText[0]);
-                }
-
-                // get the position of the first button element
-                if ($this->getElementsbyClass('Button')) {
-                    $firstButtonPos = key($this->getElementsbyClass('Button')[0]);
-
-                    if ($privacyElements) {
-                        sort($privacyElements);
-                        $newPos = $firstButtonPos - 1;
-
-                        $this->repositionArrayElement($this->formElements, $privacyElements[0], $newPos);
-                        if (array_key_exists(1, $privacyElements)) {
-                            $newPos = array_key_last($this->formElements) - 1;
-                            $this->repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
-                        }
-                    }
-
-                    // change the position of the CAPTCHA, if position change was set via API
-                    $customizeCaptchaPosition = $this->getCaptchaPosition();
-                    if (($this->getCaptchaType() != 'none') && ($customizeCaptchaPosition)) {
-
-                        // get the position of the reference field inside the field object array
-                        $ref_field_name = array_key_first($customizeCaptchaPosition);
-
-                        foreach ($this->formElements as $key => $element) {
-                            if ($this->getID() . '-' . $ref_field_name == $element->getAttribute('name')) {
-                                $ref_position = $key;
-                            }
-
-                        }
-
-                        // add correction for the "before" position, if the reference object is the last item in array
-                        $before_pos = ($ref_position != array_key_last($this->formElements)) ? $ref_position : $ref_position - 1;
-
-                        $new_pos = (reset($customizeCaptchaPosition) === 'before') ? $before_pos : $ref_position + 1;
-                        $this->repositionArrayElement($this->formElements, $captchaPosition, $new_pos);
-                    }
-                }
-
-            }
-
-            // create new array of inputfields only to position the honepot field in between
-            $inputfieldKeys = [];
-
-            foreach ($this->formElements as $key => $element) {
-                if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
-
-                    // exclude hidden input fields - add only visible fields
-                    if ($element->className() !== 'InputHidden') {
-                        $inputfieldKeys[] = $key;
-                    }
-                }
-            }
-
-            // add honeypot on the random number field position
-            if (($this->frontendforms['input_useHoneypot']) && ($inputfieldKeys)) {
-                shuffle($inputfieldKeys);
-                array_splice($this->formElements, $inputfieldKeys[0], 0, [$this->createHoneypot()]);
-            }
-
-            // create hidden Ajax redirect input if set
-            // this value can be grabbed afterwards via Javascript to make a JS redirect
-            if ($this->getSubmitWithAjax()) {
-                if ($this->ajaxRedirect) {
-                    $ajaxredirectField = new InputHidden('ajax_redirect');
-                    $ajaxredirectField->setAttribute('value', $this->ajaxRedirect);
-                    $this->add($ajaxredirectField);
-                }
-            }
-
-            //create CSRF hidden field and add it to the form at the end
-            $hiddenField = new InputHidden('post_token');
-            $hiddenField->setAttribute('name', $tokenName);
-            $hiddenField->setAttribute('value', $tokenValue);
-            $this->add($hiddenField);
-
-            //create hidden field to prevent double form submission if it was not disabled
-            if ($this->useDoubleFormSubmissionCheck) {
-                $hiddenField2 = new InputHidden('doubleSubmission_token');
-                $hiddenField2->setAttribute('name', 'doubleSubmission_token');
-                $hiddenField2->setAttribute('value', $this->doubleSubmission);
-                $this->add($hiddenField2);
-            }
-
-            //create hidden field to send form id to check if this form was submitted
-            //this is only there for the case if other forms are present on the same page
-            $hiddenField3 = new InputHidden('form_id');
-            $hiddenField3->setAttribute('name', 'form_id');
-            $hiddenField3->setAttribute('value', $this->getID());
-            $this->add($hiddenField3);
-
-            //create hidden field to send the timestamp (encoded) when the form was loaded
-            //if (($this->getMinTime()) || $this->getMaxTime()) {
-            $hiddenField4 = new InputHidden('load_time');
-            $hiddenField4->setAttribute('value', self::encryptDecrypt((string)$this->load_time));
-            $this->add($hiddenField4);
-            //}
-
-            /* BLOCKING ALERTS */
-            if ($this->wire('session')->get('blocked')) {
-                // set danger alert for blocking messages
-                $this->alert->setCSSClass('alert_dangerClass');
-                // return blocking text for too many failed attempts
-                if ($this->wire('session')->get('blocked') == 'maxAttempts') {
-                    if ($this->wire('session')->get('attempts') == $this->getMaxAttempts()) {
-                        $this->alert->setText($this->_('You have reached the max. number of allowed attempts and therefore you cannot submit the form once more. To reset the blocking and to submit the form anyway you have to close this browser, open it again and visit this page once more.'));
-                    }
-                }
-            }
-
-            // Output the form markup
-            $out .= $this->alert->___render();
-            // render the alert box on top for success or error message
-            // show form only if user is not blocked
-
-            if ($this->showForm && (($this->wire('session')->get('blocked') == null))) {
-
-                //add required texts
-                $this->prepend($this->renderRequiredText('top')); // required text hint at the top
-                $this->append($this->renderRequiredText('bottom')); // required text hint at bottom
-                $formElements = '';
-
-                $elementsClassNames = (array_map("get_class", $this->formElements));
-                $position = array_search('FrontendForms\Button', $elementsClassNames);
-
-                foreach ($this->formElements as $key => $element) {
-
-                    //create input ID as a combination of form id and input name
-                    $oldId = $element->getAttribute('id');
-                    $element->setAttribute('id', $this->getID() . '-' . $oldId);
-
-                    // change the name attribute of the CSRF field
-                    if ($element->getID() == $this->getID() . '-post_token') {
-                        $element->setAttribute('name', $tokenName);
-                    }
-
-                    // enable/disable usage of Aria attributes
-                    if (method_exists($element, 'useAttributes'))
-                        $element->useAriaAttributes($this->useAriaAttributes);
-
-                    // Label and description (Only on input fields)
-                    if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
-
-                        // set the description position on per form base if description text is present
-                        if ($element->getDescription()->getText()) {
-                            // set position from form setting if no individual position has been set
-                            if (is_null($element->getDescription()->getPosition())) {
-                                $element->getDescription()->setPosition($this->general_desc_position);
+                                // overwrite the default value with the one from the session for random question if present
+                                if (array_key_exists($this->getID() . '-load_time', $_POST)) {
+                                    // remove the value again, because it is a multi question CAPTCHA
+                                    $captchafield->setAttribute('value', '');
+                                }
                             }
                         }
 
+                        if (((wireClassName($this->captcha) === 'SimpleQuestionCaptcha') && (!$missing_msg)) || (wireClassName($this->captcha) !== 'SimpleQuestionCaptcha')) {
+                            // insert the captcha input field after the last input field
+                            $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
+                                array($captchafield), array_slice($this->formElements, $captchaPosition));
+                            // re-index the formElements array
+                            $this->formElements = array_values($this->formElements);
 
-                        // add unique id to the field-wrapper if present
-                        $element->getFieldWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-fieldwrapper');
-                        // add unique id to the input-wrapper if present
-                        $element->getInputWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-inputwrapper');
-                        $element->getLabel()->setAttribute('for', $element->getAttribute('id'));
-                    }
-                    $name = $element->getAttribute('id');
-
-                    //Enable/disable wrap of the checkboxes by its label tag by appending the label after the input tag
-                    // by using the appendLabel() method
-                    if (($element instanceof InputCheckbox) || ($element instanceof InputCheckboxMultiple)) {
-                        $element->appendLabel($this->getAppendLabelOnCheckboxes());
-                    }
-
-                    if (($element instanceof InputRadio) || ($element instanceof InputRadioMultiple)) {
-                        $element->appendLabel($this->getAppendLabelOnRadios());
-                    }
-                    //add the form id as prefix to name attributes of multiple radios and checkboxes
-                    if (($element instanceof InputCheckboxMultiple) || ($element instanceof InputRadioMultiple)) {
-                        foreach ($element->getOptions() as $cb) {
-                            $brackets = ($element instanceof InputCheckboxMultiple) ? '[]' : '';
-                            $cb->setAttribute('name', $name . $brackets);
                         }
+
                     }
 
-                    // add an element (progressbar, text,...) before the first button element for Ajax submit
-                    if ($this->getSubmitWithAjax()) {
+                    // sort the privacy elements that checkbox is before text, if both will be used
+                    $privacyElements = [];
+                    $privacyCheckbox = $this->getElementsbyClass('Privacy');
+                    if ($privacyCheckbox) {
+                        $privacyElements[] = key($privacyCheckbox[0]);
+                    }
+                    $privacyText = $this->getElementsbyClass('PrivacyText');
+                    if ($privacyText) {
+                        $privacyElements[] = key($privacyText[0]);
+                    }
 
-                        if ($key === $position) { // add it only before the first button inside the form
-                            if ($this->showProgressbar) {
-                                // create progressbar and info text for form submission
-                                $submitInfo = new Alert();
-                                $submitInfo->setCSSClass('alert_primaryClass');
-                                $submitInfo->setContent($this->createProgressbar() . $this->_('Please be patient... the form will be validated!'));
-                                $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo->___render() . '</div>';
+                    // get the position of the first button element
+                    if ($this->getElementsbyClass('Button')) {
+                        $firstButtonPos = key($this->getElementsbyClass('Button')[0]);
+
+                        if ($privacyElements) {
+                            sort($privacyElements);
+                            $newPos = $firstButtonPos - 1;
+
+                            $this->repositionArrayElement($this->formElements, $privacyElements[0], $newPos);
+                            if (array_key_exists(1, $privacyElements)) {
+                                $newPos = array_key_last($this->formElements) - 1;
+                                $this->repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
                             }
                         }
-                    }
 
-                    if (array_key_exists($name, $this->formErrors)) {
-                        $element->setCSSClass('input_errorClass');
-                        // add Aria attributes
-                        if (($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json')) {
-                            $element->setAttribute('aria-invalid', 'true');
-                            $element->setAttribute('aria-errormessage', $element->getID() . '-errormsg');
-                        }
+                        // change the position of the CAPTCHA, if position change was set via API
+                        $customizeCaptchaPosition = $this->getCaptchaPosition();
+                        if (($this->getCaptchaType() != 'none') && ($customizeCaptchaPosition)) {
 
-                        // set error class for input element
-                        $element->setErrorMessage($this->formErrors[$name][0])->setAttribute('id', $element->getID() . '-errormsg');
+                            // get the position of the reference field inside the field object array
+                            $ref_field_name = array_key_first($customizeCaptchaPosition);
 
-                        //get a first error message
-                    } else {
-                        if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
-
-                            // ids to description, notes, successmessage for Aria attributes
-                            $element->getSuccessMessage()->setAttribute('id', $element->getID() . '-successmsg');
-                            $element->getDescription()->setAttribute('id', $element->getID() . '-desc');
-                            $element->getNotes()->setAttribute('id', $element->getID() . '-notes');
-
-                            if ($this->isSubmitted()) {
-                                if (($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json') && $this->isSubmitted()) {
-                                    // add only on input elements with values
-                                    if (!empty($element->getAttribute('value'))) {
-                                        $element->setAttribute('aria-invalid', 'false');
-                                        $element->setAttribute('aria-describedby', $element->getID() . '-successmsg');
-
-                                    }
+                            foreach ($this->formElements as $key => $element) {
+                                if ($this->getID() . '-' . $ref_field_name == $element->getAttribute('name')) {
+                                    $ref_position = $key;
                                 }
                             }
 
-                        }
+                            // add correction for the "before" position, if the reference object is the last item in array
+                            $before_pos = ($ref_position != array_key_last($this->formElements)) ? $ref_position : $ref_position - 1;
 
+                            $new_pos = (reset($customizeCaptchaPosition) === 'before') ? $before_pos : $ref_position + 1;
+                            $this->repositionArrayElement($this->formElements, $captchaPosition, $new_pos);
+                        }
                     }
 
-                    $formElements .= $element->render() . PHP_EOL;
                 }
 
-                // add formElementsWrapper -> add the div container after the form tag
-                if ($this->frontendforms['input_wrapperFormElements']) {
-                    $this->getformElementsWrapper()->setContent($formElements);
-                    $formElements = $this->formElementsWrapper->___render() . PHP_EOL;
+                // create new array of inputfields only to position the honepot field in between
+                $inputfieldKeys = [];
+
+                foreach ($this->formElements as $key => $element) {
+                    if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
+
+                        // exclude hidden input fields - add only visible fields
+                        if ($element->className() !== 'InputHidden') {
+                            $inputfieldKeys[] = $key;
+                        }
+                    }
                 }
-                // render the form with all its fields
-                $this->setContent($formElements);
-                $out .= $this->renderNonSelfclosingTag($this->getTag());
+
+                // add honeypot on the random number field position
+                if (($this->frontendforms['input_useHoneypot']) && ($inputfieldKeys)) {
+                    shuffle($inputfieldKeys);
+                    array_splice($this->formElements, $inputfieldKeys[0], 0, [$this->createHoneypot()]);
+                }
+
+                // create hidden Ajax redirect input if set
+                // this value can be grabbed afterwards via Javascript to make a JS redirect
+                if ($this->getSubmitWithAjax()) {
+                    if ($this->ajaxRedirect) {
+                        $ajaxredirectField = new InputHidden('ajax_redirect');
+                        $ajaxredirectField->setAttribute('value', $this->ajaxRedirect);
+                        $this->add($ajaxredirectField);
+                    }
+                }
+
+                //create CSRF hidden field and add it to the form at the end
+                $hiddenField = new InputHidden('post_token');
+                $hiddenField->setAttribute('name', $tokenName);
+                $hiddenField->setAttribute('value', $tokenValue);
+                $this->add($hiddenField);
+
+                //create hidden field to prevent double form submission if it was not disabled
+                if ($this->useDoubleFormSubmissionCheck) {
+                    $hiddenField2 = new InputHidden('doubleSubmission_token');
+                    $hiddenField2->setAttribute('name', 'doubleSubmission_token');
+                    $hiddenField2->setAttribute('value', $this->doubleSubmission);
+                    $this->add($hiddenField2);
+                }
+
+                //create hidden field to send form id to check if this form was submitted
+                //this is only there for the case if other forms are present on the same page
+                $hiddenField3 = new InputHidden('form_id');
+                $hiddenField3->setAttribute('name', 'form_id');
+                $hiddenField3->setAttribute('value', $this->getID());
+                $this->add($hiddenField3);
+
+                //create hidden field to send the timestamp (encoded) when the form was loaded
+                if (($this->getMinTime()) || $this->getMaxTime()) {
+                    $hiddenField4 = new InputHidden('load_time');
+                    $hiddenField4->setAttribute('value', self::encryptDecrypt((string)$this->load_time));
+                    $this->add($hiddenField4);
+                }
+
+                // if a random question array is set, add the random item key to this field
+                if (!is_null($this->random_question)) {
+                    $hiddenField5 = new InputHidden('random_key');
+                    $hiddenField5->setAttribute('value', $this->random_question);
+                    $this->add($hiddenField5);
+                }
+
+                /* BLOCKING ALERTS */
+                if ($this->wire('session')->get('blocked')) {
+                    // set danger alert for blocking messages
+                    $this->alert->setCSSClass('alert_dangerClass');
+                    // return blocking text for too many failed attempts
+                    if ($this->wire('session')->get('blocked') == 'maxAttempts') {
+                        if ($this->wire('session')->get('attempts') == $this->getMaxAttempts()) {
+                            $this->alert->setText($this->_('You have reached the max. number of allowed attempts and therefore you cannot submit the form once more. To reset the blocking and to submit the form anyway you have to close this browser, open it again and visit this page once more.'));
+                        }
+                    }
+                }
+
+                // Output the form markup
+                $out .= $this->alert->___render();
+                // render the alert box on top for success or error message
+                // show form only if user is not blocked
+
+                if ($this->showForm && (($this->wire('session')->get('blocked') == null))) {
+
+                    //add required texts
+                    $this->prepend($this->renderRequiredText('top')); // required text hint at the top
+                    $this->append($this->renderRequiredText('bottom')); // required text hint at bottom
+                    $formElements = '';
+
+                    $elementsClassNames = (array_map("get_class", $this->formElements));
+                    $position = array_search('FrontendForms\Button', $elementsClassNames);
+
+                    foreach ($this->formElements as $key => $element) {
+
+                        //create input ID as a combination of form id and input name
+                        $oldId = $element->getAttribute('id');
+                        $element->setAttribute('id', $this->getID() . '-' . $oldId);
+
+                        // change the name attribute of the CSRF field
+                        if ($element->getID() == $this->getID() . '-post_token') {
+                            $element->setAttribute('name', $tokenName);
+                        }
+
+                        // enable/disable usage of Aria attributes
+                        if (method_exists($element, 'useAttributes'))
+                            $element->useAriaAttributes($this->useAriaAttributes);
+
+                        // Label and description (Only on input fields)
+                        if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
+
+                            // set the description position on per form base if description text is present
+                            if ($element->getDescription()->getText()) {
+                                // set position from form setting if no individual position has been set
+                                if (is_null($element->getDescription()->getPosition())) {
+                                    $element->getDescription()->setPosition($this->general_desc_position);
+                                }
+                            }
+
+                            // add unique id to the field-wrapper if present
+                            $element->getFieldWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-fieldwrapper');
+                            // add unique id to the input-wrapper if present
+                            $element->getInputWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-inputwrapper');
+                            $element->getLabel()->setAttribute('for', $element->getAttribute('id'));
+                        }
+                        $name = $element->getAttribute('id');
+
+                        //Enable/disable wrap of the checkboxes by its label tag by appending the label after the input tag
+                        // by using the appendLabel() method
+                        if (($element instanceof InputCheckbox) || ($element instanceof InputCheckboxMultiple)) {
+                            $element->appendLabel($this->getAppendLabelOnCheckboxes());
+                        }
+
+                        if (($element instanceof InputRadio) || ($element instanceof InputRadioMultiple)) {
+                            $element->appendLabel($this->getAppendLabelOnRadios());
+                        }
+                        //add the form id as prefix to name attributes of multiple radios and checkboxes
+                        if (($element instanceof InputCheckboxMultiple) || ($element instanceof InputRadioMultiple)) {
+                            foreach ($element->getOptions() as $cb) {
+                                $brackets = ($element instanceof InputCheckboxMultiple) ? '[]' : '';
+                                $cb->setAttribute('name', $name . $brackets);
+                            }
+                        }
+
+                        // add an element (progressbar, text,...) before the first button element for Ajax submit
+                        if ($this->getSubmitWithAjax()) {
+
+                            if ($key === $position) { // add it only before the first button inside the form
+                                if ($this->showProgressbar) {
+                                    // create progressbar and info text for form submission
+                                    $submitInfo = new Alert();
+                                    $submitInfo->setCSSClass('alert_primaryClass');
+                                    $submitInfo->setContent($this->createProgressbar() . $this->_('Please be patient... the form will be validated!'));
+                                    $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo->___render() . '</div>';
+                                }
+                            }
+                        }
+
+                        if (array_key_exists($name, $this->formErrors)) {
+                            $element->setCSSClass('input_errorClass');
+                            // add Aria attributes
+                            if (($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json')) {
+                                $element->setAttribute('aria-invalid', 'true');
+                                $element->setAttribute('aria-errormessage', $element->getID() . '-errormsg');
+                            }
+
+                            // set error class for input element
+                            $element->setErrorMessage($this->formErrors[$name][0])->setAttribute('id', $element->getID() . '-errormsg');
+
+                            //get a first error message
+                        } else {
+                            if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
+
+                                // ids to description, notes, successmessage for Aria attributes
+                                $element->getSuccessMessage()->setAttribute('id', $element->getID() . '-successmsg');
+                                $element->getDescription()->setAttribute('id', $element->getID() . '-desc');
+                                $element->getNotes()->setAttribute('id', $element->getID() . '-notes');
+
+                                if ($this->isSubmitted()) {
+                                    if (($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json') && $this->isSubmitted()) {
+                                        // add only on input elements with values
+                                        if (!empty($element->getAttribute('value'))) {
+                                            $element->setAttribute('aria-invalid', 'false');
+                                            $element->setAttribute('aria-describedby', $element->getID() . '-successmsg');
+
+                                        }
+                                    }
+                                }
+
+                            }
+
+                        }
+
+                        $formElements .= $element->render() . PHP_EOL;
+                    }
+
+                    // add formElementsWrapper -> add the div container after the form tag
+                    if ($this->frontendforms['input_wrapperFormElements']) {
+                        $this->getformElementsWrapper()->setContent($formElements);
+                        $formElements = $this->formElementsWrapper->___render() . PHP_EOL;
+                    }
+                    // render the form with all its fields
+                    $this->setContent($formElements);
+                    $out .= $this->renderNonSelfclosingTag($this->getTag());
+
+                }
+                if ($this->getSubmitWithAjax()) {
+                    $out .= '</div>';
+                }
+
 
             }
-            if ($this->getSubmitWithAjax()) {
-                $out .= '</div>';
-            }
-
-            // remove old randomquestion session if present
-
-            if (array_key_exists($this->getID() . '-load_time', $_POST)) {
-                $old_ts = self::encryptDecrypt((string)$_POST[$this->getID() . '-load_time'], 'decrypt');
-                $this->wire('session')->remove('randomquestion-' . $old_ts);
-            }
-
             return $out;
-
         }
 
         /**
@@ -2691,7 +2703,8 @@
          * @return void
          * @throws \Exception
          */
-        public function addBefore(
+        public
+        function addBefore(
             Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose      $field,
             Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $before_field
         ): void
@@ -2715,7 +2728,8 @@
          * @return void
          * @throws \Exception
          */
-        public function addAfter(
+        public
+        function addAfter(
             Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose      $field,
             Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $after_field
         ): void
@@ -2732,7 +2746,8 @@
          * @param object $field
          * @return void
          */
-        public function remove(object $field): void
+        public
+        function remove(object $field): void
         {
             if (($key = array_search($field, $this->formElements)) !== false) {
                 unset($this->formElements[$key]);
@@ -2747,7 +2762,8 @@
          * Get the min time value
          * @return int
          */
-        public function getMinTime(): int
+        public
+        function getMinTime(): int
         {
             return $this->frontendforms['input_minTime'];
         }
@@ -2757,7 +2773,8 @@
          * @param int $minTime
          * @return $this
          */
-        public function setMinTime(int $minTime): self
+        public
+        function setMinTime(int $minTime): self
         {
             $this->frontendforms['input_minTime'] = $minTime;
             return $this;
@@ -2767,7 +2784,8 @@
          * Get the max time value
          * @return int
          */
-        protected function getMaxTime(): int
+        protected
+        function getMaxTime(): int
         {
             return $this->frontendforms['input_maxTime'];
         }
@@ -2777,7 +2795,8 @@
          * @param int $maxTime
          * @return $this
          */
-        public function setMaxTime(int $maxTime): self
+        public
+        function setMaxTime(int $maxTime): self
         {
             $this->frontendforms['input_maxTime'] = $maxTime;
             return $this;
@@ -2788,7 +2807,8 @@
          * @param string $method
          * @return string
          */
-        public static function encryptDecrypt(string $string, string $method = 'encrypt'): string
+        public
+        static function encryptDecrypt(string $string, string $method = 'encrypt'): string
         {
             // encryption settings
             $encrypt_method = 'AES-256-CBC';
@@ -2815,7 +2835,8 @@
          * @param string $position - has to be 'top' or 'bottom'
          * @return string
          */
-        private function renderRequiredText(string $position): string
+        private
+        function renderRequiredText(string $position): string
         {
             if ($this->defaultRequiredTextPosition === $position) {
                 return $this->requiredHint->___render();
@@ -2828,7 +2849,8 @@
          * @param int $charLength - the length of the random string - default is 100
          * @return string - returns a slug version of the generated random string that can be used inside an url
          */
-        protected function createQueryCode(int $charLength = 100): string
+        protected
+        function createQueryCode(int $charLength = 100): string
         {
             $pass = new \ProcessWire\Password();
             if ($charLength <= 0) {
@@ -2845,7 +2867,8 @@
          * @param $string - the string
          * @return string
          */
-        protected function generateSlug(string $string): string
+        protected
+        function generateSlug(string $string): string
         {
             return preg_replace('/[^A-Za-z\d-]+/', '-', $string);
         }
@@ -2856,7 +2879,8 @@
          * @return string|null - a readable string of the time (fe 1 day instead of 86400 seconds)
          * @throws Exception
          */
-        protected function readableTimestringFromSeconds(int $seconds = 0): ?string
+        protected
+        function readableTimestringFromSeconds(int $seconds = 0): ?string
         {
             $then = new DateTime(date('Y-m-d H:i:s', 0));
             $now = new DateTime(date('Y-m-d H:i:s', $seconds));
@@ -2894,7 +2918,8 @@
          * Return the names of all input fields inside a form as an array
          * @return array
          */
-        public function getNamesOfInputFields(): array
+        public
+        function getNamesOfInputFields(): array
         {
             $elements = [];
             if ($this->formElements) {
@@ -2912,7 +2937,8 @@
          * This is a general message that could be used for all forms
          * @return void
          */
-        protected function generateEmailSentErrorAlert(): void
+        protected
+        function generateEmailSentErrorAlert(): void
         {
             $this->alert->setCSSClass('alert_dangerClass');
             $this->alert->setText($this->_('Email could not be sent due to possible wrong email configuration settings.'));
@@ -2924,10 +2950,12 @@
          * pre-header
          * @return string
          */
-        protected function getLitmusHack(): string
+        protected
+        function getLitmusHack(): string
         {
             return '&#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279;';
         }
+
 
         protected function getPreheaderStyle(): string
         {
@@ -2939,7 +2967,8 @@
          * @param \ProcessWire\WireMail $mail
          * @return string
          */
-        protected function generateEmailPreHeader(WireMail $mail): string
+        protected
+        function generateEmailPreHeader(WireMail $mail): string
         {
             if ($mail->title) { // check if title property was set
                 // generate an invisible div container
@@ -2947,5 +2976,6 @@
             }
             return '';
         }
+
 
     }
