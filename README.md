@@ -504,6 +504,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setCaptchaNotes()](#setcaptchanotes---overwrite-the-default-notes-of-the-captcha-input-field)  | Overwrite the default notes of the CAPTCHA input field  |
 | [setCaptchaDescription()](#setcaptchadescription---add-a-description-to-the-captcha-input-field)  | Add a description to the CAPTCHA input field  |
 | [setCaptchaPosition()](#setcaptchaposition---place-the-captcha-on-a-position-of-your-choice-inside-the-form)  | Output the CAPTCHA at another position inside the form  |
+| [setSimpleQuestionCaptchaRandomRotation()](#setsimplequestioncaptcharandomrotation---showing-multiple-questions-randomly-instead-of-a-single-question-with-the-simple-question-captcha)  | Showing multiple questions randomly instead of a single question with the simple question CAPTCHA |
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
@@ -951,7 +952,9 @@ With this method, you are able to position the CAPTCHA on every position inside 
 
 The method must be applied to the form object and must contain as first parameter the name of the reference field (fe. email) and as second parameter the attribute "before" or "after".
 
-``$form`->setCaptchaPosition('email', 'after');``
+```php
+$form`->setCaptchaPosition('email', 'after');
+```
 
 This example places the CAPTCHA **after** the field with the name attribute "**email**".
 
@@ -964,7 +967,7 @@ All the questions have to be defined inside an multidimensional assoc. array.
 
 Here is an example of such a multi-question array:
 
-``
+```php
 $questions = [
         [
             'question' => 'How many eyes have a human?',
@@ -994,7 +997,7 @@ $questions = [
         ],
 
     ];
-``
+```
 
 Each question is an extra array inside the array and must have at least the **question** and the **answers** key as the minimum requirements.
 
@@ -1008,7 +1011,9 @@ The following keys are optional and can be set or not:
 
 The array containing the questions has to be entered as the parameter inside this function:
 
-``$form`->setSimpleQuestionCaptchaRandomRotation($questions);``
+```php
+$form`->setSimpleQuestionCaptchaRandomRotation($questions);
+```
 
 You will find a working example inside the example folder: [https://github.com/juergenweb/FrontendForms/blob/main/Examples/randomsimplequestioncaptcha.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/randomsimplequestioncaptcha.php)
 
