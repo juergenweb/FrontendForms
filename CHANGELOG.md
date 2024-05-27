@@ -964,7 +964,9 @@ The method must be applied to the form object and must contain as first paramete
 
 This example places the CAPTCHA **after** the field with the name attribute "**email**".
 
-## 2024-05-27
+## [2.1.78] 2024-05-27
+
+This update comes with 1 bug fix, 4 new general customizing methods for all CAPTCHAS and 1 special method for the simple question CAPTCHA.
 
 - **Missing rendering of field description at the end of inputfield re-added**
 If the description position was set to "afterInput", then the description tag has not been rendered, because the rendering method was missing. This bug is fixed now.
@@ -996,3 +998,9 @@ More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readm
 This method is for positioning the description text of the CAPTCHA field independently, if needed.
 
 More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchaposition---place-the-captcha-on-a-position-of-your-choice-inside-the-form)
+
+- **New method setSimpleQuestionCaptchaRandomRotation added**
+
+This method is for the simple question captcha only and offers the possibility to display several questions randomly instead of only one question. The questions can be set as an array and are highly configurable.
+
+More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setsimplequestioncaptcharandomrotation---showing-multiple-questions-randomly-instead-of-a-single-question-with-the-simple-question-captcha)
