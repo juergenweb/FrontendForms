@@ -243,7 +243,6 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
         $this->captchaInput->getInputWrapper()->setAttribute('class', 'captcha');
 
         $this->captchaInput->setLabel($this->_('CAPTCHA field for SPAM protection'));
-        $this->captchaInput->setRule('required'); // CAPTCHA is always required
 
         $this->captchaInput->getInputWrapper()->prepend($this->createCaptchaImageTag($formID)
                 ->setAttribute('id', $formID . '-captcha-image')
