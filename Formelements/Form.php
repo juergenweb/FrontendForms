@@ -43,6 +43,7 @@
         const FORMMETHODS = ['get', 'post']; // array that holds allowed action methods (get, post)
 
         /* properties */
+        protected $load_time = ''; // the time, when the form was loaded
         protected array $storedFiles = []; // array that holds all files (including overwritten filenames)
         protected string $doubleSubmission = ''; // value hold by the double form submission session
         protected string $defaultRequiredTextPosition = 'top'; // the default required text position
@@ -67,6 +68,8 @@
         protected string|null $captchaErrorMsg = ''; // overwrite the default error message for the CAPTCHA validation
         protected string|null $captchaNotes = ''; // notes text for the Captcha
         protected string|null $captchaDescription = ''; // description text for the Captcha
+        protected string|null $captchaDescriptionPosition = ''; // description position for the Captcha
+
         protected string|int|bool $useAriaAttributes = true; // use accessibility attributes
         // Mail properties - only needed if FrontendForms will be used to send emails
         protected array $mailPlaceholder = []; // associative array for usage in emails (['placeholdername' => 'text',...])
@@ -106,6 +109,9 @@
         public function __construct(string $id)
         {
             parent::__construct();
+
+            $this->load_time = time(); // set the load time
+
 
             // set the path to the template folder for the email templates
             $this->emailTemplatesDirPath = $this->wire('config')->paths->siteModules . 'FrontendForms/email_templates/';
@@ -194,12 +200,15 @@
 
             if (array_key_exists('input_descPosition', $this->frontendforms)) {
                 $this->general_desc_position = $this->frontendforms['input_descPosition'];
+                // set the global description position for the CAPTCHA description position as default value
+                $this->captchaDescriptionPosition = $this->general_desc_position;
             }
 
             // add a hook method to render mail templates before sending the mail
             $this->addHookBefore('WireMail::send', $this, 'renderTemplate');
             // add a hook method after sending the mail to remove the session variable "templateloaded"
             $this->addHookAfter('WireMail::send', $this, 'removeTemplateSession');
+
 
         }
 
@@ -752,6 +761,7 @@
          * Set the mail body property depending on the custom mail module set
          * @param $mail
          * @param string|null $body
+         * @param string $mailModule
          * @return void
          */
         public static function setBody($mail, string|null $body, string $mailModule): void
@@ -1329,6 +1339,66 @@
         }
 
         /**
+         * Set the position of the description text of the CAPTCHA input field
+         * Can be 'beforeLabel', 'afterLabel' or 'afterInput'
+         * @param string $pos
+         * @return $this
+         */
+        public function setCaptchaDescriptionPosition(string $pos): self
+        {
+            if (in_array($pos, ['beforeLabel', 'afterLabel', 'afterInput'])) {
+                $this->captchaDescriptionPosition = $pos; // set new position property
+            }
+            return $this;
+        }
+
+        /**
+         * Set a random question to the CAPTCHA out of an array of several questions
+         * @param array $questions
+         * @return void
+         * @throws \ProcessWire\WireException
+         */
+        public function setSimpleQuestionCaptchaRandomRotation(array $questions): void
+        {
+            // check if chosen CAPTCHA type is simpe question CAPTCHA
+            if($this->getCaptchaType() == 'SimpleQuestionCaptcha'){
+
+            $random_question = $questions[array_rand($questions)];
+            $question_array = [];
+            // only set a random question if at least the question and the answer keys are present
+            if ($random_question['question'] && $random_question['answers']) {
+                // only set a random question if question is a string and the answers is an array
+                if (is_string($random_question['question']) && is_array($random_question['answers'])) {
+                    $this->setSecurityQuestion($random_question['question'], $random_question['answers']);
+
+                    $question_array['question'] = $random_question['question'];
+                    $question_array['answers'] = $random_question['answers'];
+                    // unset the question and the answers keys from the array
+                    unset($random_question['question']);
+                    unset($random_question['answers']);
+
+                    // get all other array keys if there are some left
+                    if ($questions) {
+
+                        // set additional properties if present
+                        foreach ($random_question as $name => $value) {
+                            $methodName = 'setCaptcha' . ucfirst($name);
+                            if (method_exists($this, $methodName)) {
+                                $this->$methodName($value);
+                                $question_array[$name] = $value;
+                            }
+                        }
+
+                    }
+                }
+            }
+            // create session to store all values for later usage after form validation
+            $this->wire('session')->set('randomquestion-' . $this->load_time, $question_array);
+            }
+
+        }
+
+        /**
          * Set the error message if errors occur after form submission
          * Can be used to overwrite the default error message
          * @param string $errorMsg
@@ -1675,15 +1745,27 @@
 
                                     // special treatment for SimpleQuestionCaptcha
                                     if (wireClassName($this->captcha) === 'SimpleQuestionCaptcha') {
-
                                         // add custom answers if present
                                         if ($this->answers)
                                             $this->getCaptcha()->setCaptchaValidValue($this->answers);
 
                                         // set the appropriate validator
                                         if ($this->getCaptcha()->getCaptchaValidValue()) {
+
+                                            $validValue = $this->getCaptcha()->getCaptchaValidValue();
+
+                                            // overwrite the default value with the one from the session for random question if present
+                                            if (array_key_exists($this->getID() . '-load_time', $_POST)) {
+
+                                                $old_ts = self::encryptDecrypt((string)$_POST[$this->getID() . '-load_time'], 'decrypt');
+                                                if (isset($this->wire('session')->get('randomquestion-' . $old_ts)['errorMsg'])) {
+                                                    $this->captchaErrorMsg = $this->wire('session')->get('randomquestion-' . $old_ts)['errorMsg'];
+                                                    // set the valid values from the session
+                                                    $validValue = $this->wire('session')->get('randomquestion-' . $old_ts)['answers'];
+                                                }
+                                            }
                                             $cterrormsg = $this->captchaErrorMsg ?? $this->_('The answer is wrong!');
-                                            $captchaField->setRule('compareTexts', $this->getCaptcha()->getCaptchaValidValue())->setCustomMessage($cterrormsg);
+                                            $captchaField->setRule('compareTexts', $validValue)->setCustomMessage($cterrormsg);
                                         }
 
                                     }
@@ -1805,7 +1887,8 @@
                                     // if Captcha value was valid -> add it to the captcha_value property
                                     if ($this->getCaptchaType() === 'SimpleQuestionCaptcha') {
                                         $captchaName = $this->getID() . '-captcha';
-                                        if (!in_array($captchaName, $this->formErrors)) {
+
+                                        if (!array_key_exists($captchaName, $this->formErrors)) {
                                             if (isset($sanitizedValues[$captchaName]))
                                                 $this->captcha_value = $sanitizedValues[$captchaName];
                                         }
@@ -2044,7 +2127,7 @@
          * This is useful if only one instance is allowed, but there are multiple instances
          * Returns the key of the last item, which will not be deleted (unset)
          * @param string $className
-         * @return int
+         * @return int|null
          */
         public function removeMultipleEntriesByClass(string $className): null|int
         {
@@ -2091,7 +2174,7 @@
         protected function repositionArrayElement(array &$array, $key, int $order): void
         {
             if (($a = array_search($key, array_keys($array))) === false) {
-                throw new \Exception("The {$key} cannot be found in the given array.");
+                throw new Exception("The $key cannot be found in the given array.");
             }
             $p1 = array_splice($array, $a, 1);
             $p2 = array_splice($array, 0, $order);
@@ -2106,6 +2189,7 @@
          */
         public function render(): string
         {
+
 
             // redirect after successful form validation if set
             if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
@@ -2179,16 +2263,16 @@
                 // add captcha field as last element before the button element
                 if ($this->getCaptchaType() != 'none') {
                     // set custom error message
-                    // position in form fields array to insert
+                    // position in the form fields array to insert
                     $captchaPosition = $refKey;
 
                     $captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
 
                     // add notes to the captcha input field if set
-                    if($this->captchaNotes) $captchafield->setNotes($this->captchaNotes);
+                    if ($this->captchaNotes) $captchafield->setNotes($this->captchaNotes);
 
                     // add CAPTCHA description if set
-                    if ($this->captchaDescription) $captchafield->setDescription($this->captchaDescription);
+                    if ($this->captchaDescription) $captchafield->setDescription($this->captchaDescription)->setPosition($this->captchaDescriptionPosition);
 
                     // if value of Captcha field was correct and this field is type of QuestionCaptcha ->
                     // add the value again to the input field
@@ -2218,10 +2302,30 @@
                         }
 
                         if (!empty($this->captcha_value)) {
+
+                            // add the value back to this field if there is only a single question set (not an array)
                             $captchafield->setAttribute('value', $this->captcha_value);
+                            $old_question = '';
+
+                            $old_ts = self::encryptDecrypt((string)$_POST[$this->getID() . '-load_time'], 'decrypt');
+                            if (isset($this->wire('session')->get('randomquestion-' . $old_ts)['successMsg'])) {
+                                $this->captchaSuccessMsg = $this->wire('session')->get('randomquestion-' . $old_ts)['successMsg'];
+                                $old_question = $this->wire('session')->get('randomquestion-' . $old_ts)['question'];
+                            }
                             // add success message if set
                             if ($this->captchaSuccessMsg)
                                 $captchafield->setSuccessMessage($this->captchaSuccessMsg);
+                            // check if the current question is the same before -> otherwise remove the CAPTCHA value
+                            if ($old_question != $this->question)
+                                $captchafield->setAttribute('value', '');
+
+                        } else {
+
+                            // overwrite the default value with the one from the session for random question if present
+                            if (array_key_exists($this->getID() . '-load_time', $_POST)) {
+                                // remove the value again, because it is a multi question CAPTCHA
+                                $captchafield->setAttribute('value', '');
+                            }
                         }
                     }
 
@@ -2268,15 +2372,12 @@
 
                         // get the position of the reference field inside the field object array
                         $ref_field_name = array_key_first($customizeCaptchaPosition);
-                        $ref_field = $this->getFormelementByName($ref_field_name);
 
                         foreach ($this->formElements as $key => $element) {
                             if ($this->getID() . '-' . $ref_field_name == $element->getAttribute('name')) {
                                 $ref_position = $key;
                             }
-                            if ($this->getID() . '-captcha' == $element->getAttribute('name')) {
-                                $current_position = $key;
-                            }
+
                         }
 
                         // add correction for the "before" position, if the reference object is the last item in array
@@ -2340,11 +2441,12 @@
             $this->add($hiddenField3);
 
             //create hidden field to send the timestamp (encoded) when the form was loaded
-            if (($this->getMinTime()) || $this->getMaxTime()) {
-                $hiddenField4 = new InputHidden('load_time');
-                $hiddenField4->setAttribute('value', self::encryptDecrypt((string)time()));
-                $this->add($hiddenField4);
-            }
+            //if (($this->getMinTime()) || $this->getMaxTime()) {
+            $hiddenField4 = new InputHidden('load_time');
+            $hiddenField4->setAttribute('value', self::encryptDecrypt((string)$this->load_time));
+            $this->add($hiddenField4);
+            //}
+
             /* BLOCKING ALERTS */
             if ($this->wire('session')->get('blocked')) {
                 // set danger alert for blocking messages
@@ -2472,7 +2574,7 @@
                         }
 
                     }
-                    
+
                     $formElements .= $element->render() . PHP_EOL;
                 }
 
@@ -2488,6 +2590,13 @@
             }
             if ($this->getSubmitWithAjax()) {
                 $out .= '</div>';
+            }
+
+            // remove old randomquestion session if present
+
+            if (array_key_exists($this->getID() . '-load_time', $_POST)) {
+                $old_ts = self::encryptDecrypt((string)$_POST[$this->getID() . '-load_time'], 'decrypt');
+                $this->wire('session')->remove('randomquestion-' . $old_ts);
             }
 
             return $out;
