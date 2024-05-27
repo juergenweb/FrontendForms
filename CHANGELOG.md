@@ -966,6 +966,9 @@ This example places the CAPTCHA **after** the field with the name attribute "**e
 
 ## 2024-05-27
 
+- **Missing rendering of field description at the end of inputfield re-added**
+If the description position was set to "afterInput", then the description tag has not been rendered, because the rendering method was missing. This bug is fixed now.
+
 - **New method setCaptchaErrorMsg added**
 
 This method is for overwriting the default error message for the captcha validation, that will be displayed if the value entered is not correct. 
