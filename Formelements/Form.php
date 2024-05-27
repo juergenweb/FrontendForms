@@ -70,6 +70,7 @@
         protected array|null $captchaPosition = null; // array that holds the reference field as key and the position as value
         protected string|null $captchaSuccessMsg = ''; // set a success message for the captcha field
         protected string|null $captchaErrorMsg = ''; // overwrite the default error message for the CAPTCHA validation
+        protected string|null $captchaRequiredErrorMsg = ''; // overwrite the default error message for the CAPTCHA required validation
         protected string|null $captchaNotes = ''; // notes text for the Captcha
         protected string|null $captchaDescription = ''; // description text for the Captcha
         protected string|null $captchaDescriptionPosition = ''; // description position for the Captcha
@@ -1333,6 +1334,17 @@
         }
 
         /**
+         * Method to overwrite the default CAPTCHA required error message
+         * @param string $errormsg
+         * @return $this
+         */
+        public function setCaptchaRequiredErrorMsg(string $errormsg): self
+        {
+            $this->captchaRequiredErrorMsg = $errormsg;
+            return $this;
+        }
+
+        /**
          * Method to overwrite the default CAPTCHA notes
          * @param string $notes
          * @return $this
@@ -1754,6 +1766,11 @@
                 // add description and position to the captcha input field if set
                 if ($this->captchaDescription) $this->captchafield->setDescription($this->captchaDescription)->setPosition($this->captchaDescriptionPosition);
 
+                if($this->captchaRequiredErrorMsg){
+                    $this->captchafield->setRule('required')->setCustomMessage($this->captchaRequiredErrorMsg);
+                } else {
+                    $this->captchafield->setRule('required');
+                }
 
             }
 
@@ -1849,6 +1866,7 @@
 
                                     if (count($element->getRules()) > 0) {
                                         // add required validation to be the first
+                                        bd($element->getRules());
                                         $rules = $this->putRequiredOnTop($element->getRules());
                                         foreach ($rules as $validatorName => $parameters) {
                                             $v->rule($validatorName, $element->getAttribute('name'), ...
@@ -1880,8 +1898,19 @@
                                     if ($useCaptcha) {
 
                                         if ($element->getAttribute('name') == $this->createElementName('captcha')) {
-                                            $v->rule('required',
-                                                $element->getAttribute('name'))->label($this->_('The captcha')); // captcha is always required
+
+                                            /*
+                                            if($this->captchaRequiredErrorMsg){
+                                                bd('custom');
+                                                bd($element->getAttribute('name'));
+                                                bd($this->captchaRequiredErrorMsg);
+                                                $v->rule('required',
+                                                    $element->getAttribute('name'))->message($this->captchaRequiredErrorMsg);
+                                            } else {
+                                                bd('default');
+                                                $v->rule('required',
+                                                    $element->getAttribute('name'))->label($this->_('The captcha'));
+                                            }*/
 
                                             // exclude this CAPTCHA types from using the checkCaptcha rule
                                             $nonCheckCaptchaTypes = ['SimpleQuestionCaptcha'];
