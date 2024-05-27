@@ -73,7 +73,8 @@
         protected string|null $captchaNotes = ''; // notes text for the Captcha
         protected string|null $captchaDescription = ''; // description text for the Captcha
         protected string|null $captchaDescriptionPosition = ''; // description position for the Captcha
-
+        protected string|null $captchaPlaceholder = ''; // set a placeholder for the Captcha input
+        protected InputText|InputRadioMultiple|null $captchafield;
         protected string|int|bool $useAriaAttributes = true; // use accessibility attributes
         // Mail properties - only needed if FrontendForms will be used to send emails
         protected array $mailPlaceholder = []; // associative array for usage in emails (['placeholdername' => 'text',...])
@@ -270,6 +271,17 @@
         public function setCaptchaSuccessMsg(string $successmsg): self
         {
             $this->captchaSuccessMsg = $successmsg;
+            return $this;
+        }
+
+        /**
+         * Add a placeholder to the Captcha input
+         * @param string $placeholder
+         * @return $this
+         */
+        public function setCaptchaPlaceholder(string $placeholder): self
+        {
+            $this->captchaPlaceholder = $placeholder;
             return $this;
         }
 
@@ -1725,9 +1737,28 @@
                 }
             }
 
+            // instantiate the Captcha field if set
+            $useCaptcha = ($this->getCaptchaType() !== 'none');
+            if ($useCaptcha) {
+
+                // create the input field first
+                $this->captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
+
+                // add placeholder attribute if present
+                if ($this->captchaPlaceholder)
+                    $this->captchafield->setAttribute('placeholder', $this->captchaPlaceholder);
+
+                // add notes to the captcha input field if set
+                if ($this->captchaNotes) $this->captchafield->setNotes($this->captchaNotes);
+
+                // add description and position to the captcha input field if set
+                if ($this->captchaDescription) $this->captchafield->setDescription($this->captchaDescription)->setPosition($this->captchaDescriptionPosition);
+
+
+            }
+
             // instantiates the FormValidation object
             $validation = new FormValidation($input, $this, $this->alert);
-
 
             // 1) check if this form was submitted and no other form on the same page
             if ($validation->thisFormSubmitted()) {
@@ -1749,9 +1780,7 @@
                                     $formElements[] = $this->createHoneypot();
                                 }
                                 //add captcha to the array because it will be rendered afterwards
-                                if ($this->getCaptchaType() !== 'none') {
-
-                                    $captchaField = $this->getCaptcha()->createCaptchaInputField($this->getID());
+                                if ($useCaptcha) {
 
                                     // special treatment for SimpleQuestionCaptcha
                                     if (wireClassName($this->captcha) === 'SimpleQuestionCaptcha') {
@@ -1780,12 +1809,12 @@
                                                 $errormsg = $this->captchaErrorMsg ?? $this->_('The answer is wrong!');
                                             }
 
-                                            $captchaField->setRule('compareTexts', $validValue)->setCustomMessage($errormsg);
+                                            $this->captchafield->setRule('compareTexts', $validValue)->setCustomMessage($errormsg);
                                         }
 
                                     }
 
-                                    $formElements[] = $captchaField;
+                                    $formElements[] = $this->captchafield;
                                 }
 
                                 // Get only input field for user inputs (no fieldsets, buttons,..)
@@ -1848,7 +1877,7 @@
                                     }
                                     // add captcha validation if captcha field is included
 
-                                    if ($this->getCaptchaType() !== 'none') {
+                                    if ($useCaptcha) {
 
                                         if ($element->getAttribute('name') == $this->createElementName('captcha')) {
                                             $v->rule('required',
@@ -1897,15 +1926,33 @@
                                     // set error alert
                                     $this->wire('session')->set('errors', '1');
                                     $this->formErrors = $v->errors();
-                                    bd($this->formErrors);
 
                                     // if Captcha value was valid -> add it to the captcha_value property
                                     if ($this->getCaptchaType() === 'SimpleQuestionCaptcha') {
                                         $captchaName = $this->getID() . '-captcha';
 
                                         if (!array_key_exists($captchaName, $this->formErrors)) {
-                                            if (isset($sanitizedValues[$captchaName]))
-                                                $this->captcha_value = $sanitizedValues[$captchaName];
+                                            // captcha was valid
+
+
+                                            // add the value back to this field on success if there is only a single question set (not an array)
+                                            $this->captchafield->setAttribute('value', $this->captcha_value);
+
+                                            // set the success message
+                                            // check if it is multi-question
+                                            if (array_key_exists($this->getID() . '-random_key', $_POST)) {
+
+                                                $prev_question = $this->question_array[$_POST[$this->getID() . '-random_key']];
+                                                if (array_key_exists('successMsg', $prev_question)) {
+                                                    $this->captchafield->setSuccessMessage($prev_question['successMsg']);
+                                                }
+
+                                                // check if the current question is the same before -> otherwise remove the CAPTCHA value
+                                                if ($prev_question['question'] != $this->question)
+                                                    $this->captchafield->setAttribute('value', '');
+
+                                            }
+
                                         }
                                     }
 
@@ -2205,7 +2252,6 @@
         public function render(): string
         {
 
-
             // redirect after successful form validation if set
             if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
                 $this->wire('session')->redirect($this->getRedirectURL());
@@ -2276,31 +2322,20 @@
                 // add captcha field as last element before the button element
 
                 if ($this->getCaptchaType() != 'none') {
-                    // set custom error message
+
                     // position in the form fields array to insert
                     $captchaPosition = $refKey;
-
-                    $captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
-
-                    // add notes to the captcha input field if set
-                    if ($this->captchaNotes) $captchafield->setNotes($this->captchaNotes);
-
-                    // add CAPTCHA description if set
-                    if ($this->captchaDescription) $captchafield->setDescription($this->captchaDescription)->setPosition($this->captchaDescriptionPosition);
-
-                    // if value of Captcha field was correct and this field is type of QuestionCaptcha ->
-                    // add the value again to the input field
 
                     if (wireClassName($this->captcha) === 'SimpleQuestionCaptcha') {
 
                         // add custom question as label if present
                         if ($this->question)
-                            $captchafield->setLabel($this->question);
+                            $this->captchafield->setLabel($this->question);
 
                         // check if a question and accepted answers have been set
                         $missing_msg = [];
                         // output a warning message if question for question CAPTCHA is missing
-                        if (!$captchafield->getLabel()->getText()) {
+                        if (!$this->captchafield->getLabel()->getText()) {
                             $missing_msg[] = $this->_('You have not added a question for your question CAPTCHA!');
                         }
                         // output a warning message if answers for question CAPTCHA are missing
@@ -2315,42 +2350,14 @@
                             $this->alert->setText($missingtext);
                         }
 
-                        if (!empty($this->captcha_value)) {
-
-                            // add the value back to this field if there is only a single question set (not an array)
-                            $captchafield->setAttribute('value', $this->captcha_value);
-
-                            if (array_key_exists($this->getID() . '-random_key', $_POST)) {
-
-                                $prev_question = $this->question_array[$_POST[$this->getID() . '-random_key']];
-                                if (array_key_exists('successMsg', $prev_question)) {
-                                    $this->captchaSuccessMsg = $prev_question['successMsg'];
-                                }
-
-                                // add success message if set
-                                if ($this->captchaSuccessMsg)
-                                    $captchafield->setSuccessMessage($this->captchaSuccessMsg);
-                                // check if the current question is the same before -> otherwise remove the CAPTCHA value
-                                if ($prev_question['question'] != $this->question)
-                                    $captchafield->setAttribute('value', '');
-
-                            } else {
-
-                                // overwrite the default value with the one from the session for random question if present
-                                if (array_key_exists($this->getID() . '-load_time', $_POST)) {
-                                    // remove the value again, because it is a multi question CAPTCHA
-                                    $captchafield->setAttribute('value', '');
-                                }
-                            }
-                        }
-
-
                     }
 
+                    // add the Captcha to the form array if everything is ok
                     if (((wireClassName($this->captcha) === 'SimpleQuestionCaptcha') && (!$missing_msg)) || (wireClassName($this->captcha) !== 'SimpleQuestionCaptcha')) {
+
                         // insert the captcha input field after the last input field
                         $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
-                            array($captchafield), array_slice($this->formElements, $captchaPosition));
+                            array($this->captchafield), array_slice($this->formElements, $captchaPosition));
                         // re-index the formElements array
                         $this->formElements = array_values($this->formElements);
 
@@ -2486,8 +2493,8 @@
                 // Output the form markup
                 $out .= $this->alert->___render();
                 // render the alert box on top for success or error message
-                // show form only if user is not blocked
 
+                // show form only if user is not blocked
                 if ($this->showForm && (($this->wire('session')->get('blocked') == null))) {
 
                     //add required texts
@@ -2541,6 +2548,7 @@
                         if (($element instanceof InputRadio) || ($element instanceof InputRadioMultiple)) {
                             $element->appendLabel($this->getAppendLabelOnRadios());
                         }
+
                         //add the form id as prefix to name attributes of multiple radios and checkboxes
                         if (($element instanceof InputCheckboxMultiple) || ($element instanceof InputRadioMultiple)) {
                             foreach ($element->getOptions() as $cb) {
@@ -2606,15 +2614,16 @@
                         $this->getformElementsWrapper()->setContent($formElements);
                         $formElements = $this->formElementsWrapper->___render() . PHP_EOL;
                     }
+
                     // render the form with all its fields
                     $this->setContent($formElements);
                     $out .= $this->renderNonSelfclosingTag($this->getTag());
 
                 }
+
                 if ($this->getSubmitWithAjax()) {
                     $out .= '</div>';
                 }
-
 
             }
             return $out;
