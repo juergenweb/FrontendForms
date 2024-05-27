@@ -1786,7 +1786,6 @@
                                     $formElements[] = $captchaField;
                                 }
 
-
                                 // Get only input field for user inputs (no fieldsets, buttons,..)
                                 $formElements = $validation->getRealInputFields($formElements);
 
@@ -2273,6 +2272,7 @@
                 $refKey = key($buttons[0]);
 
                 // add captcha field as last element before the button element
+
                 if ($this->getCaptchaType() != 'none') {
                     // set custom error message
                     // position in the form fields array to insert
@@ -2342,14 +2342,15 @@
                             }
                         }
 
-                        if (((wireClassName($this->captcha) === 'SimpleQuestionCaptcha') && (!$missing_msg)) || (wireClassName($this->captcha) !== 'SimpleQuestionCaptcha')) {
-                            // insert the captcha input field after the last input field
-                            $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
-                                array($captchafield), array_slice($this->formElements, $captchaPosition));
-                            // re-index the formElements array
-                            $this->formElements = array_values($this->formElements);
 
-                        }
+                    }
+
+                    if (((wireClassName($this->captcha) === 'SimpleQuestionCaptcha') && (!$missing_msg)) || (wireClassName($this->captcha) !== 'SimpleQuestionCaptcha')) {
+                        // insert the captcha input field after the last input field
+                        $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
+                            array($captchafield), array_slice($this->formElements, $captchaPosition));
+                        // re-index the formElements array
+                        $this->formElements = array_values($this->formElements);
 
                     }
 
@@ -2381,6 +2382,7 @@
 
                         // change the position of the CAPTCHA, if position change was set via API
                         $customizeCaptchaPosition = $this->getCaptchaPosition();
+          
                         if (($this->getCaptchaType() != 'none') && ($customizeCaptchaPosition)) {
 
                             // get the position of the reference field inside the field object array
