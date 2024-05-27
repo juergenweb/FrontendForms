@@ -934,6 +934,15 @@ This method is the same as the setDescription() method for input fields, but in 
 $form->setCaptchaDescription('This is my CAPTCHA description text.');
 ```
 
+### setCaptchaDescriptionPosition() - Set the position of the description of the CAPTCHA input field individually
+This method is the same as the setPosition() method for the input field description, but in this case especially for the CAPTCHA inputfield. It allows you to position the description text of the CAPTCHA input field independently of the global settings.
+
+Possible values are: beforeLabel, afterLabel and afterInput.
+
+```php
+$form->setCaptchaDescriptionPosition('beforeLabel');
+```
+
 ### setCaptchaPosition() - Place the CAPTCHA on a position of your choice inside the form
 
 The CAPTCHA is a so called "system field", which means, that it will be added by the module and not by the user. By default, the CAPTCHA will be placed before the submit button. This is fine in most cases, but if you want to position the CAPTCHA on another position, you can use this method.
