@@ -970,13 +970,13 @@ Here is an example of such a multi-question array:
 ```php
 $questions = [
         [
-            'question' => 'How many eyes have a human?',
+            'question' => 'How many eyes has a human?',
             'answers' => ['2', 'two', '2 eyes', 'two eyes'],
             'errorMsg' => 'Unfortunately not the right answer! Take a look at the mirror ;-).',
             'successMsg' => 'Perfect! You know how humans look like.'
         ],
         [
-            'question' => 'How many legs have a dog?',
+            'question' => 'How many legs has a dog?',
             'answers' => ['4', 'four', '4 legs', 'four legs'],
             'notes' => 'Tip: A dog has more than 3 but less than 5 legs',
             'description' => 'This is a custom description for the dog question.',
@@ -985,7 +985,7 @@ $questions = [
             'descriptionPosition' => 'beforeLabel'
         ],
         [
-            'question' => 'What is the name of the last day in a week?',
+            'question' => 'What is the name of the last day in the week?',
             'answers' => ['Sunday', 'its Sunday', 'it is Sunday'],
             'notes' => 'A little tip: S**day',
             'errorMsg' => 'No! Not really. A look at a calendar would probably help ;-).',
