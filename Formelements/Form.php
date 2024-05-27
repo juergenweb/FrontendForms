@@ -1776,6 +1776,8 @@
                                                 } else {
                                                     $errormsg = $this->captchaErrorMsg ?? $this->_('The answer is wrong!');
                                                 }
+                                            } else {
+                                                $errormsg = $this->captchaErrorMsg ?? $this->_('The answer is wrong!');
                                             }
 
                                             $captchaField->setRule('compareTexts', $validValue)->setCustomMessage($errormsg);
@@ -2382,7 +2384,7 @@
 
                         // change the position of the CAPTCHA, if position change was set via API
                         $customizeCaptchaPosition = $this->getCaptchaPosition();
-          
+
                         if (($this->getCaptchaType() != 'none') && ($customizeCaptchaPosition)) {
 
                             // get the position of the reference field inside the field object array
@@ -2462,6 +2464,7 @@
                 }
 
                 // if a random question array is set, add the random item key to this field
+
                 if (!is_null($this->random_question)) {
                     $hiddenField5 = new InputHidden('random_key');
                     $hiddenField5->setAttribute('value', $this->random_question);
