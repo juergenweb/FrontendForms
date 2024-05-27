@@ -1769,7 +1769,7 @@
                 if($this->captchaRequiredErrorMsg){
                     $this->captchafield->setRule('required')->setCustomMessage($this->captchaRequiredErrorMsg);
                 } else {
-                    $this->captchafield->setRule('required');
+                    $this->captchafield->setRule('required')->setCustomMessage($this->_('Please fill out the security question.');
                 }
 
             }
@@ -1866,7 +1866,7 @@
 
                                     if (count($element->getRules()) > 0) {
                                         // add required validation to be the first
-                                        bd($element->getRules());
+
                                         $rules = $this->putRequiredOnTop($element->getRules());
                                         foreach ($rules as $validatorName => $parameters) {
                                             $v->rule($validatorName, $element->getAttribute('name'), ...
@@ -1898,20 +1898,7 @@
                                     if ($useCaptcha) {
 
                                         if ($element->getAttribute('name') == $this->createElementName('captcha')) {
-
-                                            /*
-                                            if($this->captchaRequiredErrorMsg){
-                                                bd('custom');
-                                                bd($element->getAttribute('name'));
-                                                bd($this->captchaRequiredErrorMsg);
-                                                $v->rule('required',
-                                                    $element->getAttribute('name'))->message($this->captchaRequiredErrorMsg);
-                                            } else {
-                                                bd('default');
-                                                $v->rule('required',
-                                                    $element->getAttribute('name'))->label($this->_('The captcha'));
-                                            }*/
-
+                                            
                                             // exclude this CAPTCHA types from using the checkCaptcha rule
                                             $nonCheckCaptchaTypes = ['SimpleQuestionCaptcha'];
                                             if (!in_array($this->getCaptchaType(), $nonCheckCaptchaTypes)) {
