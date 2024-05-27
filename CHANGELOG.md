@@ -969,8 +969,24 @@ This example places the CAPTCHA **after** the field with the name attribute "**e
 - **Missing rendering of field description at the end of inputfield re-added**
 If the description position was set to "afterInput", then the description tag has not been rendered, because the rendering method was missing. This bug is fixed now.
 
+The new methods afterwards are especially for customizing the display of the CAPTCHA input field to your needs. The CAPTCHA input field is a so called "module system field", which means it will be created and rendered by the module and will not be created via API by the user.
+
+This is the reason, why it cannot be customized like other fields and therefore it needs some special methods to be more flexible in customizing the output.
+
 - **New method setCaptchaErrorMsg added**
 
 This method is for overwriting the default error message for the captcha validation, that will be displayed if the value entered is not correct. 
 
 More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchaerrormsg---overwrite-the-default-error-message-of-the-captcha-validation-rule)
+
+- **New method setCaptchaNotes added**
+
+This method is for overwriting the default notes for the captcha validation, that will be displayed under the input field.
+
+More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchanotes---overwrite-the-default-notes-of-the-captcha-input-field)
+
+- **New method setCaptchaDescription added**
+
+This method is for adding a description text to the CAPTCHA field.
+
+More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchadescription---add-a-description-to-the-captcha-input-field)
