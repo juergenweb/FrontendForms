@@ -65,6 +65,8 @@
         protected array|null $captchaPosition = null; // array that holds the reference field as key and the position as value
         protected string|null $captchaSuccessMsg = ''; // set a success message for the captcha field
         protected string|null $captchaErrorMsg = ''; // overwrite the default error message for the CAPTCHA validation
+        protected string|null $captchaNotes = ''; // notes text for the Captcha
+        protected string|null $captchaDescription = ''; // description text for the Captcha
         protected string|int|bool $useAriaAttributes = true; // use accessibility attributes
         // Mail properties - only needed if FrontendForms will be used to send emails
         protected array $mailPlaceholder = []; // associative array for usage in emails (['placeholdername' => 'text',...])
@@ -1298,9 +1300,31 @@
          * @param string $errormsg
          * @return $this
          */
-        public function setCustomCaptchaErrorMsg(string $errormsg): self
+        public function setCaptchaErrorMsg(string $errormsg): self
         {
             $this->captchaErrorMsg = $errormsg;
+            return $this;
+        }
+
+        /**
+         * Method to overwrite the default CAPTCHA notes
+         * @param string $notes
+         * @return $this
+         */
+        public function setCaptchaNotes(string $notes): self
+        {
+            $this->captchaNotes = $notes;
+            return $this;
+        }
+
+        /**
+         * Method to add a description text to the CAPTCHA input field
+         * @param string $desc
+         * @return $this
+         */
+        public function setCaptchaDescription(string $desc): self
+        {
+            $this->captchaDescription = $desc;
             return $this;
         }
 
@@ -2160,8 +2184,14 @@
 
                     $captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
 
+                    // add notes to the captcha input field if set
+                    if($this->captchaNotes) $captchafield->setNotes($this->captchaNotes);
+
+                    // add CAPTCHA description if set
+                    if ($this->captchaDescription) $captchafield->setDescription($this->captchaDescription);
+
                     // if value of Captcha field was correct and this field is type of QuestionCaptcha ->
-                    // add the value again to the inputfield
+                    // add the value again to the input field
 
                     if (wireClassName($this->captcha) === 'SimpleQuestionCaptcha') {
 
@@ -2442,6 +2472,7 @@
                         }
 
                     }
+                    
                     $formElements .= $element->render() . PHP_EOL;
                 }
 
