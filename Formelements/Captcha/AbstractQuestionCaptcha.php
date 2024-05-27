@@ -62,7 +62,6 @@
         {
             // start creating the captcha input field
             $captchaInput = new InputText('captcha');
-            $captchaInput->setRule('required'); // CAPTCHA is always required
             // Remove or add wrappers depending on settings
             $captchaInput->setAttribute('name', $formID . '-captcha');
             $captchaInput->useInputWrapper($this->useInputWrapper);
