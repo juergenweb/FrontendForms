@@ -990,3 +990,9 @@ More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readm
 This method is for adding a description text to the CAPTCHA field, if needed.
 
 More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchadescription---add-a-description-to-the-captcha-input-field)
+
+- **New method setCaptchaDescriptionPosition added**
+
+This method is for positioning the description text of the CAPTCHA field independently, if needed.
+
+More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchaposition---place-the-captcha-on-a-position-of-your-choice-inside-the-form)
