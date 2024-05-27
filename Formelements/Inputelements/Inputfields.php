@@ -373,13 +373,13 @@
             }
 
             // generate the render method name out of the markup type
-            $methodName = '___render'.ucfirst(pathinfo($this->markupType, PATHINFO_FILENAME));
-            if(method_exists($this,$methodName)) {
+            $methodName = '___render' . ucfirst(pathinfo($this->markupType, PATHINFO_FILENAME));
+            if (method_exists($this, $methodName)) {
                 $content = $this->$methodName($className, $input);
             } else {
                 $content = $this->___renderDefault($className, $input);
             }
-            
+
             // Add fieldwrapper ... to all elements except hidden inputs
             if ($className != 'InputHidden') {
                 if (!$this->useFieldWrapper) {
@@ -411,7 +411,6 @@
          */
         public function ___renderDefault(string $className, $input): string
         {
-
             $out = '';
             $description = $this->description->___render() . PHP_EOL;
             $successmsg = $this->getSuccessMessage()->___render() . PHP_EOL;
@@ -456,6 +455,7 @@
                     }
                     // add the description after the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
+
                         $out .= $this->getDescription()->___render();
                     }
                     $input_markup = $input . $errormsg . $successmsg;
@@ -472,6 +472,11 @@
 
             // add notes afterwards
             $out .= $this->getNotes()->render();
+
+            // add description at the end if set
+            if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterInput')) {
+                $out .= $this->getDescription()->___render();
+            }
 
             return $out;
 
@@ -500,7 +505,7 @@
             if ($this->getErrorMessage()->getText()) {
                 $this->getLabel()->setCSSClass('input_errorClass');
             } else {
-                if($_POST)
+                if ($_POST)
                     $this->getLabel()->setCSSClass('input_successClass');
             }
 
@@ -573,6 +578,11 @@
 
             // add notes afterwards
             $out .= $this->getNotes()->render();
+
+            // add description at the end if set
+            if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterInput')) {
+                $out .= $this->getDescription()->___render();
+            }
 
             return $out;
 
@@ -658,6 +668,11 @@
 
             // add notes afterwards
             $out .= $this->getNotes()->render();
+
+            // add description at the end if set
+            if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterInput')) {
+                $out .= $this->getDescription()->___render();
+            }
 
             return $out;
 
