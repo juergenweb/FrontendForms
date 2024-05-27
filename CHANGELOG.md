@@ -981,12 +981,12 @@ More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readm
 
 - **New method setCaptchaNotes added**
 
-This method is for overwriting the default notes for the captcha validation, that will be displayed under the input field.
+This method is for overwriting the default notes, that will be displayed under the input field.
 
 More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchanotes---overwrite-the-default-notes-of-the-captcha-input-field)
 
 - **New method setCaptchaDescription added**
 
-This method is for adding a description text to the CAPTCHA field.
+This method is for adding a description text to the CAPTCHA field, if needed.
 
 More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchadescription---add-a-description-to-the-captcha-input-field)
