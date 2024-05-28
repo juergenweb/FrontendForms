@@ -36,6 +36,7 @@
     // * notes: define a custom notes text for this question
     // * description: define a custom description text for this question
     // * descriptionPosition: define an individual position for the description for this question (beforeLabel, afterLabel, afterInput)
+    // * placeholder: define a custom placeholder
     // Please take care of the cameltoe writing of this key names, otherwise it will not work
     // Please take also care of the structur of the array
     // Tip: You can also load this question array from another source
@@ -45,7 +46,8 @@
             'question' => 'How many eyes havs a human?',
             'answers' => ['2', 'two', '2 eyes', 'two eyes'],
             'errorMsg' => 'Unfortunately not the right answer! Take a look at the mirror ;-).',
-            'successMsg' => 'Perfect! You know how humans look like.'
+            'successMsg' => 'Perfect! You know how humans look like.',
+            'placeholder' => 'Please fill in this field'
         ],
         [
             'question' => 'How many legs has a dog?',
