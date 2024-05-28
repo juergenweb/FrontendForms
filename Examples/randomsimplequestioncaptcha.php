@@ -34,7 +34,7 @@ $form->showProgressbar(false);
 /** Customization of the CAPTCHA  */
 
 // move the Captcha field before the privacy field
-$form->setCaptchaPosition('privacy','before');
+$form->setCaptchaPosition('privacy', 'before');
 
 // set a default success message for the captcha if you want
 $form->setCaptchaSuccessMsg("Answer was correct, but unfortunately there were other errors!");
