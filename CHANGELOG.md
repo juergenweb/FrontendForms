@@ -981,6 +981,18 @@ This method is for overwriting the default error message for the captcha validat
 
 More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchaerrormsg---overwrite-the-default-error-message-of-the-captcha-validation-rule)
 
+- **New method setCaptchaRequiredErrorMsg added**
+
+This method is for overwriting the default error message for the captcha required validation, that will be displayed if the value is missing. 
+
+More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptcharequirederrormsg---overwrite-the-default-error-message-of-the-captcha-required-validation-rule)
+
+- **New method setCaptchaPlaceholder added**
+
+This method is for adding a placeholder text to the captcha input field.
+
+More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchaplaceholder---add-a-placeholder-text-to-the-captcha-input-field)
+
 - **New method setCaptchaNotes added**
 
 This method is for overwriting the default notes, that will be displayed under the input field.
