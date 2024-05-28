@@ -507,6 +507,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setCaptchaPosition()](#setcaptchaposition---place-the-captcha-on-a-position-of-your-choice-inside-the-form)  | Output the CAPTCHA at another position inside the form  |
 | [setSimpleQuestionCaptchaRandomRotation()](#setsimplequestioncaptcharandomrotation---showing-multiple-questions-randomly-instead-of-a-single-question-with-the-simple-question-captcha)  | Showing multiple questions randomly instead of a single question with the simple question CAPTCHA |
 | [setCaptchaPlaceholder()](#setcaptchaplaceholder---add-a-placeholder-text-to-the-captcha-input-field)  | Add a placeholder text to the CAPTCHA input field |
+| [removeCaptchaLabel()](#removecaptchalabel---hide-the-label-and-display-the-label-text-optionally-as-placeholder-text)  | Hide the label and display the label text optionally as placeholder text |
 
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
