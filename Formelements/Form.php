@@ -1958,10 +1958,9 @@
                                     // set error alert
                                     $this->wire('session')->set('errors', '1');
                                     $this->formErrors = $v->errors();
-
+                                    $captchaName = $this->getID() . '-captcha';
                                     // if Captcha value was valid -> add it to the captcha_value property
                                     if ($this->getCaptchaType() === 'SimpleQuestionCaptcha') {
-                                        $captchaName = $this->getID() . '-captcha';
 
                                         if (!array_key_exists($captchaName, $this->formErrors)) {
                                             // captcha was valid
@@ -1984,11 +1983,16 @@
 
                                             }
 
-                                        } else {
-                                            // CAPTCHA was not valid, so remove the value from the input field
-                                            $this->captchafield->setAttribute('value', '');
+                                        }
+                                    } else {
+                                        // all other CAPTCHA types
+                                        if (!array_key_exists($captchaName, $this->formErrors)) {
+                                            $this->captchafield->setSuccessMessage($this->captchaSuccessMsg);
                                         }
                                     }
+
+                                    // CAPTCHA value will be deleted in any way
+                                    $this->captchafield->setAttribute('value', '');
 
                                     $this->alert->setCSSClass('alert_dangerClass');
                                     $this->alert->setText($this->getErrorMsg());
@@ -3036,6 +3040,5 @@
             }
             return '';
         }
-
 
     }
