@@ -118,9 +118,9 @@ Browser,=,,site/modules/FrontendForms/Formelements/Form.php,ef15fd2f45e6bb5ce575
 "All fields marked with (*) are mandatory and must be completed.","Alle Felder, welche mit (*) markiert sind, stellen Pflichtfelder dar und müssen in jeden Fall ausgefüllt werden.",,site/modules/FrontendForms/Formelements/Form.php,feaed8b52507d421a9953e0a9ec9a687
 "Thank you for your message.","Vielen Dank für Ihre Nachricht.",,site/modules/FrontendForms/Formelements/Form.php,a0e0f33630289d49200c61cac7900200
 "Sorry, some errors occur. Please check your inputs once more.","Es sind leider Fehler aufgetreten. Bitte überprüfen Sie Ihre Eingaben noch einmal.",,site/modules/FrontendForms/Formelements/Form.php,552663e8ba6eb0a7c5c16727f8d19bcc
+"Please fill out the security question.","Bitte füllen Sie die Sicherheitsabfrage aus.",,site/modules/FrontendForms/Formelements/Form.php,d0c2b717657a0924062bd7c85fb01bea
 "The answer is wrong!","Die Antwort ist falsch!",,site/modules/FrontendForms/Formelements/Form.php,a3d9ae2d065e5a27c531a7dacd1735a4
 "Please do not fill out this field","Bitte dieses Feld nicht ausfüllen",,site/modules/FrontendForms/Formelements/Form.php,e02d8cd38e0f708a9633f46793e31a27
-"The captcha","Das Captcha","captcha is always required",site/modules/FrontendForms/Formelements/Form.php,db41a5e06772ec7af38969d41547cf7d
 "The CAPTCHA",CAPTCHA,,site/modules/FrontendForms/Formelements/Form.php,d057415baac33355d5a125df279bd512
 attempts,Versuche,,site/modules/FrontendForms/Formelements/Form.php,79845fb11e473b1a0811ca2543f04b9c
 attempt,Versuch,,site/modules/FrontendForms/Formelements/Form.php,1db222fece0e7454c122788bf892adf8
