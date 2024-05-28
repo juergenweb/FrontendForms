@@ -921,6 +921,25 @@ Which error message will be displayed as the default error message depends on th
 ```php
 $form->setCaptchaErrorMsg('The value you have entered is not correct!');
 ```
+
+### setCaptchaRequiredErrorMsg() - Overwrite the default error message of the CAPTCHA required validation rule 
+
+This method is for overwriting the default error message for the captcha required validation, that will be displayed if the value entered is missing. 
+Every CAPTCHA has this validation rule added by default.
+
+You can use this method, if you do not like the default error message for the required rule.
+
+```php
+$form->setCaptchaRequiredErrorMsg('The CAPTCHA field must be filled out!');
+```
+
+### setCaptchaPlaceholder() - Add a placeholder text to the CAPTCHA input field 
+
+This method works only on input fields of the type text. The image captcha uses input radios and therefore this method has no effect. 
+
+```php
+$form->setCaptchaPlaceholder('Please fill in this field');
+```
 ### setCaptchaNotes() - Overwrite the default notes of the CAPTCHA input field
 This method is the same as the setNotes() method for input fields, but in this case especially for the CAPTCHA inputfield. It allows you to overwrite the default notes text with your own.
 
@@ -974,6 +993,7 @@ $questions = [
             'answers' => ['2', 'two', '2 eyes', 'two eyes'],
             'errorMsg' => 'Unfortunately not the right answer! Take a look at the mirror ;-).',
             'successMsg' => 'Perfect! You know how humans look like.'
+            'placeholder' => 'Please fill in this field'
         ],
         [
             'question' => 'How many legs has a dog?',
@@ -1008,6 +1028,7 @@ The following keys are optional and can be set or not:
 * notes: define a custom notes text for this question
 * description: define a custom description text for this question
 * descriptionPosition: define an individual position for the description for this question (beforeLabel, afterLabel, afterInput)
+* placeholder: define a custom placeholder text for the input field
 
 The array containing the questions has to be entered as the parameter inside this function:
 
