@@ -966,7 +966,7 @@ This example places the CAPTCHA **after** the field with the name attribute "**e
 
 ## 2024-05-27
 
-This update comes with 1 bug fix, 4 new general customizing methods for all CAPTCHAS and 1 special method for the simple question CAPTCHA.
+This update comes with 1 bug fix, 7 new general customizing methods for all CAPTCHAS and 1 special new method for the simple question CAPTCHA.
 
 - **Missing rendering of field description at the end of inputfield re-added**
 If the description position was set to "afterInput", then the description tag has not been rendered, because the rendering method was missing. This bug is fixed now.
@@ -1016,3 +1016,9 @@ More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readm
 This method is for the simple question captcha only and offers the possibility to display several questions randomly instead of only one question. The questions can be set as an array and are highly configurable.
 
 More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setsimplequestioncaptcharandomrotation---showing-multiple-questions-randomly-instead-of-a-single-question-with-the-simple-question-captcha)
+
+- **New method removeCaptchaLabel added**
+
+This method is for removing the label from the CAPTCHA field. Optional you can choose if you want to display the label text as placeholder text instead. 
+
+More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#removecaptchalabel---hide-the-label-and-display-the-label-text-optionally-as-placeholder-text)
