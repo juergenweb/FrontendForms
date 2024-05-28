@@ -980,6 +980,16 @@ $form`->setCaptchaPosition('email', 'after');
 
 This example places the CAPTCHA **after** the field with the name attribute "**email**".
 
+### removeCaptchaLabel() - Hide the label and display the label text optionally as placeholder text
+By default the CAPTCHA label will be displayed next to the CAPTCHA input, which is fine in most cases.
+
+If you want to suppress the display of the label you can use this method. Optional you can select, if the label text should be displayed as the placeholder text.
+In this case you have to set the parameter true inside the parenthesis.
+
+```php
+$form`->removeCaptchaLabel(true);// if set to true, then the label text will be displayed as placeholder, otherwise the label will only be removed
+```
+
 ### setSimpleQuestionCaptchaRandomRotation() - Showing multiple questions randomly instead of a single question with the simple question CAPTCHA
 Please note: This method is for usage with the simple question CAPTCHA only!
 
