@@ -964,7 +964,7 @@ The method must be applied to the form object and must contain as first paramete
 
 This example places the CAPTCHA **after** the field with the name attribute "**email**".
 
-## 2024-05-27
+## [2.1.78] 2024-05-27
 
 This update comes with 1 bug fix, 7 new general customizing methods for all CAPTCHAS and 1 special new method for the simple question CAPTCHA.
 
