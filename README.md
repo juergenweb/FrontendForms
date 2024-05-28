@@ -991,35 +991,32 @@ Here is an example of such a multi-question array:
 
 ```php
 $questions = [
-        [
-            'question' => 'How many eyes has a human?',
-            'answers' => ['2', 'two', '2 eyes', 'two eyes'],
-            'errorMsg' => 'Unfortunately not the right answer! Take a look at the mirror ;-).',
-            'successMsg' => 'Perfect! You know how humans look like.'
-            'placeholder' => 'Please fill in this field'
-        ],
-        [
-            'question' => 'How many legs has a dog?',
-            'answers' => ['4', 'four', '4 legs', 'four legs'],
-            'notes' => 'Tip: A dog has more than 3 but less than 5 legs',
-            'description' => 'This is a custom description for the dog question.',
-            'successMsg' => 'Yes you are absolute right! (Most) Dogs have 4 legs.',
-            'errorMsg' => 'Not really! It seems that you do not have seen a dog before ;-).',
-            'descriptionPosition' => 'beforeLabel'
-        ],
-        [
-            'question' => 'What is the name of the last day in the week?',
-            'answers' => ['Sunday', 'its Sunday', 'it is Sunday'],
-            'notes' => 'A little tip: S**day',
-            'errorMsg' => 'No! Not really. A look at a calendar would probably help ;-).',
-            'successMsg' => 'It is Sunday! Absolut correct!'
-        ],
-        [
-            'question' => 'How many halves make a whole',
-            'answers' => ['2', 'two', '2 halves', 'two halves']
-        ],
+    [
+        'question' => 'How many eyes does a person have?',
+        'answers' => ['2', 'two', '2 eyes', 'two eyes'],
+        'errorMsg' => 'Unfortunately not the right answer! Take a look at the mirror ;-).',
+        'successMsg' => 'Perfect! You know how humans look like.',
+    ],
+    [
+        'question' => 'How many legs does a dog have?',
+        'answers' => ['4', 'four', '4 legs', 'four legs'],
+        'notes' => 'Tip: A dog has more than 3 but less than 5 legs',
+        'successMsg' => 'Yes you are absolute right! (Most) Dogs have 4 legs.',
+        'errorMsg' => 'Not really! It seems that you do not have seen a dog before ;-).',
+    ],
+    [
+        'question' => 'What is the last day of the week called?',
+        'answers' => ['Sunday', 'its Sunday', 'it is Sunday'],
+        'notes' => 'A little tip: S**day',
+        'errorMsg' => 'No! Not really. A look at a calendar would probably help ;-).',
+        'successMsg' => 'It is Sunday! Absolut correct!',
+    ],
+    [
+        'question' => 'How many halves make a whole?',
+        'answers' => ['2', 'two', '2 halves', 'two halves']
+    ],
 
-    ];
+];
 ```
 
 Each question is an extra array inside the array and must have at least the **question** and the **answers** key as the minimum requirements.
