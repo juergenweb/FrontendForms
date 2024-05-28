@@ -43,9 +43,6 @@
         const FORMMETHODS = ['get', 'post']; // array that holds allowed action methods (get, post)
 
         /* properties */
-        protected int|null $random_question = null;
-        protected array|null $random_question_array = null;
-        protected array|null $question_array = null;
 
         protected $load_time = ''; // the time, when the form was loaded
         protected array $storedFiles = []; // array that holds all files (including overwritten filenames)
@@ -75,6 +72,11 @@
         protected string|null $captchaDescription = ''; // description text for the Captcha
         protected string|null $captchaDescriptionPosition = ''; // description position for the Captcha
         protected string|null $captchaPlaceholder = ''; // set a placeholder for the Captcha input
+        protected int|null $random_question = null;
+        protected array|null $random_question_array = null;
+        protected array|null $question_array = null;
+        protected bool $removeCaptchaLabel = false;
+        protected bool $useCaptchaLabelAsPlaceholder = false;
         protected InputText|InputRadioMultiple|null $captchafield;
         protected string|int|bool $useAriaAttributes = true; // use accessibility attributes
         // Mail properties - only needed if FrontendForms will be used to send emails
@@ -283,6 +285,13 @@
         public function setCaptchaPlaceholder(string $placeholder): self
         {
             $this->captchaPlaceholder = $placeholder;
+            return $this;
+        }
+
+        public function removeCaptchaLabel(bool $usePlaceholder = false): self
+        {
+            $this->removeCaptchaLabel = true;
+            $this->useCaptchaLabelAsPlaceholder = $usePlaceholder;
             return $this;
         }
 
@@ -1424,7 +1433,7 @@
                     }
                 }
 
-                $this->random_question = $random_question;
+                $this->random_question = $random_question; // returns integer
                 $this->random_question_array = $random_question_array;
                 $this->question_array = $questions;
 
@@ -1753,11 +1762,18 @@
             $useCaptcha = ($this->getCaptchaType() !== 'none');
             if ($useCaptcha) {
 
+
                 // create the input field first
                 $this->captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
 
+                // check if multi question -> if yes, add the question as label to the CAPTCHA
+                if($this->question_array){
+                    $current_question = $this->question_array[$this->random_question];
+                    $this->captchafield->setLabel($current_question['question']);
+                }
+
                 // add placeholder attribute if present
-                if ($this->captchaPlaceholder)
+                if ($this->captchaPlaceholder && ($this->captchafield instanceof InputText))
                     $this->captchafield->setAttribute('placeholder', $this->captchaPlaceholder);
 
                 // add notes to the captcha input field if set
@@ -1950,7 +1966,6 @@
                                         if (!array_key_exists($captchaName, $this->formErrors)) {
                                             // captcha was valid
 
-
                                             // add the value back to this field on success if there is only a single question set (not an array)
                                             $this->captchafield->setAttribute('value', $this->captcha_value);
 
@@ -1969,6 +1984,9 @@
 
                                             }
 
+                                        } else {
+                                            // CAPTCHA was not valid, so remove the value from the input field
+                                            $this->captchafield->setAttribute('value', '');
                                         }
                                     }
 
@@ -2268,6 +2286,7 @@
         public function render(): string
         {
 
+
             // redirect after successful form validation if set
             if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
                 $this->wire('session')->redirect($this->getRedirectURL());
@@ -2377,6 +2396,16 @@
                         // re-index the formElements array
                         $this->formElements = array_values($this->formElements);
 
+                    }
+
+                    // remove label and set it as placeholder if set
+                    if ($this->useCaptchaLabelAsPlaceholder && ($this->captchafield instanceof InputText)){
+                        $this->captchafield->setAttribute('placeholder', $this->captchafield->getLabel()->getText());
+                        $this->captchafield->setLabel(''); // remove the label tag
+                    }
+                    // remove Label if set
+                    if($this->removeCaptchaLabel){
+                        $this->captchafield->setLabel('');
                     }
 
                     // sort the privacy elements that checkbox is before text, if both will be used
@@ -2642,6 +2671,7 @@
                 }
 
             }
+
             return $out;
         }
 
