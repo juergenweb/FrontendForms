@@ -1769,7 +1769,7 @@
                 if($this->captchaRequiredErrorMsg){
                     $this->captchafield->setRule('required')->setCustomMessage($this->captchaRequiredErrorMsg);
                 } else {
-                    $this->captchafield->setRule('required')->setCustomMessage($this->_('Please fill out the security question.');
+                    $this->captchafield->setRule('required')->setCustomMessage($this->_('Please fill out the security question.'));
                 }
 
             }
@@ -1898,7 +1898,7 @@
                                     if ($useCaptcha) {
 
                                         if ($element->getAttribute('name') == $this->createElementName('captcha')) {
-                                            
+
                                             // exclude this CAPTCHA types from using the checkCaptcha rule
                                             $nonCheckCaptchaTypes = ['SimpleQuestionCaptcha'];
                                             if (!in_array($this->getCaptchaType(), $nonCheckCaptchaTypes)) {
