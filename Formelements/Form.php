@@ -77,6 +77,7 @@
         protected array|null $question_array = null;
         protected bool $removeCaptchaLabel = false;
         protected bool $useCaptchaLabelAsPlaceholder = false;
+        protected bool $showValueOnSameQuestionAgain = false;
         protected InputText|InputRadioMultiple|null $captchafield;
         protected string|int|bool $useAriaAttributes = true; // use accessibility attributes
         // Mail properties - only needed if FrontendForms will be used to send emails
@@ -288,12 +289,31 @@
             return $this;
         }
 
+        /**
+         * Remove the label tag from the CAPTCHA if needed
+         * Optionally, you can display the value of the label as placeholder text by setting the parameter to true
+         * @param bool $usePlaceholder -> true: label text will be displayed as placeholder text, false: not
+         * @return $this
+         */
         public function removeCaptchaLabel(bool $usePlaceholder = false): self
         {
             $this->removeCaptchaLabel = true;
             $this->useCaptchaLabelAsPlaceholder = $usePlaceholder;
             return $this;
         }
+
+        /**
+         * Show the entered value inside a multi-question CAPTCHA again, if the question is the same as before and the value was valid
+         * This method is only designed for the simple question CAPTCHA with multiple random questions
+         * @param bool $show
+         * @return $this
+         */
+        public function showValueOnSameQuestionAgain(bool $show): self
+        {
+           $this->showValueOnSameQuestionAgain = $show;
+           return $this;
+        }
+
 
 
         /**
@@ -1397,7 +1417,7 @@
          */
         public function setSimpleQuestionCaptchaRandomRotation(array $questions)
         {
-            // check if chosen CAPTCHA type is simpe question CAPTCHA
+            // check if the chosen CAPTCHA type is the simple question CAPTCHA
             if ($this->getCaptchaType() == 'SimpleQuestionCaptcha') {
 
                 $random_question = array_rand($questions);
@@ -1965,10 +1985,6 @@
                                         if (!array_key_exists($captchaName, $this->formErrors)) {
                                             // captcha was valid
 
-                                            // add the value back to this field on success if there is only a single question set (not an array)
-                                            $this->captchafield->setAttribute('value', $this->captcha_value);
-
-                                            // set the success message
                                             // check if it is multi-question
                                             if (array_key_exists($this->getID() . '-random_key', $_POST)) {
 
@@ -1977,10 +1993,14 @@
                                                     $this->captchafield->setSuccessMessage($prev_question['successMsg']);
                                                 }
 
-                                                // check if the current question is the same before -> otherwise remove the CAPTCHA value
-                                                if ($prev_question['question'] != $this->question)
-                                                    $this->captchafield->setAttribute('value', '');
+                                                // check if the current question is the same as before -> otherwise remove the CAPTCHA value on multi question CAPTCHA
+                                                    if ((!$this->showValueOnSameQuestionAgain) && ($prev_question['question'] != $this->question))
+                                                        $this->captchafield->setAttribute('value', '');
 
+                                            } else {
+                                                // single question CAPTCHA
+                                                // add the value back to this field on success if there is only a single question set (not an array)
+                                                $this->captchafield->setAttribute('value', $_POST[$this->getID().'-captcha']);
                                             }
 
                                         }
@@ -1989,10 +2009,11 @@
                                         if (!array_key_exists($captchaName, $this->formErrors)) {
                                             $this->captchafield->setSuccessMessage($this->captchaSuccessMsg);
                                         }
+                                        // CAPTCHA value will be deleted in any way
+                                        $this->captchafield->setAttribute('value', '');
                                     }
 
-                                    // CAPTCHA value will be deleted in any way
-                                    $this->captchafield->setAttribute('value', '');
+
 
                                     $this->alert->setCSSClass('alert_dangerClass');
                                     $this->alert->setText($this->getErrorMsg());
@@ -2520,7 +2541,6 @@
                 }
 
                 // if a random question array is set, add the random item key to this field
-
                 if (!is_null($this->random_question)) {
                     $hiddenField5 = new InputHidden('random_key');
                     $hiddenField5->setAttribute('value', $this->random_question);
@@ -3040,5 +3060,6 @@
             }
             return '';
         }
+
 
     }
