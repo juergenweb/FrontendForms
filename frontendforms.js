@@ -37,7 +37,7 @@ window.onload = function () {
     jumpToAnchor();
     maxCharsCounterReverse();
 
-}
+};
 
 
 /** Javascript code for the FrontendContact module
@@ -58,18 +58,18 @@ if (callbacks.length) {
 
         if (this.checked) {
             phoneWrapper.style = null;
-            descField.style.display = 'none';
+            descField.style.display = "none";
             phoneField.required = true;
         } else {
-            phoneWrapper.style.display = 'none';
+            phoneWrapper.style.display = "none";
             descField.style = null;
             phoneField.required = false;
         }
 
     };
 
-    for (let i = 0; i < callbacks.length; i++) {
-        callbacks[i].addEventListener('click', checkboxStatus, false);
+    for(let i = 0; i < callbacks.length; i++) {
+        callbacks[i].addEventListener("click", checkboxStatus, false);
     }
 
 }
@@ -78,9 +78,9 @@ if (callbacks.length) {
 /*
 Show or hide the password in the password field by checking/unchecking the show/hide checkbox below the input field
 */
-document.addEventListener('click', function (element) {
+document.addEventListener("click", function (element) {
 
-    if (element.target.classList.contains('pwtoggle')) {
+    if (element.target.classList.contains("pwtoggle")) {
         let passwordInput = element.target.parentNode.previousElementSibling;
         if (passwordInput.type === "password") {
             passwordInput.type = "text";
@@ -173,7 +173,7 @@ function showClearLink(event) {
  */
 
 // get all input HTML elements
-let numInputs = document.querySelectorAll('input');
+let numInputs = document.querySelectorAll("input");
 
 // check if something has been changed inside an input field
 for (let i = 0; i < numInputs.length; i++) {
@@ -201,12 +201,12 @@ function changeHTML5AttributeValue() {
                         // check if validator is dateBeforeField
                         if (validator === "dateBeforeField") {
                             value = calculateBeforeAfterValue(-1, value);
-                            value = value.toISOString().split('T')[0];
+                            value = value.toISOString().split("T")[0];
                         }
                         // check if validator is dateAfterField
                         if (validator === "dateAfterField") {
                             value = calculateBeforeAfterValue(1, value);
-                            value = value.toISOString().split('T')[0];
+                            value = value.toISOString().split("T")[0];
                         }
                     }
                     field.setAttribute(attribute, value);
@@ -250,32 +250,32 @@ function calculateTimeRange() {
                 let value = this.value;
                 let days = field.dataset.ff_days;
 
-                if (attribute === 'min') {
+                if (attribute === "min") {
                     if (attribute && value) {
                         // calculate new date value
-                        let value2 = calculateNewDate(value, days, '+');
+                        let value2 = calculateNewDate(value, days, "+");
                         // convert to YYYY-mm-dd
                         value2 = new Date(value2).toISOString().slice(0, 10);
                         // validator dateOutsideOfDaysRange (min or max attribute)
-                        if (field.dataset.ff_validator === 'dateOutsideOfDaysRange') {
+                        if (field.dataset.ff_validator === "dateOutsideOfDaysRange") {
                             if (days > 0) {
                                 // positive days value
-                                field.setAttribute('min', value2);
+                                field.setAttribute("min", value2);
                             } else if (days < 0) {
                                 // negative days value
-                                field.setAttribute('max', value2);
+                                field.setAttribute("max", value2);
                             } else {
                                 // value is zero - remove max attribute
-                                field.removeAttribute('max');
+                                field.removeAttribute("max");
                             }
                         } else {
                             // validator dateWithinDaysRange (min and max attribute)
                             if (days > 0) {
-                                field.setAttribute('min', value);
-                                field.setAttribute('max', value2);
+                                field.setAttribute("min", value);
+                                field.setAttribute("max", value2);
                             } else {
-                                field.setAttribute('max', value);
-                                field.setAttribute('min', value2);
+                                field.setAttribute("max", value);
+                                field.setAttribute("min", value2);
                             }
                         }
                     }
@@ -297,7 +297,7 @@ function calculateTimeRange() {
  */
 function calculateNewDate(date, days, operator) {
     let result = new Date(date);
-    if (operator === '+') {
+    if (operator === "+") {
         result.setDate(result.getDate() + parseInt(days));
     } else {
         result.setDate(result.getDate() - parseInt(days));
@@ -325,7 +325,7 @@ function ajaxSubmit(formid = null) {
         let form = document.getElementById(formid);
         subAjax(form);
     } else {
-        let pageforms = document.querySelectorAll('[data-submitajax]');
+        let pageforms = document.querySelectorAll("[data-submitajax]");
 
         // get all forms that contain the data-submitajax attribute
         if (pageforms.length) {
@@ -345,7 +345,7 @@ function ajaxSubmit(formid = null) {
 function subAjax(form) {
 
 
-    if (typeof (form) == 'string') {
+    if (typeof (form) == "string") {
         form = document.getElementById(form);
     }
 
@@ -354,13 +354,13 @@ function subAjax(form) {
 
 
         // add eventlistener to all forms which include the submit attribute
-        form.addEventListener('submit', function (e) {
+        form.addEventListener("submit", function (e) {
 
             e.preventDefault();
 
             let formid = form.dataset.submitajax;
-            let action = form.getAttribute('action');
-            let progress = document.getElementById(formid + '-form-submission');
+            let action = form.getAttribute("action");
+            let progress = document.getElementById(formid + "-form-submission");
             // show the info (text, progressbar, ...) by removing display:none from the outer container
             if (progress) {
                 progress.style.display = null;
@@ -368,9 +368,9 @@ function subAjax(form) {
 
             // check if anchor is present in the action attribute
             let anchor = action.split(/#(.*)/)[1];
-            if (anchor !== 'undefined') {
+            if (anchor !== "undefined") {
                 // no anchor, add the anchor of the ajax-wrapper div
-                anchor = formid + '-ajax-wrapper';
+                anchor = formid + "-ajax-wrapper";
             }
 
             // make the Ajax request
@@ -383,20 +383,20 @@ function subAjax(form) {
                 const parser = new DOMParser();
                 let doc = parser.parseFromString(result, "text/html");
 
-                let wrapper = doc.getElementById(formid + '-ajax-wrapper');
+                let wrapper = doc.getElementById(formid + "-ajax-wrapper");
                 let content = wrapper.innerHTML;
 
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    let redirectFieldName = formid + '-ajax_redirect';
+                    let redirectFieldName = formid + "-ajax_redirect";
                     let redirectUrl = formData.get(redirectFieldName);
 
                     // check if the form is valid because redirect should only happen after a valid submission
-                    if (wrapper.dataset.validated === '1') {
-                        let anchorQueryString = '';
+                    if (wrapper.dataset.validated === "1") {
+                        let anchorQueryString = "";
 
                         // check if a special redirect data attribute is present
                         if (redirectUrl) {
-                            let urlParts = redirectUrl.split('#');
+                            let urlParts = redirectUrl.split("#");
                             // check if an internal anchor is set
                             if (urlParts.length > 1) {
 
@@ -404,22 +404,22 @@ function subAjax(form) {
                                 redirectUrl = urlParts[0];
                                 let anchor = urlParts[1];
                                 // instead of the anchor, use a query string which does not make problems
-                                anchorQueryString = '?fc-anchor=' + anchor;
+                                anchorQueryString = "?fc-anchor=" + anchor;
                             }
                             window.location = redirectUrl + anchorQueryString;
                         } else {
                             // load the validated form back into the target div
-                            document.getElementById(formid + '-ajax-wrapper').innerHTML = content;
+                            document.getElementById(formid + "-ajax-wrapper").innerHTML = content;
                             // jump to the start of the form
                             jumpTo(anchor);
                         }
                     } else {
                         // load the validated form back into the target div
-                        document.getElementById(formid + '-ajax-wrapper').innerHTML = content;
+                        document.getElementById(formid + "-ajax-wrapper").innerHTML = content;
                         // jump to the start of the form
                         jumpTo(anchor);
                         // load a new CAPTCHA if CAPTCHA is used
-                        reloadCaptcha(formid + '-captcha-image', e);
+                        reloadCaptcha(formid + "-captcha-image", e);
                         // start as the first page load
                         ajaxSubmit();
                         // start counter
@@ -431,7 +431,7 @@ function subAjax(form) {
                         // will be needed to make star rating working on Ajax requests
                         let ratingStars = [...document.getElementsByClassName("star-rating")];
                         if (ratingStars.length > 0) {
-                            if (typeof configRating === 'function') {
+                            if (typeof configRating === "function") {
                                 configRating();
                             }
                         }
@@ -440,7 +440,7 @@ function subAjax(form) {
                 }
             }
             xhr.open("POST", action);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
             let formData = new FormData(form);
             xhr.send(formData);
         });
@@ -458,7 +458,7 @@ function subAjax(form) {
  */
 function jumpToAnchor() {
     const urlParams = new URLSearchParams(window.location.search);
-    const anchor = urlParams.get('fc-anchor');
+    const anchor = urlParams.get("fc-anchor");
     if (anchor) {
         console.log(urlParams);
         urlParams.delete("fc-anchor");
@@ -473,7 +473,7 @@ function jumpToAnchor() {
  */
 function maxCharsCounterReverse() {
 
-    let textareas = document.querySelectorAll('[data-charactercounter="1"]')
+    let textareas = document.querySelectorAll("[data-charactercounter='1']")
 
     if (textareas.length > 0) {
 
@@ -484,7 +484,7 @@ function maxCharsCounterReverse() {
                 const maxLength = target.getAttribute("maxlength");
                 if (maxLength) {
                     const currentLength = target.value.length;
-                    const counterSpan = document.getElementById(target.id + '-char_count');
+                    const counterSpan = document.getElementById(target.id + "-char_count");
 
                     // if max number of characters is reached, output a special info message
                     if (currentLength === maxLength) {
