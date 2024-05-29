@@ -3,7 +3,6 @@ JavaScript file for FrontendForms module
 contains no JQuery - pure JavaScript
 */
 
-
 /*
 Javascript counter in seconds
 Outputs a timer in seconds depending on values set in data attributes
@@ -32,11 +31,9 @@ function submitCounter() {
 
 window.onload = function () {
     submitCounter();
-
     ajaxSubmit();
     jumpToAnchor();
     maxCharsCounterReverse();
-
 };
 
 
@@ -167,16 +164,15 @@ function showClearLink(event) {
     }
 }
 
-
 /**
  * Change HTML 5 validation attributes depending on values of another field
  */
 
 // get all input HTML elements
-let numInputs = document.querySelectorAll("input");
+var numInputs = document.querySelectorAll("input");
 
 // check if something has been changed inside an input field
-for (let i = 0; i < numInputs.length; i++) {
+for (var i = 0; i < numInputs.length; i++) {
     numInputs[i].addEventListener("change", changeHTML5AttributeValue, false);
     numInputs[i].addEventListener("change", calculateTimeRange, false);
 }
@@ -344,14 +340,11 @@ function ajaxSubmit(formid = null) {
  */
 function subAjax(form) {
 
-
     if (typeof (form) == "string") {
         form = document.getElementById(form);
     }
 
-
     if (form) {
-
 
         // add eventlistener to all forms which include the submit attribute
         form.addEventListener("submit", function (e) {
@@ -499,5 +492,3 @@ function maxCharsCounterReverse() {
     }
 
 }
-
-
