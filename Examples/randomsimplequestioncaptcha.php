@@ -37,7 +37,7 @@ $form->showProgressbar(false);
 $form->setCaptchaPosition('privacy', 'before');
 
 // set a default success message for the captcha if you want
-$form->setCaptchaSuccessMsg("Answer was correct, but unfortunately there were other errors!");
+$form->setCaptchaSuccessMsg("Answer was correct, but unfortunately there are other errors!");
 
 // overwrite the default error message "The answer is wrong!"
 $form->setCaptchaErrorMsg('No,no,no! That is not right!');
