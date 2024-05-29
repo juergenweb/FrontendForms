@@ -303,17 +303,16 @@
         }
 
         /**
-         * Show the entered value inside a multi-question CAPTCHA again, if the question is the same as before and the value was valid
-         * This method is only designed for the simple question CAPTCHA with multiple random questions
+         * Show the entered value inside a multi-question CAPTCHA again, if the question is the same as before and the
+         * value was valid This method is only designed for the simple question CAPTCHA with multiple random questions
          * @param bool $show
          * @return $this
          */
         public function showValueOnSameQuestionAgain(bool $show): self
         {
-           $this->showValueOnSameQuestionAgain = $show;
-           return $this;
+            $this->showValueOnSameQuestionAgain = $show;
+            return $this;
         }
-
 
 
         /**
@@ -1787,7 +1786,7 @@
                 $this->captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
 
                 // check if multi question -> if yes, add the question as label to the CAPTCHA
-                if($this->question_array){
+                if ($this->question_array) {
                     $current_question = $this->question_array[$this->random_question];
                     $this->captchafield->setLabel($current_question['question']);
                 }
@@ -1802,7 +1801,7 @@
                 // add description and position to the captcha input field if set
                 if ($this->captchaDescription) $this->captchafield->setDescription($this->captchaDescription)->setPosition($this->captchaDescriptionPosition);
 
-                if($this->captchaRequiredErrorMsg){
+                if ($this->captchaRequiredErrorMsg) {
                     $this->captchafield->setRule('required')->setCustomMessage($this->captchaRequiredErrorMsg);
                 } else {
                     $this->captchafield->setRule('required')->setCustomMessage($this->_('Please fill out the security question.'));
@@ -1994,17 +1993,25 @@
                                                 }
 
                                                 // check if the current question is the same as before -> otherwise remove the CAPTCHA value on multi question CAPTCHA
-                                                    if ((!$this->showValueOnSameQuestionAgain) && ($prev_question['question'] != $this->question))
+                                                if (!$this->showValueOnSameQuestionAgain) {
+                                                    $this->captchafield->setAttribute('value', '');
+                                                } else {
+                                                    // question is not the same as before -> delete the value
+                                                    if ($prev_question['question'] != $this->question) {
                                                         $this->captchafield->setAttribute('value', '');
-
+                                                    }
+                                                }
                                             } else {
                                                 // single question CAPTCHA
                                                 // add the value back to this field on success if there is only a single question set (not an array)
-                                                $this->captchafield->setAttribute('value', $_POST[$this->getID().'-captcha']);
+                                                $this->captchafield->setAttribute('value', $_POST[$this->getID() . '-captcha']);
                                                 $this->captchafield->setSuccessMessage($this->captchaSuccessMsg);
 
                                             }
 
+                                        } else {
+                                            // entered CAPTCHA value was wrong
+                                            $this->captchafield->setAttribute('value', '');
                                         }
                                     } else {
                                         // all other CAPTCHA types
@@ -2014,7 +2021,6 @@
                                         // CAPTCHA value will be deleted in any way
                                         $this->captchafield->setAttribute('value', '');
                                     }
-
 
 
                                     $this->alert->setCSSClass('alert_dangerClass');
@@ -2426,12 +2432,12 @@
                     }
 
                     // remove label and set it as placeholder if set
-                    if ($this->useCaptchaLabelAsPlaceholder && ($this->captchafield instanceof InputText)){
+                    if ($this->useCaptchaLabelAsPlaceholder && ($this->captchafield instanceof InputText)) {
                         $this->captchafield->setAttribute('placeholder', $this->captchafield->getLabel()->getText());
                         $this->captchafield->setLabel(''); // remove the label tag
                     }
                     // remove Label if set
-                    if($this->removeCaptchaLabel){
+                    if ($this->removeCaptchaLabel) {
                         $this->captchafield->setLabel('');
                     }
 
