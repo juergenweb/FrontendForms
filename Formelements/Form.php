@@ -2001,6 +2001,8 @@
                                                 // single question CAPTCHA
                                                 // add the value back to this field on success if there is only a single question set (not an array)
                                                 $this->captchafield->setAttribute('value', $_POST[$this->getID().'-captcha']);
+                                                $this->captchafield->setSuccessMessage($this->captchaSuccessMsg);
+
                                             }
 
                                         }
