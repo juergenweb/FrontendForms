@@ -910,9 +910,10 @@ The first parameter is the question and the second contains the accepted answers
 The Captcha field will be added automatically to the form if set. For this reason you have no possiblity to add or remove attributes or markup by yourself by default.
 
 To offer the possibility to output a success message info after the form input for the CAPTCHA if the CAPTCHA value was correct, you can use this method.
+Please note: A user will only see this success message, if there are other errors on the form. All CAPTCHAS, except the single question CAPTCHA does not hold the entered value inside the input field, after the form subission, so the user has to enter the CAPTCHA value again. In this case a message like "Well done, your value was correct, but you need to entere the CAPTCHA value again" is better than only using fe "well done".
 
 ```php
-  $form->setCaptchaSuccessMsg('Well done!');
+  $form->setCaptchaSuccessMsg('Well done, your value was correct, but you need to entere the CAPTCHA value again');
 ```
 This success message is the opposite of an error message and was introduced to input elements in version 2.1.70. With this method you can add it to CAPTCHA inputs as well, if you want.
 
