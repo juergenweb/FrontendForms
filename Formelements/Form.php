@@ -1977,51 +1977,55 @@
                                     // set error alert
                                     $this->wire('session')->set('errors', '1');
                                     $this->formErrors = $v->errors();
-                                    $captchaName = $this->getID() . '-captcha';
-                                    // if Captcha value was valid -> add it to the captcha_value property
-                                    if ($this->getCaptchaType() === 'SimpleQuestionCaptcha') {
 
-                                        if (!array_key_exists($captchaName, $this->formErrors)) {
-                                            // captcha was valid
+                                    // check if a CAPTCHA is enabled
+                                    if ($this->getCaptchaType() != 'none') {
 
-                                            // check if it is multi-question
-                                            if (array_key_exists($this->getID() . '-random_key', $_POST)) {
+                                        $captchaName = $this->getID() . '-captcha';
+                                        // if Captcha value was valid -> add it to the captcha_value property
+                                        if ($this->getCaptchaType() === 'SimpleQuestionCaptcha') {
 
-                                                $prev_question = $this->question_array[$_POST[$this->getID() . '-random_key']];
-                                                if (array_key_exists('successMsg', $prev_question)) {
-                                                    $this->captchafield->setSuccessMessage($prev_question['successMsg']);
-                                                }
+                                            if (!array_key_exists($captchaName, $this->formErrors)) {
+                                                // captcha was valid
 
-                                                // check if the current question is the same as before -> otherwise remove the CAPTCHA value on multi question CAPTCHA
-                                                if (!$this->showValueOnSameQuestionAgain) {
-                                                    $this->captchafield->setAttribute('value', '');
-                                                } else {
-                                                    // question is not the same as before -> delete the value
-                                                    if ($prev_question['question'] != $this->question) {
-                                                        $this->captchafield->setAttribute('value', '');
+                                                // check if it is multi-question
+                                                if (array_key_exists($this->getID() . '-random_key', $_POST)) {
+
+                                                    $prev_question = $this->question_array[$_POST[$this->getID() . '-random_key']];
+                                                    if (array_key_exists('successMsg', $prev_question)) {
+                                                        $this->captchafield->setSuccessMessage($prev_question['successMsg']);
                                                     }
+
+                                                    // check if the current question is the same as before -> otherwise remove the CAPTCHA value on multi question CAPTCHA
+                                                    if (!$this->showValueOnSameQuestionAgain) {
+                                                        $this->captchafield->setAttribute('value', '');
+                                                    } else {
+                                                        // question is not the same as before -> delete the value
+                                                        if ($prev_question['question'] != $this->question) {
+                                                            $this->captchafield->setAttribute('value', '');
+                                                        }
+                                                    }
+                                                } else {
+                                                    // single question CAPTCHA
+                                                    // add the value back to this field on success if there is only a single question set (not an array)
+                                                    $this->captchafield->setAttribute('value', $_POST[$this->getID() . '-captcha']);
+                                                    $this->captchafield->setSuccessMessage($this->captchaSuccessMsg);
+
                                                 }
+
                                             } else {
-                                                // single question CAPTCHA
-                                                // add the value back to this field on success if there is only a single question set (not an array)
-                                                $this->captchafield->setAttribute('value', $_POST[$this->getID() . '-captcha']);
-                                                $this->captchafield->setSuccessMessage($this->captchaSuccessMsg);
-
+                                                // entered CAPTCHA value was wrong
+                                                $this->captchafield->setAttribute('value', '');
                                             }
-
                                         } else {
-                                            // entered CAPTCHA value was wrong
+                                            // all other CAPTCHA types
+                                            if (!array_key_exists($captchaName, $this->formErrors)) {
+                                                $this->captchafield->setSuccessMessage($this->captchaSuccessMsg);
+                                            }
+                                            // CAPTCHA value will be deleted in any way
                                             $this->captchafield->setAttribute('value', '');
                                         }
-                                    } else {
-                                        // all other CAPTCHA types
-                                        if (!array_key_exists($captchaName, $this->formErrors)) {
-                                            $this->captchafield->setSuccessMessage($this->captchaSuccessMsg);
-                                        }
-                                        // CAPTCHA value will be deleted in any way
-                                        $this->captchafield->setAttribute('value', '');
                                     }
-
 
                                     $this->alert->setCSSClass('alert_dangerClass');
                                     $this->alert->setText($this->getErrorMsg());
@@ -3068,6 +3072,5 @@
             }
             return '';
         }
-
-
+        
     }
