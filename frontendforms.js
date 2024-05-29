@@ -45,7 +45,7 @@ window.onload = function () {
  * checkbox status
  * **/
 
-const callbacks = document.getElementsByClassName("fc-callback");
+var callbacks = document.getElementsByClassName("fc-callback");
 
 if (callbacks.length) {
     let checkboxStatus = function () {
