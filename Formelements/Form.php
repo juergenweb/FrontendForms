@@ -1994,12 +1994,15 @@
                                                     $prev_question = $this->question_array[$_POST[$this->getID() . '-random_key']];
                                                     if (array_key_exists('successMsg', $prev_question)) {
                                                         $this->captchafield->setSuccessMessage($prev_question['successMsg']);
+                                                    } else {
+                                                        // output the global success message if set
+                                                        $this->captchafield->setSuccessMessage($this->captchaSuccessMsg);
                                                     }
 
                                                     // check if the current question is the same as before -> otherwise remove the CAPTCHA value on multi question CAPTCHA
-                                                    if (!$this->showValueOnSameQuestionAgain) {
+                                                    if ($this->showValueOnSameQuestionAgain) {
                                                         $this->captchafield->setAttribute('value', '');
-                                                    } else {
+                                                    } else {// false
                                                         // question is not the same as before -> delete the value
                                                         if ($prev_question['question'] != $this->question) {
                                                             $this->captchafield->setAttribute('value', '');
@@ -3072,5 +3075,5 @@
             }
             return '';
         }
-        
+
     }
