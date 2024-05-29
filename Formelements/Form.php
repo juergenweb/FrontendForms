@@ -2001,13 +2001,14 @@
 
                                                     // check if the current question is the same as before -> otherwise remove the CAPTCHA value on multi question CAPTCHA
                                                     if ($this->showValueOnSameQuestionAgain) {
-                                                        $this->captchafield->setAttribute('value', '');
-                                                    } else {// false
                                                         // question is not the same as before -> delete the value
                                                         if ($prev_question['question'] != $this->question) {
                                                             $this->captchafield->setAttribute('value', '');
                                                         }
+                                                    } else {// false
+                                                        $this->captchafield->setAttribute('value', '');
                                                     }
+                                                    
                                                 } else {
                                                     // single question CAPTCHA
                                                     // add the value back to this field on success if there is only a single question set (not an array)
