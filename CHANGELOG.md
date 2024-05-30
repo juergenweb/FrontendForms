@@ -969,18 +969,20 @@ This example places the CAPTCHA **after** the field with the name attribute "**e
 This update comes with 1 bug fix, 1 JavaScript addition, 7 new general customizing methods for all CAPTCHAS and 1 special new method for the simple question CAPTCHA.
 
 - **Missing rendering of field description at the end of inputfield re-added**
-  If the description position was set to "afterInput", then the description tag has not been rendered, because the   rendering method was missing. This bug is fixed now.
+
+  If the description position was set to "afterInput", then the description tag has not been rendered, because the     rendering method was missing. This bug is fixed now.
   
   The new methods afterwards are especially for customizing the display of the CAPTCHA input field to your needs. The CAPTCHA input field is a so called "module system field", which means it will be created and rendered by the module and will not be created via API by the user.
   
   This is the reason, why it cannot be customized like other fields and therefore it needs some special methods to be more flexible in customizing the output.
 
 - **JavaScript addition to submit timer function added**
-If validation min time until a form will be submitted is enabled, you will get a warning if the form has been submitted to fast. In this case a warning alert will be displayed and a reverse timer counts from the min time (fe 5 seconds) to 0. After this time you will be able to submit the form again.
 
-If the counter was finished, it has been removed, but the alert was still there.
-
-I have added a little piece of code, so that the warning alert will be removed too after this time period, because it is no longer relevant for the user.
+  If validation min time until a form will be submitted is enabled, you will get a warning if the form has been submitted to fast. In this case a warning alert will be displayed and a reverse timer counts from the min time (fe 5 seconds) to 0. After this time you will be able to submit the form again.
+  
+  If the counter was finished, it has been removed, but the alert was still there.
+  
+  I have added a little piece of code, so that the warning alert will be removed too after this time period, because it is no longer relevant for the user.
 
 - **New method setCaptchaErrorMsg added**
 
