@@ -3,7 +3,7 @@ JavaScript file for FrontendForms module
 contains no JQuery - pure JavaScript
 */
 
-// add a namespace to prevent conflict with other JavasScript files
+// add a closure for usage as a namespace to prevent conflict with other JavasScript files
 var FRONTENDFORMS = FRONTENDFORMS || {};
 
 FRONTENDFORMS.subns = (function() {
