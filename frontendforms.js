@@ -3,6 +3,10 @@ JavaScript file for FrontendForms module
 contains no JQuery - pure JavaScript
 */
 
+// add a namespace to prevent conflict with other JavasScript files
+var FRONTENDFORMS = FRONTENDFORMS || {};
+
+FRONTENDFORMS.subns = (function() {
 /*
 Javascript counter in seconds
 Outputs a timer in seconds depending on values set in data attributes
@@ -492,3 +496,5 @@ function maxCharsCounterReverse() {
     }
 
 }
+
+})();
