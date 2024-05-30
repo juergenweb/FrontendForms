@@ -968,14 +968,6 @@ This example places the CAPTCHA **after** the field with the name attribute "**e
 
 This update comes with 1 bug fix, 1 JavaScript addition, 7 new general customizing methods for all CAPTCHAS and 1 special new method for the simple question CAPTCHA.
 
-- **Missing rendering of field description at the end of inputfield re-added**
-
-  If the description position was set to "afterInput", then the description tag has not been rendered, because the     rendering method was missing. This bug is fixed now.
-  
-  The new methods afterwards are especially for customizing the display of the CAPTCHA input field to your needs. The CAPTCHA input field is a so called "module system field", which means it will be created and rendered by the module and will not be created via API by the user.
-  
-  This is the reason, why it cannot be customized like other fields and therefore it needs some special methods to be more flexible in customizing the output.
-
 - **JavaScript addition to submit timer function added**
 
   If validation min time until a form will be submitted is enabled, you will get a warning if the form has been submitted to fast. In this case a warning alert will be displayed and a reverse timer counts from the min time (fe 5 seconds) to 0. After this time you will be able to submit the form again.
@@ -984,50 +976,59 @@ This update comes with 1 bug fix, 1 JavaScript addition, 7 new general customizi
   
   I have added a little piece of code, so that the warning alert will be removed too after this time period, because it is no longer relevant for the user.
 
+
+- **Missing rendering of field description at the end of inputfield re-added**
+
+  If the description position was set to "afterInput", then the description tag has not been rendered, because the     rendering method was missing. This bug is fixed now.
+  
+  The new methods afterwards are especially for customizing the display of the CAPTCHA input field to your needs. The CAPTCHA input field is a so called "module system field", which means it will be created and rendered by the module and will not be created via API by the user.
+  
+  This is the reason, why it cannot be customized like other fields and therefore it needs some special methods to be more flexible in customizing the output.
+
 - **New method setCaptchaErrorMsg added**
 
-This method is for overwriting the default error message for the captcha validation, that will be displayed if the value entered is not correct. 
-
-More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchaerrormsg---overwrite-the-default-error-message-of-the-captcha-validation-rule)
+  This method is for overwriting the default error message for the captcha validation, that will be displayed if the value entered is not correct. 
+  
+  More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchaerrormsg---overwrite-the-default-error-message-of-the-captcha-validation-rule)
 
 - **New method setCaptchaRequiredErrorMsg added**
 
-This method is for overwriting the default error message for the captcha required validation, that will be displayed if the value is missing. 
-
-More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptcharequirederrormsg---overwrite-the-default-error-message-of-the-captcha-required-validation-rule)
+  This method is for overwriting the default error message for the captcha required validation, that will be displayed if the value is missing. 
+  
+  More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptcharequirederrormsg---overwrite-the-default-error-message-of-the-captcha-required-validation-rule)
 
 - **New method setCaptchaPlaceholder added**
 
-This method is for adding a placeholder text to the captcha input field.
-
-More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchaplaceholder---add-a-placeholder-text-to-the-captcha-input-field)
+  This method is for adding a placeholder text to the captcha input field.
+  
+  More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchaplaceholder---add-a-placeholder-text-to-the-captcha-input-field)
 
 - **New method setCaptchaNotes added**
 
-This method is for overwriting the default notes, that will be displayed under the input field.
-
-More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchanotes---overwrite-the-default-notes-of-the-captcha-input-field)
+  This method is for overwriting the default notes, that will be displayed under the input field.
+  
+  More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchanotes---overwrite-the-default-notes-of-the-captcha-input-field)
 
 - **New method setCaptchaDescription added**
 
-This method is for adding a description text to the CAPTCHA field, if needed.
-
-More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchadescription---add-a-description-to-the-captcha-input-field)
+  This method is for adding a description text to the CAPTCHA field, if needed.
+  
+  More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchadescription---add-a-description-to-the-captcha-input-field)
 
 - **New method setCaptchaDescriptionPosition added**
 
-This method is for positioning the description text of the CAPTCHA field independently, if needed.
-
-More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchaposition---place-the-captcha-on-a-position-of-your-choice-inside-the-form)
+  This method is for positioning the description text of the CAPTCHA field independently, if needed.
+  
+  More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setcaptchaposition---place-the-captcha-on-a-position-of-your-choice-inside-the-form)
 
 - **New method setSimpleQuestionCaptchaRandomRotation added**
 
-This method is for the simple question captcha only and offers the possibility to display several questions randomly instead of only one question. The questions can be set as an array and are highly configurable.
-
-More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setsimplequestioncaptcharandomrotation---showing-multiple-questions-randomly-instead-of-a-single-question-with-the-simple-question-captcha)
+  This method is for the simple question captcha only and offers the possibility to display several questions randomly instead of only one question. The questions can be set as an array and are highly configurable.
+  
+  More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#setsimplequestioncaptcharandomrotation---showing-multiple-questions-randomly-instead-of-a-single-question-with-the-simple-question-captcha)
 
 - **New method removeCaptchaLabel added**
 
-This method is for removing the label from the CAPTCHA field. Optional you can choose if you want to display the label text as placeholder text instead. 
-
-More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#removecaptchalabel---hide-the-label-and-display-the-label-text-optionally-as-placeholder-text)
+  This method is for removing the label from the CAPTCHA field. Optional you can choose if you want to display the label text as placeholder text instead. 
+  
+  More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#removecaptchalabel---hide-the-label-and-display-the-label-text-optionally-as-placeholder-text)
