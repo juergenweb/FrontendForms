@@ -106,6 +106,7 @@
                                 $submit_Time,
                                 '<span id="minTime" data-time="' . $this->form->getMinTime() . '" data-unit="' . $secondsLeft . ';' . $secondLeft . '">' . $this->secondsToReadable($this->form->getMinTime())) . '</span><div id="timecounter"></div>';
                         $this->alert->setCSSClass('alert_warningClass');
+                        $this->alert->setAttribute('data-submittime', $this->form->getID());
                         $this->alert->setText($text);
                         return false;
                     }
