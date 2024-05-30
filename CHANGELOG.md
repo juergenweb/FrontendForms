@@ -968,7 +968,7 @@ This example places the CAPTCHA **after** the field with the name attribute "**e
 
 This update comes with 1 bug fix, 2 JavaScript additions, 7 new general customizing methods for all CAPTCHAS and 1 special new method for the simple question CAPTCHA.
 
-- **Put all JavaScript code inside a closure to prevent conflicts**
+- **The entire JavaScript code was placed in a closure to avoid conflicts.**
 
   To avoid future conflicts with other JavaScript files, I have placed the entire JavaScript code in a closure that works like a namespace. This prevents conflicts with other JavaScript files that use variables with the same names as those in this file.
 
