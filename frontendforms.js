@@ -42,9 +42,9 @@ window.onload = function () {
  * checkbox status
  * **/
 
-var callbacks = document.getElementsByClassName("fc-callback");
+const frontendformscallbacks = document.getElementsByClassName("fc-callback");
 
-if (callbacks.length) {
+if (frontendformscallbacks.length) {
     let checkboxStatus = function () {
 
         let phoneID = this.getAttribute("data-phone-id");
@@ -65,8 +65,8 @@ if (callbacks.length) {
 
     };
 
-    for(let i = 0; i < callbacks.length; i++) {
-        callbacks[i].addEventListener("click", checkboxStatus, false);
+    for(let i = 0; i < frontendformscallbacks.length; i++) {
+        frontendformscallbacks[i].addEventListener("click", checkboxStatus, false);
     }
 
 }
@@ -169,12 +169,12 @@ function showClearLink(event) {
  */
 
 // get all input HTML elements
-var numInputs = document.querySelectorAll("input");
+let frontendformsnumInputs = document.querySelectorAll("input");
 
 // check if something has been changed inside an input field
-for (var i = 0; i < numInputs.length; i++) {
-    numInputs[i].addEventListener("change", changeHTML5AttributeValue, false);
-    numInputs[i].addEventListener("change", calculateTimeRange, false);
+for (let i = 0; i < frontendformsnumInputs.length; i++) {
+    frontendformsnumInputs[i].addEventListener("change", changeHTML5AttributeValue, false);
+    frontendformsnumInputs[i].addEventListener("change", calculateTimeRange, false);
 }
 
 // Change the HTML5 attribute on change
