@@ -2400,9 +2400,11 @@ Each question is a page, so you can do everything you can do with all the other 
 
 If you want to edit or delete a page, click directly on the linked question text in the table and you will be redirected to the editing page for this question. If you click on "Add new question", you will be redirected to the "Add new page" page.
 
-![Data table with questions](https://github.com/juergenweb/FrontendForms/blob/main/images/questionpage.png?raw=true)
+The next image shows the edit page of a question.
 
-In addition to the mandatory fields "Question" and "Answers", there are a number of other optional fields that you can fill in, e.g. a description text, a note text, a customized error and success message etc., but these fields are optional and therefore do not have to be filled in.
+![Edit page](https://github.com/juergenweb/FrontendForms/blob/main/images/questionpage.png?raw=true)
+
+In addition to the mandatory fields "Question" and "Answers", there are a number of other optional fields that you can fill in, e.g. a description text, a note text, a customized error and success message etc., but these fields are optional and therefore do not have to be filled in. You can use the field for further customization of a single question.
 
 You can also find all question pages in the page tree under the administration page.
 
