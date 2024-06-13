@@ -2365,4 +2365,49 @@ $form->useFormInCrossDomainIframe();
 The disadvantage of this method is that the usage of a CAPTCHA is no longer possible, because it only works with session.
 CSRF-Protection and the check for double form subission are also disabled, but this is the only way to use a form inside an iframe on another domain.
 
+## Custom module FrontendFormsManager
 
+THIS IS PART OF THE NEXT UPDATE!!
+
+### What is the module FrontendFormsManager?
+FrontendFormsManger is a module that will be shipped with FrontendForms, but will not be installed by default, because it is not necessary for running FrontendForms. 
+
+This module is for entering questions for the SIMPLE QUESTION CAPTCHA in an easy to use interface and to make these questions usable in all forms. So you can manage all your questions in one place with the possibility to add, edit or delete or also to publish or unpublish questions. It contains also a little statistic section with charts.
+
+For the future, it is planned to extend this module with further possibilities, but for now it is only an addon for the SIMPLE QUESTION CAPTCHA (June 2024).
+
+If you are not using the SIMPLE QUESTION CAPTCHA, installing this module makes no benefit for you (at the time of writing).
+
+### How does it work?
+
+Technically spoken, this module creates a new admin page under SETUP.
+
+Bild Menü
+
+This page is the dashboard page, which contains the overview. 
+
+Bild Dasboard
+
+By clicking the "Add/edit/delete" button you will be redirected to the next page which contains a list of all questions. This list is a data table with a little filter form to filter questions to your needs (fe status, question text, visibility on the frontend).
+
+Bild Tabelle
+
+Just to mention: By default the table shows 10 questions per page. If the number of questions is higher, the table will be paginated. You can change the number of questions/page inside the module configuration to your needs if you want.
+
+Each question is a page, so you can do everything that you can do with all other pages in ProcessWire. All the fields and templates for these pages will be created automatically during the module installation
+
+If you want to edit or delete a page, click directly on the linked question text inside the table and you will be redirected to the "edit page" of this question. If you click "add new question", you will be redirected to the "add new page".
+
+Bild Edit page
+
+Beside the mandatory fields "question" and "answers", there are a lot of other optional field to add fe a description text, a notes text, customized error and success message and so on, but these fields are optional.
+
+## How to install/uninstall the module
+
+This is a normal ProcessWire module so the install/uninstall of the module is the same as at all other modules. Go to the modules section, select the module "FrontendForms Manager" and install it at usual.
+
+After the module installation you find a new navigation link under SETUP.
+
+If you want to uninstall the module, go to the module section too and click to uninstall the module.
+
+ONE THING TO MENTION: Uninstall of the module deletes all pages, fields and templates too, which were created by this module. This means that all questions will be deleted and are no longer available after module installation. Please take this into account, if you uninstall the module!
