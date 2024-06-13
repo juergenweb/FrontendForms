@@ -14,6 +14,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 6. Multi-language
 7. Option to send emails using HTML email templates within the WireMail class by using custom methods and properties added to the WireMail class (supports also using these custom methods and properties via PostmarkApp, WireMailPHPMailer and WireMailSMTP)
 8. Ajax support for form submission
+9. Contains an optional additonal module (FrontendForms Manager) for installation to provide an userfriendly UI for the SIMPLE QUESTION CAPTCHA 
 
 ## Requirements
 * PHP>=8.0.0
@@ -39,6 +40,7 @@ This module will work without GD-Library too, but you will not be able to use CA
 * [Multi-language](#multi-language)
 * [HTML email templates](#email-templates)
 * [Use forms in iframe](#use-forms-in-iframe)
+* [Extra module: FrontendForms Manager](#custom-module-frontendformsmanager)
 
 ## Installation and Quick-start guide
 The most simple way is to install it via the ProcessWire module manager in the administration area, but you can also install it manually following the steps afterwards:
