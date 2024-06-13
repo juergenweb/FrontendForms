@@ -3139,7 +3139,8 @@
          */
         protected function getCaptchaQuestions(): array
         {
-            $questions = $this->wire('pages')->find('template=ff_question');
+            // need to include all, otherwise pages under the admin tree will not be listed
+            $questions = $this->wire('pages')->find('template=ff_question,include=all,status=published,status!=hidden');
             $questionArray = [];
             if (!$questions->count) return $questionArray;
 
