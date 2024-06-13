@@ -18,6 +18,7 @@ use ProcessWire\WirePermissionException;
 
 class EvenCharacterTextCaptcha extends AbstractCharset
 {
+    protected string $importantNotes = '';
 
     /**
      * @throws WireException
@@ -27,7 +28,7 @@ class EvenCharacterTextCaptcha extends AbstractCharset
     {
         parent::__construct();
         $this->title = $this->_('Even string captcha');
-        $this->desc = $this->_('Enter every second character of the text from the image in the input field.');
+        $this->desc = $this->importantNotes = $this->_('Enter every second character of the text from the image in the input field.');
     }
 
     /**
@@ -50,7 +51,7 @@ class EvenCharacterTextCaptcha extends AbstractCharset
     public function createCaptchaInputField(string $formID): InputText
     {
         $parent = parent::createCaptchaInputField($formID);
-        $parent->setNotes($this->desc);
+        $parent->setNotes($this->desc, true);
         return $parent;
     }
 
