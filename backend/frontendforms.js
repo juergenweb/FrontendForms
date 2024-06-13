@@ -36,3 +36,30 @@ window.onload = function () {
     }
 
 };
+
+// Ajax calls for FrontendForms Manager
+$( document ).ready(function() {
+
+    if ($("button.statistics").size() > 0) {
+
+        $("button.statistics").click(function(event){
+            event.preventDefault();
+
+            $.ajax({
+                url: $(location).attr("href"),
+                type: 'post', // performing a POST request
+                data : {
+                    type : $(this).data('statistic')// will be accessible in $_POST
+                },
+                success: function(result)
+                {
+                    // remove pageload container first
+                    $('#pageload').remove();
+                    $("#questionsstatistic").html(result);
+                }
+            });
+
+        });
+    }
+
+});
