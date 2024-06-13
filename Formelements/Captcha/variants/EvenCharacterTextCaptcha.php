@@ -18,7 +18,6 @@ use ProcessWire\WirePermissionException;
 
 class EvenCharacterTextCaptcha extends AbstractCharset
 {
-    protected string $importantNotes = '';
 
     /**
      * @throws WireException
