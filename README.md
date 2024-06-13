@@ -2410,4 +2410,6 @@ After the module installation you find a new navigation link under SETUP.
 
 If you want to uninstall the module, go to the module section too and click to uninstall the module.
 
+![Module installation](https://github.com/juergenweb/FrontendForms/blob/main/images/installmodule.png?raw=true)
+
 ONE THING TO MENTION: Uninstall of the module deletes all pages, fields and templates too, which were created by this module. This means that all questions will be deleted and are no longer available after module installation. Please take this into account, if you uninstall the module!
