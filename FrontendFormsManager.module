@@ -872,7 +872,7 @@
                     if ($this->languages && $this->languages->count() < 2) {
                         if ($fieldproperties['fieldtype'] == 'FieldtypeTextLanguage')
                             $fieldproperties['fieldtype'] = 'FieldtypeText';
-                        if ($fieldproperties['fieldtype'] == 'FieldtypeTextAreaLanguage')
+                        if ($fieldproperties['fieldtype'] == 'FieldtypeTextareaLanguage')
                             $fieldproperties['fieldtype'] = 'FieldtypeTextarea';
                     }
                     $field->type = wire('modules')->get($fieldproperties['fieldtype']);
