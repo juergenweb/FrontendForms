@@ -49,7 +49,7 @@ class SimpleMathTextCaptcha extends AbstractMath
     public function createCaptchaInputField(string $formID): InputText
     {
         $parent = parent::createCaptchaInputField($formID);
-        $parent->setNotes($this->desc, true);
+        $parent->setNotes($this->desc);
         return $parent;
     }
 
