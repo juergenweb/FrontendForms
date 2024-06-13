@@ -2404,7 +2404,7 @@ The next image shows the edit page of a question.
 
 ![Edit page](https://github.com/juergenweb/FrontendForms/blob/main/images/questionpage.png?raw=true)
 
-In addition to the mandatory fields "Question" and "Answers", there are a number of other optional fields that you can fill in, e.g. a description text, a note text, a customized error and success message etc., but these fields are optional and therefore do not have to be filled in. You can use the field for further customization of a single question.
+In addition to the mandatory fields "Question" and "Answers", there are a number of other optional fields that you can fill in, e.g. a description text, a note text, a customized error and success message etc., but these fields are optional and therefore do not have to be filled in. You can use these fields for further customization of a single question.
 
 You can also find all question pages in the page tree under the administration page.
 
