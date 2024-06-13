@@ -20,6 +20,7 @@
     use ProcessWire\HookEvent;
     use ProcessWire\Language;
     use ProcessWire\Module;
+    use ProcessWire\PageArray;
     use ProcessWire\User;
     use ProcessWire\Page;
     use ProcessWire\Wire;
@@ -74,7 +75,7 @@
         protected string|null $captchaPlaceholder = ''; // set a placeholder for the Captcha input
         protected int|null $random_question = null;
         protected array|null $random_question_array = null;
-        protected array|null $question_array = null;
+        protected array|null $question_array = [];
         protected bool $removeCaptchaLabel = false;
         protected bool $useCaptchaLabelAsPlaceholder = false;
         protected bool $showValueOnSameQuestionAgain = false;
@@ -218,25 +219,64 @@
             // add a hook method after sending the mail to remove the session variable "templateloaded"
             $this->addHookAfter('WireMail::send', $this, 'removeTemplateSession');
 
+            // create questions array for the simple text CAPTCHA
+            $this->question_array = $this->getCaptchaQuestions();
 
         }
 
+
         /**
-         * Overwrite the question and the answers of a simple question captcha on per form base
+         *  Add a single question to the simple question captcha on per form base
          * @param string|null $question
          * @param array|null $answers
+         * @param array $options - add all other question parameters like notes, description, placeholder to the
+         *     question
          * @return $this
          */
-        public function setSecurityQuestion(string|null $question, array|null $answers): self
+        public function setSecurityQuestion(string|null $question, array|null $answers, array $options = []): self
         {
+
             // add question sign if it is not present in the question
             if (!is_null($question)) {
                 if (substr($question, -1) != '?') {
                     $question = $question . '?';
                 }
             }
-            $this->answers = $answers;
-            $this->question = $question;
+
+            // add this question to the questions array
+            $array = [
+                'question' => $question,
+                'answers' => $answers
+            ];
+            if ($options) {
+                foreach ($options as $k => $v) {
+                    $array[$k] = $v;
+                }
+            }
+            $this->question_array[] = array_filter($array);
+            return $this;
+        }
+
+        /**
+         * Add multiple questions as a multidimensional assoc array for the Simple question CAPTCHA
+         * @param array $questions
+         * @return $this
+         */
+        public function setSecurityQuestions(array $questions): self
+        {
+            foreach ($questions as $question) {
+                $q = $question['question'];
+                $a = $question['answers'];
+                $options = [];
+                // check if options are set
+                unset($question['question']);
+                unset($question['answers']);
+                if ($question) {
+                    $options = $question;
+                }
+                $this->setSecurityQuestion($q, $a, $options);
+
+            }
             return $this;
         }
 
@@ -1409,55 +1449,66 @@
         }
 
         /**
-         * Set a random question to the CAPTCHA out of an array of several questions
+         * DEPRICATED: This method has been replaced by the setSecurityQuestions method
+         * @param array $questions
+         * @return void
+         */
+        public function setSimpleQuestionCaptchaRandomRotation(array $questions)
+        {
+            $this->setSecurityQuestions($questions);
+        }
+
+        /**
+         * Take a random question for the CAPTCHA out of an array of several questions
          * @param array $questions
          * @return void
          * @throws \ProcessWire\WireException
          */
-        public function setSimpleQuestionCaptchaRandomRotation(array $questions)
+        protected function getRandomQuestion(array $questions)
         {
-            // check if the chosen CAPTCHA type is the simple question CAPTCHA
-            if ($this->getCaptchaType() == 'SimpleQuestionCaptcha') {
+            if ($questions) {
+                // check if the chosen CAPTCHA type is the simple question CAPTCHA
+                if ($this->getCaptchaType() == 'SimpleQuestionCaptcha') {
 
-                $random_question = array_rand($questions);
-                $random_question_array = $questions[$random_question];
+                    $random_question = array_rand($questions);
+                    $random_question_array = $questions[$random_question];
 
-                // only set a random question if at least the question and the answer keys are present
-                if ($random_question_array['question'] && $random_question_array['answers']) {
-                    // only set a random question if question is a string and the answers is an array
-                    if (is_string($random_question_array['question']) && is_array($random_question_array['answers'])) {
-                        $this->setSecurityQuestion($random_question_array['question'], $random_question_array['answers']);
+                    // only set a random question if at least the question and the answer keys are present
+                    if ($random_question_array['question'] && $random_question_array['answers']) {
+                        // only set a random question if question is a string and the answers is an array
+                        if (is_string($random_question_array['question']) && is_array($random_question_array['answers'])) {
+                            $this->setSecurityQuestion($random_question_array['question'], $random_question_array['answers']);
 
-                        $question_array_array['question'] = $random_question_array['question'];
-                        $question_array_array['answers'] = $random_question_array['answers'];
-                        // unset the question and the answers keys from the array
-                        unset($random_question_array['question']);
-                        unset($random_question_array['answers']);
-                        // unset values that will be displayed only after post
-                        unset($random_question_array['successMsg']);
-                        unset($random_question_array['errorMsg']);
+                            $question_array_array['question'] = $random_question_array['question'];
+                            $question_array_array['answers'] = $random_question_array['answers'];
+                            // unset the question and the answers keys from the array
+                            unset($random_question_array['question']);
+                            unset($random_question_array['answers']);
+                            // unset values that will be displayed only after post
+                            unset($random_question_array['successMsg']);
+                            unset($random_question_array['errorMsg']);
 
-                        // get all other array keys if there are some left
-                        if ($questions) {
+                            // get all other array keys if there are some left
+                            if ($questions) {
 
-                            // set additional properties if present
-                            foreach ($random_question_array as $name => $value) {
-                                $methodName = 'setCaptcha' . ucfirst($name);
-                                if (method_exists($this, $methodName)) {
-                                    $this->$methodName($value);
+                                // set additional properties if present
+                                foreach ($random_question_array as $name => $value) {
+                                    $methodName = 'setCaptcha' . ucfirst($name);
+                                    if (method_exists($this, $methodName)) {
+                                        $this->$methodName($value);
+                                    }
                                 }
-                            }
 
+                            }
                         }
                     }
+
+                    $this->random_question = $random_question; // returns integer
+                    $this->random_question_array = $random_question_array;
+                    $this->question_array = $questions;
+
                 }
-
-                $this->random_question = $random_question; // returns integer
-                $this->random_question_array = $random_question_array;
-                $this->question_array = $questions;
-
             }
-
         }
 
         /**
@@ -1755,6 +1806,11 @@
         public function ___isValid(): bool
         {
 
+            // Add the multi-question array for the simple question CAPTCHA
+
+            if ($this->question_array)
+                $this->getRandomQuestion($this->question_array);
+
             // set WireInput array depth to 2 because auf multiple file uploads
             $this->wire('config')->wireInputArrayDepth = 2;
             $formMethod = $this->getAttribute('method'); // grab the method (get or post)
@@ -2008,7 +2064,7 @@
                                                     } else {// false
                                                         $this->captchafield->setAttribute('value', '');
                                                     }
-                                                    
+
                                                 } else {
                                                     // single question CAPTCHA
                                                     // add the value back to this field on success if there is only a single question set (not an array)
@@ -2326,7 +2382,6 @@
          */
         public function render(): string
         {
-
 
             // redirect after successful form validation if set
             if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
@@ -3075,6 +3130,68 @@
                 return '<div id="preheader-text" style="' . $this->getPreheaderStyle() . '">' . $mail->title . $this->getLitmusHack() . '</div>';
             }
             return '';
+        }
+
+        /**
+         * Get all Captcha questions as a PageArray
+         * @return \ProcessWire\PageArray|null
+         * @throws \ProcessWire\WireException
+         */
+        protected function getCaptchaQuestions(): array
+        {
+            $questions = $this->wire('pages')->find('template=ff_question');
+            $questionArray = [];
+            if (!$questions->count) return $questionArray;
+
+            // check if multi-language site
+            $multilang = false;
+            if ($this->wire('languages')) {
+                $multilang = true;
+                $lang = $this->wire('user')->language;
+            }
+            // create the multidim. array
+            foreach ($questions as $key => $question) {
+
+                if ($multilang) {
+                    $title = $question->getLanguageValue($lang, 'title');
+                    // check if field "title" contains a value in this language, otherwise take the value from the default lanugage
+                    if (!$title) {
+                        $title = $question->getLanguageValue('default', 'title');
+                    }
+                    $answers = explode("\n", $question->getLanguageValue($lang, 'ff_answers'));
+                    // check if field "answers" contains values in this language, otherwise take the values from the default lanugage
+                    if ($answers) {
+                        $answers = explode("\n", $question->getLanguageValue('default', 'ff_answers'));
+                    }
+                    $successmsg = $question->getLanguageValue($lang, 'ff_successmsg');
+                    $errormsg = $question->getLanguageValue($lang, 'ff_errormsg');
+                    $placeholder = $question->getLanguageValue($lang, 'ff_placeholder');
+                    $notes = $question->getLanguageValue($lang, 'ff_notes');
+                    $description = $question->getLanguageValue($lang, 'ff_description');
+                    $descriptionPosition = $question->getLanguageValue($lang, 'ff_descposition')->value;
+                } else {
+                    $title = $question->title;
+                    $answers = explode("\n", $question->answers);
+                    $successmsg = $question->ff_successmsg;
+                    $errormsg = $question->ff_errormsg;
+                    $placeholder = $question->ff_placeholder;
+                    $notes = $question->ff_notes;
+                    $description = $question->description;
+                    $descriptionPosition = $question->ff_descposition->value;
+                }
+
+                $questionArray[$key]['question'] = $title;
+                $questionArray[$key]['answers'] = $answers;
+                $questionArray[$key]['successMsg'] = $successmsg;
+                $questionArray[$key]['errorMsg'] = $errormsg;
+                $questionArray[$key]['placeholder'] = $placeholder;
+                $questionArray[$key]['notes'] = $notes;
+                $questionArray[$key]['description'] = $description;
+                $questionArray[$key]['descriptionPosition'] = $descriptionPosition;
+
+            }
+            return array_filter($questionArray);
+
         }
 
     }
