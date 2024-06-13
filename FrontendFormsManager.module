@@ -1,0 +1,993 @@
+<?php
+
+    namespace ProcessWire;
+
+    use Exception;
+    use PDO;
+
+    /**
+     * A custom admin page module for the FrontendForms module
+     */
+    class FrontendFormsManager extends Process implements Module, ConfigurableModule
+    {
+
+        protected WireInputData|null $filtervalues = null; // post data after the filter form has been submitted
+        protected int $items_per_page = 10; // default number of questions to show inside the table, if there are more questions -> pagination will be added
+        protected PageArray $allQuestions; // PageArray containing all questions independent of status
+        protected PageArray $publishedQuestions; // PageArray containing all questions with status published
+        protected PageArray $unpublishedQuestions; // PageArray containing all questions with status unpublished
+        protected PageArray $hiddenQuestions; // PageArray containing all questions with status hidden
+        protected PageArray $lockedQuestions; // PageArray containing all questions with status locked
+        protected PageArray $activeQuestions; // PageArray containing all questions that are visible and will be used in the CAPTCHA
+        protected PageArray $inactiveQuestions; // PageArray containing all questions that are NOT visible and will NOT be used in the CAPTCHA
+        protected array $chartTexts = [];
+        protected array $questionFields = []; // configuration array containing all question fields
+
+        /**
+         * Constructor method which runs during class initialization
+         * @throws \ProcessWire\WireException
+         */
+        public function __construct()
+        {
+            parent::__construct();
+            // include configuration file for the question fields
+            include('config/questionFields.php');
+
+            // set config values if present
+            if ($this->input_paginationnumber)
+                $this->items_per_page = $this->input_paginationnumber;
+
+        }
+
+        /**
+         * Function to run before all modules have been initialized
+         * @return void
+         * @throws \ProcessWire\WireException
+         */
+        public function init(): void
+        {
+
+            // set the chart intro text
+            $this->chartTexts = [
+                'QuestionsStatusChart' => $this->_('This chart indicates how many questions belong to a certain status.'),
+                'QuestionsActiveChart' => $this->_('This chart shows how many questions are displayed on the frontend (active) or not (inactive).'),
+            ];
+
+            // add the chart.js to the backend
+            $this->wire('config')->scripts->add(
+                'https://cdn.jsdelivr.net/npm/chart.js'
+            );
+
+            // get questions with different status
+            $this->allQuestions = $this->wire('pages')->find('template=ff_question,include=all');
+            $this->publishedQuestions = $this->activeQuestions = $this->wire('pages')->find('template=ff_question');
+            $this->unpublishedQuestions = $this->wire('pages')->find('template=ff_question,status=unpublished');
+            $this->hiddenQuestions = $this->wire('pages')->find('template=ff_question,status=hidden');
+            $this->lockedQuestions = $this->wire('pages')->find('template=ff_question,status=locked');
+            $this->inactiveQuestions = $this->wire('pages')->find('template=ff_question,status=unpublished|hidden');
+
+            $this->addHookAfter('Pages::saved, Pages::deleted', $this, 'redirectAfterQuestionEdit');
+            $this->addHookAfter('ProcessLanguage::processCSV', $this, 'writeDataToFields');
+            $this->addHookBefore('Process::headline', $this, 'changePageHeadline');
+
+            // set post values if the filter form has been submitted
+            if ($this->wire('input')) {
+                $this->filtervalues = $this->wire('input')->post;
+            }
+
+        }
+
+        /**
+         * Change the headlines of the questions-overview page and the add new question page
+         * @param \ProcessWire\HookEvent $event
+         * @return void
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        protected function changePageHeadline(HookEvent $event): void
+        {
+            $process = $event->object;
+            $headline = '';
+
+            if (($process == 'FrontendFormsManager') || ($process == 'ProcessPageAdd')) {
+
+                if ($process == 'FrontendFormsManager') {
+                    $slug = $this->wire('input')->urlSegments[$this->wire('input')->pageNum];
+
+                    $headlines = [
+                        'questions-for-the-simple-question-captcha' => $this->_('List of all questions for the simple question CAPTCHA')
+                    ];
+                    if (array_key_exists($slug, $headlines)) {
+                        $headline = $headlines[$slug];
+                        // Overwrite the processBrowserTitle
+                        $this->wire('processBrowserTitle', $headline);
+                    }
+                } else {
+                    $page = $this->wire('page');
+                    $slug = $this->wire('input')->get();
+                    $template_id = (int)$slug->template_id;
+                    $template_ID = $this->wire('templates')->get('ff_question')->id;
+
+                    if ($template_id === $template_ID) {
+                        $headline = $this->_('Add a new question');
+                    }
+                }
+
+                $event->arguments(0, $headline);
+
+            }
+        }
+
+        /**
+         * Add the translations to the newly created fields
+         * @param \ProcessWire\HookEvent $event
+         * @return void
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        protected function writeDataToFields(HookEvent $event): void
+        {
+
+            $csvFile_path = $event->arguments(0);
+
+            // run only if the translation file of this module is processed (contains FrontendFormsManager in the path)
+            if (str_contains($csvFile_path, 'frontendformsmanager')) {
+
+                $template = $this->wire('templates')->get('ff_question');
+
+                $language = $event->arguments(1); // the language where the translation should be added
+
+                //get the Language translator class for this language
+                $translation = $this->wire('languages')->translator($language);
+
+                // save data (label, description,..) to fields in current language
+                $textdomain = $translation->filenameToTextdomain($this->wire('config')->paths->siteModules . 'frontendforms/config/questionFields.php');
+
+                foreach ($this->questionFields as $name => $fieldproperties) {
+                    //grab the field object
+                    $f = $this->wire('fields')->get($name);
+
+                    // create an array of field properties that should be set and saved
+                    $field_properties = ['label', 'description', 'notes'];
+                    foreach ($field_properties as $property) {
+                        if ($f->$property) {
+                            ${$property} = $translation->getTranslation($textdomain, $f->$property);
+
+                            if ($language->isDefault()) {
+                                $property_lang = $property;
+                            } else {
+                                $property_lang = $property . $language->id;
+                            }
+                            $f->set($property_lang, ${$property});
+                            $f->save($property);
+                        }
+                    }
+                }
+
+                // set a new text domain because translatable strings for the options are inside another file
+                $textdomain = $translation->filenameToTextdomain($this->wire('config')->paths->siteModules . 'frontendforms/frontendformsmanager.module');
+
+                // get the FieldtypeOptions field "ff_descposition" and add the translations for the options
+                $f = $this->wire('fields')->get('ff_descposition');
+                if ($f) {
+                    $options = $this->wire('modules')->get('FieldtypeOptions')->getOptions($f);
+
+                    $database = $this->wire('database');
+                    // get the table
+                    $tablename = 'fieldtype_options';
+                    // check first if this table exists
+                    if ($database->tableExists($tablename)) {
+
+                        // check if single or multi-lang site with languages installed
+                        $multilang = ($this->languages->count() > 1);
+
+                        // update the title language column
+                        foreach ($options as $option) {
+
+                            if ($multilang) {
+                                $colTitle = 'title' . $language->id;
+                                $colValue = 'value' . $language->id;
+                            } else {
+                                $colTitle = 'title';
+                                $colValue = 'value';
+                            }
+
+                            $title = $translation->getTranslation($textdomain, $option->title);
+                            $value = $option->value;
+
+                            // create sql statement to add title and value to the entry
+                            $sql = 'UPDATE ' . $tablename . ' SET ' . $colTitle . '=:title, ' . $colValue . '=:value WHERE fields_id=:fieldid AND option_id=:optionid';
+
+                            // try to save the data to the database
+                            try {
+                                $query = $database->prepare($sql);
+                                $query->bindValue(":title", $title);
+                                $query->bindValue(":value", $value);
+                                $query->bindValue(":fieldid", $f->id, PDO::PARAM_INT);
+                                $query->bindValue(":optionid", $option->id, PDO::PARAM_INT);
+
+                                // execute the query to save the language values to the databse
+                                $query->execute();
+                            } catch (Exception $e) {
+                                // not used at the moment
+                            }
+
+                        }
+                    }
+                }
+
+                // save the template context label for the title field in the given language
+                // will be changed from title to question
+                $f = $template->fieldgroup->getField('title', true);
+                $label = $translation->getTranslation($textdomain, $f->label);
+                if ($language->isDefault()) {
+                    $property = 'label';
+                } else {
+                    $property = 'label' . $language->id;
+                }
+                $f->set($property, $label);
+                $this->wire('fields')->saveFieldgroupContext($f, $template->fieldgroup);
+            }
+        }
+
+        /**
+         * Method to redirect to the questions table page if there are no errors
+         * @param \ProcessWire\Page $page
+         * @return void
+         * @throws \ProcessWire\WireException
+         */
+        protected function redirectQuestion(Page $page): void
+        {
+            $errors = false;
+
+            // not a page with the question template? return
+            if ($page->template->name != 'ff_question') return;
+
+            // page does not contain at least 1 question? return ->
+            // this is especially to prevent redirect on newly added page
+            if ($this->wire('input')) {
+                if ($this->wire('input')->post->ff_answers) {
+                    if (!empty($page->ff_answers)) {
+
+                        // check for errors
+                        foreach (wire('notices') as $notice) {
+                            if ($notice instanceof NoticeError) $errors = true;
+                        }
+
+                        // if there are no errors -> redirect to the questions' overview page
+                        if (!$errors) {
+                            $this->wire('session')->redirect($this->wire('urls')->admin . 'setup/frontendforms-dashboard/questions-for-the-simple-question-captcha');
+
+                        }
+
+                    }
+                }
+            }
+
+        }
+
+        /**
+         * Method to redirect to the questions table page if a question has been edited without errors
+         * @param \ProcessWire\HookEvent $event
+         * @return void
+         * @throws \ProcessWire\WireException
+         */
+        public function redirectAfterQuestionEdit(HookEvent $event): void
+        {
+            $page = $event->arguments(0);
+            $this->redirectQuestion($page);
+        }
+
+        /**
+         * Render the chart for the questions
+         * @return string
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        public function renderQuestionsChart(): string
+        {
+
+            $out = '<div id="questionsstatistic"></div>';
+
+            // page load
+            $out .= '<div id="pageload" style="width:100%;"><p>' . $this->chartTexts['QuestionsStatusChart'] . '</p><canvas id="questions"></canvas></div>';
+            $out .= $this->createQuestionsStatusChart();
+
+            $form = $this->modules->get('InputfieldForm');
+            $form->action = $this->wire('input')->url; // we submit on the same page
+            $form->method = 'post';
+            $form->attr('name+id', 'ff_question_statistic_form');
+
+            // create buttons for different views
+            $buttons = [
+                'QuestionsStatusChart' => $this->_('Status'),
+                'QuestionsActiveChart' => $this->_('Visibility')
+            ];
+
+            foreach ($buttons as $id => $label) {
+                $button = $this->modules->get('InputfieldButton');
+                $button->setSmall();
+                $button->addClass('statistics');
+                $button->id = $id;
+                $button->value = $label;
+                $button->attr('data-statistic', $id);
+                $button->type = 'submit';
+                $form->add($button);
+            }
+
+            $out .= $form->render();
+
+            return $out;
+
+        }
+
+        /**
+         * Generate the script for showing the status charts
+         * @return string
+         */
+        protected function createQuestionsStatusChart(): string
+        {
+
+            // run only if questions exist
+            if ($this->allQuestions->count) {
+
+                // make a data string out of the array
+                $data = [
+                    $this->allQuestions->count,
+                    $this->publishedQuestions->count,
+                    $this->unpublishedQuestions->count,
+                    $this->hiddenQuestions->count,
+                    $this->lockedQuestions->count,
+                ];
+
+            } else {
+                $data = [0, 0, 0, 0, 0, 0];
+            }
+            $data = implode(', ', $data);
+            // output the script tag
+            return '<script>
+              const ctx = document.getElementById("questions");
+            
+              new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: ["' . $this->_('total') . '", 
+                  "' . $this->_('published') . '",  
+                  "' . $this->_('unpublished') . '", 
+                  "' . $this->_('hidden') . '", 
+                  "' . $this->_('locked') . '"],
+                  datasets: [{
+                    label: "' . $this->_('Number of questions') . '" ,
+                    data: [' . $data . '],
+                    borderWidth: 1
+                  }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: "' . $this->_('Number of questions') . '"
+                            },
+                            ticks: {
+                                stepSize: 1
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: "' . $this->_('Status types') . '"
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: "' . $this->_('Number of question per status and total') . '"
+                        }
+                    }
+                 }   
+                })
+                
+                </script>';
+        }
+
+        /**
+         * Generate the script for the active/inactive charts
+         * @return string
+         */
+        protected function createQuestionsActiveChart(): string
+        {
+
+            // run only if questions exist
+            if ($this->allQuestions->count) {
+
+                // make a data string out of the array
+                $data = [
+                    $this->allQuestions->count,
+                    $this->activeQuestions->count,
+                    $this->inactiveQuestions->count,
+                ];
+
+            } else {
+                $data = [0, 0, 0];
+            }
+            $data = implode(', ', $data);
+            // output the script tag
+            return '<script>
+              const ctx = document.getElementById("questions");
+            
+              new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: ["' . $this->_('total') . '", 
+                  "' . $this->_('active') . '",  
+                  "' . $this->_('inactive') . '"],
+                  datasets: [{
+                    label: "' . $this->_('Number of questions') . '" ,
+                    data: [' . $data . '],
+                    borderWidth: 1
+                  }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: "' . $this->_('Number of questions') . '"
+                            },
+                            ticks: {
+                                stepSize: 1
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: "' . $this->_('Visibility types') . '"
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: "' . $this->_('Number of active and inactive question and total') . '"
+                        }
+                    }
+                 }   
+                })
+                </script>';
+        }
+
+        /**
+         * Method to redirect to the questions table page if a new question has been added without errors
+         * @param \ProcessWire\HookEvent $event
+         * @return void
+         * @throws \ProcessWire\WireException
+         */
+        public function redirectAfterQuestionAdded(HookEvent $event): void
+        {
+            $page = $event->arguments(0);
+            $this->redirectQuestion($page);
+        }
+
+        /**
+         * Create the module info
+         * @return array
+         */
+        public static function getModuleinfo(): array
+        {
+            return [
+                'title' => __('FrontendForms Manager', __FILE__),
+                'summary' => __('Additional administration page for the FrontendForms module.', __FILE__),
+                'author' => 'Jürgen Kern',
+                'version' => '1.0.0',
+                'icon' => 'area-chart',
+                'permanent' => false,
+                'autoload' => true,
+                'permission' => 'page-edit',
+                'requires' => [
+                    'FrontendForms',
+                    'PHP>=8.0.0',
+                    'ProcessWire>=3.0.195'
+                ],
+                'page' => [
+                    'name' => 'frontendforms-dashboard',
+                    'parent' => 'setup',
+                    'title' => __('FrontendForms Manager', __FILE__),
+                ],
+            ];
+        }
+
+        /**
+         * Dashboard page
+         * @return string
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        public function execute(): string
+        {
+
+            if ($this->wire('config')->ajax) {
+
+                // load JS depending on button value
+                $input = $this->wire('input');
+                $method = 'create' . $input->post('type');
+                $out = $this->$method();
+                // create the canvas for the chart
+                $out .= '<div style="width:100%;"><p>' . $this->chartTexts[$input->post('type')] . '</p><canvas id="questions"></canvas></div>';
+                return $out;
+            } else {
+
+                $form = $this->modules->get('InputfieldForm');
+
+                // Question part
+                $fieldsetQuestions = $this->modules->get('InputfieldFieldset');
+                $fieldsetQuestions->label = $this->_('Questions for the SIMPLE TEXT CAPTCHA');
+                $form->add($fieldsetQuestions);
+
+                $field = $this->modules->get('InputfieldMarkup');
+                $field->label = $this->_('Manage all questions for the SIMPLE QUESTION CAPTCHA');
+                $field->value = $this->renderQuestionsList();
+                $field->columnWidth = 50;
+                $fieldsetQuestions->add($field);
+
+                $field = $this->modules->get('InputfieldMarkup');
+                $field->label = $this->_('Questions statistics');
+                $field->value = $this->renderQuestionsChart();
+                $field->columnWidth = 50;
+                $fieldsetQuestions->add($field);
+
+                $form->add($fieldsetQuestions);
+
+                return $form->render();
+
+            }
+
+        }
+
+        /**
+         * Overview page for all questions for the SIMPLE TEXT CAPTCHA
+         * @return string
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        public function ___executeQuestionsForTheSimpleQuestionCaptcha(): string
+        {
+
+            // render the text over the table
+            $out = '<p>' . $this->_('Manage all questions for the SIMPLE QUESTION CAPTCHA in one place.') . '</p>';
+
+            // render the table including the filter form
+            $out .= $this->renderQuestionsTable();
+            // render the back link
+            $out .= '<div id="backlink"><a href="' . $this->config->urls->admin . 'setup/frontendforms-dashboard"><i class="fa fa-arrow-left"></i> ' . $this->_('Back to the dashboard') . '</a>';
+
+            return $out;
+        }
+
+        /**
+         * Render the form to filter the questions by certain conditions
+         * @return string
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        protected function renderQuestionsFilter(): string
+        {
+
+            $form = modules()->get('InputfieldForm');
+            $form->action = $this->wire('input')->url; // we submit on the same page
+            $form->method = 'post';
+            $form->attr('name+id', 'ff_filter_form');
+
+            $fieldset = modules()->get('InputfieldFieldset');
+            $fieldset->label = $this->_('Filter');
+            $fieldset->columnWidth = '100';
+            $fieldset->icon = 'fa-filter';
+
+            // filter by question text
+            $f = modules()->get('InputfieldText');
+            $f->set('label', $this->_('Filter by question text'));
+            $f->attr('name+id', 'question');
+            $f->columnWidth = '50';
+            $f->notes = $this->_('Filter questions by containing a specific word or phrase.');
+            $fieldset->add($f);
+
+            // filter by page status
+            $f = modules()->get('InputfieldSelect');
+            $f->set('label', $this->_('Filter by status'));
+            $f->attr('name+id', 'status');
+            $f->attr('maxlength', 50);
+            if ($this->filtervalues)
+                $f->attr('value', $this->filtervalues->status);
+            $f->addOption(Page::statusOn, $this->_('all'));
+            $f->addOption('0', $this->_('published'));
+            $f->addOption(Page::statusUnpublished, $this->_('unpublished'));
+            $f->addOption(Page::statusHidden, $this->_('hidden'));
+            $f->addOption(Page::statusLocked, $this->_('locked'));
+            $f->required(true);
+            $f->defaultValue = '2';
+            $f->columnWidth = '25';
+            $f->notes = $this->_('Filter questions according to their page status.');
+            $fieldset->add($f);
+
+            // filter by visibility status
+            $f = modules()->get('InputfieldSelect');
+            $f->set('label', $this->_('Filter by visibility'));
+            $f->attr('name+id', 'statusvisibility');
+            $f->attr('maxlength', 50);
+            if ($this->filtervalues)
+                $f->attr('value', $this->filtervalues->statusvisibility);
+            $f->addOption('0', $this->_('all'));
+            $f->addOption('1', $this->_('active'));
+            $f->addOption('2', $this->_('inactive'));
+            $f->required(true);
+            $f->defaultValue = '0';
+            $f->columnWidth = '25';
+            $f->notes = $this->_('Filter whether the questions are used by the CAPTCHA or not.');
+            $fieldset->add($f);
+
+            // submit button
+            $f = modules()->get('InputfieldSubmit');
+            $f->attr('id+name', 'ff-submit-btn');
+            $f->attr('value', $this->_('Filter'));
+            $fieldset->add($f);
+
+            $form->add($fieldset);
+            return $form->render();
+
+        }
+
+        /**
+         * Get all questions matching the given selectors
+         * @return \ProcessWire\PageArray|null
+         * @throws \ProcessWire\WireException
+         */
+        protected function getAllQuestions(): PageArray|null
+        {
+
+            $selectors = []; // default selector array
+
+            // filter by template
+            $selectors['template'] = 'template=ff_question';
+
+            if ($this->filtervalues && $this->filtervalues->count()) {
+
+                // filter by title
+                if ($this->filtervalues->question) {
+                    $title = $this->wire('sanitizer')->selectorValue($this->filtervalues->question);
+                    $selectors['title'] = 'title%=' . $title;
+                }
+
+                // filter by status
+                if ($this->filtervalues->status != '0') {
+                    $selectors['status'] = 'status=' . $this->filtervalues->status;
+                } else {
+                    $selectors['status'] = 'status!=' . Page::statusUnpublished;
+                }
+
+                // filter by visibility (overwrites the status from the filter before
+                if ($this->filtervalues->statusvisibility != '0') {
+                    if ($this->filtervalues->statusvisibility == '1') {
+                        $selectors['statusvisible'] = 'status!=unpublished|hidden';
+                    } else {
+                        $selectors['statusvisible'] = 'status=unpublished|hidden';
+                    }
+                }
+
+            }
+
+            // include all questions independent of status
+            if (!$this->filtervalues->count() || (!array_key_exists('status', $selectors) || ($this->filtervalues->status == '1'))) {
+                $selectors[] = 'include=all';
+            }
+
+            return $this->wire('pages')->find(implode(',', $selectors));
+        }
+
+        /**
+         * Render the table containing all questions
+         * @return string
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        protected function renderQuestionsTable(): string
+        {
+
+            $pages = $this->getAllQuestions();
+            $out = $this->renderQuestionsFilter();
+
+            if (is_null($pages)) {
+                return $this->_('No questions have been created at the moment.');
+            }
+
+            $start = ($this->wire('input')->pageNum - 1) * $this->items_per_page;
+            $pages->setLimit($this->items_per_page);
+            $pages->setStart($start);
+            // slice only if the number of pages is higher than the number of items per page
+            if ($pages->count > $this->items_per_page) {
+                $viewPages = $pages->slice($start, $this->items_per_page);
+                $counter = true;
+            } else {
+                $viewPages = $pages;
+                $counter = false;
+            }
+
+            if ($viewPages->count) {
+
+                $table = $this->modules->get('MarkupAdminDataTable');
+                $table->encodeEntities = false;
+                $table->setEncodeEntities(false);
+                $table->headerRow([
+                    $this->_('#'),
+                    $this->_('Question'),
+                    $this->_('Created'),
+                    $this->_('User'),
+                    $this->_('Visibility') . '*',
+                ]);
+
+                foreach ($viewPages as $i => $p) {
+
+                    // single language site
+                    $question = $p->title;
+
+                    // only for multi-language site
+                    if ($this->languages()) {
+                        $lang = $this->wire('user')->language->name;
+
+                        $question = $p->getLanguageValue($lang, 'title');
+
+                        if (empty($question)) {
+                            $question = $p->getLanguageValue($this->wire('languages')->getDefault()->id, 'title');
+                        }
+
+                    }
+
+                    // get visibility of the question
+                    if ($this->activeQuestions->find($p->id)->count) {
+                        $visibility = '<span class="ff-hiddenvalue">1</span><i class="fa fa-eye"></i>';
+                    } else {
+                        $visibility = '<span class="ff-hiddenvalue">0</span><i class="fa fa-eye-slash"></i>';
+                    }
+
+                    $number = $counter ? $start + $i + 1 : $i + 1;
+
+                    $table->row(
+                        [
+                            $number,
+                            [$question => $p->editUrl()],
+                            $p->createdStr,
+                            $p->createdUser->name,
+                            $visibility
+
+                        ]
+                    );
+
+                }
+
+                // render the table with the questions
+                $out .= $table->render();
+
+                $out .= '<div class="table-legend"><ul id="visiblity-legend">
+                        <li><i class="fa fa-eye"></i>...' . $this->_('will be used (shown) as CAPTCHA question on the frontend') . '</li>
+                        <li><i class="fa fa-eye-slash"></i>...' . $this->_('will not be used (shown) as CAPTCHA question on the frontend') . '</li>
+                        </ul></div>';
+
+                // render the pagination
+                $out .= $pages->renderPager();
+
+            } else {
+                $out .= '<div id="no-results"><p>' . $this->_('There are no questions.') . '</p></div>';
+            }
+
+            // create the "add new question" button
+            $button = $this->modules->get('InputfieldButton');
+            $button->value = $this->_('Add new question');
+            $button->icon = 'plus';
+            $button->setSecondary();
+            $button->attr('href', $this->config->urls->admin . 'page/add/?parent_id=' . $this->wire('pages')->get('frontendforms-dashboard')->id . '&template_id=' . $this->wire('templates')->get('ff_question')->id);
+
+            $out .= $button->render();
+
+            return $out;
+        }
+
+        /**
+         * Render a list of questions
+         * @return string
+         * @throws \ProcessWire\WireException
+         */
+        protected function renderQuestionsList(): string
+        {
+
+            if (is_null($this->allQuestions)) {
+                return '<p>' . $this->_('No questions have been created yet.') . '</p>';
+            }
+
+            $out = '<p>' . $this->_('If you want to use the SIMPLE QUESTION CAPTCHA, you can add, edit or delete the related questions in this section by clicking on the button below.') . '</p>';
+
+            // create the statistic table
+            $out .= '<table id="questions-statistic">';
+            $out .= '<tr id="questions-published"><td class="statistic-label">' . $this->_('Questions with status "published"') . ':</td><td class="question-number">' . $this->publishedQuestions->count() . '</td></tr>';
+            $out .= '<tr id="questions-unpublished"><td class="statistic-label">' . $this->_('Questions with status "unpublished"') . ':</td><td class="question-number">' . $this->unpublishedQuestions->count() . '</td></tr>';
+            $out .= '<tr id="questions-hidden"><td class="statistic-label">' . $this->_('Questions with status "hidden"') . ':</td><td class="question-number">' . $this->hiddenQuestions->count() . '</td></tr>';
+            $out .= '<tr id="questions-locked"><td class="statistic-label">' . $this->_('Questions with status "locked"') . ':</td><td class="question-number">' . $this->lockedQuestions->count() . '</td></tr>';
+
+            $out .= '<tr id="questions-active"><td class="statistic-label">' . $this->_('Active questions (will be displayed on the frontend)') . ':</td><td class="question-number">' . $this->activeQuestions->count() . '</td></tr>';
+            $out .= '<tr id="questions-active"><td class="statistic-label">' . $this->_('Inactive questions (will not be displayed on the frontend)') . ':</td><td class="question-number">' . $this->inactiveQuestions->count() . '</td></tr>';
+            $out .= '<tr id="questions-total"><td class="statistic-label">' . $this->_('Questions total') . ':</td><td class="question-number">' . $this->allQuestions->count() . '</td></tr>';
+            $out .= '</table>';
+
+            // create and add the button to add/edit/delete questions
+            $button = $this->modules->get('InputfieldButton');
+            $button->value = $this->_('Add/edit/delete questions');
+            $button->icon = 'pencil';
+            $button->setSecondary();
+            $button->attr('href', './questions-for-the-simple-question-captcha');
+            $out .= $button->render();
+
+            return $out;
+        }
+
+        /**
+         * Run code during module installation
+         * @return void
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        public function install(): void
+        {
+            parent::install();
+
+            // only for multilanguage sites
+            if ($this->languages) {
+                $userLang = $this->wire('user')->language;
+                // set user language to default language -> only for storing the options in the databae
+                $this->wire('user')->language = $this->wire('languages')->getLanguage('default');
+            }
+
+            // create ff_question template if it does not exist
+            $template = $this->wire('templates')->get('ff_question');
+            if (!$template) {
+                $template = $this->wire('templates')->add('ff_question');
+                $template->noChildren = 1;
+                $template->noChangeTemplate = 1;
+                $template->parentTemplates = [2];
+                $template->tags = 'FrontendForms';
+                $template->save();
+            }
+
+            // add title field to this template
+            $title = $this->wire('fields')->get('title');
+            $template->fieldgroup->add($title);
+
+            // Create all other fields and add them to the template too
+            foreach ($this->questionFields as $name => $fieldproperties) {
+                if (!wire('fields')->get($name)) {
+                    $field = new Field();
+
+                    // change FieldtypeTextLanguage and FieldtypeTextareaLanguage to
+                    // FieldtypeText and FieldtypeTextarea on single language site
+                    if ($this->languages && $this->languages->count() < 2) {
+                        if ($fieldproperties['fieldtype'] == 'FieldtypeTextLanguage')
+                            $fieldproperties['fieldtype'] = 'FieldtypeText';
+                        if ($fieldproperties['fieldtype'] == 'FieldtypeTextAreaLanguage')
+                            $fieldproperties['fieldtype'] = 'FieldtypeTextarea';
+                    }
+                    $field->type = wire('modules')->get($fieldproperties['fieldtype']);
+                    $field->name = $name;
+
+                    foreach ($fieldproperties as $propName => $propValue) {
+                        $field->$propName = $fieldproperties[$propName];
+                    }
+                    $field->tags = $this->className();
+                    $field->save();
+                    // add the field to the template
+                    $template->fieldgroup->add($field);
+
+                }
+            }
+
+            // save the complete fieldgroup
+            $template->fieldgroup->save();
+
+            // add the options for the description position field
+            $field = $this->wire('fields')->get('ff_descposition');
+
+            $fieldtype = $field->type;
+            $options = $fieldtype->getOptions($field);
+
+            // check if options are present
+            if ($options) {
+
+                $optionArray = [
+                    'inherit' => $this->_('Inherit from the default value'),
+                    'beforeLabel' => $this->_('Above the label of the input field'),
+                    'afterLabel' => $this->_('Below the label of the input field'),
+                    'afterInput' => $this->_('Below the input field')
+                ];
+
+                foreach ($optionArray as $v => $t) {
+                    $option = new SelectableOption();
+                    $option->value = $v;
+                    $option->title = $t;
+                    $options->add($option);
+                }
+
+                $fieldtype->setOptions($field, $options);
+            }
+
+            $f = $template->fieldgroup->getField('title', true);
+            $f->label = $this->_('Question');
+            $this->wire('fields')->saveFieldgroupContext($f, $template->fieldgroup);
+
+        }
+
+        /**
+         * Run code during uninstalling of the module
+         * @return void
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        public function uninstall(): void
+        {
+
+            $templates = $this->wire('templates');
+            $template = $this->wire('templates')->get('ff_question');
+            $pages = $this->wire('pages');
+
+            // delete the dashboard page and all its subpages
+            $page = $pages->get("frontendforms-dashboard");
+            if ($page->id != 0) $pages->delete($page, true);
+
+            $fieldgroup = $this->wire('fieldgroups')->get('ff_question');
+
+            // delete all fields
+            foreach ($this->questionFields as $name => $f) {
+                $f = $this->wire('fields')->get($name);
+                if (!is_null($f)) {
+                    if (!is_null($fieldgroup)) {
+                        $fieldgroup->softRemove($f);
+                        $fieldgroup->save();
+                        $this->wire('fields')->delete($f);
+                    }
+                }
+            }
+
+            // delete all pages using the question template
+            $pagesToDelete = $pages->find('template=ff_question,include=all');
+            foreach ($pagesToDelete as $p) {
+                $p->delete();
+            }
+
+            // finally, delete the question template
+            if ($template) $templates->delete($template);
+
+        }
+
+        /**
+         * Define all fields for module configuration
+         * @param \ProcessWire\InputfieldWrapper $inputfields
+         * @return void
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        public function getModuleConfigInputfields(InputfieldWrapper $inputfields): void
+        {
+
+            // pagination number
+            $paginationnumber = $this->modules->get('InputfieldInteger');
+            $paginationnumber->label = $this->_('Pagination number for data tables');
+            $paginationnumber->name = 'input_paginationnumber';
+            $paginationnumber->inputType = 'number';
+            $paginationnumber->value = $this->input_paginationnumber;
+            $paginationnumber->min = 1;
+            $paginationnumber->defaultValue = 10;
+            $paginationnumber->description = $this->_('Please select how many entries should be displayed inside a data table per page.');
+            $paginationnumber->notes = $this->_('If the total number of entries inside the table is higher, the table will be paginated.');
+            $inputfields->add($paginationnumber);
+
+        }
+
+    }
