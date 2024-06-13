@@ -2369,7 +2369,7 @@ CSRF-Protection and the check for double form subission are also disabled, but t
 
 ## Custom module FrontendFormsManager
 
-THIS IS PART OF THE NEXT UPDATE!!
+THIS IS PART OF THE NEXT UPDATE (2.1.79) - NOT INCLUDED YET!!
 
 ### What is the module FrontendFormsManager?
 FrontendFormsManger is a module that is delivered with FrontendForms, but is not installed by default, as it is not necessary for the operation of FrontendForms. 
