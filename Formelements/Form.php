@@ -1842,7 +1842,7 @@
                 $this->captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
 
                 // check if multi question -> if yes, add the question as label to the CAPTCHA
-                if ($this->question_array) {
+                if (($this->getCaptchaType() == 'SimpleQuestionCaptcha') && $this->question_array) {
                     $current_question = $this->question_array[$this->random_question];
                     $this->captchafield->setLabel($current_question['question']);
                 }
