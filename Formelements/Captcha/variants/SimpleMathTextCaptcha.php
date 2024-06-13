@@ -19,6 +19,7 @@ use ProcessWire\WirePermissionException;
 class SimpleMathTextCaptcha extends AbstractMath
 {
 
+
     /**
      * @throws WireException
      * @throws WirePermissionException
@@ -48,7 +49,7 @@ class SimpleMathTextCaptcha extends AbstractMath
     public function createCaptchaInputField(string $formID): InputText
     {
         $parent = parent::createCaptchaInputField($formID);
-        $parent->setNotes($this->desc);
+        $parent->setNotes($this->desc, true);
         return $parent;
     }
 
