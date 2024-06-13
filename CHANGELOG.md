@@ -1041,11 +1041,11 @@ This update comes with 1 bug fix, 2 JavaScript additions, 7 new general customiz
 
 COMING SOON!!
 
-This update is a bigger update and comes with 1 new admin module and 2 new methods for the simple question CAPTCHA for adding Question per API.
+This update is a bigger update and comes with 1 new admin module and 2 new methods for the simple question CAPTCHA for adding questions per API.
 
 - **New admin module FrontendForms Manager**
 
-  This is a new UI for entering questions for the SIMPLE QUESTION CAPTCHA directly in ProcessWire. If you are not using this new CAPTCHA type, this new module may be not relevant for you at the moment, but it should be extended with further functionality in the future.
+  This is a new UI for entering questions for the SIMPLE QUESTION CAPTCHA directly in ProcessWire. If you are not using this new CAPTCHA type, this module may be not relevant for you at the moment, but it should be extended with further functionality in the future.
 
   The module will not be installed automatically during the update. You need to go to the module manager, click the refresh button and install this module manually.
 
@@ -1059,7 +1059,7 @@ This update is a bigger update and comes with 1 new admin module and 2 new metho
 
    More info [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#setsecurityquestion---enter-only-a-single-question).
 
-   The other method **setSecurityQuestions()** - plural - is the replacement of the earlier integrated setSimpleQuestionCaptchaRandomRotation() method, which is deprecated and has been replaced by this method.
+   The other method **setSecurityQuestions()** - plural - is the replacement of the earlier integrated setSimpleQuestionCaptchaRandomRotation() method, which is deprecated now and has been replaced by this method.
 
    This method is for adding multiple questions at once on per form base to the CAPTCHA.
 
