@@ -2380,15 +2380,15 @@ If you are not using the SIMPLE QUESTION CAPTCHA, installing this module makes n
 
 ### How does it work?
 
-Technically spoken, this module creates a new admin page under SETUP.
+Technically spoken, this module creates a new admin page under SETUP called *FrontendForms Manager*.
 
 ![Navigation](https://github.com/juergenweb/FrontendForms/blob/main/images/setupmenupoint.png?raw=true)
 
-This page is the dashboard page, which contains the overview. 
+After clicking on the navigation link you will be redirected to the dashboard page, which contains the overview. 
 
 ![Dashboard page](https://github.com/juergenweb/FrontendForms/blob/main/images/dashboard.png?raw=true)
 
-By clicking the "Add/edit/delete" button you will be redirected to the next page which contains a list of all questions. This list is a data table with a little filter form to filter questions to your needs (fe status, question text, visibility on the frontend).
+By clicking the "Add/edit/delete questions" button you will be redirected to the next page which contains a list of all questions. This list is a data table with a little filter form to filter questions to your needs (fe status, question text, visibility on the frontend).
 
 ![Data table with questions](https://github.com/juergenweb/FrontendForms/blob/main/images/questiontable.png?raw=true)
 
