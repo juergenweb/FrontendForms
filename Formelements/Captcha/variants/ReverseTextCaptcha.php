@@ -18,8 +18,6 @@ use ProcessWire\WirePermissionException;
 
 class ReverseTextCaptcha extends AbstractCharset
 {
-
-    protected string $importantNotes = '';
     
     /**
      * @throws WireException
