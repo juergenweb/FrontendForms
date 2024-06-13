@@ -27,7 +27,7 @@ class EvenCharacterTextCaptcha extends AbstractCharset
     {
         parent::__construct();
         $this->title = $this->_('Even string captcha');
-        $this->desc = $this->importantNotes = $this->_('Enter every second character of the text from the image in the input field.');
+        $this->desc = $this->_('Enter every second character of the text from the image in the input field.');
     }
 
     /**
