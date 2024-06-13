@@ -1039,6 +1039,8 @@ This update comes with 1 bug fix, 2 JavaScript additions, 7 new general customiz
 
 ## 2024-06-13
 
+COMING SOON!!
+
 This update is a bigger update and comes with 1 new admin module and 2 new methods for the simple question CAPTCHA for adding Question per API.
 
 - **New admin module FrontendForms Manager**
