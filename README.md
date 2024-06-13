@@ -2370,13 +2370,13 @@ CSRF-Protection and the check for double form subission are also disabled, but t
 THIS IS PART OF THE NEXT UPDATE!!
 
 ### What is the module FrontendFormsManager?
-FrontendFormsManger is a module that will be shipped with FrontendForms, but will not be installed by default, because it is not necessary for running FrontendForms. 
+FrontendFormsManger is a module that is delivered with FrontendForms, but is not installed by default, as it is not necessary for the operation of FrontendForms. 
 
-This module is for entering questions for the SIMPLE QUESTION CAPTCHA in an easy to use interface and to make these questions usable in all forms. So you can manage all your questions in one place with the possibility to add, edit or delete or also to publish or unpublish questions. It contains also a little statistic section with charts.
+This module is for entering questions for the SIMPLE QUESTION CAPTCHA in an easy-to-use interface and to make these questions usable in all forms. So you can manage all your questions in one place and have the possibility to add, edit or delete questions or even publish or not publish them. It also includes a small statistical section with charts.
 
-For the future, it is planned to extend this module with further possibilities, but for now it is only an addon for the SIMPLE QUESTION CAPTCHA (June 2024).
+There are plans to expand this module with further options in the future, but for now it is only an add-on for the SIMPLE QUESTION CAPTCHA (June 2024).
 
-If you are not using the SIMPLE QUESTION CAPTCHA, installing this module makes no benefit for you (at the time of writing).
+If you do not use the SIMPLE QUESTION CAPTCHA, installing this module (at the time of writing) will not benefit you.
 
 ### How does it work?
 
@@ -2388,28 +2388,28 @@ After clicking on the navigation link you will be redirected to the dashboard pa
 
 ![Dashboard page](https://github.com/juergenweb/FrontendForms/blob/main/images/dashboard.png?raw=true)
 
-By clicking the "Add/edit/delete questions" button you will be redirected to the next page which contains a list of all questions. This list is a data table with a little filter form to filter questions to your needs (fe status, question text, visibility on the frontend).
+If you click on the "Add/edit/delete questions" button, you will be redirected to the next page, which contains a list of all questions. This list is a data table with a small filter form that you can use to filter the questions according to your needs (e.g. status, question text, visibility in the frontend).
 
 ![Data table with questions](https://github.com/juergenweb/FrontendForms/blob/main/images/questiontable.png?raw=true)
 
-Just to mention: By default the table shows 10 questions per page. If the number of questions is higher, the table will be paginated. You can change the number of questions/page inside the module configuration to your needs if you want.
+Note: The table displays 10 questions per page by default. If the number of questions is higher, the table will be paginated. You can change the number of questions/page in the module configuration according to your needs.
 
-Each question is a page, so you can do everything that you can do with all other pages in ProcessWire. All the fields and templates for these pages will be created automatically during the module installation
+Each question is a page, so you can do everything you can do with all the other pages in ProcessWire. All fields and templates for these pages are created automatically during the module installation.
 
-If you want to edit or delete a page, click directly on the linked question text inside the table and you will be redirected to the "edit page" of this question. If you click "add new question", you will be redirected to the "add new page".
+If you want to edit or delete a page, click directly on the linked question text in the table and you will be redirected to the editing page for this question. If you click on "Add new question", you will be redirected to the "Add new page" page.
 
 ![Data table with questions](https://github.com/juergenweb/FrontendForms/blob/main/images/questionpage.png?raw=true)
 
-Beside the mandatory fields "question" and "answers", there are a lot of other optional field to add fe a description text, a notes text, customized error and success message and so on, but these fields are optional.
+In addition to the mandatory fields "Question" and "Answers", there are a number of other optional fields that you can fill in, e.g. a description text, a note text, a customized error and success message etc., but these fields are optional and therefore do not have to be filled in.
 
 ## How to install/uninstall the module
 
-This is a normal ProcessWire module so the install/uninstall of the module is the same as at all other modules. Go to the modules section, select the module "FrontendForms Manager" and install it at usual.
+This is a normal ProcessWire module, so the installation/uninstallation of the module is the same as for all other modules. Go to the module area, select the "FrontendForms Manager" module and install it as usual.
 
-After the module installation you find a new navigation link under SETUP.
+After installing the module, you will find a new navigation link under SETUP.
 
 If you want to uninstall the module, go to the module section too and click to uninstall the module.
 
 ![Module installation](https://github.com/juergenweb/FrontendForms/blob/main/images/installmodule.png?raw=true)
 
-ONE THING TO MENTION: Uninstall of the module deletes all pages, fields and templates too, which were created by this module. This means that all questions will be deleted and are no longer available after module installation. Please take this into account, if you uninstall the module!
+NOTE: Uninstalling the module also deletes all pages, fields and templates that were created by this module. This means that all questions will be deleted and will no longer be available after uninstalling of the module. Please keep this in mind when uninstalling the module!
