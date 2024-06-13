@@ -19,6 +19,8 @@ use ProcessWire\WirePermissionException;
 class ReverseTextCaptcha extends AbstractCharset
 {
 
+    protected string $importantNotes = '';
+    
     /**
      * @throws WireException
      * @throws WirePermissionException
@@ -49,7 +51,7 @@ class ReverseTextCaptcha extends AbstractCharset
     public function createCaptchaInputField(string $formID): InputText
     {
         $parent = parent::createCaptchaInputField($formID);
-        $parent->setNotes($this->desc);
+        $parent->setNotes($this->desc, true);
         return $parent;
     }
 
