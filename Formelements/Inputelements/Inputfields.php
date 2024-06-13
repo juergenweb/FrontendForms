@@ -41,6 +41,7 @@
         protected array $notes_array = []; // property that holds multiple notes as an array - needed for some fields internally
         protected string $form_id_submitted = ''; // get the id of the form after form submission - needed for some validation rules
         protected string|int|bool $useAriaAttr = true; // whether to render area attributes or not
+        protected string $importantNotes = '';// notes text, that cannot be overwritten
 
         /**
          * Every input field must have a name, so the name is required as parameter in the constructor
@@ -400,6 +401,7 @@
             return $out;
         }
 
+
         /**
          *  Render the input field including wrappers, notes, description, prepend markup, append markup and error
          *  message
@@ -477,7 +479,6 @@
             if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterInput')) {
                 $out .= $this->getDescription()->___render();
             }
-
             return $out;
 
         }
@@ -805,13 +806,25 @@
             return $this->notes;
         }
 
+        /** Internal method to get the notes text that should not be overwritten
+         * Especially useful if the the notes text has been set before and is very important
+         *
+         * @return string
+         */
+        public function getImportantNotes(): string
+        {
+            return $this->importantNotes;
+        }
+
         /**
          * Set the notes text
          * @param string $notes
+         * @param bool $importantNotes -> this notes text cannot not be overwritten
          * @return Notes
          */
-        public function setNotes(string $notes): Notes
+        public function setNotes(string $notes, bool $important = false): Notes
         {
+            if($important) $this->importantNotes = $notes;
             $this->notes->setText($notes);
             return $this->notes;
         }
