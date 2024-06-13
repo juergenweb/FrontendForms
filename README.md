@@ -2406,6 +2406,10 @@ The next image shows the edit page of a question.
 
 In addition to the mandatory fields "Question" and "Answers", there are a number of other optional fields that you can fill in, e.g. a description text, a note text, a customized error and success message etc., but these fields are optional and therefore do not have to be filled in. You can use these fields for further customization of a single question.
 
+The next image shows the CAPTCHA input field.
+
+![Captcha input field](https://github.com/juergenweb/FrontendForms/blob/main/images/captchafield.png?raw=true)
+
 You can also find all question pages in the page tree under the administration page.
 
 ![Page tree](https://github.com/juergenweb/FrontendForms/blob/main/images/pagetree.png?raw=true)
