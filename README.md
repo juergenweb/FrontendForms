@@ -2414,7 +2414,7 @@ You can also find all question pages in the page tree under the administration p
 
 This is a normal ProcessWire module, so the installation/uninstallation of the module is the same as for all other modules. Go to the module area, select the "FrontendForms Manager" module and install it as usual.
 
-After installing the module, you will find the new navigation link, as described before, under SETUP.
+After installing the module, you will find the new navigation link *FrontendForms Manger*, as described above, under the navigation item SETUP.
 
 If you want to uninstall the module, go to the module section and click to uninstall the module.
 
