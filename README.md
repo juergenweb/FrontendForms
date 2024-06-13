@@ -507,7 +507,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setCaptchaNotes()](#setcaptcharequirederrormsg---overwrite-the-default-error-message-of-the-captcha-required-validation-rule)  | Overwrite the default notes of the CAPTCHA input field  |
 | [setCaptchaDescription()](#setcaptchadescription---add-a-description-to-the-captcha-input-field)  | Add a description to the CAPTCHA input field  |
 | [setCaptchaPosition()](#setcaptchaposition---place-the-captcha-on-a-position-of-your-choice-inside-the-form)  | Output the CAPTCHA at another position inside the form  |
-| [setSimpleQuestionCaptchaRandomRotation()](#setsimplequestioncaptcharandomrotation---showing-multiple-questions-randomly-instead-of-a-single-question-with-the-simple-question-captcha)  | Showing multiple questions randomly instead of a single question with the simple question CAPTCHA |
+| [setSimpleQuestionCaptchaRandomRotation() DEPRECATED](#setsimplequestioncaptcharandomrotation---showing-multiple-questions-randomly-instead-of-a-single-question-with-the-simple-question-captcha)  | Showing multiple questions randomly instead of a single question with the simple question CAPTCHA |
 | [setCaptchaPlaceholder()](#setcaptchaplaceholder---add-a-placeholder-text-to-the-captcha-input-field)  | Add a placeholder text to the CAPTCHA input field |
 | [removeCaptchaLabel()](#removecaptchalabel---hide-the-label-and-display-the-label-text-optionally-as-placeholder-text)  | Hide the label and display the label text optionally as placeholder text |
 
@@ -995,11 +995,18 @@ $form`->removeCaptchaLabel(true);// if set to true, then the label text will be 
 ```
 
 ### setSimpleQuestionCaptchaRandomRotation() - Showing multiple questions randomly instead of a single question with the simple question CAPTCHA
+This method is DEPRECATED and has been replaced by the setSecurityQuestions() method. It works, but should not be used any longer.
+
+Take a look at the next method: setSecurityQuestions().
+
+### setSecurityQuestions() - Enter multiple questions at once
+This method does the same as setSimpleQuestionCaptchaRandomRotation() method, which is deprecated.
+
 Please note: This method is for usage with the simple question CAPTCHA only!
 
-By default, the simple question CAPTCHA supports only 1 single question to be displayed. This method extends the CAPTCHA for using multiple questions, that will be displayed randomly on page load.
+By default, the simple question CAPTCHA supports only 1 single question to be displayed, which can be entered inside the module configuration. If you want to show more questions that changes randomly on every page load, you have to use the [*FrontendForms Manger*](#custom-module-frontendformsmanager) user-interface and enter your questions there or you can use this method to extend the single question CAPTCHA to a multi-question CAPTCHA.
 
-All the questions have to be defined inside an multidimensional assoc. array.
+All the questions have to be defined inside an multidimensional assoc. array containing a specific structure as described below.
 
 Here is an example of such a multi-question array:
 
@@ -1047,13 +1054,26 @@ The following keys are optional and can be set or not:
 The array containing the questions has to be entered as the parameter inside this function:
 
 ```php
-$form`->setSimpleQuestionCaptchaRandomRotation($questions);
+$form`->setSecurityQuestions($questions);
 ```
 
-You will find a working example inside the example folder: [https://github.com/juergenweb/FrontendForms/blob/main/Examples/randomsimplequestioncaptcha.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/randomsimplequestioncaptcha.php)
+You can also use this method side by side with the questions entered inside the FrontendForms Manager.
 
-Maybe someday an UI for entering the questions will be added to this module.
+### setSecurityQuestion() - Enter only a single question
+Instead of adding multiple questions at once via an multi-level array as described in the previous method, you can add a single question with this method to the CAPTCHA (independent if you use the FrontendForms Manger or not).
 
+Please note: This method is for usage with the simple question CAPTCHA only!
+
+```php
+$form`->setsetSecurityQuestion('My question', ['answer 1', 'answer 2', 'answer 3']);
+```
+You have also the possibility to add various parameter (eg notes text, description text etc) as the third parameter (assoc. array).
+
+```php
+$form`->setsetSecurityQuestion('My question', ['answer 1', 'answer 2', 'answer 3'], ['notes' => 'This is my notes text', 'description' => 'My description text']);
+```
+
+For all possible parameters take a look at the setSecurityQuestions() method which has been described before.
 
 ## Input field methods
 
