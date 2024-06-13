@@ -1036,3 +1036,29 @@ This update comes with 1 bug fix, 2 JavaScript additions, 7 new general customiz
   This method is for removing the label from the CAPTCHA field. Optional you can choose if you want to display the label text as placeholder text instead. 
   
   More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#removecaptchalabel---hide-the-label-and-display-the-label-text-optionally-as-placeholder-text)
+
+## 2024-06-13
+
+This update is a bigger update and comes with 1 new admin module and 2 new methods for the simple question CAPTCHA for adding Question per API.
+
+- **New admin module FrontendForms Manager**
+
+  This is a new UI for entering questions for the SIMPLE QUESTION CAPTCHA directly in ProcessWire. If you are not using this new CAPTCHA type, this new module may be not relevant for you at the moment, but it should be extended with further functionality in the future.
+
+  The module will not be installed automatically during the update. You need to go to the module manager, click the refresh button and install this module manually.
+
+  Please read the full description and instruction for this module [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#custom-module-frontendformsmanager).
+
+ - **2 New methods for adding new questions to the CAPTCHA**
+
+   The first method is not completely new, but I want to mention it: **setSecurityQuestion()**.
+
+   This method is for adding a single CAPTCHA question on per for base to the CAPTCHA.
+
+   More info [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#setsecurityquestion---enter-only-a-single-question).
+
+   The other method **setSecurityQuestions()** - plural - is the replacement of the earlier integrated setSimpleQuestionCaptchaRandomRotation() method, which is deprecated and has been replaced by this method.
+
+   This method is for adding multiple questions at once on per form base to the CAPTCHA.
+
+   More info [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#setsecurityquestions---enter-multiple-questions-at-once).
