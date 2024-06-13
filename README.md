@@ -2404,6 +2404,10 @@ If you want to edit or delete a page, click directly on the linked question text
 
 In addition to the mandatory fields "Question" and "Answers", there are a number of other optional fields that you can fill in, e.g. a description text, a note text, a customized error and success message etc., but these fields are optional and therefore do not have to be filled in.
 
+You can also find all question pages in the page tree under the administration page.
+
+![Page tree](https://github.com/juergenweb/FrontendForms/blob/main/images/pagetree.png?raw=true)
+
 ## How to install/uninstall the module
 
 This is a normal ProcessWire module, so the installation/uninstallation of the module is the same as for all other modules. Go to the module area, select the "FrontendForms Manager" module and install it as usual.
