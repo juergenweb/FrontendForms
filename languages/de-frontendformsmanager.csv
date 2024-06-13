@@ -1,0 +1,80 @@
+en,de,description,file,hash
+"This chart indicates how many questions belong to a certain status.","Dieses Diagramm zeigt, wie viele Fragen einem bestimmten Status angehören.",,site/modules/FrontendForms/FrontendFormsManager.module,7a3466881a14c754ac4a48106c1b4bb5
+"This chart shows how many questions are displayed on the frontend (active) or not (inactive).","Dieses Diagramm zeigt, wie viele Fragen im Frontend angezeigt werden (aktiv) oder nicht (inaktiv).",,site/modules/FrontendForms/FrontendFormsManager.module,b6d75d0a454edfb28a9c5c048cb20b16
+"List of all questions for the simple question CAPTCHA","Liste aller Fragen für das einfache Frage CAPTCHA",,site/modules/FrontendForms/FrontendFormsManager.module,11da7aac15a18bb4d6307c26d44f4c6f
+"Add a new question","Eine neue Frage hinzufügen",,site/modules/FrontendForms/FrontendFormsManager.module,b67f92900c8c7f5541224d8d14107249
+Status,=,,site/modules/FrontendForms/FrontendFormsManager.module,ec53a8c4f07baed5d8825072c89799be
+Visibility,Sichtbarkeit,,site/modules/FrontendForms/FrontendFormsManager.module,1729a56cfc89021478498fe0c89a843a
+total,gesamt,,site/modules/FrontendForms/FrontendFormsManager.module,fbb44b4487415b134bce9c790a27fe5e
+published,veröffentlicht,,site/modules/FrontendForms/FrontendFormsManager.module,8f888fedf6bd5ff7c93c6d76bb8dc21c
+unpublished,unveröffentlicht,,site/modules/FrontendForms/FrontendFormsManager.module,3ebd43fb0ca85e5d4aae6b6f19703a39
+hidden,versteckt,,site/modules/FrontendForms/FrontendFormsManager.module,662f707d5491e9bce8238a6c0be92190
+locked,gesperrt,,site/modules/FrontendForms/FrontendFormsManager.module,4cef2f30ac7d33419d00c1d93a090095
+"Number of questions","Anzahl der Fragen",,site/modules/FrontendForms/FrontendFormsManager.module,41f480750b7d85340eee17c9c4c86d76
+"Status types","Status Typen",,site/modules/FrontendForms/FrontendFormsManager.module,5d99646dc04ed596b3a8e3d5f0850221
+"Number of question per status and total","Anzahl der Fragen pro Status und gesamt",,site/modules/FrontendForms/FrontendFormsManager.module,15d92a0b27416a4cf0353a2fc9ab47c0
+active,aktiv,,site/modules/FrontendForms/FrontendFormsManager.module,c76a5e84e4bdee527e274ea30c680d79
+inactive,inaktiv,,site/modules/FrontendForms/FrontendFormsManager.module,19d3894f53ce79c3f836f26cf8a3be3b
+"Visibility types",Sichtbarkeits-Arten,,site/modules/FrontendForms/FrontendFormsManager.module,030d05d170cb366307d5429bba5565f9
+"Number of active and inactive question and total","Anzahl der aktiven und inaktiven Fragen sowie gesamt",,site/modules/FrontendForms/FrontendFormsManager.module,d39bcbd03e435bfd2c2fd76836f73b44
+"Questions for the SIMPLE TEXT CAPTCHA","Fragen für das EINFACHE FRAGE CAPTCHA",,site/modules/FrontendForms/FrontendFormsManager.module,b4c576f8a5b38eff98049ed9e4dc101a
+"Manage all questions for the SIMPLE QUESTION CAPTCHA","Verwalten Sie alle Fragen für das EINFACHE FRAGE CAPTCHA",,site/modules/FrontendForms/FrontendFormsManager.module,250019d88eeca10932e3d40bb09ce3b5
+"Questions statistics","Fragen Statistiken",,site/modules/FrontendForms/FrontendFormsManager.module,faec30dbd9ef07709d8c33fdd11cf66a
+"Manage all questions for the SIMPLE QUESTION CAPTCHA in one place.","Verwalten Sie alle Fragen für das EINFACHE FRAGE CAPTCHA an einem Ort.",,site/modules/FrontendForms/FrontendFormsManager.module,3d1b8b1393fde38144ad8ecba2a5fc68
+"Back to the dashboard","Zurück zur Übersicht",,site/modules/FrontendForms/FrontendFormsManager.module,86c9ce4b2e3b43353a23861c053a594b
+Filter,=,,site/modules/FrontendForms/FrontendFormsManager.module,d7778d0c64b6ba21494c97f77a66885a
+"Filter by question text","Filtern nach Fragen-Text",,site/modules/FrontendForms/FrontendFormsManager.module,a6ff831f0edf7f8005760a999cb60e19
+"Filter questions by containing a specific word or phrase.","Filtern von Fragen anhand eines bestimmten Wortes oder einer Wortphrase",,site/modules/FrontendForms/FrontendFormsManager.module,cdab3dfcbbb5e5523be258f3207b0543
+"Filter by status","Filtern nach Statuts",,site/modules/FrontendForms/FrontendFormsManager.module,5dd5cd6670a0fc8e47a47aa94d27b8b2
+all,alle,,site/modules/FrontendForms/FrontendFormsManager.module,a181a603769c1f98ad927e7367c7aa51
+"Filter questions according to their page status.","Filtern von Fragen anhand des Seiten-Status.",,site/modules/FrontendForms/FrontendFormsManager.module,000abf628b1abccf65a23698208fba18
+"Filter by visibility","Filtern nach Sichtbarkeit",,site/modules/FrontendForms/FrontendFormsManager.module,603fbf05a5aa6253a7c6384853cb6689
+"Filter whether the questions are used by the CAPTCHA or not.","Filtern anhand des Kritieriums, ob die Frage beim CAPTCHA angezeigt wird oder nicht.",,site/modules/FrontendForms/FrontendFormsManager.module,2c7c44365ac7c8e1fb5bc34f654c812f
+"No questions have been created at the moment.","Im Moment wurden noch keine Frage erstellt",,site/modules/FrontendForms/FrontendFormsManager.module,70dfa5b7b0368e70377dcec64a197a8f
+#,=,,site/modules/FrontendForms/FrontendFormsManager.module,01abfc750a0c942167651c40d088531d
+Question,Frage,,site/modules/FrontendForms/FrontendFormsManager.module,a97ea56b0e00b2379736ae60869ff66a
+Created,"Erstellt am",,site/modules/FrontendForms/FrontendFormsManager.module,0eceeb45861f9585dd7a97a3e36f85c6
+User,Benutzer,,site/modules/FrontendForms/FrontendFormsManager.module,8f9bfe9d1345237cb3b2b205864da075
+"will be used (shown) as CAPTCHA question on the frontend","wird im Frontend beim CAPTCHA angezeigt",,site/modules/FrontendForms/FrontendFormsManager.module,797223ea50a1191aa3d0422321f76900
+"will not be used (shown) as CAPTCHA question on the frontend","wird nicht im Frontend beim CAPTCHA angezeigt",,site/modules/FrontendForms/FrontendFormsManager.module,91f9f3dcf32e3b35db975d303846f22c
+"There are no questions.","Es gibt keine Fragen.",,site/modules/FrontendForms/FrontendFormsManager.module,78132c6a7ffcd380dc877b1dbe22442e
+"Add new question","Eine neue Frage erstellen",,site/modules/FrontendForms/FrontendFormsManager.module,2a3db08ece9db0589d17f4a28b9958f8
+"No questions have been created yet.","Bis jetzt wurden noch keine Fragen erstellt.",,site/modules/FrontendForms/FrontendFormsManager.module,4d6068e701c464a4b4023a05ecd65d0d
+"If you want to use the SIMPLE QUESTION CAPTCHA, you can add, edit or delete the related questions in this section by clicking on the button below.","Wenn Sie das EINFACHE FRAGE CAPTCHA verwenden möchten, dann können Sie hier Frage erstellen, bearbeiten oder löschen indem Sie auf den Button weiter unten klicken.",,site/modules/FrontendForms/FrontendFormsManager.module,d0031a5235e9b380ac6e5bb32339871f
+"Questions with status ""published""","Fragen mit Status ""veröffentlicht""",,site/modules/FrontendForms/FrontendFormsManager.module,ce0627ddbd2ef785a69b2dade92a6526
+"Questions with status ""unpublished""","Fragen mit Status ""unveröffentlicht""",,site/modules/FrontendForms/FrontendFormsManager.module,b238945e7898bc2cede56b8869597000
+"Questions with status ""hidden""","Fragen mit Status ""versteckt""",,site/modules/FrontendForms/FrontendFormsManager.module,9c85fc674962371bd807fbe470036600
+"Questions with status ""locked""","Fragen mit Status ""gesperrt""",,site/modules/FrontendForms/FrontendFormsManager.module,e8ab2227c04f89d371197383d8357820
+"Active questions (will be displayed on the frontend)","Aktive Fragen (werden im Frontend angezeigt)",,site/modules/FrontendForms/FrontendFormsManager.module,efb5e6d1eef98b26cf23e8c0173f40bd
+"Inactive questions (will not be displayed on the frontend)","Inaktive Fragen (werden nicht im Frontend angezeigt)",,site/modules/FrontendForms/FrontendFormsManager.module,298f462198b72d314c26d68f806c476b
+"Questions total","Gesamtanzahl aller Fragen",,site/modules/FrontendForms/FrontendFormsManager.module,dcd943b0f5e1a473f4803395af5e4706
+"Add/edit/delete questions","Hinzufügen/bearbeiten/löschen von Fragen",,site/modules/FrontendForms/FrontendFormsManager.module,23f5c75c7b296cce7ec039ba05ffd91d
+"Inherit from the default value","Vom Standardwert übernehmen",,site/modules/FrontendForms/FrontendFormsManager.module,f8c3bdf54db5392744acd4c74b3fb9af
+"Above the label of the input field","Oberhalb der Eingabefeld-Bezeichnung (Label)",,site/modules/FrontendForms/FrontendFormsManager.module,67d69ad5b86f9485a1ffe5c3925fc540
+"Below the label of the input field","Unterhalb der Eingabefeld-Bezeichnung (Label)",,site/modules/FrontendForms/FrontendFormsManager.module,ea516aff53231f573565309917786352
+"Below the input field","Unterhalb des Eingabefeldes (Input)",,site/modules/FrontendForms/FrontendFormsManager.module,99496a9f358b973e5c475c6c38441cc7
+"Pagination number for data tables","Paginationsnummer für Daten-Tabellen",,site/modules/FrontendForms/FrontendFormsManager.module,0f6125bce53a7f802da8d9feb2ae7e40
+"Please select how many entries should be displayed inside a data table per page.","Bitte wählen Sie aus, wie viele Einträge in einer Datentabelle pro Seite angezeigt werden sollen.",,site/modules/FrontendForms/FrontendFormsManager.module,c8afe997985601d8ab23420fe9a9d5a3
+"If the total number of entries inside the table is higher, the table will be paginated.","Wenn die Gesamtzahl der Einträge in der Tabelle höher ist, wird die Tabelle paginiert.",,site/modules/FrontendForms/FrontendFormsManager.module,cf74d4fba3d676998324ae2e6b7cff1b
+"FrontendForms Manager",=,,site/modules/FrontendForms/FrontendFormsManager.module,1bc4ddb5b62b3fe81a7813f2f322c48a
+"Additional administration page for the FrontendForms module.","Zusätzliche Verwaltungsseite für das FrontendForms-Modul.",,site/modules/FrontendForms/FrontendFormsManager.module,0ff317d3baaddf1705c924fa4c6c040f
+en,de,description,file,hash
+"Accepted answers","Akzeptierte Antworten",,site/modules/FrontendForms/config/questionFields.php,cce75deb233360295f6767182c938f32
+"Add all accepted answers (each on a new line).","Fügen Sie alle akzeptierten Antworten hinzu (jede in einer neuen Zeile).",,site/modules/FrontendForms/config/questionFields.php,45d7ca50d976f3c4f755fa35821036d9
+"Custom error message","Eigene Fehlermeldung",,site/modules/FrontendForms/config/questionFields.php,ecc06d754e4dda5735774f2cea9a3b68
+"Set a custom error message if you want.","Geben Sie eine eigene Fehlermeldung ein, wenn Sie möchten.",,site/modules/FrontendForms/config/questionFields.php,8bd8b18e7770795be254c93810a372c4
+"This will overwrite the default error message if the CAPTCHA answer was wrong.","Dies überschreibt die Standard-Fehlermeldung, wenn die Antwort auf die CAPTCHA-Frage falsch war.",,site/modules/FrontendForms/config/questionFields.php,e16385405c0f47ad2ceb370f74bc2ab9
+"Success message",Erfolgsmeldung,,site/modules/FrontendForms/config/questionFields.php,eb348dd0d56400bd18e7c9e8d25cc666
+"Set a custom success message if you want.","Geben Sie eine eigene Erfolgsmeldung ein, wenn Sie möchten.",,site/modules/FrontendForms/config/questionFields.php,2e63c4d559b627072de5a4b21f1eb32c
+"This message will be shown, if the answer of the CAPTCHA was correct, but there were other errors.","Diese Meldung wird dann angezeigt, wenn die Antwort auf die CAPTCHA-Frage zwar richtig war, aber es noch weitere Fehler im Formular gab.",,site/modules/FrontendForms/config/questionFields.php,ce4c2231658c3a72e7aebe024e94aa51
+"Placeholder text","Platzhalter Text",,site/modules/FrontendForms/config/questionFields.php,910370309c0af1e93df0ae98ff8cfe5a
+"Set a placeholder text if you want.","Geben Sie einen Platzhalter-Text ein, wenn Sie möchten.",,site/modules/FrontendForms/config/questionFields.php,b973c03d6052d7606a019c01bfe3d5f6
+"Notes text",Hinweistext,,site/modules/FrontendForms/config/questionFields.php,74d5e1805d45df0b13e9479aa6ff2560
+"Set a notes text if you want.","Geben Sie einen Hinweistext ein, wenn Sie möchten.",,site/modules/FrontendForms/config/questionFields.php,8b110c326d0539657cfb11ea1c8872de
+"The notes text will be displayed below the input field.","Der Hinweistext wird unterhalb des Eingabefeldes angezeigt.",,site/modules/FrontendForms/config/questionFields.php,5246e64a8eba26d147ac489b70f1d603
+"Description text",Beschreibungstext,,site/modules/FrontendForms/config/questionFields.php,fc4c04ecf67db91c6464624c45b6d962
+"Set a description text if you want.","Geben Sie einen Beschreibungstext ein, wenn Sie möchten.",,site/modules/FrontendForms/config/questionFields.php,b28adfe52910e98d754b219d946b5168
+"The description text will be displayed below or above the label or below the input field.","Der Beschreibungstext wird ober- oder unterhalb der Feldbezeichnung oder unterhalb des Eingabefeldes angezeigt.",,site/modules/FrontendForms/config/questionFields.php,9208ed81e76d40f644bf2285b17f19f2
+"Description position","Position für den Beschreibungstext",,site/modules/FrontendForms/config/questionFields.php,91261839ea22b9ecf95e5fbb89ec8583
+"You can change the position of the description text if you want.","Sie können die Position des Beschreibungstextes ändern, wenn Sie möchten",,site/modules/FrontendForms/config/questionFields.php,9d9ec0ab13ea5dcc47e0265aea2de226
+"This will overwrite the default description position.","Dies überschreibt die Standard-Position",,site/modules/FrontendForms/config/questionFields.php,46f1e762ce350d92ef565e24cfd6249e
