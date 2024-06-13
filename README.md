@@ -2382,15 +2382,15 @@ If you are not using the SIMPLE QUESTION CAPTCHA, installing this module makes n
 
 Technically spoken, this module creates a new admin page under SETUP.
 
-Bild Menü
+![Navigation](https://github.com/juergenweb/FrontendForms/blob/master/images/setupmenupoint.png?raw=true)
 
 This page is the dashboard page, which contains the overview. 
 
-Bild Dasboard
+![Dashboard page](https://github.com/juergenweb/FrontendForms/blob/master/images/dashboard.png?raw=true)
 
 By clicking the "Add/edit/delete" button you will be redirected to the next page which contains a list of all questions. This list is a data table with a little filter form to filter questions to your needs (fe status, question text, visibility on the frontend).
 
-Bild Tabelle
+![Data table with questions](https://github.com/juergenweb/FrontendForms/blob/master/images/questiontable.png?raw=true)
 
 Just to mention: By default the table shows 10 questions per page. If the number of questions is higher, the table will be paginated. You can change the number of questions/page inside the module configuration to your needs if you want.
 
@@ -2398,7 +2398,7 @@ Each question is a page, so you can do everything that you can do with all other
 
 If you want to edit or delete a page, click directly on the linked question text inside the table and you will be redirected to the "edit page" of this question. If you click "add new question", you will be redirected to the "add new page".
 
-Bild Edit page
+![Data table with questions](https://github.com/juergenweb/FrontendForms/blob/master/images/questionpage.png?raw=true)
 
 Beside the mandatory fields "question" and "answers", there are a lot of other optional field to add fe a description text, a notes text, customized error and success message and so on, but these fields are optional.
 
