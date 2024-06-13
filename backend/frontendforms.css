@@ -204,3 +204,55 @@ From https://javascriptarticles.com/pure-css-tooltip/
     margin: 0;
 }
 
+#backlink {
+    margin-top: 20px;
+}
+
+.statistic-label {
+    padding-right: 10px;
+}
+
+.question-number {
+    text-align:right;
+}
+
+#questions-statistic {
+    margin: 10px 0 30px 0;
+    border: 2px solid #f0f3f7;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#questions-statistic tr td {
+    padding: 5px 10px;
+    border-bottom: 2px dotted #f0f3f7;
+}
+
+#questions-total {
+    background: #f0f3f7;
+    font-weight: bold;
+}
+
+#visiblity-legend {
+    list-style-type: none;
+}
+
+.ff-hiddenvalue {
+    position: absolute;
+    left: -999em;
+}
+
+.table-legend::before {
+    content: "* ";
+    position: absolute;
+    padding-left: 10px;
+    font-size: 20px;
+}
+
+.table-legend {
+    background: #f0f3f7;
+}
+
+.table-legend ul li {
+    padding: 3px;
+}
