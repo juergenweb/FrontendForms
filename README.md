@@ -500,7 +500,6 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [useCSRFProtection()](#usecsrfprotection---enabledisable-csrf-protection-on-form)  | Enable or disable CSRF-Protection  |
 | [useFormInCrossDomainIframe()](#useformincrossdomainiframe---use-forms-in-an-iframe-on-another-domain)  | Method to prepare a form to be usable inside an iframe on another domain  |
 | [setDescPosition()](#setdescposition---change-the-position-of-field-descriptions)  | Set the position of the field description text  |
-| [setSecurityQuestion()](#setsecurityquestion---change-the-question-and-answer-of-a-question-captcha-on-per-form-base)  | Change the Question and answer of a question CAPTCHA on per form base  |
 | [setCaptchaSuccessMsg()](#setcaptchasuccessmsg---add-a-success-message-under-the-captcha-field)  | Add a success message under the CAPTCHA field  |
 | [setCaptchaErrorMsg()](#setcaptchaerrormsg---overwrite-the-default-error-message-of-the-captcha-validation-rule)  | Overwrite the default error message of the CAPTCHA validation rule  |
 | [setCaptchaRequiredErrorMsg()](#setcaptcharequirederrormsg---overwrite-the-default-error-message-of-the-captcha-required-validation-rule)  | Overwrite the default error message of the CAPTCHA required validation rule |
@@ -508,6 +507,8 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setCaptchaDescription()](#setcaptchadescription---add-a-description-to-the-captcha-input-field)  | Add a description to the CAPTCHA input field  |
 | [setCaptchaPosition()](#setcaptchaposition---place-the-captcha-on-a-position-of-your-choice-inside-the-form)  | Output the CAPTCHA at another position inside the form  |
 | [setSimpleQuestionCaptchaRandomRotation() DEPRECATED](#setsimplequestioncaptcharandomrotation---showing-multiple-questions-randomly-instead-of-a-single-question-with-the-simple-question-captcha)  | Showing multiple questions randomly instead of a single question with the simple question CAPTCHA |
+| [setSecurityQuestion()](#setsecurityquestion---enter-only-a-single-question)  | Enter a single question for the simple question CAPTCHA on per form base  |
+| [setSecurityQuestions()](#setsecurityquestions---enter-multiple-questions-at-once)  | Enter multiple question at once for the simple question CAPTCHA on per form base  |
 | [setCaptchaPlaceholder()](#setcaptchaplaceholder---add-a-placeholder-text-to-the-captcha-input-field)  | Add a placeholder text to the CAPTCHA input field |
 | [removeCaptchaLabel()](#removecaptchalabel---hide-the-label-and-display-the-label-text-optionally-as-placeholder-text)  | Hide the label and display the label text optionally as placeholder text |
 
@@ -888,25 +889,6 @@ With this method you can change the position of each input field description on 
 ```php
   $form->setDescPosition('afterLabel'); // possible parameters: beforeLabel, afterLabel, afterInput
 ```
-
-### setSecurityQuestion() - Change the Question and answer of a question CAPTCHA on per form base
-This is a special method, which could be only used in conjunction with the simple question CAPTCHA. It allows you to overwrite the question and the answers for this CAPTCHA method on per form base.
-
-```php
-  $form->setSecurityQuestion('What color has a green apple?', ['green', 'green color', 'it is green']);
-```
-
-The first parameter is the question and the second contains the accepted answers as an array.
-
-
-### setSecurityQuestion() - Change the Question and answer of a question CAPTCHA on per form base
-This is a special method, which could be only used in conjunction with the simple question CAPTCHA. It allows you to overwrite the question and the answers for this CAPTCHA method on per form base.
-
-```php
-  $form->setSecurityQuestion('What color has a green apple?', ['green', 'green color', 'it is green']);
-```
-
-The first parameter is the question and the second contains the accepted answers as an array.
 
 ### setCaptchaSuccessMsg() - Add a success message under the CAPTCHA field
 The Captcha field will be added automatically to the form if set. For this reason you have no possiblity to add or remove attributes or markup by yourself by default.
