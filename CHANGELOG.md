@@ -1069,3 +1069,9 @@ So please take care to import the correct translation file into your module.
    This method is for adding multiple questions at once on per form base to the CAPTCHA.
 
    More info [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#setsecurityquestions---enter-multiple-questions-at-once).
+
+   If you are using the new FrontendForms Manager module, you do not need to use these 2 methods (but you can to add additional questions).
+
+   These 2 new methods are the API equivalent to the FrontendForms Manger, so you can use multiple questions too, without using the new module.
+
+   So it is up to you, if prefer to use the FrontendForms Manager or you want to use the API methods or you want to combine both.
