@@ -2373,8 +2373,6 @@ CSRF-Protection and the check for double form subission are also disabled, but t
 
 ## Custom module FrontendFormsManager
 
-THIS IS PART OF THE NEXT UPDATE (2.1.79) - NOT INCLUDED YET!!
-
 ### What is the module FrontendFormsManager?
 FrontendFormsManger is a module that is delivered with FrontendForms, but is not installed by default, as it is not necessary for the operation of FrontendForms. 
 
@@ -2403,6 +2401,8 @@ Note: The table displays 10 questions per page by default. If the number of ques
 Each question is a page, so you can do everything you can do with all the other pages in ProcessWire. All fields and templates for these pages are created automatically during the module installation.
 
 If you want to edit or delete a page, click directly on the linked question text in the table and you will be redirected to the editing page for this question. If you click on "Add new question", you will be redirected to the "Add new page" page.
+
+If you have no idea for simple questions, you will find some example questions [here](https://github.com/juergenweb/FrontendForms/blob/main/Examples/examplequestions.txt).
 
 The next image shows the edit page of a question.
 
