@@ -2560,13 +2560,6 @@
                 foreach ($this->formElements as $key => $element) {
                     if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
 
-                        if(!empty($element->getImportantNotes())){
-                            $notesValues = [$element->getImportantNotes()];
-                            $notesValues[] = $element->getNotes()->getText();
-                            $notes = array_filter($notesValues);
-                            if($notes) $element->getNotes()->setText(implode('<br>', $notes));
-                        }
-
                         // exclude hidden input fields - add only visible fields
                         if ($element->className() !== 'InputHidden') {
                             $inputfieldKeys[] = $key;
