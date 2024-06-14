@@ -1,4 +1,4 @@
-<?php
+i<?php
     declare(strict_types=1);
 
     namespace ProcessWire;
@@ -111,8 +111,8 @@ $questions = [
 
 ];
 
-// This is the magic method, which turns your single question CAPTCHA into the random multi question CAPTCHA
-$form->setSimpleQuestionCaptchaRandomRotation($questions);
+// With this method you can change your single question CAPTCHA into the random multi question CAPTCHA
+$form->setSecurityQuestions($questions);
 
 // add name field
 $name = new \FrontendForms\InputText("name");
