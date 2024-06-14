@@ -1037,9 +1037,7 @@ This update comes with 1 bug fix, 2 JavaScript additions, 7 new general customiz
   
   More info [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#removecaptchalabel---hide-the-label-and-display-the-label-text-optionally-as-placeholder-text)
 
-## 2024-06-13
-
-COMING SOON!!
+## [2.2.0] 2024-06-14
 
 This update is a bigger update and comes with 1 new admin module and 2 new methods for the simple question CAPTCHA for adding questions per API.
 
@@ -1050,6 +1048,13 @@ This update is a bigger update and comes with 1 new admin module and 2 new metho
   The module will not be installed automatically during the update. You need to go to the module manager, click the refresh button and install this module manually.
 
   Please read the full description and instruction for this module [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#custom-module-frontendformsmanager).
+
+  To all users who run a multilanguage site: If you are importing the German language files which are delivered with this module, please take care that you have **2 language files** now instead of one (because there are 2 modules):
+
+  * de-frontenforms.csv (for the FrontendForms module)
+  * de-frontendformsmanager.csv (for the new FrontendForms Manager module)
+
+So please take care to import the correct translation file into your module.
 
  - **2 New methods for adding new questions to the CAPTCHA**
 
