@@ -2382,6 +2382,8 @@ There are plans to expand this module with further options in the future, but fo
 
 If you do not use the SIMPLE QUESTION CAPTCHA, installing this module (at the time of writing) will not benefit you.
 
+To get it working, please select the "SINGLE QUESTION CAPTCHA" inside the tab "Spam protections and security settings for the forms" in the module configuration of FrontendForms.
+
 ### How does it work?
 
 Technically spoken, this module creates a new admin page under SETUP called *FrontendForms Manager*.
@@ -2417,6 +2419,8 @@ The next image shows the CAPTCHA input field.
 You can also find all question pages in the page tree under the administration page.
 
 ![Page tree](https://github.com/juergenweb/FrontendForms/blob/main/images/pagetree.png?raw=true)
+
+You need to enter at least 1 question to get it working. If you have installed the module, but no questions have been entered, than the single question from the module configuration will be taken as the fallback instead. In this case you have only a "single question CAPTCHA" instead of a "multi question CAPTCHA";
 
 ## How to install/uninstall the module
 
