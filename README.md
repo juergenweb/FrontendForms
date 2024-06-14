@@ -1041,6 +1041,8 @@ $form`->setSecurityQuestions($questions);
 
 You can also use this method side by side with the questions entered inside the FrontendForms Manager.
 
+You can take a look at the [examples folder](https://github.com/juergenweb/FrontendForms/blob/main/Examples/setmultiplequestionsforcaptcha.php), where you can find a working example using this method.
+
 ### setSecurityQuestion() - Enter only a single question
 Instead of adding multiple questions at once via an multi-level array as described in the previous method, you can add a single question with this method to the CAPTCHA (independent if you use the FrontendForms Manger or not).
 
