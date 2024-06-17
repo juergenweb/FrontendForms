@@ -3142,7 +3142,13 @@
             // need to include all, otherwise pages under the admin tree will not be listed
             $questions = $this->wire('pages')->find('template=ff_question,include=all,status=published,status!=hidden');
             $questionArray = [];
-            if (!$questions->count) return $questionArray;
+            $numberOfQuestions = $questions->count;
+            if (!$numberOfQuestions) return $questionArray;
+
+            // just the case there are more than 25 pages, pick only 25 pages randomly to prevent a too large array
+            if($numberOfQuestions > 25) {
+                $questions = $questions->findRandom(25);
+            }
 
             // check if multi-language site
             $multilang = false;
