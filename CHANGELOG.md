@@ -1075,3 +1075,9 @@ So please take care to import the correct translation file into your module.
    These 2 new methods are the API equivalent to the FrontendForms Manger, so you can use multiple questions too, without using the new module.
 
    So it is up to you, if prefer to use the FrontendForms Manager or you want to use the API methods or you want to combine both.
+
+## 2024-06-17
+
+ - **New CAPTCHA images added**
+
+   3 new Flower images for usage with the image CAPTCHA added. 
