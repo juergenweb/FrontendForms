@@ -1080,4 +1080,8 @@ So please take care to import the correct translation file into your module.
 
  - **New CAPTCHA images added**
 
-   3 new Flower images for usage with the image CAPTCHA added. 
+   3 new Flower images for usage with the image CAPTCHA added.
+
+- **Limit questions in questions array to 25 items to prevent overhead**
+  The getCaptchaQuestions() method returns a page array with all questions that have been added via the FrontenForms Manager. This is fine if the number of questions is not to high. If there is the case that you have entered for example 100 questions, than the questions array contains 100 items, which is very large. To prevent such a large array, the max. number of questions in the question array will be limited to 25 question now. This 25 quesitons will be selected randomly.
+  
