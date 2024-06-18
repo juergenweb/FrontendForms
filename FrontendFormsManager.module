@@ -22,6 +22,7 @@
         protected PageArray $inactiveQuestions; // PageArray containing all questions that are NOT visible and will NOT be used in the CAPTCHA
         protected array $chartTexts = [];
         protected array $questionFields = []; // configuration array containing all question fields
+        protected bool $langSupport = false; // language support is enabled (true) or not (false)
 
         /**
          * Constructor method which runs during class initialization
@@ -74,6 +75,8 @@
             if ($this->wire('input')) {
                 $this->filtervalues = $this->wire('input')->post;
             }
+
+            $this->langSupport = $this->wire('modules')->isInstalled('LanguageSupport');
 
         }
 
@@ -207,7 +210,7 @@
 
                             // needs to be done this way, because translation will not be found at the first csv import
                             $title = $translation->getTranslation($textdomain, $option->title, '', ['getInfo' => true]);
-                            if($title['translated']){
+                            if ($title['translated']) {
                                 $title = $title['response']['text'];
                             } else {
                                 $title = $this->parseLanguageCSV($csvFile_path, $option->title);
@@ -243,7 +246,7 @@
 
                 // needs to be done this way, because translation will not be found at the first csv import
                 $label = $translation->getTranslation($textdomain, $f->label, '', ['getInfo' => true]);
-                if($label['translated']){
+                if ($label['translated']) {
                     $label = $label['response']['text'];
                 } else {
                     $label = $this->parseLanguageCSV($csvFile_path, $f->label);
@@ -872,9 +875,9 @@
             parent::install();
 
             // only for multilanguage sites
-            if ($this->languages) {
+            if ($this->langSupport) {
                 $userLang = $this->wire('user')->language;
-                // set user language to default language -> only for storing the options in the databae
+                // set user language to default language -> only for storing the options in the database
                 $this->wire('user')->language = $this->wire('languages')->getLanguage('default');
             }
 
@@ -896,22 +899,15 @@
             // Create all other fields and add them to the template too
             foreach ($this->questionFields as $name => $fieldproperties) {
                 if (!wire('fields')->get($name)) {
-                    $field = new Field();
 
-                    // change FieldtypeTextLanguage and FieldtypeTextareaLanguage to
-                    // FieldtypeText and FieldtypeTextarea on single language site
-                    if ($this->languages && $this->languages->count() < 2) {
-                        if ($fieldproperties['fieldtype'] == 'FieldtypeTextLanguage')
-                            $fieldproperties['fieldtype'] = 'FieldtypeText';
-                        if ($fieldproperties['fieldtype'] == 'FieldtypeTextareaLanguage')
-                            $fieldproperties['fieldtype'] = 'FieldtypeTextarea';
-                    }
+                    $field = new Field();
                     $field->type = wire('modules')->get($fieldproperties['fieldtype']);
                     $field->name = $name;
 
                     foreach ($fieldproperties as $propName => $propValue) {
                         $field->$propName = $fieldproperties[$propName];
                     }
+
                     $field->tags = $this->className();
                     $field->save();
                     // add the field to the template
