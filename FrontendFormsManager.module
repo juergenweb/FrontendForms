@@ -910,7 +910,7 @@
                             $fieldproperties['fieldtype'] = 'FieldtypeTextLanguage';
                         }
                     }
-                    bd($fieldproperties['fieldtype']);
+
                     $field = new Field();
                     $field->type = wire('modules')->get($fieldproperties['fieldtype']);
                     $field->name = $name;
