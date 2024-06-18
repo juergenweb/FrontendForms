@@ -1085,5 +1085,9 @@ So please take care to import the correct translation file into your module.
 - **Limit questions in questions array to 25 items to prevent overhead**
   The getCaptchaQuestions() method returns a page array with all questions that have been added via the FrontenForms Manager. This is fine if the number of questions is not to high. If there is the case that you have entered for example 100 questions, than the questions array contains 100 items, which is very large. To prevent such a large array, the max. number of questions in the question array will be limited to 25 question now. This 25 quesitons will be selected randomly.
   
-- **Better check for language support added**
-  A problem has been reported, which occurs during the installation of the FrontendForms Manager on a site, where Language Support was not enabled. It seems that this problems was caused during the creation of language fields on a site where languages were not enabled. A better check to find out if the Language Support Module is installed has been added to prevent problems during the installation.
+- **Check for installation of LanguageSupportFields added**
+  A problem has been reported, which occurs during the installation of the FrontendForms Manager (SQL error during the creation of ProcessWire fields).
+
+   After several tests I figured it out: The problem occurs during the creation of multi-language fields if the module "LanguageSupportFields" was not installed, so I added a check to check if this module is installed. If yes, then multi-language fields will be created, if not, then single language fiels will be created.
+
+  This problem occured by the creation of *FieldtypeTextareaLanguage" and *FieldtypeTextLanguage*, but should be solved now.
