@@ -38,6 +38,8 @@
             if ($this->input_paginationnumber)
                 $this->items_per_page = $this->input_paginationnumber;
 
+            $this->langSupport = $this->wire('modules')->isInstalled('LanguageSupport');
+
         }
 
         /**
@@ -75,8 +77,6 @@
             if ($this->wire('input')) {
                 $this->filtervalues = $this->wire('input')->post;
             }
-
-            $this->langSupport = $this->wire('modules')->isInstalled('LanguageSupport');
 
         }
 
@@ -899,6 +899,15 @@
             // Create all other fields and add them to the template too
             foreach ($this->questionFields as $name => $fieldproperties) {
                 if (!wire('fields')->get($name)) {
+
+                    if($this->langSupport) {
+                        if($fieldproperties['fieldtype'] == 'FieldtypeTextarea'){
+                            $fieldproperties['fieldtype'] = 'FieldtypeTextareaLanguage';
+                        }
+                        if($fieldproperties['fieldtype'] == 'FieldtypeText'){
+                            $fieldproperties['fieldtype'] = 'FieldtypeTextLanguage';
+                        }
+                    }
 
                     $field = new Field();
                     $field->type = wire('modules')->get($fieldproperties['fieldtype']);
