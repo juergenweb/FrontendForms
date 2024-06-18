@@ -23,6 +23,7 @@
         protected array $chartTexts = [];
         protected array $questionFields = []; // configuration array containing all question fields
         protected bool $langSupport = false; // language support is enabled (true) or not (false)
+        protected bool $langSupportFields = false; // language support for fields on the frontend is enabled (true) or not (false)
 
         /**
          * Constructor method which runs during class initialization
@@ -39,6 +40,7 @@
                 $this->items_per_page = $this->input_paginationnumber;
 
             $this->langSupport = $this->wire('modules')->isInstalled('LanguageSupport');
+            $this->langSupportFields = $this->wire('modules')->isInstalled('LanguageSupportFields');
 
         }
 
@@ -900,7 +902,7 @@
             foreach ($this->questionFields as $name => $fieldproperties) {
                 if (!wire('fields')->get($name)) {
 
-                    if($this->langSupport) {
+                    if($this->langSupportFields) {
                         if($fieldproperties['fieldtype'] == 'FieldtypeTextarea'){
                             $fieldproperties['fieldtype'] = 'FieldtypeTextareaLanguage';
                         }
@@ -908,7 +910,7 @@
                             $fieldproperties['fieldtype'] = 'FieldtypeTextLanguage';
                         }
                     }
-
+                    bd($fieldproperties['fieldtype']);
                     $field = new Field();
                     $field->type = wire('modules')->get($fieldproperties['fieldtype']);
                     $field->name = $name;
