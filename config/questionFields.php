@@ -12,9 +12,17 @@
      * Created: 10.06.2024
      */
 
+    if($this->langSupport) {
+        $textarea = 'FieldtypeTextareaLanguage';
+        $text = 'FieldtypeTextLanguage';
+    } else {
+        $textarea =  'FieldtypeTextarea';
+        $text =  'FieldtypeText';
+    }
+
     $this->questionFields = [
         'ff_answers' => [
-            'fieldtype' => 'FieldtypeTextareaLanguage',
+            'fieldtype' => $textarea,
             'label' => $this->_("Accepted answers"),
             'description' => $this->_("Add all accepted answers (each on a new line)."),
             'required' => 1,
@@ -22,30 +30,30 @@
             'stripTags' => 1
         ],
         'ff_errormsg' => [
-            'fieldtype' => 'FieldtypeTextLanguage',
+            'fieldtype' => $text,
             'label' => $this->_("Custom error message"),
             'description' => $this->_("Set a custom error message if you want."),
             'notes' => $this->_("This will overwrite the default error message if the CAPTCHA answer was wrong.")
         ],
         'ff_successmsg' => [
-            'fieldtype' => 'FieldtypeTextLanguage',
+            'fieldtype' => $text,
             'label' => $this->_("Success message"),
             'description' => $this->_("Set a custom success message if you want."),
             'notes' => $this->_("This message will be shown, if the answer of the CAPTCHA was correct, but there were other errors.")
         ],
         'ff_placeholder' => [
-            'fieldtype' => 'FieldtypeTextLanguage',
+            'fieldtype' => $text,
             'label' => $this->_("Placeholder text"),
             'description' => $this->_("Set a placeholder text if you want.")
         ],
         'ff_notes' => [
-            'fieldtype' => 'FieldtypeTextLanguage',
+            'fieldtype' => $text,
             'label' => $this->_("Notes text"),
             'description' => $this->_("Set a notes text if you want."),
             'notes' => $this->_("The notes text will be displayed below the input field.")
         ],
         'ff_description' => [
-            'fieldtype' => 'FieldtypeTextLanguage',
+            'fieldtype' => $text,
             'label' => $this->_("Description text"),
             'description' => $this->_("Set a description text if you want."),
             'notes' => $this->_("The description text will be displayed below or above the label or below the input field.")
