@@ -1091,3 +1091,8 @@ So please take care to import the correct translation file into your module.
    After several tests I figured it out: The problem occurs during the creation of multi-language fields if the module "LanguageSupportFields" was not installed, so I added a check to check if this module is installed. If yes, then multi-language fields will be created, if not, then single language fiels will be created.
 
   This problem occured by the creation of *FieldtypeTextareaLanguage" and *FieldtypeTextLanguage*, but should be solved now.
+
+## 2024-06-18
+
+- **Bug at asterisk rendering at Pico framework fixed**
+  The asterisk at a checkbox has been displayed independently if the checkbox was required or not (only at Pico framework). This bug has been fixed now
