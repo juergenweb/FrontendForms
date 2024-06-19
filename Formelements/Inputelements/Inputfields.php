@@ -624,7 +624,11 @@
                     /** Special treatment for label markup */
 
                     // pico does not accept an asterisk inside a tag, so every tag must be removed from the asterisk first
-                    $asterisk = ($this->frontendforms['input_showasterisk']) ? strip_tags($this->getLabel()->___renderAsterisk()) : '';
+                    $asterisk = '';
+                    if ($this->getRules() && array_key_exists('required', $this->getRules())) {
+                        $asterisk = ($this->frontendforms['input_showasterisk']) ? strip_tags($this->getLabel()->___renderAsterisk()) : '';
+                    }
+
 
                     // add the asterisk directly after the label text, but before the error message
                     // the label must also contain success and error message
