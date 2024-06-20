@@ -20,7 +20,6 @@
     use ProcessWire\WireException;
     use ProcessWire\WirePermissionException;
     use Valitron\Validator as V;
-    use ProcessWire\wire as wire;
 
     class CustomRules extends Tag
     {
@@ -521,43 +520,6 @@
                 }
                 return true;
             }, $this->_('contains not the correct answer.'));
-
-
-            /**
-             * 32) Set this field to required if another specified field has a value in it
-             * Define as third parameter an exact value for the specified field
-             * Important: This validator runs only if a required validator with true as parameter has been set before
-             * $field->setRule('required', true)
-             */
-            V::addRule('requiredIf', function ($field, $value, array $params, array $fields) {
-
-                /*
-                $fieldName = $this->getID() . '-' . $params[0];
-                if($params){
-                    // value is present
-                }
-
-                bd($params);
-
-                return true;
-
-                $compareValue = array_key_exists('1', $params) ? $params[1] : null;
-                $fieldValue = $fields[$params[0]];
-
-                if ($fieldValue) {
-                    if ($compareValue) {
-                        if ($compareValue == $fieldValue) {
-                            if($value) return true;
-                            return false;
-                        }
-                        return true;
-                    } else {
-                        if($value) return true;
-                        return false;
-                    }
-                }*/
-                return true;
-            }, $this->_('is required Alter'));
 
 
             /**
