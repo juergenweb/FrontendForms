@@ -1092,7 +1092,7 @@ So please take care to import the correct translation file into your module.
 
   This problem occured by the creation of *FieldtypeTextareaLanguage" and *FieldtypeTextLanguage*, but should be solved now.
 
-## 2024-06-18
+## [2.2.2] 2024-06-20
 
 - **Bug at asterisk rendering at Pico framework fixed**
 
