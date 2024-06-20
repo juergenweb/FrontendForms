@@ -1585,6 +1585,8 @@ For more detailed explanation on each validation rule click the link at the vali
 | [firstAndLastname](#firstandlastname)  | Checks if first and lastname contains only allowed characters    |
 | [uniqueFilenameInDir](#uniquefilenameindir)  | Checks if a newly uploaded file has the same filename as a file inside the destination directory  |
 | [compareTexts](#compareTexts)  | Checks if a text entered in an inputfield is present in an array of texts.  |
+| [checkIban](#checkiban)  | Checks if an IBAN entered in an inputfield is in the correct format.  |
+| [checkBic](#checkbic)  | Checks if a BIC entered in an inputfield is in the correct format.  |
 
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
