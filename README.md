@@ -1917,6 +1917,20 @@ $field->setRule('compareTexts', ['green','is green', 'has color green']);
 ```
 You need to add all the texts or text snippets as an array to the validator. The value entered will be compared to these texts and returns true if a match was found, otherwise false.
 
+### checkIban
+This validator checks only if the syntax of an IBAN entered is correct, but it does not check if the IBAN really exists.
+
+```php
+$field->setRule('checkIban';
+```
+
+### checkBic
+This validator checks only if the syntax of a BIC entered is correct, but it does not check if the BIC really exists.
+
+```php
+$field->setRule('checkBic';
+```
+
 ## Customization of validation
 For each validator rule exists an error message as a translatable string. This is ok for most cases, but
 sometimes you need to show another error message than the translated one. For these cases you can customize your error
