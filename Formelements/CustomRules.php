@@ -551,7 +551,7 @@
                 }
 
                 return ((98 - $checksum) === $checkInt);
-            }, $this->_('is not in the correct format'));
+            }, $this->_('is not in the correct format.'));
 
             /**
              * Check if BIC code is in the right format
@@ -560,7 +560,7 @@
             {
                 $pattern = '/^[a-z]{6}[0-9a-z]{2}([0-9a-z]{3})?\z/i';
                 return preg_match($pattern, $value);
-            }, $this->_('is not in the correct format'));
+            }, $this->_('is not in the correct format.'));
 
         }
 
