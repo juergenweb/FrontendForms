@@ -20,6 +20,7 @@
     use ProcessWire\WireException;
     use ProcessWire\WirePermissionException;
     use Valitron\Validator as V;
+    use ProcessWire\wire as wire;
 
     class CustomRules extends Tag
     {
@@ -505,22 +506,99 @@
             V::addRule('compareTexts', function ($field, $value, $params) {
 
                 // check if value is array first
-                if(!is_array($params[0]))
+                if (!is_array($params[0]))
                     throw new \Exception($this->_('Please add only an array as second parameter.'));
 
-                if($params[0]) {
+                if ($params[0]) {
 
                     $answers = array_map('strtolower', $params[0]);
                     // convert the value to lowercase too
                     $value = strtolower($value);
-                    if(in_array($value, $answers)){
-                     return true;
-                }
+                    if (in_array($value, $answers)) {
+                        return true;
+                    }
                     return false;
                 }
                 return true;
             }, $this->_('contains not the correct answer.'));
 
+
+            /**
+             * 32) Set this field to required if another specified field has a value in it
+             * Define as third parameter an exact value for the specified field
+             * Important: This validator runs only if a required validator with true as parameter has been set before
+             * $field->setRule('required', true)
+             */
+            V::addRule('requiredIf', function ($field, $value, array $params, array $fields) {
+
+                /*
+                $fieldName = $this->getID() . '-' . $params[0];
+                if($params){
+                    // value is present
+                }
+
+                bd($params);
+
+                return true;
+
+                $compareValue = array_key_exists('1', $params) ? $params[1] : null;
+                $fieldValue = $fields[$params[0]];
+
+                if ($fieldValue) {
+                    if ($compareValue) {
+                        if ($compareValue == $fieldValue) {
+                            if($value) return true;
+                            return false;
+                        }
+                        return true;
+                    } else {
+                        if($value) return true;
+                        return false;
+                    }
+                }*/
+                return true;
+            }, $this->_('is required Alter'));
+
+
+            /**
+             * Check if IBAN is of the correct syntax
+             * This validator is taken from cakephp 3.7 validation class.
+             */
+            V::addRule('checkIban', function ($field, $value)
+            {
+                $check = $value;
+                if (!preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/', $check)) {
+                    return false;
+                }
+
+                $country = substr($check, 0, 2);
+                $checkInt = intval(substr($check, 2, 2));
+                $account = substr($check, 4);
+                $search = range('A', 'Z');
+                $replace = [];
+                foreach (range(10, 35) as $tmp) {
+                    $replace[] = strval($tmp);
+                }
+                $numStr = str_replace($search, $replace, $account . $country . '00');
+                $checksum = intval(substr($numStr, 0, 1));
+                $numStrLength = strlen($numStr);
+                for ($pos = 1; $pos < $numStrLength; $pos++) {
+                    $checksum *= 10;
+                    $checksum += intval(substr($numStr, $pos, 1));
+                    $checksum %= 97;
+                }
+
+                return ((98 - $checksum) === $checkInt);
+            }, $this->_('is not in the correct format'));
+
+            /**
+             * Check if BIC code is in the right format
+             */
+            V::addRule('checkBic', function ($field, $value)
+            {
+                $pattern = '/^[a-z]{6}[0-9a-z]{2}([0-9a-z]{3})?\z/i';
+                return preg_match($pattern, $value);
+            }, $this->_('is not in the correct format'));
 
         }
 
@@ -556,7 +634,7 @@
                 array_push($this->storedFiles, $newFileNamePath);
                 return true;
             } else {
-                array_push($this->storedFiles, $uploadPath.$filename);
+                array_push($this->storedFiles, $uploadPath . $filename);
                 return !$exist;
             }
         }
