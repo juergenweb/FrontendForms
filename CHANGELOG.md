@@ -1095,10 +1095,13 @@ So please take care to import the correct translation file into your module.
 ## 2024-06-18
 
 - **Bug at asterisk rendering at Pico framework fixed**
+
   The asterisk at a checkbox has been displayed independently if the checkbox was required or not (only at Pico framework). This bug has been fixed now
 
 - **New validator checkIban added**
-  This validator checks if an IBAN entered in an inputfield has the correct format [more](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#checkiban).
 
-  - **New validator checkBic added**
-  This validator checks if a BIC entered in an inputfield has the the correct format [more](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#checkbic).
+  This validator checks if an IBAN entered in an inputfield has the correct format ([more](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#checkiban)).
+
+- **New validator checkBic added**
+
+  This validator checks if a BIC entered in an inputfield has the the correct format ([more](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#checkbic)).
