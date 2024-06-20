@@ -1923,14 +1923,14 @@ You need to add all the texts or text snippets as an array to the validator. The
 This validator checks only if the syntax of an IBAN entered is correct, but it does not check if the IBAN really exists.
 
 ```php
-$field->setRule('checkIban';
+$field->setRule('checkIban');
 ```
 
 ### checkBic
 This validator checks only if the syntax of a BIC entered is correct, but it does not check if the BIC really exists.
 
 ```php
-$field->setRule('checkBic';
+$field->setRule('checkBic');
 ```
 
 ## Customization of validation
