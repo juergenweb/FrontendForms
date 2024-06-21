@@ -2017,7 +2017,7 @@
                 $captchaHeight->attr('value', $this->input_captchaHeight);
                 $captchaHeight->attr('min', 10);
                 $captchaHeight->columnWidth = 33;
-                $captchaHeight->requiredIf = "input_captchaType!=SimpleQuestionCaptcha";
+                $captchaHeight->requiredIf = "input_captchaType=SimpleQuestionCaptcha";
                 $captchaHeight->showIf = "input_captchaType!=none|DefaultImageCaptcha|SimpleQuestionCaptcha";
                 $fieldsetbasic->add($captchaHeight, $inputfields);
 
