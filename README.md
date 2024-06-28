@@ -1725,12 +1725,14 @@ $field->setRule('safePassword');
 ### allowedFileSize
 This validation checks if an uploaded file is not larger than the allowed filesize. It takes the value of
 $_FILES['size'] and compare it the max file size set as second parameter.
-The value of the filesize must be in Bytes (fe 10 000 Bytes equals 10kB). Returns ture if the uploaded fiel is not larger than the allowed file size, otherwise false.
+Returns true if the uploaded file is not larger than the allowed file size, otherwise false.
 
-First parameter: validation name / Second parameter: allowed filesize in Bytes
+First parameter: validation name / Second parameter: allowed filesize as an integer in Bytes or as a string with or without the unit in B, KB, MB, GB, TB or PB. If you do not enter a unit to a string, than the value will be interpreted automatically in bytes. 
 
 ```php
-$field->setRule('allowedFileSize', '10000');
+$field->setRule('allowedFileSize', 10000); // as an integer in Bytes OR
+$field->setRule('allowedFileSize', '10000'); // as a string without an unit OR
+$field->setRule('allowedFileSize', '10 MB'); // as a string with an unit OR
 ```
 
 ### noErrorOnUpload
