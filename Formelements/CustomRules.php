@@ -270,13 +270,13 @@
                 if (count($value) == 1) {
                     if ($value[0]['error'] == '0') {
                         $size = $value[0]['size'];
-                        return ($size <= $params[0]);
+                        return ($size <= Inputfields::convertToBytes($params[0]));
                     }
                 } else {
                     foreach ($value as $file) {
                         if ($file['error'] == '0') {
                             $size = $file['size'];
-                            return ($size <= $params[0]);
+                            return ($size <= Inputfields::convertToBytes($params[0]));
                         }
                         return true;
                     }
@@ -286,7 +286,7 @@
 
 
             /**
-             * 17) Check if an error occur during the upload of the file
+             * 17) Check if an error occured during the upload of the file
              */
             V::addRule('noErrorOnUpload', function ($field, $value) {
                 if (count($value) == 1) {
