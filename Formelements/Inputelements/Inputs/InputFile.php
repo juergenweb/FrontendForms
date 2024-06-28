@@ -141,7 +141,9 @@ class InputFile extends Input
         // check for simultaneously presence of 'phpIniFilesize' and 'allowedFileSize'
         if ((array_key_exists('phpIniFilesize', $this->notes_array)) && (array_key_exists('allowedFileSize',
                 $this->notes_array))) {
-            if ((int)$this->notes_array['allowedFileSize']['value'] <= (int)$this->notes_array['phpIniFilesize']['value']) {
+            $allowed = Inputfields::convertToBytes($this->notes_array['allowedFileSize']['value']);
+            $ini = Inputfields::convertToBytes($this->notes_array['phpIniFilesize']['value']);
+            if ($allowed <= $ini) {
                 // allowed filesize is larger than the one in ini.php - so take only the value of php.ini
                 unset($this->notes_array['phpIniFilesize']); // remove phpIniFilesize from the array
             } else {
@@ -152,7 +154,7 @@ class InputFile extends Input
         // create HTML5 max-size attribute depending on validator settings
         if ((array_key_exists('phpIniFilesize', $this->notes_array)) || (array_key_exists('allowedFileSize', $this->notes_array))) {
             $file_size = $this->notes_array['phpIniFilesize']['value'] ?? $this->notes_array['allowedFileSize']['value'];
-            $this->setAttribute('max-size', (string)$file_size);
+            $this->setAttribute('max-size', (string)(Inputfields::convertToBytes($file_size)/1000)); // set max-size in kb
         }
         return parent::___render();
     }
