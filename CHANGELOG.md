@@ -1105,3 +1105,11 @@ So please take care to import the correct translation file into your module.
 - **New validator checkBic added**
 
   This validator checks if a BIC entered in an inputfield has the the correct format ([more](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#checkbic)).
+
+## [2.2.3] 2024-06-28
+
+- **Select field for privacy page has been changed from InputfieldSelect to InputfieldPageAutocomplete**
+
+  Due to an issue report by dotnetic in the support forum, there is a timeout problem on sites with a lot of pages if are trying to open the configuration settings page (Read more: https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=242390).
+
+  The fieldtype has now been changed from InputfieldSelect to InputfieldPageAutocomplete to prevent such a timeout.
