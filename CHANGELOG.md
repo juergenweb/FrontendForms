@@ -1117,3 +1117,7 @@ So please take care to import the correct translation file into your module.
 - **Wrong filesize conversion fixed**
 
   This issue was also reported by dotnetic in the support forum. There was a conversion issue of the filesize set in the php.ini for the max file-size. In this file the you have to write the unit different than in all other cases. For example: 10 MB has to be written as 10M, 10 GB as 10G and so on. This led to mistakes during the conversion to Bytes, but should be fixed now.
+
+- **Enter the filesize inside the allowedFileSize validator in different formats now**
+  
+  You are now able to enter the filesize inside the allowedfilesize validator not only in Bytes but also as a string with an unit (eg 10 MB). Read more [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#allowedfilesize).
