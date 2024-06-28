@@ -1828,14 +1828,12 @@
             $fieldset4->icon = 'fa-list';
 
             // Select the data privacy page
-            $dataPrivacySelect = $this->wire('modules')->get('InputfieldSelect');
+            $dataPrivacySelect = $this->wire('modules')->get('InputfieldPageAutocomplete');
             $dataPrivacySelect->attr('name', 'input_privacy');
+            $dataPrivacySelect->maxSelectedItems = 1;
             $dataPrivacySelect->label = $this->_('Privacy policy page');
-            $dataPrivacySelect->description = $this->_('Select the page which contains your privacy policy.');
+            $dataPrivacySelect->description = $this->_('Select the page that contains your privacy policy by entering a search term for the title of that page (e.g. privacy).');
             $dataPrivacySelect->notes = $this->_('The link to this page will be used inside the Privacy class for generating the "Accept the privacy policy" checkbox.');
-            foreach ($this->wire('pages')->find("has_parent!=2,id!=2|7,status<" . Page::statusTrash . ",include=all") as $page) {
-                $dataPrivacySelect->addOption($page->id, $page->title);
-            }
             $dataPrivacySelect->attr('value', $this->input_privacy);
             $fieldset4->add($dataPrivacySelect, $inputfields);
 
