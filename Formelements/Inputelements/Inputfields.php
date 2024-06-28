@@ -188,6 +188,40 @@
         }
 
         /**
+         * Convert a filesize to bytes if
+         * @param string|int $from
+         * @param bool $ini
+         * @return int|null
+         */
+        public static function convertToBytes(string|int $from, bool $ini = false): ?int {
+
+            if($ini) {
+                // php.ini only allows 1 letter for the unit
+                $units = ['B', 'K', 'M', 'G', 'T', 'P'];
+            } else {
+                $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+            }
+
+            if(is_int($from)) $from = (string)$from;
+
+            $pos = ($ini) ? -1 : -2;
+            $number = substr($from, 0, $pos);
+            $suffix = strtoupper(substr($from,$pos));
+
+            //B or no suffix
+            if(is_numeric(substr($suffix, 0, 1))) {
+                return (int)preg_replace('/[^\d]/', '', $from);
+            }
+
+            $exponent = array_flip($units)[$suffix] ?? null;
+            if($exponent === null) {
+                return null;
+            }
+
+            return (int)$number * (1024 ** $exponent);
+        }
+
+        /**
          * Set a validator rule to validate the input value
          * Checks first if the validator method exists, otherwise does nothing
          * Check https://processwire.com/api/ref/sanitizer/ for all sanitizer methods
@@ -207,6 +241,15 @@
                 $variables = $args;
             }
 
+            // if only a integer has been added as allowed file size, convert it to kb, MB and so on on error messages
+            if ($validator == 'allowedFileSize') {
+                if(is_int($variables[0])) {
+
+                    $variables[0] = wireBytesStr($variables[0]);
+                }
+            }
+
+
             $this->api = new ValitronAPI();
             $this->api->setValidator($validator);
             $result = $this->api->setRule($validator, $variables);
@@ -218,7 +261,10 @@
             // but can be used for other fields to if needed
 
             // inform about max filesize
+
             if ($validator == 'allowedFileSize') {
+
+                $max_file_size = self::convertToBytes($variables[0]);
                 $this->notes_array['allowedFileSize']['text'] = sprintf($this->_('Please do not upload files larger than %s'),
                     wireBytesStr($variables[0]));
                 $this->notes_array['allowedFileSize']['value'] = $variables[0];
@@ -235,7 +281,8 @@
 
             // inform about max filesize according to php.ini value
             if ($validator == 'phpIniFilesize') {
-                $max_file_size = (int)ini_get("upload_max_filesize") * 1024;
+
+                $max_file_size = self::convertToBytes(ini_get("upload_max_filesize"), true);
                 $this->notes_array['phpIniFilesize']['text'] = sprintf($this->_('Please do not upload files larger than %s'),
                     wireBytesStr($max_file_size));
                 $this->notes_array['phpIniFilesize']['value'] = $max_file_size;
