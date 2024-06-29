@@ -1115,24 +1115,36 @@ These methods can be used on each input field independent of the input type.
 | [useCustomWrapper() ](#usecustomwrapper---add-a-custom-wrapper-to-an-inputfield)  |     add a custom wrapper to an inputfield  |
 | [setSuccessMessage()](#setsuccessmessage---display-a-message-after-form-submission-and-the-entered-field-value-is-valid)  | display a successmessage under an inputfield if the value entered is correct after form submission a  |
 
+### useInputWrapper - add or remove the inputwrapper on per field base
+This is the same as the useInputWrapper() method of the form, but in this case you can add or remove the inputwrapper on per field base indpendent of what is set on per form base.
+
+```php
+$field->useInputWrapper(true); // can be true or false
+```
+
+### useFieldWrapper - add or remove the outer fieldwrapper on per field base
+This is the same as the useFieldWrapper() method of the form, but in this case you can add or remove the fieldwrapper on per field base indpendent of what is set on per form base.
+
+```php
+$field->useFieldWrapper(true); // can be true or false
+```
+
 ### getFieldWrapper() - get the most outer container of a formfield object
 Get the fieldwrapper object for form fields for further manipulations
 The getFieldWrapper() method returns the Field wrapper object, so you can manipulate it, if you need.
 
 ```php
-$form = new Form('myForm');
-$form->getFieldWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the wrapper object
+$field->getFieldWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the wrapper object
 ```
 
 ### getInputWrapper() - get the container element surrounding the input field
 With this method you can grab the wrapper object for further manipulations, if needed
 
 ```php
-$form = new Form('myForm');
 // input wrapper object
-$form->getInputWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the input wrapper object
+$field->getInputWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the input wrapper object
 // and the same for the field wrapper object
-$form->getFieldWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the field wrapper object
+$field->getFieldWrapper()->setAttribute('class', 'newClass')->removeAttribute('class', 'oldClass'); // customize the field wrapper object
 ```
 
 #### setLabel() - add the label text
