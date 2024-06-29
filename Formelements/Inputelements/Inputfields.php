@@ -34,8 +34,8 @@
         protected ValitronAPI $api; // Default values
         protected array $sanitizer = []; // array to hold all sanitizer methods for this input field
         protected array $validatonRules = []; // array to hold all validation rules for one input field (can be none or multiple)
-        protected bool $useInputWrapper = true; // show or hide the wrapper for the input element
-        protected bool $useFieldWrapper = true; // show or hide the wrapper for the complete field element including label
+        protected bool|null $useInputWrapper = null; // show or hide the wrapper for the input element
+        protected bool|null $useFieldWrapper = null; // show or hide the wrapper for the complete field element including label
         protected string $markupType = ''; // the selected markup type (fe UiKit, none, Bootstrap,... whatever)
         protected array $defaultValue = []; // array of all default values
         protected array $notes_array = []; // property that holds multiple notes as an array - needed for some fields internally
@@ -123,6 +123,15 @@
         }
 
         /**
+         * Internal function to check if input wrapper is set on per form base or not
+         * @return bool|null
+         */
+        public function getUsageOfInputWrapper(): bool|null
+        {
+            return $this->useInputWrapper;
+        }
+
+        /**
          * Add the field wrapper to the input field
          * @param bool $useFieldWrapper
          * @return void
@@ -130,6 +139,15 @@
         public function useFieldWrapper(bool $useFieldWrapper): void
         {
             $this->useFieldWrapper = $useFieldWrapper;
+        }
+
+        /**
+         * Internal function to check if field wrapper is set on per form base or not
+         * @return bool|null
+         */
+        public function getUsageOfFieldWrapper(): bool|null
+        {
+            return $this->useFieldWrapper;
         }
 
         /**
@@ -427,7 +445,15 @@
                 $content = $this->___renderDefault($className, $input);
             }
 
-            // Add fieldwrapper ... to all elements except hidden inputs
+            // Add fieldwrapper if set
+            if (!$this->useFieldWrapper) {
+                $out .= $content;
+            } else {
+                $this->fieldWrapper->setContent($content);
+                $out .= $this->fieldWrapper->___render() . PHP_EOL;
+            }
+
+            /*
             if ($className != 'InputHidden') {
                 if (!$this->useFieldWrapper) {
                     $out .= $content;
@@ -438,7 +464,7 @@
             } else {
                 $out .= $content;
             }
-
+*/
             // check if custom wrapper was added an render it as the most outer container
             if ($this->useCustomWrapper) {
                 $this->customWrapper->setContent($out);
@@ -511,6 +537,7 @@
 
             // add input-wrapper if set
             if ($this->useInputWrapper) {
+
                 $this->inputWrapper->setContent($input_markup);
                 $out .= $this->inputWrapper->___render() . PHP_EOL;
             } else {
