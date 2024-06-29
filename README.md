@@ -1093,6 +1093,8 @@ These methods can be used on each input field independent of the input type.
 
 | Method name  | Use case | 
 | ------------- | ------------- |
+| [useInputWrapper()](#useinputwrapper---add-or-remove-the-inputwrapper-on-per-field-base)  | add or remove the inputwrapper on per field base  |
+| [useFieldWrapper()](#usefieldwrapper---add-or-remove-the-outer-fieldwrapper-on-per-field-base)  | add or remove the outer fieldwrapper on per field base  |
 | [getFieldWrapper()](#getfieldwrapper---get-the-most-outer-container-of-a-formfield-object)  | get the most outer container of a formfield object  |
 | [getInputWrapper()](#getinputwrapper---get-the-container-element-surrounding-the-input-field)  | get the container element surrounding the input field  |
 | [setLabel()](#setlabel---add-the-label-text)  |  add the label text  |
