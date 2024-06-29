@@ -1537,6 +1537,20 @@ $selectfield->addOption($this->_('Poor'), '2');
 $selectfield->addOption($this->_('Terrible'), '1');
 ```
 
+## Additional Markup
+
+If you want to add some markup between the form fields you can use the markup class to add some markup to the form.
+This markup object has to be added like any other form elements to the form via the add() method.
+
+```php
+$markup = new Markup();
+$markup->setMarkup('<p>This is my extra markup!</p>');
+$form->add($markup);
+```
+This class does not have other methods, like setAttribute() or others that form fields have, because it is only a simple class to add some raw HTML code to the form.
+
+Just to mention: Beside this method you can also use the [prepend() and append() methods](#prepend-append---prepend-or-append-a-string-to-an-object-field-form-button) to add some markup to a form field. 
+
 ## Form validation
 The [Valitron validation library](https://github.com/vlucas/valitron) is used to validate form values and this validation
 class comes with a lot of ready-to-use validation rules.
