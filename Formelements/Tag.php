@@ -67,8 +67,8 @@ abstract class Tag extends Wire
     protected object $classes; // all pre-defined css-classes as stdClass object
     protected string $prepend = ''; // markup before the tag
     protected string $append = ''; // markup after the tag
-    protected bool $useInputWrapper = true; // whether the input wrapper should be user or not
-    protected bool $useFieldWrapper = true;// whether the field wrapper should be user or not
+    protected bool|null $useInputWrapper = true; // whether the input wrapper should be user or not
+    protected bool|null $useFieldWrapper = true;// whether the field wrapper should be user or not
     protected bool $appendcheckbox = false; // whether the checkbox should be appended after the label or not
     protected bool $appendradio = false;  // whether the radio should be appended after the label or not
     protected string $uploadPath = '';
