@@ -2791,7 +2791,7 @@
          * @throws \Exception
          */
         public function add(
-            Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose           $field,
+            Markup|Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose           $field,
             Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose|null|bool $otherfield = null,
             bool                                                                 $add_before = false
         ): void
