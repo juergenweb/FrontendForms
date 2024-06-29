@@ -31,6 +31,7 @@ This module will work without GD-Library too, but you will not be able to use CA
 * [General methods](#general-methods)
 * [Form and its methods](#form-methods)
 * [Input fields and their methods](#input-field-methods)
+* [Additional Markup](#additional-markup)
 * [Form validation](#form-validation)
 * [Customization of validation](#customization-of-validation)
 * [Other form elements](#other-form-elements)
