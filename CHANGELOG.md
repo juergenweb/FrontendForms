@@ -1121,3 +1121,15 @@ So please take care to import the correct translation file into your module.
 - **Enter the filesize inside the allowedFileSize validator in different formats now**
   
   You are now able to enter the filesize inside the allowedfilesize validator not only in Bytes but also as a string with an unit (eg 10 MB). Read more [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#allowedfilesize).
+
+- **New class to add simple markup to the form**
+
+  Beside the append() and prepend() methods, which can be used to add some additional markup to any input field, you have now the possibility to add some extra markup to the form (independent of any input field). This can be done in the way like this:
+
+  ```php
+  $markup = new Markup();
+  $markup->setMarkup('<p>This is my extra markup!</p>');
+  $form->add($markup);
+  ```
+
+  Read more [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#additional-markup).
