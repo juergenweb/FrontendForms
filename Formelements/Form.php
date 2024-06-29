@@ -2646,7 +2646,7 @@
                     $position = array_search('FrontendForms\Button', $elementsClassNames);
 
                     foreach ($this->formElements as $key => $element) {
-
+                     
                         //create input ID as a combination of form id and input name
                         $oldId = $element->getAttribute('id');
                         $element->setAttribute('id', $this->getID() . '-' . $oldId);
@@ -2799,8 +2799,23 @@
 
             // add or remove wrapper divs on each form element
             if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
-                $field->useInputWrapper($this->useInputWrapper);
-                $field->useFieldWrapper($this->useFieldWrapper);
+
+                // check if usage of inputwrapper is set on per field base
+                if(is_null($field->getUsageOfInputWrapper())){
+                    $useinputwrapper = $this->useInputWrapper;
+                } else {
+                    $useinputwrapper = $field->getUsageOfInputWrapper();
+                }
+                $field->useInputWrapper($useinputwrapper);
+
+                // check if usage of fieldwrapper is set on per field base
+                if(is_null($field->getUsageOfFieldWrapper())){
+                    $usefieldwrapper = $this->useFieldWrapper;
+                } else {
+                    $usefieldwrapper = $field->getUsageOfFieldWrapper();
+                }
+                $field->useFieldWrapper($usefieldwrapper);
+
                 // create a placeholder for the label of this field
                 $fieldname = $field->getAttribute('name');
                 $this->setMailPlaceholder($fieldname . 'label', $field->getLabel()->getText());
