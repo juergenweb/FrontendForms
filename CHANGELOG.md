@@ -1133,3 +1133,11 @@ So please take care to import the correct translation file into your module.
   ```
 
   Read more [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#additional-markup).
+
+- **useInputWrapper(), useFieldWrapper() - 2 new methods for inputfields**
+
+  These 2 new methods are the same as the useInputWrapper() and useFieldWrapper() methods that can be used with the form object. But in this case you can overwrite the settings of the form on per field base.
+
+  This means, that if you have set to use the fieldwrapper on all input elements, you can disable for example the usage of the fieldwrapper on a specific field by using (in this case) the useInputWrapper(false) method. This gives you a little more flexibility.
+
+  Read more [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#useinputwrapper---add-or-remove-the-inputwrapper-on-per-field-base)
