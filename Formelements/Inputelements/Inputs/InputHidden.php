@@ -25,6 +25,9 @@ class InputHidden extends Input
     {
         parent::__construct($id);
         $this->setAttribute('type', 'hidden');
+        // disable input and field wrapper by default on this input type
+        $this->useInputWrapper(false);
+        $this->useFieldWrapper(false);
     }
 
     /**
