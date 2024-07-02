@@ -647,6 +647,14 @@ Fe if you want to get the field with the name attribute "email" add "email" as p
   $form->getFormelementByName($fieldname); // fieldname could be fe email, pass or whatever
 ```
 
+### getFormelementsByClass() - get all form fields of a specific class
+If you need all formelements of a given class (eg InputfieldText), this method is the right one - returns array containing all objects of the given class
+
+```php
+  $form->getFormelementByClass($classname); // classname must be the name of the class with or without namespace
+  $form->getFormelementByClass('Button); // this outputs an array containing all button elements of the form object
+```
+
 ### setErrorMsg() - overwrite the default error message after form submission
 With this method you can overwrite the default error message which appears inside the alert box after an unsuccessful form submission.
 ```php
