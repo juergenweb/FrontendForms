@@ -1141,3 +1141,11 @@ So please take care to import the correct translation file into your module.
   This means, that if you have set to use the fieldwrapper on all input elements, you can disable for example the usage of the fieldwrapper on a specific field by using (in this case) the useInputWrapper(false) method. This gives you a little more flexibility.
 
   Read more [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#useinputwrapper---add-or-remove-the-inputwrapper-on-per-field-base)
+
+## 2024-07-02
+
+- **getFormelementsByClass() - New method for form object**
+
+  This method returns an array containing all form elements of a given class. For example you get all Button object or InputfieldEmail objects and so on.
+
+  Read more [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#getformelementsbyclass---get-all-form-fields-of-a-specific-class)
