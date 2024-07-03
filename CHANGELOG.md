@@ -1149,3 +1149,7 @@ So please take care to import the correct translation file into your module.
   This method returns an array containing all form elements of a given class. For example you grab all Button objects or InputfieldEmail objects and so on.
 
   Read more [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#getformelementsbyclass---get-all-form-fields-of-a-specific-class)
+
+- **getValues() method now returns all POST variables independent if they are added via Markup or as an object to the form**
+
+  In previous versions of this module, the getValues() method had returned only the values of inputfields which has been added to the form object via the add() method and which were visible to the users (no hidden fields). Due to a user request, I have rewritten this method to also return hidden fields and inputfields which have been added for example via the Markup class and has not been added as an inputfield object to the the form object. Now you will get much more POST values with this method than before.
