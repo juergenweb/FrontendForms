@@ -20,7 +20,6 @@
     use ProcessWire\HookEvent;
     use ProcessWire\Language;
     use ProcessWire\Module;
-    use ProcessWire\PageArray;
     use ProcessWire\User;
     use ProcessWire\Page;
     use ProcessWire\Wire;
@@ -1586,24 +1585,33 @@
         /**
          * Get all sanitized form values after form submission as an array
          * If there are sanitizers set for the form values, they will be applied
-         * @param bool $buttonValue
+         * @param bool $buttonValue : If there are buttons set the value of the buttons will be applied too
          * @return array|null
          */
         public function getValues(bool $buttonValue = false): array|null
         {
 
-            if ($buttonValue) {
-                return $this->values;
+            // add button elements to inputfields if set
+            $elements = $this->getNamesOfInputFields();
+            foreach($this->getFormElementsByClass('Button') as $button) {
+                if($button->hasAttribute('value')){
+                    if($button->hasAttribute('name')){
+                        if($buttonValue){
+                            $elements[] = $button->getAttribute('name');
+                        }
+                    }
+                }
             }
 
-            $result = array_intersect($this->getNamesOfInputFields(), $this->getNamesOfInputFields());
             $values = [];
+            foreach ($elements as $key) {
 
-            foreach ($result as $key) {
+                // remove [] from name attribute if present
+                $key = str_replace('[]', '', $key);
 
                 // check if inputfield is a file upload field
                 $formElement = $this->getFormelementByName($key);
-                if ($formElement instanceof InputFile) {
+                if ($formElement && $formElement instanceof InputFile) {
                     $files = [];
                     if ($this->storedFiles) {
                         $pathFileArray = $this->storedFiles;
@@ -1627,8 +1635,8 @@
 
                     }
 
-
                 } else {
+
                     if (array_key_exists($key, $this->values)) {
                         $values[$key] = $this->values[$key];
                     }
@@ -1662,6 +1670,29 @@
             return current(array_filter($this->formElements, function ($e) use ($name) {
                 return $e->getAttribute('name') == $name;
             }));
+        }
+
+        /**
+         * Get all elements of the form that are an object of a specific class
+         * Returns an array containing all objects of the given class (eg all Button elements)
+         * @param string $class
+         * @return array
+         */
+        public function getFormElementsByClass(string $class): array
+        {
+            // remove namespace first if set
+            if (str_contains($class, '\\'))
+                $class = substr(strrchr($class, '\\'), 1);
+
+            $items = [];
+            foreach ($this->formElements as $element) {
+
+                $className = substr(strrchr(get_class($element), '\\'), 1);
+                if ($className == $class) {
+                    $items[] = $element;
+                }
+            }
+            return $items;
         }
 
         /**
@@ -1870,6 +1901,7 @@
 
             // 1) check if this form was submitted and no other form on the same page
             if ($validation->thisFormSubmitted()) {
+
                 // add a validation class to the form after it was submitted
                 $this->setCSSClass('formClassValidated'); // add the CSS class
                 // 2) check if form was submitted in time range
@@ -2185,27 +2217,47 @@
          */
         private function setValues(): void
         {
+            $post_values = $this->wire('input')->post;
+            // get buttons
+            foreach ($this->getFormElementsByClass('Button') as $button) {
+                if ($button->hasAttribute('value')) {
+                    if ($button->hasAttribute('name')) {
+                        $post_values[$button->getAttribute('name')] = $button->getAttribute('value');
+                    }
+                }
+            }
+
             $values = [];
-            foreach ($this->formElements as $element) {
-                if ($element->getAttribute('value')) {
+            foreach ($post_values as $name => $value) {
+
+                // grab formelement by its name attribute
+                $element = $this->getFormelementByName($name);
+
+                if ($element) {
 
                     // Run all sanitizer methods over the value
                     if (method_exists($element, 'getSanitizers')) {
                         $sanitizers = $element->getSanitizers();
                         foreach ($sanitizers as $sanitizer) {
-                            $value = $element->wire('sanitizer')->$sanitizer($element->getAttribute('value'));
+                            $value = $element->wire('sanitizer')->$sanitizer($post_values->$name);
                         }
                     } else {
-                        $value = $element->getAttribute('value');
+                        $value = $post_values->$name;
                     }
-                    $values[$element->getAttribute('name')] = $value;
+                } else {
+                    // no element exists -> get the value directly from the POST array
+                    $value = $post_values->$name;
 
-                    // set all form values to a placeholder
-                    $fieldName = str_replace($this->getID() . '-', '', $element->getAttribute('name')) . 'value';
-
-                    $this->setMailPlaceholder($fieldName, $element->getAttribute('value'));
                 }
+                $values[$name] = $value;
+
+                // set all form values to a placeholder
+                $fieldName = str_replace($this->getID() . '-', '', $name) . 'value';
+
+                $this->setMailPlaceholder($fieldName, $value);
+
             }
+
             $this->values = $values;
         }
 
@@ -2646,7 +2698,7 @@
                     $position = array_search('FrontendForms\Button', $elementsClassNames);
 
                     foreach ($this->formElements as $key => $element) {
-                     
+
                         //create input ID as a combination of form id and input name
                         $oldId = $element->getAttribute('id');
                         $element->setAttribute('id', $this->getID() . '-' . $oldId);
@@ -2791,7 +2843,7 @@
          * @throws \Exception
          */
         public function add(
-            Markup|Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose           $field,
+            Markup|Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose    $field,
             Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose|null|bool $otherfield = null,
             bool                                                                 $add_before = false
         ): void
@@ -2801,15 +2853,16 @@
             if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
 
                 // check if usage of inputwrapper is set on per field base
-                if(is_null($field->getUsageOfInputWrapper())){
+                if (is_null($field->getUsageOfInputWrapper())) {
                     $useinputwrapper = $this->useInputWrapper;
                 } else {
                     $useinputwrapper = $field->getUsageOfInputWrapper();
                 }
+
                 $field->useInputWrapper($useinputwrapper);
 
                 // check if usage of fieldwrapper is set on per field base
-                if(is_null($field->getUsageOfFieldWrapper())){
+                if (is_null($field->getUsageOfFieldWrapper())) {
                     $usefieldwrapper = $this->useFieldWrapper;
                 } else {
                     $usefieldwrapper = $field->getUsageOfFieldWrapper();
@@ -3161,7 +3214,7 @@
             if (!$numberOfQuestions) return $questionArray;
 
             // just the case there are more than 25 pages, pick only 25 pages randomly to prevent a too large array
-            if($numberOfQuestions > 25) {
+            if ($numberOfQuestions > 25) {
                 $questions = $questions->findRandom(25);
             }
 
