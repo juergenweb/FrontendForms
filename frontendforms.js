@@ -426,6 +426,10 @@ function jumpToAnchor() {
 function maxCharsCounterReverse() {
     const textarea = document.querySelector("textarea");
 
+    if (!textarea) {
+        return;
+    }
+    
     textarea.addEventListener("input", event => {
         const target = event.currentTarget;
         const maxLength = target.getAttribute("maxlength");
