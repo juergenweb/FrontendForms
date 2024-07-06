@@ -25,6 +25,7 @@ This module will work without GD-Library too, but you will not be able to use CA
 
 ## Table of contents
 * [Installation and Quick-start guide](#installation-and-quick-start-guide)
+* [Support for CSS frameworks](#support-for-css-frameworks)
 * [Which input types are supported?](#which-input-types-are-supported)
 * [SPAM protection](#spam-protection-and-security-features)
 * [Prevent double form submission](#prevent-double-form-submission)
