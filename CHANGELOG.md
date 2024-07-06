@@ -1153,3 +1153,13 @@ So please take care to import the correct translation file into your module.
 - **getValues() method now returns all POST variables independent if they are added via Markup or as an object to the form**
 
   In previous versions of this module, the getValues() method had returned only the values of inputfields which has been added to the form object via the add() method and which were visible to the users (no hidden fields). Due to a user request, I have rewritten this method to also return hidden fields and inputfields which have been added for example via the Markup class and has not been added as an inputfield object to the the form object. Now you will get much more POST values with this method than before.
+
+- **Support for not included CSS frameworks added**
+
+  This module comes with native support for Bootstrap 5, UIKit 3 and Pico CSS frameworks. Selection one of these frameworks in the module configuration changes the classes being used on the frontend for the forms.
+
+   If you want to use your own classes for example of a framework that is not supported by default, you have to add each class in the backend inside the tab "Own CSS classes" This works fine, but has one big disadvantage: You can only change the classnames for this PW installation. If you install a new PW site and you want to use the same classes, you have to enter them once more.
+
+  To make life a little bit easier, you can now add your own json file including all the classes inside a new folder called "frameworks". You will find this folder under site/assets/files/frameworks.
+
+  
