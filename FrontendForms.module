@@ -63,6 +63,7 @@
         protected array $blacklist = []; // array of all passwords inside the blacklist as stored inside the db
 
         protected string $modulePath = ''; // path to this module folder
+        protected string $customFrameworksPath = ''; // path to the folder, where all custom framework json files can be stored
         protected array $moduleConfig = []; // array that hold all module config values
         protected string $lang = 'en'; // default language
 
@@ -249,6 +250,7 @@
 
             // add the appropriate values to properties, so you can get them everywhere inside the class
             $this->modulePath = $this->wire('config')->paths->siteModules . 'FrontendForms/'; // set relative path to this module
+            $this->customFrameworksPath = $this->wire('config')->paths->assets.'files/FrontendForms/frameworks/';
             $this->moduleConfig = $this->wire('modules')->getConfig($this);
             $this->imagePath = $this->modulePath . 'captchaimages/'; // path to the images for the CAPTCHA
             $this->passwordPath = $this->modulePath . 'passwords.txt'; // path to password.txt file
@@ -269,10 +271,37 @@
             // create numeric array of all available email templates inside the email folder
             $this->setEmailTemplates();
 
+
             //get all classes from the currently loaded framework from the folder CSSClasses
-            $this->defaultClasses = json_decode(file_get_contents($this->modulePath . 'CSSClasses/' . $this->input_framework));
+            /*
+            if($this->wire('files')->exists($this->modulePath . 'CSSClasses/' . $this->input_framework)){
+                $filePath = $this->modulePath . 'CSSClasses/' . $this->input_framework;
+            } else if ($this->wire('files')->exists($this->customFrameworksPath.$this->input_framework)){
+                $filePath = $this->customFrameworksPath.$this->input_framework;
+            } else {
+                // load none.json file as fallback
+                $filePath = $this->modulePath . 'CSSClasses/none.json';
+            }*/
+
+            $this->defaultClasses = json_decode(file_get_contents(self::getCSSClassFile($this->input_framework)));
+            //$this->defaultClasses = json_decode(file_get_contents($this->modulePath . 'CSSClasses/' . $this->input_framework));
+
 
             self::$framework = str_replace('.json', '', $this->input_framework);
+        }
+
+        public static function getCSSClassFile(string $framework): string
+        {
+            $modulePath = wire('config')->paths->siteModules . 'FrontendForms'.DIRECTORY_SEPARATOR;
+            $customFrameworksPath = wire('config')->paths->assets.'files'.DIRECTORY_SEPARATOR.'FrontendForms'.DIRECTORY_SEPARATOR.'frameworks'.DIRECTORY_SEPARATOR;
+
+            if(wire('files')->exists($modulePath . 'CSSClasses' .DIRECTORY_SEPARATOR. $framework)){
+                return $modulePath . 'CSSClasses' .DIRECTORY_SEPARATOR. $framework;
+            } else if (wire('files')->exists($customFrameworksPath.$framework)){
+                return $customFrameworksPath.$framework;
+            }
+                // load none.json file as fallback
+                return $modulePath . 'CSSClasses'.DIRECTORY_SEPARATOR .'none.json';
         }
 
 
@@ -1643,7 +1672,13 @@
             $frameworkSelect->attr('name', 'input_framework');
             $frameworkSelect->label = $this->_('Output rendering');
             $frameworkSelect->description = $this->_('Select if you want to use a framework for rendering the form or not');
-            $frameWorkFiles = $this->wire('files')->find($this->modulePath . 'CSSClasses/', ['extensions' => 'json']);
+            $defaultFrameWorkFiles = $this->wire('files')->find($this->modulePath . 'CSSClasses/', ['extensions' => 'json']);
+            // check if custom framework folder exists, otherwise create it
+            if(!$this->wire('files')->exists($this->customFrameworksPath)){
+                $this->wire('files')->mkdir($this->customFrameworksPath);
+            }
+            $customFrameworkFiles = $this->wire('files')->find($this->customFrameworksPath, ['extensions' => 'json']);
+            $frameWorkFiles = array_merge($defaultFrameWorkFiles, $customFrameworkFiles);
             $key = array_search($this->modulePath . 'CSSClasses/none.json', $frameWorkFiles);
             array_unshift($frameWorkFiles, $frameWorkFiles[$key]); // move none.json to the first position in the array
 
@@ -1655,6 +1690,7 @@
                 }
                 $frameWorkOptions[pathinfo($path, PATHINFO_BASENAME)] = $label;
             }
+            // check for external frameworks under site/assets/files/Frontendforms/frameworks
             $frameworkSelect->addOptions(array_unique($frameWorkOptions));
             $frameworkSelect->attr('value', $this->input_framework);
             $frameworkSelect->required = 1;
