@@ -271,21 +271,8 @@
             // create numeric array of all available email templates inside the email folder
             $this->setEmailTemplates();
 
-
             //get all classes from the currently loaded framework from the folder CSSClasses
-            /*
-            if($this->wire('files')->exists($this->modulePath . 'CSSClasses/' . $this->input_framework)){
-                $filePath = $this->modulePath . 'CSSClasses/' . $this->input_framework;
-            } else if ($this->wire('files')->exists($this->customFrameworksPath.$this->input_framework)){
-                $filePath = $this->customFrameworksPath.$this->input_framework;
-            } else {
-                // load none.json file as fallback
-                $filePath = $this->modulePath . 'CSSClasses/none.json';
-            }*/
-
             $this->defaultClasses = json_decode(file_get_contents(self::getCSSClassFile($this->input_framework)));
-            //$this->defaultClasses = json_decode(file_get_contents($this->modulePath . 'CSSClasses/' . $this->input_framework));
-
 
             self::$framework = str_replace('.json', '', $this->input_framework);
         }
@@ -1673,10 +1660,6 @@
             $frameworkSelect->label = $this->_('Output rendering');
             $frameworkSelect->description = $this->_('Select if you want to use a framework for rendering the form or not');
             $defaultFrameWorkFiles = $this->wire('files')->find($this->modulePath . 'CSSClasses/', ['extensions' => 'json']);
-            // check if custom framework folder exists, otherwise create it
-            if(!$this->wire('files')->exists($this->customFrameworksPath)){
-                $this->wire('files')->mkdir($this->customFrameworksPath);
-            }
             $customFrameworkFiles = $this->wire('files')->find($this->customFrameworksPath, ['extensions' => 'json']);
             $frameWorkFiles = array_merge($defaultFrameWorkFiles, $customFrameworkFiles);
             $key = array_search($this->modulePath . 'CSSClasses/none.json', $frameWorkFiles);
@@ -2656,6 +2639,10 @@
             // create custom email template folder if it does not exist
             $this->wire('files')->mkdir($this->wire('config')->paths->site . 'frontendforms-custom-templates/');
 
+            // check if custom framework folder exists, otherwise create it
+            if(!$this->wire('files')->exists($this->customFrameworksPath)){
+                $this->wire('files')->mkdir($this->customFrameworksPath);
+            }
         }
 
         /**
