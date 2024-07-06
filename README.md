@@ -141,28 +141,30 @@ Now you are ready to use the module inside your project!
 
 ## Support for CSS frameworks
 
-This module comes with native support for Bootstrap 5, UIKit 3 and Pico CSS frameworks at the time of writing. Selection one of these frameworks in the module configuration changes the classes being used on the frontend for the forms.
+This module comes with native support for Bootstrap 5, UIKit 3 and Pico CSS framework at the time of writing. Selecting one of these frameworks in the module configuration changes the classes being used on the frontend inside the forms.
 
-If you want to use your own classes for example of a framework that is not supported by default, you have to add each class in the backend inside the tab "Own CSS classes" This works fine, but has one big disadvantage: You can only change the classnames for the given ProcessWire installation. If you install a new ProcessWire site and you want to use the same classes, you have to enter them once more.
+If you want to use your own classes for example of a framework that is not supported by default, you have to add each class in the backend inside the tab "Own CSS classes" This works fine, but has one big disadvantage: You can only change the classnames for the given ProcessWire installation. If you install a new ProcessWire site and you want to use the same classes again, you have to enter them once more.
 
-To make life a little bit easier, you can add your own json file including all the classes inside a new folder called "frameworks". You will find this folder under site/assets/files/frameworks.
+To make life a little bit easier, you can add your own json file including all the classes inside a new folder called "frameworks". You will find this folder under site/assets/files/frameworks. This folder will not be overwritten during an update.
 
 ### How does it work
-To create your own json files with your own classes, please copy an existing json file (eg. of the UIKit framework). You will find the existing files inside the folder "CSSClasses".
 
-Rename the file with a different name (eg myCSS.json) and add it inside the folder "frameworks". Now you have to overwrite the classes inside this file with your own classnames.
+To create your own json files with your own classes, please copy an existing json file (eg. of the UIKit framework) first. You will find all existing files inside the folder "CSSClasses". It does not matter which of them you choose as your skeleton file for your own classes.
+
+Rename the file with a different name (eg myCSS.json) than the existing ones and add it inside the folder "frameworks" (site/assets/files/frameworks). Now you have to overwrite the classes inside this file with your own classnames.
 
 ```json
 "alertClass": "my-alert" // eg alertClass will be overwritten from alert to my alert
 ```
-Go to the module configuration in the backend and select your own CSS as the framework that should be used.
+Go to the module configuration in the backend and select your own CSS as the framework that should be used. You will find this configuration setting under "Markup and styling for forms -> Setting for markup and styling -> Output rendering".
+
 That is all and now all classes on the frontend will be replaced by your own classes. 
 
 The big advantage is that you can use this file on another ProcessWire installation in the same way, without the need to write it once more.
 
 **Important note!!**
 
-Please keep in mind that only the classnames will change in this case. This works for most cases, but if you try to add classes from a CSS framework that uses a different markup for forms too, you will probably get not desired output for your forms. In this case you can write a request on Github for adding support to this framework and probably I will add it ;-)
+Please keep in mind that only the classnames will change in this case. This works for most cases, but if you try to add classes from a CSS framework that uses a different markup for forms too, you will probably get not the desired output for your forms. In this case you can write a request on Github for adding support to this framework and probably I will add it ;-)
 
 ## Which input types are supported?
 You can find examples of all supported input types inside the 'examples' folder in the inputTypes.php
