@@ -1162,4 +1162,6 @@ So please take care to import the correct translation file into your module.
 
   You will find a more detailed explanation about this new possibility [here](https://github.com/juergenweb/FrontendForms/blob/main/README.md#support-for-css-frameworks).
 
-  
+- **Small JavaScript bug fixed**
+
+  There was a little bug in the maxCharsCounterReverse() function: a missing check if a textarea is present. Thanks to dotnetic for reporting this issue and providing a fix too.
