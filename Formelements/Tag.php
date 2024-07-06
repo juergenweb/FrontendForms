@@ -13,9 +13,14 @@ namespace FrontendForms;
  * Created: 03.07.2022
  */
 
+
+use ProcessWire\FrontendForms;
 use ProcessWire\Wire as Wire;
 use ProcessWire\WireException;
 use ProcessWire\WirePermissionException;
+
+
+\ProcessWire\wire('classLoader')->addNamespace('ProcessWire', '.'.__DIR__ . 'FrontendForms');
 
 abstract class Tag extends Wire
 {
@@ -95,7 +100,8 @@ abstract class Tag extends Wire
         $this->appendradio = in_array('appendradio', $this->frontendforms['input_appendLabel']);
 
         // load the json file from CSSClass directory
-        $this->classes = json_decode(file_get_contents($this->wire('config')->paths->FrontendForms . 'CSSClasses' . DIRECTORY_SEPARATOR . $this->frontendforms['input_framework']));
+        $this->classes = json_decode(file_get_contents(FrontendForms::getCSSClassFile($this->frontendforms['input_framework'])));
+        //$this->classes = json_decode(file_get_contents($this->wire('config')->paths->FrontendForms . 'CSSClasses' . DIRECTORY_SEPARATOR . $this->frontendforms['input_framework']));
     }
 
     /**
