@@ -1142,7 +1142,7 @@ So please take care to import the correct translation file into your module.
 
   Read more [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#useinputwrapper---add-or-remove-the-inputwrapper-on-per-field-base)
 
-## 2024-07-02
+## [2.2.4] 2024-07-06
 
 - **getFormelementsByClass() - New method for form object**
 
