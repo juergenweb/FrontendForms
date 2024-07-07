@@ -1168,4 +1168,4 @@ So please take care to import the correct translation file into your module.
 
 - **Size of CAPTCHA images reduced**
 
-   The size of the CAPTCHA images has been reduced from 900px to 450px in length to improve the loading speed. 450px seems to be enough.
+   The size of the CAPTCHA images has been reduced from 900px to 450px in length to prevent timeouts during the update. Over the time I have added so much different CAPTCHA images that the total size of all images is over 12MB now. This could lead to timeouts during an update of the module, especially if your connection is not very fast. To improve the download speed and to prevent such timeouts I have reduced all CAPTCHA images to the half size. 450px seems to be enough ;-)
