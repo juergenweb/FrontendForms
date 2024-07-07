@@ -1165,3 +1165,7 @@ So please take care to import the correct translation file into your module.
 - **Small JavaScript bug fixed**
 
   There was a little bug in the maxCharsCounterReverse() function: a missing check if a textarea is present. Thanks to dotnetic for reporting this issue and providing a fix too.
+
+- **Size of CAPTCHA images reduced**
+
+   The size of the CAPTCHA images has been reduced from 900px to 450px in length to improve the loading speed. 450px seems to be enough.
