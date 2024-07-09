@@ -2877,7 +2877,12 @@
             // if the field is not a text element, set the name attribute
             if (!is_subclass_of($field, 'FrontendForms\TextElements')) {
                 // Add id of the form as prefix for the name attribute of the field
-                $field->setAttribute('name', $this->getID() . '-' . $field->getId());
+                if($field->hasAttribute('name')){
+                    $fieldName = $field->getAttribute('name');
+                } else {
+                    $fieldName = $field->getId();
+                }
+                $field->setAttribute('name', $this->getID() . '-' . $fieldName);
             }
 
             if (!is_null($otherfield)) {
