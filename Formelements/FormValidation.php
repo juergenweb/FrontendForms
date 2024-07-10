@@ -81,6 +81,7 @@
                 // calculate new min time depending on the required fields, which has no value at the moment
                 if ($numberOfRequiredFieldWithValues) {
                     $newMinTime = (round(($this->form->getMinTime() * (count($requiredFields) - $numberOfRequiredFieldWithValues)) / count($requiredFields)));
+                    if($newMinTime < 1) $newMinTime = 1; // set it to at least 1 to prevent error if newMinTime would be rounded to 0
                     $this->form->setMinTime((int)$newMinTime);
                 }
 
