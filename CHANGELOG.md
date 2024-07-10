@@ -1175,3 +1175,11 @@ So please take care to import the correct translation file into your module.
 - **Bug fixed for setting input field name**
 
   There was a bug that prevents the setting of a custom field name attribute for an inputfield. This is fixed now and you can set the name attribute different from the id attribute.
+
+- **Bug fixed for throwing error message if minTime() will be rounded to 0**
+
+  Thanks to Donatas from the forum, who reported a bug inside the checkTimeDiff() method, which calculates the time difference between loading the form and submitting the form.
+
+  This method caluculates the minTime() depending on the mandatory fields left inside the form and rounded the value to seconds. If the value will be rounded to 0, an error occured. This is an rare edge-case-scenario, but it could happen.
+
+  The bug fix sets the value to at least 1 second if the rounded value is lower than 1, so that it will never become 0. This prevents from stopping the code and firing an error message.
