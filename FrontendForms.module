@@ -282,6 +282,7 @@
             self::$framework = str_replace('.json', '', $this->input_framework);
         }
 
+
         public static function getCSSClassFile(string $framework): string
         {
             $modulePath = wire('config')->paths->siteModules . 'FrontendForms'.DIRECTORY_SEPARATOR;
@@ -1297,7 +1298,9 @@
 
             $version = $this->getModuleInfo()['version'];
             if (!$this->input_removeJS) {
-                $js = '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '" defer></script>' . PHP_EOL;
+
+                $js = '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.js?v=' . $version . '"></script>' . PHP_EOL;
+                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '" defer></script>' . PHP_EOL;
                 $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
             }
             if (!$this->input_removeCSS) {
