@@ -2550,7 +2550,7 @@ That is all and now field 2 will be only visible, if you select value 1 on field
 
 ### On which fields can I add a dependency?
 
-You can add a dependency on every form element (button, input field, alert,..). There is no restriction, but the most used case is to show/hide and input field.
+You can add a dependency on every form element (button, input field, alert,..). There is no restriction, but the most used case is to show/hide an input field.
 
 Disable/enable functionality is for input fields only.
 
