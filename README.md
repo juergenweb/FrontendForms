@@ -2520,8 +2520,11 @@ It is a script written by Ali Khallad, but I found it very useful, so I decided 
 You will find the script and the original documentation at https://github.com/bomsn/mf-conditional-fields.
 I can recommend that you not only read my documentation here, but also take a look at the documentation there.
 
-**Please note**: writing conditions seems to be not so easy to understand at the first sight, but it is very easy, believe me.
-For better understanding, I have written a lot of examples on how to write conditions. You will find them all inside the Example folder.
+**Please note**: 
+
+Writing conditions seems to be not so easy to understand at the first sight, but it is very easy, believe me.
+
+For better understanding, I have written a lot of examples on how to write conditions. You will find them all inside the [Example folder](https://github.com/juergenweb/FrontendForms/tree/main/Examples/inputfield_conditions).
 Please study these examples to get an idea of how it works. 
  
 ### What is the use case of using input field dependencies?
@@ -2529,7 +2532,9 @@ Please study these examples to get an idea of how it works.
 Let me explain the usage according to an example:
 
 Let's say you have two fields in your form: a number input field (field 1) and a text input field (field 2).
+
 Field 2 should only be visible if the value "1" is selected inside field 1. Otherwise, field 2 should be hidden.
+
 The input field dependencies allow you to add the condition directly to field 2 without having to write a line of JavaScript.
 
 Here is an example on how to add such a condition to an input field:
@@ -2541,16 +2546,18 @@ $field2->showIf([
         'value' => '1'
     ]);
 ```
-That is all and now field 2 will be visible, if you select 1 on field 1.
+That is all and now field 2 will be only visible, if you select value 1 on field 1.
 
 ### On which fields can I add a dependency?
 
 You can add a dependency on every form element (button, input field, alert,..). There is no restriction, but the most used case is to show/hide and input field.
+
 Disable/enable functionality is for input fields only.
 
 ### Which fields can be used as reference fields?
 
 A reference field is a field from which you retrieve the comparison value for the condition. 
+
 Only fields with pre-defined values can be used as reference field. Therefore you can use only the following input types:
 
 * checkbox single
@@ -2560,11 +2567,11 @@ Only fields with pre-defined values can be used as reference field. Therefore yo
 * select single
 * select multiple 
 
-Other input field types not supported as a reference field (eg an text input).
+Other input field types are not supported as a reference field (eg a text input).
 
 ### Writing a rule
 
-Dependency rules have to be written as an array with the keys name, operator and value:
+Dependency rules have to be written as an array with the keys "name", "operator" and "value".
 
 ```php
 $rule = ['name' => 'field1', 'operator' => 'is', 'value' => '3'];
@@ -2588,10 +2595,11 @@ $field->showIf([rule]);
 ```
 You will find an example of each type at [Examples/inputfield_conditions/conditiontypes.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/inputfield_conditions/conditiontypes.php). Please take a look there on how to use them.
 
-### 2 types of logic: AND and OR
+### 2 types of logic: AND / OR
 
 The logic operator is only relevant if you are combining 2 or more rules. The OR-operator is set by default. So if you want to combine multiple rules
 via OR-logic, you do not have to do anything.
+
 If you want to combine them via AND-logic, you have to add the logic after the rules as second parameter.
 
 ```php
@@ -2620,7 +2628,8 @@ At the moment, 12 types of operators will be supported:
 * isempty (equals: ='')
 * isnotempty (equals: !='')
 
-The names of the operators are self describing, so I do not explain them here (I guess you know for what they are for)
+The names of the operators are self describing, so I do not explain them here (I guess you know for what they are for).
+
 For an example of each operator, please take a look at [Examples\inputfield_conditions\operatortypes.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/inputfield_conditions/operatortypes.php).
 
 ### Using inputfield dependencies on multivalue inputfields
