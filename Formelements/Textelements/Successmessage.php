@@ -22,9 +22,9 @@
          * @throws WireException
          * @throws WirePermissionException
          */
-        public function __construct()
+        public function __construct($id = null)
         {
-            parent::__construct();
+            parent::__construct($id);
             $this->setCSSClass('success_messageClass');
             if ($this->frontendforms['input_framework'] === 'bootstrap5.json')
                 $this->setTag('div');
