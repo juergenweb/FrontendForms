@@ -1170,7 +1170,7 @@ So please take care to import the correct translation file into your module.
 
    The size of the CAPTCHA images has been reduced from 900px to 450px in length to prevent timeouts during the update. Over the time I have added so much different CAPTCHA images that the total size of all images is over 12MB now. This could lead to timeouts during an update of the module, especially if your connection is not very fast. To improve the download speed and to prevent such timeouts I have reduced all CAPTCHA images to the half size. 450px seems to be enough ;-)
 
-## 2024-07-09
+## [2.2.5] 2024-07-11
 
 - **Bug fixed for setting input field name**
 
@@ -1183,3 +1183,9 @@ So please take care to import the correct translation file into your module.
   This method caluculates the minTime() depending on the mandatory fields left inside the form and rounded the value to seconds. If the value will be rounded to 0, an error occured. This is an rare edge-case-scenario, but it could happen.
 
   The bug fix sets the value to at least 1 second if the rounded value is lower than 1, so that it will never become 0. This prevents from stopping the code and firing an error message.
+
+- **Inputfield dependencies added to show/hide/enable/disable form elements**
+
+  With this new feature you can show or hide certain input fields (and other form elements) depending on the value(s) of other inputfields. In addition to show and hide you can enable or disable inputfields.
+
+  You will find the complete description [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#inputfield-dependencies)
