@@ -44,6 +44,7 @@ This module will work without GD-Library too, but you will not be able to use CA
 * [HTML email templates](#email-templates)
 * [Use forms in iframe](#use-forms-in-iframe)
 * [Extra module: FrontendForms Manager](#custom-module-frontendformsmanager)
+* [Inputfield dependencies](#inputfield-dependencies)
 
 ## Installation and Quick-start guide
 The most simple way is to install it via the ProcessWire module manager in the administration area, but you can also install it manually following the steps afterwards:
@@ -2577,10 +2578,10 @@ $rule = ['name' => 'field1', 'operator' => 'is', 'value' => '3'];
 
 As mentioned before, you can show, hide, enable or disable form elements. For this reason, you have 4 methods, that have to be added to a field:
 
-*showIf()
-*hideIf()
-*enableIf()
-*disableIf()
+* showIf()
+* hideIf()
+* enableIf()
+* disableIf()
 
 ```php
 $field->showIf([rule]);
