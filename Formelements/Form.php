@@ -1593,10 +1593,10 @@
 
             // add button elements to inputfields if set
             $elements = $this->getNamesOfInputFields();
-            foreach($this->getFormElementsByClass('Button') as $button) {
-                if($button->hasAttribute('value')){
-                    if($button->hasAttribute('name')){
-                        if($buttonValue){
+            foreach ($this->getFormElementsByClass('Button') as $button) {
+                if ($button->hasAttribute('value')) {
+                    if ($button->hasAttribute('name')) {
+                        if ($buttonValue) {
                             $elements[] = $button->getAttribute('name');
                         }
                     }
@@ -1848,6 +1848,7 @@
             $input = $this->wire('input')->$formMethod; // get the GET or POST values after submission
             $formElements = $this->formElements; //grab all form elements as an array of objects
 
+
             // check for file upload fields inside the form
             $file_upload_fields = $this->getFileUploadFields();
             if ($file_upload_fields) {
@@ -1980,6 +1981,15 @@
                                         // remove all validation rules from this element
                                         $element->removeAllRules();
                                     }
+
+                                    // check if the field is inside the POST array
+                                    // if not (eg field is disabled), then remove all validation rules, because no user input can be entered
+
+                                    $fieldValue = $this->wire('input')->post($this->getID() . '-' . $element->getID());
+                                    if (is_null($fieldValue)) {
+                                        $element->removeAllRules();
+                                    }
+
                                 }
 
                                 $v = new Validator($sanitizedValues);
@@ -2054,7 +2064,7 @@
                                     $this->wire('session')->remove($this->getAttribute('id') . '-email');
                                     $this->wire('session')->remove($this->getAttribute('id') . '-username');
 
-                                    // finally add the files including the overwritten fielnames to the array
+                                    // finally add the files including the overwritten filenames to the array
                                     if ($this->storedFiles) {
                                         $this->uploaded_files = $this->storedFiles;
                                     }
@@ -2606,7 +2616,7 @@
 
                 }
 
-                // create new array of inputfields only to position the honepot field in between
+                // create new array of inputfields only to position the honeypot field in between
                 $inputfieldKeys = [];
 
                 foreach ($this->formElements as $key => $element) {
@@ -2616,6 +2626,33 @@
                         if ($element->className() !== 'InputHidden') {
                             $inputfieldKeys[] = $key;
                         }
+
+                    }
+                    // check if field conditions have been set
+
+                    if (!is_null($element->getConditions())) {
+                        $conditions = $element->getConditions();
+
+                        if (count($conditions['rules']) == count($conditions['rules'], COUNT_RECURSIVE)) {
+                            $conditions['rules'] = [$conditions['rules']];
+                        }
+
+                        // get all name attributes
+                        $modified_rules = [];
+
+                        foreach ($conditions['rules'] as $rule) {
+
+                            if (!str_starts_with($rule['name'], $this->getID() . '-')) {
+                                $rule['name'] = $this->getID() . '-' . $rule['name'];
+                            }
+
+                            $modified_rules[] = $rule;
+
+                        }
+                        $conditions['rules'] = $modified_rules;
+                        $conditions = json_encode($conditions);
+                        $element->setAttribute('data-conditional-rules', htmlspecialchars($conditions));
+
                     }
                 }
 
@@ -2797,7 +2834,6 @@
                             }
 
                         }
-
                         $formElements .= $element->render() . PHP_EOL;
                     }
 
@@ -2874,7 +2910,7 @@
                 $this->setMailPlaceholder($fieldname . 'label', $field->getLabel()->getText());
                 $this->setMailPlaceholder($fieldname . 'value', $field->getAttribute('value'));
             }
-            // if the field is not a text element, set the name attribute
+            // if the field is not a text element, set the name attribute if not set before
             if (!is_subclass_of($field, 'FrontendForms\TextElements')) {
                 // Add id of the form as prefix for the name attribute of the field
                 if($field->hasAttribute('name')){
