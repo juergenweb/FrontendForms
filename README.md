@@ -14,7 +14,8 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 6. Multi-language
 7. Option to send emails using HTML email templates within the WireMail class by using custom methods and properties added to the WireMail class (supports also using these custom methods and properties via PostmarkApp, WireMailPHPMailer and WireMailSMTP)
 8. Ajax support for form submission
-9. Contains an optional additonal module (FrontendForms Manager) for installation to provide an userfriendly UI for the SIMPLE QUESTION CAPTCHA 
+9. Contains an optional additonal module (FrontendForms Manager) for installation to provide an userfriendly UI for the SIMPLE QUESTION CAPTCHA
+10. Support for inputfield dependencies (show/hide fields depending on values of other fields)
 
 ## Requirements
 * PHP>=8.0.0
@@ -2508,6 +2509,170 @@ You can also find all question pages in the page tree under the administration p
 ![Page tree](https://github.com/juergenweb/FrontendForms/blob/main/images/pagetree.png?raw=true)
 
 You need to enter at least 1 question to get it working. If you have installed the module, but no questions have been entered, than the single question from the module configuration will be taken as the fallback instead. In this case you have only a "single question CAPTCHA" instead of a "multi question CAPTCHA";
+
+## Inputfield dependencies
+
+Inputfield dependencies is a JavaScript implementation that allows you to show/hide form elements (inputfields, alerts, texts, etc.) or to enable/disable inputfields according to the value(s) set inside one or more other fields
+with pre-defined values such as checkboxes, radios and selects.
+Writing such a script is very complex and difficult, so I have not written this script by myself.
+It is a script written by Ali Khallad, but I found it very useful, so I decided to implement it into FrontendForms.
+You will find the script and the original documentation at https://github.com/bomsn/mf-conditional-fields.
+I can recommend that you not only read my documentation here, but also take a look at the documentation there.
+
+Please note: writing conditions seems to be not so easy to understand at the first sight, but it is very easy, believe me.
+For better understanding, I have written a lot of examples on how to write conditions. You will find them all inside the Example folder.
+Please study these examples to get an idea of how it works. 
+ 
+
+### What is the use case of using input field dependencies?
+
+Let me explain the usage according to an example:
+
+Let's say you have two fields in your form: a number input field (field 1) and a text input field (field 2).
+Field 2 should only be visible if the value "1" is selected inside field 1. Otherwise, field 2 should be hidden.
+The input field dependencies allow you to add the condition directly to field 2 without having to write a line of JavaScript.
+
+Here is an example on how to add such a condition to an input field:
+
+```php
+$field2->showIf([
+        'name' => 'field1', 
+        'operator' => 'is',
+        'value' => '1'
+    ]);
+```
+That is all and now field 2 will be visible, if you select 1 on field 1.
+
+### On which fields can I add a dependency?
+
+You can add a dependency on every form element (button, input field, alert,..). There is no restriction, but the most used case is to show/hide and input field.
+Disable/enable functionality is for input fields only.
+
+### Which fields can be used as reference fields?
+
+A reference field is a field from which you retrieve the comparison value for the condition. 
+Only fields with pre-defined values can be used as reference field. Therefore you can use only the following input types:
+
+* checkbox single
+* checkbox multiple
+* radio single
+* radio multiple
+* select single
+* select multiple 
+
+Other input field types not supported as a reference field (eg an text input).
+
+### Writing a rule
+
+Dependency rules have to be written as an array with the keys name, operator and value:
+
+```php
+$rule = ['name' => 'field1', 'operator' => 'is', 'value' => '3'];
+```
+
+* The name value should be the name attribute of the reference field (in this case field1)
+* The operator should be the comparison type (is, isnot, largerthan, beginswith,...). these types will be explained later on
+* The value should be the value of the reference field, which should trigger the action (hide, show,...) 
+
+### 4 types of conditions
+
+As mentioned before, you can show, hide, enable or disable form elements. For this reason, you have 4 methods, that have to be added to a field:
+
+*showIf()
+*hideIf()
+*enableIf()
+*disableIf()
+
+```php
+$field->showIf([rule]);
+```
+You will find an example of each type at [Examples/inputfield_conditions/conditiontypes.php](). Please take a look there on how to use them.
+
+### 2 types of logic: AND and OR
+
+The logic operator is only relevant if you are combining 2 or more rules. The OR-operator is set by default. So if you want to combine multiple rules
+via OR-logic, you do not have to do anything.
+If you want to combine them via AND-logic, you have to add the logic after the rules as second parameter.
+
+```php
+$field->showIf([rules], 'and');
+```
+
+I have also written some examples using the AND and OR logic and you will find them at Examples/inputfield_conditions/multipleconditionsWithAndOr.php. 
+
+### 12 types of operators
+
+Operators are for comparing a given value with a selected value (<, = <= and so on).
+
+At the moment, 12 types of operators will be supported:
+
+
+* is (equals: =)
+* isnot (equals: !=)
+* greaterthan (equals: >)
+* lessthan (equals: <)
+* contains (equals: %=)
+* doesnotcontain (equals: %!=)
+* beginswith (equals: *%=)
+* doesnotbeginwith (equals: *%!=)
+* endswith (equals: %*=)
+* doesnotendwith (equals: %*!=)
+* isempty (equals: ='')
+* isnotempty (equals: !='')
+
+The names of the operators are self describing, so I do not explain them here (I guess you know for what they are for)
+For an example of each operator, please take a look at Examples\inputfield_conditions\operatortypes.php
+
+### Using inputfield dependencies on multivalue inputfields
+
+Checkboxes and Selects allow you to select multiple values instead of only one if they have the attribute multiple. For this reason, they have to be treated
+a little bit different than the rest.
+
+The biggest difference is by checking for multiple values, and each of the values has to be selected.
+
+Let's say you have 3 checkboxes with the values 1, 2, and 3 and you want to check if 2 AND 3 are checked, you have to write
+the values separated by a "|"
+
+```php
+value = '2|3'
+```
+
+The best way to understand how it should be written is to take a look at the examples at
+Examples/inputfield_conditions/multivaluefieldsconditions.php. There, you will find an example for each use case.
+
+### Combining multiple rules 
+
+If you want to add more than 1 rule to an element, you can write multiple rules separated by a comma inside an array:
+
+Single rule: 
+
+Syntax: [condition]
+
+```php
+$rule = ['name' => 'field1', 'operator' => 'is', 'value' => '3'];
+```
+
+Multiple rules: 
+
+Syntax: [[condition 1], [conditon 2]]
+
+```php
+$rules = [['name' => 'field1', 'operator' => 'is', 'value' => '3'], ['name' => 'field3', 'operator' => 'isnot', 'value' => '5']];
+```
+
+Take a look at the examples at Examples/inputfield_conditions/multipleconditionsWithAndOr.php for a better understanding.
+
+### Show/hide elements that are not input fields
+
+As written before, you can also show/hide other form elements, not only input fields. You will find examples of showing/hiding text elements, alert elements, and so on 
+at Examples/inputfield_conditions/usingconditionsOnNonInputfields.php.
+
+### Limitations
+
+This JavaScript feature does not cover all possible use cases, but it allows you to perform standard comparison operations.
+If you need a special comparison you have to write your own JavaScript snippet or you write a feature request to the author
+of this script on Github (https://github.com/bomsn/mf-conditional-fields).  
+
 
 ## How to install/uninstall the module
 
