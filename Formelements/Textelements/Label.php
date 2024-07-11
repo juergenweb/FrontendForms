@@ -24,9 +24,9 @@ class Label extends TextElements
      * @throws WireException
      * @throws WirePermissionException
      */
-    public function __construct()
+    public function __construct($id = null)
     {
-        parent::__construct();
+        parent::__construct($id);
         $this->enableAsterisk = $this->frontendforms['input_showasterisk']; // from global settings
         $this->setTag('label');
         $this->setCSSClass('labelClass');
