@@ -22,9 +22,9 @@ class Legend extends TextElements
      * @throws WireException
      * @throws WirePermissionException
      */
-    public function __construct()
+    public function __construct($id = null)
     {
-        parent::__construct();
+        parent::__construct($id);
         $this->setTag('legend');
         $this->setCSSClass('legendClass');
     }
