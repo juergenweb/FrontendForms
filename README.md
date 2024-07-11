@@ -2512,18 +2512,17 @@ You need to enter at least 1 question to get it working. If you have installed t
 
 ## Inputfield dependencies
 
-Inputfield dependencies is a JavaScript implementation that allows you to show/hide form elements (inputfields, alerts, texts, etc.) or to enable/disable inputfields according to the value(s) set inside one or more other fields
-with pre-defined values such as checkboxes, radios and selects.
+Inputfield dependencies is a JavaScript implementation that allows you to show/hide form elements (inputfields, alerts, texts, etc.) or to enable/disable inputfields according to the value(s) set inside one or more other fields with pre-defined values such as checkboxes, radios and selects.
+
 Writing such a script is very complex and difficult, so I have not written this script by myself.
 It is a script written by Ali Khallad, but I found it very useful, so I decided to implement it into FrontendForms.
 You will find the script and the original documentation at https://github.com/bomsn/mf-conditional-fields.
 I can recommend that you not only read my documentation here, but also take a look at the documentation there.
 
-Please note: writing conditions seems to be not so easy to understand at the first sight, but it is very easy, believe me.
+**Please note**: writing conditions seems to be not so easy to understand at the first sight, but it is very easy, believe me.
 For better understanding, I have written a lot of examples on how to write conditions. You will find them all inside the Example folder.
 Please study these examples to get an idea of how it works. 
  
-
 ### What is the use case of using input field dependencies?
 
 Let me explain the usage according to an example:
@@ -2586,7 +2585,7 @@ As mentioned before, you can show, hide, enable or disable form elements. For th
 ```php
 $field->showIf([rule]);
 ```
-You will find an example of each type at [Examples/inputfield_conditions/conditiontypes.php](). Please take a look there on how to use them.
+You will find an example of each type at [Examples/inputfield_conditions/conditiontypes.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/inputfield_conditions/conditiontypes.php). Please take a look there on how to use them.
 
 ### 2 types of logic: AND and OR
 
@@ -2598,7 +2597,7 @@ If you want to combine them via AND-logic, you have to add the logic after the r
 $field->showIf([rules], 'and');
 ```
 
-I have also written some examples using the AND and OR logic and you will find them at Examples/inputfield_conditions/multipleconditionsWithAndOr.php. 
+I have also written some examples using the AND and OR logic and you will find them at [Examples/inputfield_conditions/multipleconditionsWithAndOr.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/inputfield_conditions/multipleconditionsWithAndOr.php). 
 
 ### 12 types of operators
 
@@ -2621,7 +2620,7 @@ At the moment, 12 types of operators will be supported:
 * isnotempty (equals: !='')
 
 The names of the operators are self describing, so I do not explain them here (I guess you know for what they are for)
-For an example of each operator, please take a look at Examples\inputfield_conditions\operatortypes.php
+For an example of each operator, please take a look at [Examples\inputfield_conditions\operatortypes.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/inputfield_conditions/operatortypes.php).
 
 ### Using inputfield dependencies on multivalue inputfields
 
@@ -2638,7 +2637,7 @@ value = '2|3'
 ```
 
 The best way to understand how it should be written is to take a look at the examples at
-Examples/inputfield_conditions/multivaluefieldsconditions.php. There, you will find an example for each use case.
+[Examples/inputfield_conditions/multivaluefieldsconditions.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/inputfield_conditions/multivaluefieldsconditions.php). There, you will find an example for each use case.
 
 ### Combining multiple rules 
 
@@ -2660,12 +2659,12 @@ Syntax: [[condition 1], [conditon 2]]
 $rules = [['name' => 'field1', 'operator' => 'is', 'value' => '3'], ['name' => 'field3', 'operator' => 'isnot', 'value' => '5']];
 ```
 
-Take a look at the examples at Examples/inputfield_conditions/multipleconditionsWithAndOr.php for a better understanding.
+Take a look at the examples at [Examples/inputfield_conditions/multipleconditionsWithAndOr.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/inputfield_conditions/multipleconditionsWithAndOr.php) for a better understanding.
 
 ### Show/hide elements that are not input fields
 
 As written before, you can also show/hide other form elements, not only input fields. You will find examples of showing/hiding text elements, alert elements, and so on 
-at Examples/inputfield_conditions/usingconditionsOnNonInputfields.php.
+at [Examples/inputfield_conditions/usingconditionsOnNonInputfields.php](https://github.com/juergenweb/FrontendForms/blob/main/Examples/inputfield_conditions/usingconditionsOnNonInputfields.php).
 
 ### Limitations
 
