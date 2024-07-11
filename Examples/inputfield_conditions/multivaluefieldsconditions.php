@@ -157,7 +157,7 @@
 
     echo '<h2>Select multiple</h2>';
     echo '<p>Select multiple can also have 1 or more values selected.</p>';
-    echo '<p><b>Please note: If your name attribute contains "[]" for sending multiple values as an array, you also have to add it to the name property of the condition array!</b></p>';
+    echo '<p><b>Please note: Select multiple contains "[]" at the end of the name attribute for sending multiple values as an array, you also have to add it to the name property of the condition array!</b></p>';
 
     echo '<h3>Example 4 (select multiple) with AND logic: Show firstname field only if "CSS2", "Less" and "Sass" are selected in the select multiple field</h3>';
     echo '<p>This example shows how the "showIf" condition works by checking for multiple values of a select multiple field.</p>';
