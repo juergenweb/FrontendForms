@@ -22,9 +22,9 @@ class Alert extends TextElements
      * @throws WireException
      * @throws WirePermissionException
      */
-    public function __construct()
+    public function __construct(?string $id = null)
     {
-        parent::__construct();
+        parent::__construct($id);
         $this->setTag('div');
         $this->setCSSClass('alertClass');
     }
