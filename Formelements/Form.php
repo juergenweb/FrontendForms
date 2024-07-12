@@ -100,6 +100,11 @@
         protected string $validated = '0'; // the form is validated (1) or not (0)
         protected string|null|int|bool $showProgressbar = true;
 
+        protected string $labeltag = 'label'; // set the default global tag for the label element
+        protected string $desctag = 'p'; // set the default global tag for the description element
+        protected string $notestag = 'p'; // set the default global tag for the notes element
+        protected string $msgtag = 'p'; // set the default global tag for the message elements (success and error message)
+
 
         /* objects */
         protected Alert $alert; // alert box
@@ -199,6 +204,30 @@
             // set the folder of the page in assets/files as default target folder for file uploads
             $this->setUploadPath($this->wire('config')->paths->assets . 'files/' . $this->page->id . '/');
 
+            // Global tags for label, description,...
+
+            // 1) Label
+            $labelTag = (!empty($this->frontendforms['input_global_label_tag'])) ? $this->frontendforms['input_global_label_tag'] : 'label';
+            $this->setLabelTag($labelTag);
+
+            // 2) Description
+            $descTag = (!empty($this->frontendforms['input_global_desc_tag'])) ? $this->frontendforms['input_global_desc_tag'] : 'p';
+            $this->setDescriptionTag($descTag);
+
+            // 3) Notes
+            $defaultNotesTag = ($this->frontendforms['input_framework'] === 'pico2.json')? 'small' : 'p';
+            $notesTag = (!empty($this->frontendforms['input_global_notes_tag'])) ? $this->frontendforms['input_global_notes_tag'] : $defaultNotesTag;
+            $this->setNotesTag($notesTag);
+
+            // 4) Messages
+            $defaultMsgTag = 'p';
+            if ($this->frontendforms['input_framework'] === 'bootstrap5.json')
+                $defaultMsgTag = 'div';
+            if ($this->frontendforms['input_framework'] === 'pico2.json')
+                $defaultMsgTag = 'small';
+            $messagesTag = (!empty($this->frontendforms['input_global_msg_tag'])) ? $this->frontendforms['input_global_msg_tag'] : $defaultMsgTag;
+            $this->setMessageTag($messagesTag);
+
             // Global text for auto-generated emails
             $this->doNotReply = $this->_('This email was generated automatically. So please do not reply to this email.');
 
@@ -221,6 +250,46 @@
             // create questions array for the simple text CAPTCHA
             $this->question_array = $this->getCaptchaQuestions();
 
+        }
+
+        /**
+         * Change the label tag for all elements inside the form
+         * @param string $labeltag
+         * @return void
+         */
+        public function setLabelTag(string $labeltag): void
+        {
+            $this->labeltag = $labeltag;
+        }
+
+        /**
+         * Change the description tag for all elements inside the form
+         * @param string $desctag
+         * @return void
+         */
+        public function setDescriptionTag(string $desctag): void
+        {
+            $this->desctag = $desctag;
+        }
+
+        /**
+         * Change the notes tag for all elements inside the form
+         * @param string $notestag
+         * @return void
+         */
+        public function setNotesTag(string $notestag): void
+        {
+            $this->notestag = $notestag;
+        }
+
+        /**
+         * Change the message tag for all elements inside the form
+         * @param string $messagetag
+         * @return void
+         */
+        public function setMessageTag(string $msgtag): void
+        {
+            $this->msgtag = $msgtag;
         }
 
 
@@ -2436,6 +2505,17 @@
             $array = array_merge($p2, $p1, $array);
         }
 
+        protected function changeElementTag(object $element, string $tagProperty): void
+        {
+                if ($element) {
+                    if($element->getCustomTag()){
+                        $element->setTag($element->getCustomTag());
+                    } else {
+                        $element->setTag($tagProperty);
+                    }
+                }
+        }
+
         /**
          * Render the form markup (including alerts if present) on the frontend
          * @return string
@@ -2474,6 +2554,26 @@
                 if ($obj instanceof InputFile) {
                     $this->setAttribute('enctype', 'multipart/form-data');
                     break;
+                }
+
+                //$class = __NAMESPACE__.'\Label';
+                if (is_subclass_of($obj, 'FrontendForms\Inputfields')) {
+                    // Label
+                    $this->changeElementTag($obj->getLabel(), $this->labeltag);
+                    $this->changeElementTag($obj->getDescription(), $this->desctag);
+                    $this->changeElementTag($obj->getNotes(), $this->notestag);
+                    $this->changeElementTag($obj->getErrorMessage(), $this->msgtag);
+                    $this->changeElementTag($obj->getSuccessMessage(), $this->msgtag);
+                    /*
+                    if ($obj->getLabel()) {
+                        $label = $obj->getLabel();
+                        if($label->getCustomTag()){
+                            $label->setTag($label->getCustomTag());
+                        } else {
+                            $label->setTag($this->labeltag);
+                        }
+                    }
+                    */
                 }
             }
 
@@ -2764,6 +2864,7 @@
                             $element->getFieldWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-fieldwrapper');
                             // add unique id to the input-wrapper if present
                             $element->getInputWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-inputwrapper');
+
                             $element->getLabel()->setAttribute('for', $element->getAttribute('id'));
                         }
                         $name = $element->getAttribute('id');
@@ -2912,6 +3013,7 @@
             }
             // if the field is not a text element, set the name attribute if not set before
             if (!is_subclass_of($field, 'FrontendForms\TextElements')) {
+
                 // Add id of the form as prefix for the name attribute of the field
                 if($field->hasAttribute('name')){
                     $fieldName = $field->getAttribute('name');
