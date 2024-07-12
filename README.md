@@ -1099,6 +1099,38 @@ $form`->setsetSecurityQuestion('My question', ['answer 1', 'answer 2', 'answer 3
 
 For all possible parameters take a look at the setSecurityQuestions() method which has been described before.
 
+### setLabelTag() - Change the tag for the label on this form
+
+Wtih this method you can overwrite the global tag for the lable on per form base.
+
+```php
+$form`->setLabelTag('div');
+```
+
+### setDescriptionTag() - Change the tag for the input field description on this form
+
+Wtih this method you can overwrite the global tag for the input field description on per form base.
+
+```php
+$form`->setDescriptionTag('div');
+```
+
+### setNotesTag() - Change the tag for the input field notes text on this form
+
+Wtih this method you can overwrite the global tag for the input field notes text on per form base.
+
+```php
+$form`->setNotesTag('small');
+```
+
+### setMessageTag() - Change the tag for the input field error and success message text on this form
+
+Wtih this method you can overwrite the global tag for the input field messages on per form base.
+
+```php
+$form`->setMessageTag('div');
+```
+
 ## Input field methods
 
 For better understanding of methods explained afterwards, take a look of the anatomy of input fields first.
