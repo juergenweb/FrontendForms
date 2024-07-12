@@ -1196,6 +1196,8 @@ So please take care to import the correct translation file into your module.
 
 Sometimes the tags set for an element don't fit your needs. For example, you want the description of the input field to be rendered within "div" tags and not with "p" tags. Until now, it was not possible to set the tags globally, but this gap is now closed with this update.
 
+Many thanks to Donatas from the support forum, who made a request regarding changing the tags and thus gave me the idea to implement this feature.
+
   To make FrontendForms even more customizable, you can now change the tags for the following elements of an input field: Label, Description, Notes, Success and Error Message. In the backend you will now find 4 new configuration fields where you can change the tags globally.
 
   The global tags can be overwritten on per form base too with 4 new methods (setLabelTag(), setDescriptionTag(), setNotesTag() and setMessageTag()). 
