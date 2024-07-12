@@ -17,6 +17,7 @@ use ProcessWire\WirePermissionException;
 
 class Errormessage extends TextElements
 {
+    use TraitTags;
 
     /**
      * @throws WireException
@@ -26,10 +27,6 @@ class Errormessage extends TextElements
     {
         parent::__construct($id);
         $this->setCSSClass('error_messageClass');
-        if ($this->frontendforms['input_framework'] === 'bootstrap5.json')
-            $this->setTag('div');
-        if ($this->frontendforms['input_framework'] === 'pico2.json')
-            $this->setTag('small');
     }
 
 }
