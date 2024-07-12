@@ -17,6 +17,7 @@ use ProcessWire\WirePermissionException;
 
 class Notes extends TextElements
 {
+    use TraitTags;
 
     /**
      * @throws WireException
@@ -26,8 +27,6 @@ class Notes extends TextElements
     {
         parent::__construct($id);
         $this->setCSSClass('notesClass');
-        if ($this->frontendforms['input_framework'] === 'pico2.json')
-            $this->setTag('small');
     }
 
 }
