@@ -1189,3 +1189,17 @@ So please take care to import the correct translation file into your module.
   With this new feature you can show or hide certain input fields (and other form elements) depending on the value(s) of other inputfields. In addition to show and hide you can enable or disable inputfields.
 
   You will find the complete description [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#inputfield-dependencies)
+
+## [2.2.6] 2024-07-12
+
+- **New configuration fields for setting global tags for label, description, notes, success and error message added**
+
+Sometimes the tags set for an element don't fit your needs. For example, you want the description of the input field to be rendered within "div" tags and not with "p" tags. Until now, it was not possible to set the tags globally, but this gap is now closed with this update.
+
+  To make FrontendForms even more customizable, you can now change the tags for the following elements of an input field: Label, Description, Notes, Success and Error Message. In the backend you will now find 4 new configuration fields where you can change the tags globally.
+
+  The global tags can be overwritten on per form base too with 4 new methods (setLabelTag(), setDescriptionTag(), setNotesTag() and setMessageTag()).
+
+  Last but not least you can overwrite the values set on per form base directly on the inputfield itself via the setTag() method.
+
+  You will find more information here
