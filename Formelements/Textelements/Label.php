@@ -17,6 +17,8 @@ use ProcessWire\WirePermissionException;
 
 class Label extends TextElements
 {
+
+    use TraitTags;
     protected int|string $enableAsterisk = 1;
     protected bool $required = false;
 
@@ -28,7 +30,6 @@ class Label extends TextElements
     {
         parent::__construct($id);
         $this->enableAsterisk = $this->frontendforms['input_showasterisk']; // from global settings
-        $this->setTag('label');
         $this->setCSSClass('labelClass');
     }
 
@@ -48,6 +49,7 @@ class Label extends TextElements
      */
     public function render(): string
     {
+
         $content = $this->getText();
         if($this->getText()){
             if ($this->getRequired()) {
