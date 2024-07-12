@@ -2546,6 +2546,9 @@ $field2->showIf([
         'value' => '1'
     ]);
 ```
+
+This rule in words: Show field 2 only if value 1 is selected in field 1. Otherwise hide it.
+
 That is all and now field 2 will be only visible, if you select value 1 on field 1.
 
 ### On which fields can I add a dependency?
