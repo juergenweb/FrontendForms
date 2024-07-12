@@ -18,6 +18,7 @@ use ProcessWire\WirePermissionException;
 class TextElements extends Element
 {
 
+
     /**
      * @param string|null $id
      * @throws WireException
@@ -26,7 +27,7 @@ class TextElements extends Element
     public function __construct(?string $id = null)
     {
         parent::__construct($id);
-        $this->setTag('p'); // default tag is paragraph - can be overwritten
+        //$this->setTag('p'); // default tag is paragraph - can be overwritten
     }
 
     /**
