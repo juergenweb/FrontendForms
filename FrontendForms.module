@@ -86,6 +86,12 @@
         protected string|int $input_showasterisk = 1; // show asterisk on required fields
         protected string|int $input_ajaxformsubmission = 0; // submit forms via Ajax (1) or not (0)
         protected string|int $input_hideProgressBar = 0; // Hide the progressbar during form submission (1) or not (0)
+        protected string $input_global_label_tag = ''; // the tag that should be used as the global tag for labels
+        protected string $input_global_desc_tag = ''; // the tag that should be used as the global tag for descriptions
+        protected string $input_global_notes_tag = ''; // the tag that should be used as the global tag for nots
+        protected string $input_global_msg_tag = ''; // the tag that should be used as the global tag for messages (error and success message)
+
+
 
         /* Email configuration */
         protected string $input_emailTemplate = 'template_1.html'; // default email template
@@ -230,7 +236,11 @@
                 'toppasswords_download' => '',
                 'last_check' => '',
                 'github_modified' => '',
-                'input_html5_validation' => 0
+                'input_html5_validation' => 0,
+                'input_global_label_tag' => '',
+                'input_global_desc_tag' => '',
+                'input_global_notes_tag' => '',
+                'input_global_msg_tag' => ''
             ];
         }
 
@@ -1271,6 +1281,10 @@
                 'input_html5_validation' => ['$form->setHtml5Validation(true); // true,false'],
                 'input_question' => ['$form->setSecurityQuestion("What color is green?", ["green", "color green", "it is green"]); // first parameter is the question'],
                 'input_answers' => ['$form->setSecurityQuestion("What color is green?", ["green", "color green", "it is green"]); // second parameter are the answers'],
+                'input_global_label_tag' => ['$form->setLabelTag("div");'],
+                'input_global_desc_tag' => ['$form->setDescriptionTag("div");'],
+                'input_global_notes_tag' => ['$form->setNotesTag("div");'],
+                'input_global_msg_tag' => ['$form->setMessageTag("div");'],
             ];
             if (!array_key_exists($field->name, $fields)) {
                 return;
@@ -1711,6 +1725,42 @@
             $descPosition->addOption('afterLabel', $this->_('After the field label'));
             $descPosition->addOption('afterInput', $this->_('After the input field'));
             $fieldsetMarkup->add($descPosition, $inputfields);
+
+            //input_global_label_tag
+            $globalLabelTag = $this->wire('modules')->get('InputfieldText');
+            $globalLabelTag->attr('name', 'input_global_label_tag');
+            $globalLabelTag->attr('value', $this->input_global_label_tag);
+            $globalLabelTag->label = $this->_('Tag for the label element');
+            $globalLabelTag->description = $this->_('Change the tag (p, div,..) for the label of an input field.');
+            $globalLabelTag->notes = $this->_('If you are not satisfied with the tag used for this item, you can modify it according to your needs. Otherwise, leave this field blank.');
+            $fieldsetMarkup->add($globalLabelTag, $inputfields);
+
+            //input_global_desc_tag
+            $globalDescTag = $this->wire('modules')->get('InputfieldText');
+            $globalDescTag->attr('name', 'input_global_desc_tag');
+            $globalDescTag->attr('value', $this->input_global_desc_tag);
+            $globalDescTag->label = $this->_('Tag for the description element');
+            $globalDescTag->description = $this->_('Change the tag (p, div,..) for the description of an input field.');
+            $globalDescTag->notes = $this->_('If you are not satisfied with the tag used for this item, you can modify it according to your needs. Otherwise, leave this field blank.');
+            $fieldsetMarkup->add($globalDescTag, $inputfields);
+
+            //input_global_notes_tag
+            $globalNotesTag = $this->wire('modules')->get('InputfieldText');
+            $globalNotesTag->attr('name', 'input_global_notes_tag');
+            $globalNotesTag->attr('value', $this->input_global_notes_tag);
+            $globalNotesTag->label = $this->_('Tag for the notes element');
+            $globalNotesTag->description = $this->_('Change the tag (p, div,..) for the notes of an input field.');
+            $globalNotesTag->notes = $this->_('If you are not satisfied with the tag used for this item, you can modify it according to your needs. Otherwise, leave this field blank.');
+            $fieldsetMarkup->add($globalNotesTag, $inputfields);
+
+            //input_global_msg_tag
+            $globalMsgTag = $this->wire('modules')->get('InputfieldText');
+            $globalMsgTag->attr('name', 'input_global_msg_tag');
+            $globalMsgTag->attr('value', $this->input_global_msg_tag);
+            $globalMsgTag->label = $this->_('Tag for the message elements (success and error message)');
+            $globalMsgTag->description = $this->_('Change the tag (p, div,..) for the messages of an input field.');
+            $globalMsgTag->notes = $this->_('If you are not satisfied with the tag used for this item, you can modify it according to your needs. Otherwise, leave this field blank.');
+            $fieldsetMarkup->add($globalMsgTag, $inputfields);
 
             $fieldsetStyle = $this->wire('modules')->get('InputfieldFieldset');
             $fieldsetStyle->label = $this->_('Custom CSS classes');
