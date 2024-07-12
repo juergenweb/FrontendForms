@@ -543,6 +543,10 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setSecurityQuestions()](#setsecurityquestions---enter-multiple-questions-at-once)  | Enter multiple question at once for the simple question CAPTCHA on per form base  |
 | [setCaptchaPlaceholder()](#setcaptchaplaceholder---add-a-placeholder-text-to-the-captcha-input-field)  | Add a placeholder text to the CAPTCHA input field |
 | [removeCaptchaLabel()](#removecaptchalabel---hide-the-label-and-display-the-label-text-optionally-as-placeholder-text)  | Hide the label and display the label text optionally as placeholder text |
+| [setLabelTag()](#setlabeltag---change-the-tag-for-the-label-on-this-form)  | Change the tag for the label on per form base |
+| [setDescriptionTag()](#setdescriptiontag---change-the-tag-for-the-input-field-description-on-this-form)  | Change the tag for the input field description on per form base |
+| [setNotesTag()](#setnotestag---change-the-tag-for-the-input-field-notes-text-on-this-form)  | Change the tag for the input field notes text on per form base |
+| [setMsgTag()](#setmessagetag---change-the-tag-for-the-input-field-error-and-success-message-text-on-this-form)  | Change the tag for the success and error message on per form base |
 
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
