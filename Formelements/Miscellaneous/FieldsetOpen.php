@@ -12,13 +12,13 @@ namespace FrontendForms;
  * Created: 03.07.2022
  */
 
-class FieldsetOpen extends Tag
+class FieldsetOpen extends Element
 {
     protected Legend $legend;
 
-    public function __construct()
+    public function __construct(?string $id = null)
     {
-        parent::__construct();
+        parent::__construct($id);
         $this->setTag('fieldset');
         $this->setCSSClass('fieldsetClass');
     }
