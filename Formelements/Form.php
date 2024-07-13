@@ -2729,10 +2729,9 @@
 
                     }
                     // check if field conditions have been set
-
-                    if (!is_null($element->getConditions())) {
+                    if (method_exists($element, 'getConditions') && (!is_null($element->getConditions()))) {
                         $conditions = $element->getConditions();
-
+                        
                         if (count($conditions['rules']) == count($conditions['rules'], COUNT_RECURSIVE)) {
                             $conditions['rules'] = [$conditions['rules']];
                         }
