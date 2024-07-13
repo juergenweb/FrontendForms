@@ -1206,3 +1206,8 @@ Many thanks to Donatas from the support forum, who made a request regarding chan
 
   Last but not least you can overwrite the values set on per form base directly on the inputfield itself via the setTag() method (but this method is not new).
 
+## [2.2.7] 2024-07-13
+
+- **Small bug of inputfield dependencies and fieldset fixed**
+
+If you are using a fieldset inside a form, you got an error, because the inputfield dependencies could not be used in combination with a fieldset. This has been fixed now.
