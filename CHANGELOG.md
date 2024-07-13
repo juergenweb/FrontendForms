@@ -1212,7 +1212,7 @@ Many thanks to Donatas from the support forum, who made a request regarding chan
 
 If you are using a fieldset inside a form, you got an error, because the inputfield dependencies could not be used in combination with a fieldset. This has been fixed now.
 
-## 2024-07-13
+## [2.2.8] 2024-07-13
 
 - **Writing mistake in property name fixed**
 
