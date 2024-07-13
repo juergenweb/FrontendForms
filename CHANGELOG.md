@@ -1211,3 +1211,10 @@ Many thanks to Donatas from the support forum, who made a request regarding chan
 - **Small bug of inputfield dependencies and fieldset fixed**
 
 If you are using a fieldset inside a form, you got an error, because the inputfield dependencies could not be used in combination with a fieldset. This has been fixed now.
+
+## 2024-07-13
+
+- **Writing mistake in property name fixed**
+
+Inside the password field there was a writing mistake for the property of the password length, which results in that the min length of the password will not be printed inside the password condition text (minlenght instead of minLength). This is fixed now
+
