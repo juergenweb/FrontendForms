@@ -1218,3 +1218,6 @@ If you are using a fieldset inside a form, you got an error, because the inputfi
 
 Inside the password field there was a writing mistake for the property of the password length, which results in that the min length of the password will not be printed inside the password condition text (minlenght instead of minLength). This is fixed now
 
+- **Add recognition for url segments in form action attribute**
+
+The form action attribute, that has been automatically set during the instantiation of a form had only recognized the base url. If you are using url segments, and a form is submitted inside a segment, the form had always been redirected to the base url instead of the base url + segments. This has been fixed now and should work.
