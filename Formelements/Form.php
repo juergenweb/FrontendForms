@@ -104,8 +104,7 @@
         protected string $desctag = 'p'; // set the default global tag for the description element
         protected string $notestag = 'p'; // set the default global tag for the notes element
         protected string $msgtag = 'p'; // set the default global tag for the message elements (success and error message)
-
-
+        protected string|null $segments = null;
         /* objects */
         protected Alert $alert; // alert box
         protected RequiredTextHint $requiredHint; // hint to inform that all required fields have to be filled out
@@ -179,7 +178,9 @@
             $this->visitorIP = $this->wire('session')->getIP();
             $this->showForm = $this->allowFormViewByIP(); // show or hide the form depending on the IP ban
             $this->setAttribute('method', 'post'); // default is post
-            $this->setAttribute('action', $this->page->url); // stay on the same page - needs to run after the API is ready
+            // take care about url segments if enabled
+            $this->segments = ($this->wire('input')->urlSegmentStr())??  '';
+            $this->setAttribute('action', $this->page->url.$this->segments); // stay on the same page - needs to run after the API is ready
             $this->setAttribute('id', $id); // set the id
             $this->setAttribute('name', $this->getID() . '-' . time());
             $this->setHtml5Validation($this->frontendforms['input_html5_validation']);
@@ -2405,7 +2406,7 @@
         public function setRedirectUrlAfterAjax(string|null $url = null): self
         {
             if (!is_null($url)) {
-                $this->ajaxRedirect = $url;
+                $this->ajaxRedirect = $url.$this->segments;
             }
             return $this;
         }
