@@ -126,11 +126,12 @@
          */
         public function renderPasswordRequirements(): ?string
         {
+
             if ($this->getPasswordConditions()) {
                 return sprintf($this->_('The password must be at least %s characters and must contain characters of the following categories: %s.'),
-                    (string)$this->minlength, $this->getPasswordConditions());
+                    (string)$this->minLength, $this->getPasswordConditions());
             } else {
-                if ($this->minlength) {
+                if ($this->minLength) {
                     return sprintf($this->_('The password must be at least %s characters.'), (string)$this->minlength);
                 }
                 return null;
