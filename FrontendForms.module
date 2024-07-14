@@ -1446,6 +1446,8 @@
                             // Generate form name with new incremented number
                             $formNameCount = $formName . '__' . $formCount;
 
+
+
                             // Include new form name in the list of existing forms
                             $foundForms[] = $formNameCount;
 
@@ -1458,10 +1460,10 @@
                             } else {
                                 $functionName = $formName;
                             }
-
+                            
                             // check if a function with this name exists
                             if (function_exists($functionName)) {
-                                $out .= $functionName($formCount);
+                                $out .= $functionName($formNameCount);
                             }
                             return $out;
                         },
