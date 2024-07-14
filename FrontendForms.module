@@ -92,7 +92,6 @@
         protected string $input_global_msg_tag = ''; // the tag that should be used as the global tag for messages (error and success message)
 
 
-
         /* Email configuration */
         protected string $input_emailTemplate = 'template_1.html'; // default email template
         protected array $mailProperties = []; // array of placeholder variables for HTML templates
@@ -260,7 +259,7 @@
 
             // add the appropriate values to properties, so you can get them everywhere inside the class
             $this->modulePath = $this->wire('config')->paths->siteModules . 'FrontendForms/'; // set relative path to this module
-            $this->customFrameworksPath = $this->wire('config')->paths->assets.'files/FrontendForms/frameworks/';
+            $this->customFrameworksPath = $this->wire('config')->paths->assets . 'files/FrontendForms/frameworks/';
             $this->moduleConfig = $this->wire('modules')->getConfig($this);
             $this->imagePath = $this->modulePath . 'captchaimages/'; // path to the images for the CAPTCHA
             $this->passwordPath = $this->modulePath . 'passwords.txt'; // path to password.txt file
@@ -282,7 +281,7 @@
             $this->setEmailTemplates();
 
             // check if custom framework folder exists, otherwise create it
-            if(!$this->wire('files')->exists($this->customFrameworksPath)){
+            if (!$this->wire('files')->exists($this->customFrameworksPath)) {
                 $this->wire('files')->mkdir($this->customFrameworksPath);
             }
 
@@ -295,16 +294,16 @@
 
         public static function getCSSClassFile(string $framework): string
         {
-            $modulePath = wire('config')->paths->siteModules . 'FrontendForms'.DIRECTORY_SEPARATOR;
-            $customFrameworksPath = wire('config')->paths->assets.'files'.DIRECTORY_SEPARATOR.'FrontendForms'.DIRECTORY_SEPARATOR.'frameworks'.DIRECTORY_SEPARATOR;
+            $modulePath = wire('config')->paths->siteModules . 'FrontendForms' . DIRECTORY_SEPARATOR;
+            $customFrameworksPath = wire('config')->paths->assets . 'files' . DIRECTORY_SEPARATOR . 'FrontendForms' . DIRECTORY_SEPARATOR . 'frameworks' . DIRECTORY_SEPARATOR;
 
-            if(wire('files')->exists($modulePath . 'CSSClasses' .DIRECTORY_SEPARATOR. $framework)){
-                return $modulePath . 'CSSClasses' .DIRECTORY_SEPARATOR. $framework;
-            } else if (wire('files')->exists($customFrameworksPath.$framework)){
-                return $customFrameworksPath.$framework;
+            if (wire('files')->exists($modulePath . 'CSSClasses' . DIRECTORY_SEPARATOR . $framework)) {
+                return $modulePath . 'CSSClasses' . DIRECTORY_SEPARATOR . $framework;
+            } else if (wire('files')->exists($customFrameworksPath . $framework)) {
+                return $customFrameworksPath . $framework;
             }
-                // load none.json file as fallback
-                return $modulePath . 'CSSClasses'.DIRECTORY_SEPARATOR .'none.json';
+            // load none.json file as fallback
+            return $modulePath . 'CSSClasses' . DIRECTORY_SEPARATOR . 'none.json';
         }
 
 
@@ -791,6 +790,9 @@
             $this->addHookBefore('Modules::saveConfig', $this, 'cleanUpBlacklist');
             // if the pass config field will be saved update the blacklist
             $this->addHookAfter('Fields::saved', $this, 'updateBlacklist');
+
+            // Hook for replacing form placeholders inside CKEditor fields
+            $this->addHookAfter('Page::render', $this, 'replaceFormPlaceholders');
 
             // Hook for checking if update button was pressed by analyzing Post values
             $this->addHookBefore('Page::render', $this, 'blacklistButtonSubmit');
@@ -1314,7 +1316,7 @@
             if (!$this->input_removeJS) {
 
                 $js = '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.js?v=' . $version . '"></script>' . PHP_EOL;
-                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '" defer></script>' . PHP_EOL;
+                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '&time=' . time() . '" defer></script>' . PHP_EOL;
                 $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
             }
             if (!$this->input_removeCSS) {
@@ -1381,6 +1383,94 @@
                     }
                 }
             }
+        }
+
+        protected function replaceFormPlaceholders(HookEvent $event): void
+        {
+            $page = $event->object;
+
+
+            // don't run on admin pages
+            if ($page->template->name === 'admin') {
+                return;
+            }
+
+            $content = $event->return;
+            // find all ckeditor fields on the page and run the code only on that fields
+            $template = $page->template;
+            // get the namespace of the template file
+            $namespace = $template->ns;
+            // get all fields of the template
+            $fields = $template->fieldgroup;
+
+            foreach ($fields as $field) {
+                if (($field->type == 'FieldtypeTextarea') && ($field->contentType == 1)) {
+
+                    $name = $field->name;
+
+                    // Save found placeholders temporarily to iterate their number
+                    $foundForms = $page->data('found-forms', []);
+
+                    // Find forms with or without surrounding <p> inside body
+                    $findFormsRegex = '/(<p>\s*)?{{([a-zA-Z0-9_-]+)}}(\s*<\/p>)?/';
+
+                    // Do the search and Replace
+                    $content = preg_replace_callback(
+                        $findFormsRegex,
+                        function ($matches) use ($page, $event, $namespace) {
+
+                            // This is where the magic happens
+                            $formHtml = $matches[0];
+                            $formFullName = $matches[2];
+
+                            $out = '';
+
+                            // Figure out form name and iteration, if exists
+                            $formNameParts = explode('__', $formFullName);
+                            $formName = $formNameParts[0];
+                            $formCount = $formNameParts[1] ?? 1;
+
+                            // Replace with nothing if placeholders are unknown
+                            if ($formName != $formFullName) return '';
+
+                            // Get form number on the page
+                            $formCount = $formCount ?? 1;
+
+                            // Get array of existing form names from temp page variable
+                            $foundForms = $page->data('found-forms');
+
+
+                            // Increment form number if form name was already found before and exists in the temp found forms array
+                            while (in_array($formName . '__' . $formCount, $foundForms)) $formCount++;
+
+                            // Generate form name with new incremented number
+                            $formNameCount = $formName . '__' . $formCount;
+
+                            // Include new form name in the list of existing forms
+                            $foundForms[] = $formNameCount;
+
+                            // Push to the global page variable
+                            $page->data('found-forms', $foundForms);
+
+                            // Create the dynamic function name (with or without namespace
+                            if ($namespace) {
+                                $functionName = $namespace . DIRECTORY_SEPARATOR . $formName;
+                            } else {
+                                $functionName = $formName;
+                            }
+
+                            // check if a function with this name exists
+                            if (function_exists($functionName)) {
+                                $out .= $functionName($formCount);
+                            }
+                            return $out;
+                        },
+                        $content
+                    );
+                }
+            }
+
+            $event->return = $content;
         }
 
         /**
