@@ -1221,3 +1221,9 @@ Inside the password field there was a writing mistake for the property of the pa
 - **Add recognition for url segments in form action attribute**
 
 The form action attribute, that has been automatically set during the instantiation of a form had only recognized the base url. If you are using url segments, and a form is submitted inside a segment, the form had always been redirected to the base url instead of the base url + segments. This has been fixed now and should work.
+
+## [2.2.9] 2024-07-15
+
+- **br tags from input radio multiple vertical removed**
+
+This is a small update and contains only 1 styling bug fix: a br tag has been removed from inputfield radios multiple, if no framework has been selected. The br had created a wide gap between the radio buttons, which had looked very ugly.
