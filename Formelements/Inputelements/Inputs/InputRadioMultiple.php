@@ -113,8 +113,6 @@ class InputRadioMultiple extends Input
                             $this->appendLabel(false);
                             break;
                         default:
-                            // add br tag if checkboxes should be aligned vertically
-                            $radio->getLabel()->append('<br>');
                     }
                 } else {
                     switch ($this->markupType) {
