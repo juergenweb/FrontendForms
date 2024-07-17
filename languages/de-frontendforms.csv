@@ -165,7 +165,7 @@ hours,Stunden,,site/modules/FrontendForms/Formelements/FormValidation.php,73cddd
 minutes,Minuten,,site/modules/FrontendForms/Formelements/FormValidation.php,640fd0cc0ffa0316ae087652871f4486
 seconds,Sekunden,,site/modules/FrontendForms/Formelements/FormValidation.php,783e8e29e6a8c3e22baa58a19420eb4f
 and,und,,site/modules/FrontendForms/Formelements/FormValidation.php,be5d5d37542d75f93a87094459f76678
-en,de,description,file,hash
+en,default,description,file,hash
 "GD library is not installed/enabled. Please install/enable it to be able to use CAPTCHA images.","Die GD-Bibliothek ist nicht installiert/aktiviert. Bitte installieren/aktivieren Sie diese, um die CAPTCHA-Funktion verwenden zu können.",,site/modules/FrontendForms/FrontendForms.module,3f73c9dc2eed9de2758f0bf0c32893f4
 "Sorry, but the file including the password list could not be downloaded from GitHub.","Leider konnte die Datei, welche die Passwörter enthält, nicht von GitHub heruntergeladen werden.",,site/modules/FrontendForms/FrontendForms.module,0e482f9f5b5ee24fc1c79e192f3e775f
 Comments,Kommentare,"should be identical to the weird name/title above",site/modules/FrontendForms/FrontendForms.module,8413c683b4b27cc3f4dbd4c90329d8ba
@@ -235,6 +235,10 @@ Details,=,,site/modules/FrontendForms/FrontendForms.module,3ec365dd533ddb7ef3d1c
 "Output rendering","Ausgabe rendern",,site/modules/FrontendForms/FrontendForms.module,e22428c686e2484d13fe958b6dd96ded
 "Select if you want to use a framework for rendering the form or not","Wählen Sie aus, ob Sie ein CSS-Framework für die Formularausgabe nutzen möchten oder nicht",,site/modules/FrontendForms/FrontendForms.module,b8ab6902234d473780a27431e7c004fe
 "No framework",Keines,,site/modules/FrontendForms/FrontendForms.module,672c694e3c32de003ed77fa07f6420cc
+"Custom path for the CSS classes json file","Benutzerdefinierter Pfad für die JSON-Datei der CSS-Klassen",,site/modules/FrontendForms/FrontendForms.module,df7e7a4b40e471bef3d8def9d6650d13
+"If you want to save your custom CSS class file in a directory other than site/assets/files/FrontendForms/frameworks/, you can enter the path to your custom directory here. Otherwise leave this field empty.","Wenn Sie Ihre benutzerdefinierte CSS-Klassendatei in einem anderen Verzeichnis als site/assets/files/FrontendForms/frameworks/ speichern möchten, können Sie hier den Pfad zu Ihrem benutzerdefinierten Verzeichnis eingeben. Andernfalls lassen Sie dieses Feld leer.",,site/modules/FrontendForms/FrontendForms.module,fd0b6fed9e7e756313769a11093ff20d
+"Please enter the path starting with site (eg site/templates/FrontendForms/frameworks).","Bitte geben Sie den Pfad beginnend mit site ein (z.B. site/templates/FrontendForms/frameworks).",,site/modules/FrontendForms/FrontendForms.module,2faa0d1d2f63b7b5358d8d351efed3ee
+"You find more information about custom CSS json files %s.","Weitere Informationen über benutzerdefinierte CSS-json-Dateien finden Sie %s.",,site/modules/FrontendForms/FrontendForms.module,2f97875791a2ed2f8d0e37fe2459f06c
 "Append the label after the input tag on checkboxes and radios","Den Label-Tag nach dem Input Tag bei Checkboxen und Radio Buttons anzeigen",,site/modules/FrontendForms/FrontendForms.module,3d40631076ed8bbd19e7aaa78cd4f123
 "By default, radio and checkbox tags are wrapped by their label tag. If you want to append the label tag after the input tag, please check the appropriate box.","Standardmäßig werden Checkboxen und Radio Buttons mit dem Label Tag umgeben. Wenn Sie aber möchten, dass der Label Tag erst nach dem Input Tag angezeigt wird, dann markieren Sie die entsprechende Box.",,site/modules/FrontendForms/FrontendForms.module,420b58ba111ac466843ceb296be2b1c4
 "Append label on checkboxes","Label bei Checkboxen nach dem Input Tag anzeigen",,site/modules/FrontendForms/FrontendForms.module,cf44c50f0e34ccaa350623b45fb893ab
