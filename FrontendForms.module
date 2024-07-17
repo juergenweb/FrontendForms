@@ -91,7 +91,6 @@
         protected string $input_global_notes_tag = ''; // the tag that should be used as the global tag for nots
         protected string $input_global_msg_tag = ''; // the tag that should be used as the global tag for messages (error and success message)
 
-
         /* Email configuration */
         protected string $input_emailTemplate = 'template_1.html'; // default email template
         protected array $mailProperties = []; // array of placeholder variables for HTML templates
@@ -167,7 +166,7 @@
                 'summary' => 'Create forms and validate them using the Valitron library.',
                 'author' => "Jürgen Kern",
                 'href' => 'https://github.com/juergenweb/FrontendForms',
-                'version' => '2.2.9',
+                'version' => '2.2.10',
                 'singular' => true,
                 'autoload' => true,
                 'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
@@ -192,6 +191,7 @@
                 'input_removeJS' => 0,
                 'input_removeCSS' => 0,
                 'input_framework' => 'none.json',
+                'input_customframeworkpath' => '',
                 'input_descPosition' => 'afterInput',
                 'input_appendLabel' => [],
                 'input_ajaxformsubmission' => 0,
@@ -285,18 +285,28 @@
                 $this->wire('files')->mkdir($this->customFrameworksPath);
             }
 
-            //get all classes from the currently loaded framework from the folder CSSClasses
-            $this->defaultClasses = json_decode(file_get_contents(self::getCSSClassFile($this->input_framework)));
 
             self::$framework = str_replace('.json', '', $this->input_framework);
+
+            // set the default custom framework path
+            if(array_key_exists('input_customframeworkpath', $this->moduleConfig) && ($this->moduleConfig['input_customframeworkpath'])){
+                $cp = $this->wire('config')->paths->root.$this->moduleConfig['input_customframeworkpath'];
+                // add trailing slash at the end, if it is missing
+                if(substr($cp, -1) != '/'){
+                    $cp = $cp.'/';
+                }
+                $this->customFrameworksPath = $cp;
+            }
+
+            //get all classes from the currently loaded framework from the folder CSSClasses
+            $this->defaultClasses = json_decode(file_get_contents(self::getCSSClassFile($this->input_framework, $this->customFrameworksPath)));
+
         }
 
 
-        public static function getCSSClassFile(string $framework): string
+        public static function getCSSClassFile(string $framework, string $customFrameworksPath): string
         {
             $modulePath = wire('config')->paths->siteModules . 'FrontendForms' . DIRECTORY_SEPARATOR;
-            $customFrameworksPath = wire('config')->paths->assets . 'files' . DIRECTORY_SEPARATOR . 'FrontendForms' . DIRECTORY_SEPARATOR . 'frameworks' . DIRECTORY_SEPARATOR;
-
             if (wire('files')->exists($modulePath . 'CSSClasses' . DIRECTORY_SEPARATOR . $framework)) {
                 return $modulePath . 'CSSClasses' . DIRECTORY_SEPARATOR . $framework;
             } else if (wire('files')->exists($customFrameworksPath . $framework)) {
@@ -305,7 +315,6 @@
             // load none.json file as fallback
             return $modulePath . 'CSSClasses' . DIRECTORY_SEPARATOR . 'none.json';
         }
-
 
         public static function createMailModuleOptions(Modules $modules): array
         {
@@ -1460,7 +1469,7 @@
                             } else {
                                 $functionName = $formName;
                             }
-                            
+
                             // check if a function with this name exists
                             if (function_exists($functionName)) {
                                 $out .= $functionName($formNameCount);
@@ -1792,6 +1801,20 @@
             $frameworkSelect->attr('value', $this->input_framework);
             $frameworkSelect->required = 1;
             $fieldsetMarkup->add($frameworkSelect, $inputfields);
+
+
+            //input_global_label_tag
+            $customFrameworkPath = $this->wire('modules')->get('InputfieldText');
+            $customFrameworkPath->attr('name', 'input_customframeworkpath');
+            $customFrameworkPath->attr('value', $this->input_customframeworkpath);
+            $customFrameworkPath->label = $this->_('Custom path for the CSS classes json file');
+            $customFrameworkPath->description = $this->_('If you want to save your custom CSS class file in a directory other than site/assets/files/FrontendForms/frameworks/, you can enter the path to your custom directory here. Otherwise leave this field empty.');
+            $notes = $this->_('Please enter the path starting with site (eg site/templates/FrontendForms/frameworks).');
+            $notes .= '<br>'.sprintf($this->_('You find more information about custom CSS json files %s.'), '<a href="https://github.com/juergenweb/FrontendForms/blob/main/README.md#support-for-css-frameworks">here</a>');
+            $customFrameworkPath->entityEncodeText = false;
+
+            $customFrameworkPath->notes = $notes;
+            $fieldsetMarkup->add($customFrameworkPath, $inputfields);
 
             // Append labels on checkboxes and radio buttons after input tag
             $appendLabels = $this->wire('modules')->get('InputfieldCheckboxes');
