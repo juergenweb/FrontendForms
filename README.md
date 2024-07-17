@@ -148,6 +148,7 @@ This module comes with native support for Bootstrap 5, UIKit 3 and Pico CSS fram
 If you want to use your own classes for example of a framework that is not supported by default, you have to add each class in the backend inside the tab "Own CSS classes" This works fine, but has one big disadvantage: You can only change the classnames for the given ProcessWire installation. If you install a new ProcessWire site and you want to use the same classes again, you have to enter them once more.
 
 To make life a little bit easier, you can add your own json file including all the classes inside a new folder called "frameworks". You will find this folder under site/assets/files/frameworks. This folder will not be overwritten during an update.
+If you want to store your json file on another location (eg. site/templates/FrontenForms/frameworks), you have to enter the path inside the backend configuration. There is a text input field under the framework select, where you can enter the path to your custom directory.
 
 ### How does it work
 
