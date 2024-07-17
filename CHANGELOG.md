@@ -1232,7 +1232,7 @@ This is a small update and contains only 1 styling bug fix: a br tag has been re
 
 - **Support for adding path to custom-json-classes file added**
 
-This is an addition that comes from a user request by dotnetic. He needs to save his json-css-classes file on another directory that the default directory(site/assets/files/FrontendForms/frameworks). For this reason I have added a new
+This is an addition that comes from a user request by dotnetic. He needs to save his json-css-classes file on another directory than the default directory(site/assets/files/FrontendForms/frameworks). For this reason I have added a new
 configuration field for entering the path to another directory. You will find this new configuration field under the framework select in the backend.
 
 If you are not familiar with json-css-classes configuration files, please read the docs [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#support-for-css-frameworks).
