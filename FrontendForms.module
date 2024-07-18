@@ -1810,7 +1810,7 @@
             $customFrameworkPath->label = $this->_('Custom path for the CSS classes json file');
             $customFrameworkPath->description = $this->_('If you want to save your custom CSS class file in a directory other than site/assets/files/FrontendForms/frameworks/, you can enter the path to your custom directory here. Otherwise leave this field empty.');
             $notes = $this->_('Please enter the path starting with site (eg site/templates/FrontendForms/frameworks).');
-            $notes .= '<br>'.sprintf($this->_('You find more information about custom CSS json files %s.'), '<a href="https://github.com/juergenweb/FrontendForms/blob/main/README.md#support-for-css-frameworks">here</a>');
+            $notes .= '<br>'.sprintf($this->_('You find more information about custom CSS json files %s.'), '<a target="_blank" href="https://github.com/juergenweb/FrontendForms/blob/main/README.md#support-for-css-frameworks">here</a>');
             $customFrameworkPath->entityEncodeText = false;
 
             $customFrameworkPath->notes = $notes;
