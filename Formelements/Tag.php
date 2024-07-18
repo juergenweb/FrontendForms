@@ -99,8 +99,13 @@ abstract class Tag extends Wire
         $this->appendcheckbox = in_array('appendcheckbox', $this->frontendforms['input_appendLabel']);
         $this->appendradio = in_array('appendradio', $this->frontendforms['input_appendLabel']);
 
+        if(array_key_exists('input_customframeworkpath', $this->frontendforms)){
+            $customframeworkpath = $this->frontendforms['input_customframeworkpath'];
+        } else {
+            $customframeworkpath = '';
+        }
         // load the json file from CSSClass directory
-        $this->classes = json_decode(file_get_contents(FrontendForms::getCSSClassFile($this->frontendforms['input_framework'], $this->frontendforms['input_customframeworkpath'])));
+        $this->classes = json_decode(file_get_contents(FrontendForms::getCSSClassFile($this->frontendforms['input_framework'], $customframeworkpath)));
         //$this->classes = json_decode(file_get_contents($this->wire('config')->paths->FrontendForms . 'CSSClasses' . DIRECTORY_SEPARATOR . $this->frontendforms['input_framework']));
     }
 
