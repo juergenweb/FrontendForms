@@ -16,6 +16,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 8. Ajax support for form submission
 9. Contains an optional additonal module (FrontendForms Manager) for installation to provide an userfriendly UI for the SIMPLE QUESTION CAPTCHA
 10. Support for inputfield dependencies (show/hide fields depending on values of other fields)
+11. Support for using forms inside CKEditor fields via placeholders
 
 ## Requirements
 * PHP>=8.0.0
@@ -2722,6 +2723,82 @@ This JavaScript feature does not cover all possible use cases, but it allows you
 If you need a special comparison you have to write your own JavaScript snippet or you write a feature request to the author
 of this script on Github (https://github.com/bomsn/mf-conditional-fields).  
 
+## Adding forms via placeholders to CKEditor fields
+
+Sometimes it can be useful to insert forms directly between text stored in CKEditor fields. This is now possible
+by using placeholders inside these fields, which are replaced by forms during the rendering process.
+
+Thanks to Donatas, who uses FrontendForms for his projects and has the idea and the need to implement such a feature for a project.
+He offers me his code for a working solution, and I have implemented it into FrontendForms.
+So, this new feature is made available to you by Donatas.
+
+### How does it work?
+
+To display a form in a CKEditor field, you must include the full code for the form in a function inside the template.
+The only parameter you need to add is the ID of the form.
+
+Instead of echoing the form at the end, you have to set a return command.
+
+The name of the function will become the name of the placeholder. Please take care of the upper and lower case.
+Here you can see an example of a simple form wrapped inside a function.
+
+```php
+
+// function name is formInterests, so the placeholder name is formInterests too!!
+
+function formInterests(string $id = 'myform') // add the ID of the form as the parameter
+        {
+
+            $form = new \FrontendForms\Form($id); // use the ID as set inside the constructor
+
+            $php = new \FrontendForms\Select('php');
+            $php->setLabel('My preferred PHP version is');
+            $php->setDefaultValue('PHP 8');
+            $php->addOption('PHP 6', 'PHP 6');
+            $php->addOption('PHP 7', 'PHP 7');
+            $php->addOption('PHP 8', 'PHP 8');
+            $php->setRule('required');
+            $form->add($php);
+
+            $button = new \FrontendForms\Button('submit');
+            $button->setAttribute('value', 'Send');
+            $form->add($button);
+
+            if ($form->isValid()) {
+               // do whatever you want with the POST values
+            }
+
+            return $form->render(); // do not echo the output -> use return in the function
+        }
+``` 
+
+
+The name of the function is called "formInterests", so the name of the placeholder is "formInterests" too.
+You can see the id of the form is entered as the only parameter of the function. This parameter will be 
+added to the form construction on the first line.
+
+At the end of the form object, you can see that the form will be returned. That is all.
+
+Best of all, you can add multiple instances of the same form to the editor panel without having to worry about the form IDs.
+Take a look at the following usage.
+
+![Placeholder in backend](https://github.com/juergenweb/FrontendForms/blob/main/images/forminterests-backend.jpg?raw=true)
+
+Every placeholder of the same type will be replaced with the same type of form, but every form has a unique ID.
+This is accomplished by adding an increment number to the end of the form ID (e.g. contactform__1, contactform__2 and so on) automatically.
+You do not have to take care about it!
+
+
+![Placeholder in backend](https://github.com/juergenweb/FrontendForms/blob/main/images/forminterests-frontend.jpg?raw=true)
+
+### Limitations 
+
+You can only add forms via placeholders that are set via the function within the template of the displayed page. You can't view forms that are in another template.
+For example, you have a contact page, and there you have created the contact form inside a function. It is not possible
+to view this form on another page with another template (e.g. About us page using the about-us template). I can only be
+displayed on the contact page.
+
+Placeholders can only be used in CKEditor fields, not in other fields like Textarea.
 
 ## How to install/uninstall the module
 
