@@ -2743,34 +2743,34 @@ Instead of echoing the form at the end, you have to set a return command.
 The name of the function will become the name of the placeholder. Please take care of the upper and lower case.
 Here you can see an example of a simple form wrapped inside a function.
 
+
 ```php
 
 // function name is formInterests, so the placeholder name is formInterests too!!
 
-function formInterests(string $id = 'myform') // add the ID of the form as the parameter
-        {
+function formInterests(string $id = 'myform') // add the ID of the form as the parameter{
 
-            $form = new \FrontendForms\Form($id); // use the ID as set inside the constructor
+   $form = new \FrontendForms\Form($id); // use the ID as set inside the constructor
 
-            $php = new \FrontendForms\Select('php');
-            $php->setLabel('My preferred PHP version is');
-            $php->setDefaultValue('PHP 8');
-            $php->addOption('PHP 6', 'PHP 6');
-            $php->addOption('PHP 7', 'PHP 7');
-            $php->addOption('PHP 8', 'PHP 8');
-            $php->setRule('required');
-            $form->add($php);
+   $php = new \FrontendForms\Select('php');
+   $php->setLabel('My preferred PHP version is');
+   $php->setDefaultValue('PHP 8');
+   $php->addOption('PHP 6', 'PHP 6');
+   $php->addOption('PHP 7', 'PHP 7');
+   $php->addOption('PHP 8', 'PHP 8');
+   $php->setRule('required');
+   $form->add($php);
 
-            $button = new \FrontendForms\Button('submit');
-            $button->setAttribute('value', 'Send');
-            $form->add($button);
+   $button = new \FrontendForms\Button('submit');
+   $button->setAttribute('value', 'Send');
+   $form->add($button);
 
-            if ($form->isValid()) {
-               // do whatever you want with the POST values
-            }
+   if ($form->isValid()) {
+      // do whatever you want with the POST values
+   }
 
-            return $form->render(); // do not echo the output -> use return in the function
-        }
+   return $form->render(); // do not echo the output -> use return in the function
+}
 ``` 
 
 
