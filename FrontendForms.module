@@ -1430,7 +1430,7 @@
 
                             // This is where the magic happens
                             $formHtml = $matches[0];
-                            $formFullName = $matches[2];
+                            $formFullName = strtolower($matches[2]);
 
                             $out = '';
 
@@ -1445,17 +1445,14 @@
                             // Get form number on the page
                             $formCount = $formCount ?? 1;
 
-                            // Get array of existing form names from temp page variable
+                            // Get the array of existing form names from temp page variable
                             $foundForms = $page->data('found-forms');
-
 
                             // Increment form number if form name was already found before and exists in the temp found forms array
                             while (in_array($formName . '__' . $formCount, $foundForms)) $formCount++;
 
                             // Generate form name with new incremented number
                             $formNameCount = $formName . '__' . $formCount;
-
-
 
                             // Include new form name in the list of existing forms
                             $foundForms[] = $formNameCount;
