@@ -2734,7 +2734,7 @@ by using placeholders inside these fields, which are replaced by forms during th
 He offers me his code for a working solution, and I have implemented it into FrontendForms.
 So, this new feature is made available to you by Donatas.
 
-## Syntax for the placeholder
+### Syntax for the placeholder
 
 You need to write the placeholder in your CKEditor field like this:
 
