@@ -2775,7 +2775,8 @@ function formInterests(string $id = 'myform'){ // add the ID of the form as the 
 ``` 
 
 
-The name of the function is called "formInterests", so the name of the placeholder is "formInterests" too.
+The name of the function is called "formInterests", so the name of the placeholder is "formInterests" or "forminterests" too.
+
 You can name the function whatever you like as long as it is unique inside the template. You can name it for example "contactForm" or "newsletter".
 In this case you need to use the placeholders "contactForm" or "newsletter" inside your CKEditor fields.
 
