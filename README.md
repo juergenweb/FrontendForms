@@ -46,6 +46,7 @@ This module will work without GD-Library too, but you will not be able to use CA
 * [Use forms in iframe](#use-forms-in-iframe)
 * [Extra module: FrontendForms Manager](#custom-module-frontendformsmanager)
 * [Inputfield dependencies](#inputfield-dependencies)
+* [Adding forms via placeholders to CKEditor fields](#adding-forms-via-placeholders-to-ckeditor-fields)
 
 ## Installation and Quick-start guide
 The most simple way is to install it via the ProcessWire module manager in the administration area, but you can also install it manually following the steps afterwards:
