@@ -2730,7 +2730,7 @@ Sometimes it can be useful to insert forms directly between text stored in CKEdi
 by using placeholders inside these fields, which are replaced by forms during the rendering process.
 
 > [!NOTE]
-> Thanks to Donatas, who uses FrontendForms for his projects and has the idea and the need to implement such a feature for a project.
+> Thanks to Donatas(@donatasben), who uses FrontendForms for his projects and has the idea and the need to implement such a feature for a project.
 He offers me his code for a working solution, and I have implemented it into FrontendForms.
 So, this new feature is made available to you by Donatas.
 
