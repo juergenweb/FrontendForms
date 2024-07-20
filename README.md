@@ -2747,20 +2747,21 @@ Enter the name of your placeholder between 2 opening and closing brackets. It do
 ### How does it work?
 
 To display a form in a CKEditor field, you must include the full code for the form in a function inside the template.
-The only parameter you need to add is the ID of the form.
 
-Instead of echoing the form at the end, you have to set a return command.
+The name of the function is also the name of the placeholder and the ID of the form. 
+The only parameter you need to add is the variable $id as the function's parameter. This variable will be replaced later on with the dynamic ID for the form. This ID cannont be changed manually.
 
-The name of the function will become the name of the placeholder.
+Instead of echoing the form at the end, you have to set a return command at the end.
 
 Here you can see an example of a simple form wrapped inside a function.
 
 
 ```php
 
-// function name is formInterests, so the placeholder name is "formInterests" or "forminterests" or "FORMINTERESTS" too!!
+// function name is formInterests, so the placeholder name is "formInterests" or "forminterests" or "FORMINTERESTS". You can write the placeholder as you want.
+// The id of the form is also "forminterests" + the suffix containing the number of the form (eg forminterests__1). The ID will be set automatically.
 
-function formInterests(string $id = 'myform'){ // add the ID of the form as the parameter
+function formInterests($id){ // add the variable $id without a value as the functions's parameter
 
    $form = new \FrontendForms\Form($id); // use the ID as set inside the constructor
 
@@ -2788,9 +2789,6 @@ function formInterests(string $id = 'myform'){ // add the ID of the form as the 
 
 You can name the function whatever you like as long as it is unique inside the template. You can name it for example "contactForm" or "newsletter".
 In this case you need to use the placeholders "contactForm" or "newsletter" inside your CKEditor fields (using mixed, upper or lowercase letters).
-
-You can see that the ID of the form is entered as the only parameter for the function. This parameter will be 
-added to the form construction on the first line too. Everything after that is the same syntax for writing a form as usual.
 
 At the end of the function, the form object will be returned with the return command (no echo command).
 
