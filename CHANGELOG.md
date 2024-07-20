@@ -1237,3 +1237,16 @@ configuration field for entering the path to another directory. You will find th
 
 If you are not familiar with json-css-classes configuration files, please read the docs [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#support-for-css-frameworks).
 
+## [2.2.11] 2024-07-20
+
+- **Support for adding forms to CKEditor fields via placeholders**
+
+This is an addition that goes back to a user request from donatas. He needs to load multiple forms into CKEditor fields. That's why he developed a working solution and offered me to integrate it into FrontendForms.
+
+In short: By using placeholders in the style of {{myplaceholder}}, you can load forms into CKEditor fields and these placeholders will be replaced by forms during the page rendering process.
+
+More details about how to use forms in CKEditor field are available inside the [docs](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#adding-forms-via-placeholders-to-ckeditor-fields).
+
+- **A kind of namespace added to the main JS file of FrontendForms**
+
+To avoid conflicts of variables and functions of FrontendForms with other javascript files, I added some kind of namespace to the main JS file. Now all functions and variables run in their own scope and there should be no conflict with other libraries or JS files.
