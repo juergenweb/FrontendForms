@@ -2729,7 +2729,8 @@ of this script on Github (https://github.com/bomsn/mf-conditional-fields).
 Sometimes it can be useful to insert forms directly between text stored in CKEditor fields. This is now possible
 by using placeholders inside these fields, which are replaced by forms during the rendering process.
 
-Thanks to Donatas, who uses FrontendForms for his projects and has the idea and the need to implement such a feature for a project.
+> [!NOTE]
+> Thanks to Donatas, who uses FrontendForms for his projects and has the idea and the need to implement such a feature for a project.
 He offers me his code for a working solution, and I have implemented it into FrontendForms.
 So, this new feature is made available to you by Donatas.
 
