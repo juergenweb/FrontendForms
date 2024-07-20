@@ -2778,10 +2778,10 @@ The name of the function is called "formInterests", so the name of the placehold
 You can name the function whatever you like as long as it is unique inside the template. You can name it for example "contactForm" or "newsletter".
 In this case you need to use the placeholders "contactForm" or "newsletter" inside your CKEditor fields.
 
-You can see the id of the form is entered as the only parameter of the function. This parameter will be 
-added to the form construction on the first line.
+You can see that the ID of the form is entered as the only parameter for the function. This parameter will be 
+added to the form construction on the first line too. Everything after that is the same syntax for writing a form as usual.
 
-At the end of the form object, you can see that the form will be returned. That is all.
+At the end of the function, the form object will be returned with the return command (no echo command).
 
 Best of all, you can add multiple instances of the same form to the editor panel without having to worry about the form IDs.
 Take a look at the following usage.
