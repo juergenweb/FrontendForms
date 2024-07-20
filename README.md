@@ -2742,7 +2742,7 @@ You need to write the placeholder in your CKEditor field like this:
 {{nameofyourplaceholder}}
 ```
 
-Enter the name of your placeholder between 2 opening and closing brackets. You only have to take care, that there is no empty space between the placeholder name and the bracktes. 
+Enter the name of your placeholder between 2 opening and closing brackets. You only have to take care, that there is no empty space between the placeholder name and the brackets. 
 
 ### How does it work?
 
