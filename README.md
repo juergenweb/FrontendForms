@@ -2747,7 +2747,7 @@ Here you can see an example of a simple form wrapped inside a function.
 
 ```php
 
-// function name is formInterests, so the placeholder name is formInterests too!!
+// function name is formInterests, so the placeholder name is "formInterests" or "forminterests" too!!
 
 function formInterests(string $id = 'myform'){ // add the ID of the form as the parameter
 
