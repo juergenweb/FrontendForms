@@ -2788,8 +2788,11 @@ Take a look at the following usage.
 
 ![Placeholder in backend](https://github.com/juergenweb/FrontendForms/blob/main/images/forminterests-backend.jpg?raw=true)
 
+You can see that the placeholder "formInterest" is added 2 times to the CKEditor field "body" and 1 time to CKEditor field "sidebar".
+
 Every placeholder of the same type will be replaced with the same type of form, but every form has a unique ID.
 This is accomplished by adding an increment number to the end of the form ID (e.g. contactform__1, contactform__2 and so on) automatically.
+
 You do not have to take care about it!
 
 
