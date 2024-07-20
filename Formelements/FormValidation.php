@@ -52,6 +52,8 @@
 
         /**
          * Check if min time and max time limits are lower/higher than submission time
+         * Please keep in mind: This function calculates a new min time after each submission depending on the number of empty required fields left
+         *
          * @return boolean - true, if everything is ok
          * @throws Exception
          * @throws WireException
@@ -109,6 +111,7 @@
                         $this->alert->setCSSClass('alert_warningClass');
                         $this->alert->setAttribute('data-submittime', $this->form->getID());
                         $this->alert->setText($text);
+
                         return false;
                     }
                     //too slow
