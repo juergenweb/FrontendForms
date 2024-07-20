@@ -2748,7 +2748,7 @@ Here you can see an example of a simple form wrapped inside a function.
 
 // function name is formInterests, so the placeholder name is formInterests too!!
 
-function formInterests(string $id = 'myform') // add the ID of the form as the parameter{
+function formInterests(string $id = 'myform'){ // add the ID of the form as the parameter
 
    $form = new \FrontendForms\Form($id); // use the ID as set inside the constructor
 
