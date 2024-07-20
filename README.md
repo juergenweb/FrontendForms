@@ -2734,6 +2734,16 @@ by using placeholders inside these fields, which are replaced by forms during th
 He offers me his code for a working solution, and I have implemented it into FrontendForms.
 So, this new feature is made available to you by Donatas.
 
+## Syntax for the placeholder
+
+You need to write the placeholder in your CKEditor field like this:
+
+```
+{{nameofyourplaceholder}}
+```
+
+Enter the name of your placeholder between 2 opening and closing brackets. 
+
 ### How does it work?
 
 To display a form in a CKEditor field, you must include the full code for the form in a function inside the template.
