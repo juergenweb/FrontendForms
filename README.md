@@ -2778,7 +2778,7 @@ function formInterests(string $id = 'myform'){ // add the ID of the form as the 
 The name of the function is called "formInterests", so the name of the placeholder is "formInterests" or "forminterests" too.
 
 You can name the function whatever you like as long as it is unique inside the template. You can name it for example "contactForm" or "newsletter".
-In this case you need to use the placeholders "contactForm" or "newsletter" inside your CKEditor fields.
+In this case you need to use the placeholders "contactForm" or "newsletter" inside your CKEditor fields (using mixed upper and lowercase letters or lowercase only).
 
 You can see that the ID of the form is entered as the only parameter for the function. This parameter will be 
 added to the form construction on the first line too. Everything after that is the same syntax for writing a form as usual.
@@ -2797,6 +2797,7 @@ This is accomplished by adding an increment number to the end of the form ID (e.
 
 You do not have to take care about it!
 
+And this is how it looks like on the frontend:
 
 ![Placeholder in backend](https://github.com/juergenweb/FrontendForms/blob/main/images/forminterests-frontend.jpg?raw=true)
 
