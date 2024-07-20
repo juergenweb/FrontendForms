@@ -2740,7 +2740,8 @@ The only parameter you need to add is the ID of the form.
 
 Instead of echoing the form at the end, you have to set a return command.
 
-The name of the function will become the name of the placeholder. Please take care of the upper and lower case.
+The name of the function will become the name of the placeholder. You don't have to worry about case sensitivity for the placeholder name in the CKEditor field. You can write the placeholder with lowercase letters only, or you can also write it mixed with uppercase and lowercase letters. This makes no difference.
+
 Here you can see an example of a simple form wrapped inside a function.
 
 
