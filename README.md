@@ -2758,8 +2758,10 @@ Here you can see an example of a simple form wrapped inside a function.
 
 ```php
 
-// function name is formInterests, so the placeholder name is "formInterests" or "forminterests" or "FORMINTERESTS". You can write the placeholder as you want.
-// The id of the form is also "forminterests" + the suffix containing the number of the form (eg forminterests__1). The ID will be set automatically.
+// Function name is formInterests, so the placeholder name is "formInterests" or "forminterests" or "FORMINTERESTS".
+// You can write the placeholder as you want (uppercase, lowercase, mixed).
+// The id of the form is also "forminterests" + the suffix containing the number of the form (eg forminterests__1).
+// The dynamic ID will be set automatically.
 
 function formInterests($id){ // add the variable $id without a value as the functions's parameter
 
