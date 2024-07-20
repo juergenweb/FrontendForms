@@ -2742,7 +2742,7 @@ You need to write the placeholder in your CKEditor field like this:
 {{nameofyourplaceholder}}
 ```
 
-Enter the name of your placeholder between 2 opening and closing brackets. You only have to take care, that there is no empty space between the placeholder name and the brackets. 
+Enter the name of your placeholder between 2 opening and closing brackets. It does not matter if you write the name of the placeholder in lower case only, uppercase only or mixed letters. The syntax is not case sensitive. You only have to take care, that there is no empty space between the placeholder name and the brackets. 
 
 ### How does it work?
 
@@ -2751,14 +2751,14 @@ The only parameter you need to add is the ID of the form.
 
 Instead of echoing the form at the end, you have to set a return command.
 
-The name of the function will become the name of the placeholder. You don't have to worry about case sensitivity for the placeholder name in the CKEditor field. You can write the placeholder with lowercase letters only, or you can also write it mixed with uppercase and lowercase letters. This makes no difference.
+The name of the function will become the name of the placeholder.
 
 Here you can see an example of a simple form wrapped inside a function.
 
 
 ```php
 
-// function name is formInterests, so the placeholder name is "formInterests" or "forminterests" too!!
+// function name is formInterests, so the placeholder name is "formInterests" or "forminterests" or "FORMINTERESTS" too!!
 
 function formInterests(string $id = 'myform'){ // add the ID of the form as the parameter
 
@@ -2786,10 +2786,8 @@ function formInterests(string $id = 'myform'){ // add the ID of the form as the 
 ``` 
 
 
-The name of the function is called "formInterests", so the name of the placeholder is "formInterests" or "forminterests" too.
-
 You can name the function whatever you like as long as it is unique inside the template. You can name it for example "contactForm" or "newsletter".
-In this case you need to use the placeholders "contactForm" or "newsletter" inside your CKEditor fields (using mixed upper and lowercase letters or lowercase only).
+In this case you need to use the placeholders "contactForm" or "newsletter" inside your CKEditor fields (using mixed, upper or lowercase letters).
 
 You can see that the ID of the form is entered as the only parameter for the function. This parameter will be 
 added to the form construction on the first line too. Everything after that is the same syntax for writing a form as usual.
@@ -2801,7 +2799,7 @@ Take a look at the following usage.
 
 ![Placeholder in backend](https://github.com/juergenweb/FrontendForms/blob/main/images/forminterests-backend.jpg?raw=true)
 
-You can see that the placeholder "formInterest" is added 2 times to the CKEditor field "body" and 1 time to CKEditor field "sidebar".
+You can see, that the placeholder "forminterest" is added 2 times to the CKEditor field "body" and 1 time to CKEditor field "sidebar".
 
 Every placeholder of the same type will be replaced with the same type of form, but every form has a unique ID.
 This is accomplished by adding an increment number to the end of the form ID (e.g. contactform__1, contactform__2 and so on) automatically.
