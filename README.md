@@ -2765,7 +2765,7 @@ Here you can see an example of a simple form wrapped inside a function.
 
 function formInterests($id){ // add the variable $id without a value as the functions's parameter
 
-   $form = new \FrontendForms\Form($id); // use the ID from the function parameter
+   $form = new \FrontendForms\Form($id); // use $id from the function parameter
    $php = new \FrontendForms\Select('php');
    $php->setLabel('My preferred PHP version is');
    $php->setDefaultValue('PHP 8');
