@@ -2783,7 +2783,7 @@ function formInterests($id){ // add the variable $id without a value as the func
       // do whatever you want with the POST values
    }
 
-   return $form->render(); // do not echo the output -> use return in the function
+   return $form->render(); // do not echo the output -> use return instead
 }
 ``` 
 
