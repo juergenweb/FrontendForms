@@ -2125,6 +2125,7 @@
                                     $this->alert->setCSSClass('alert_successClass');
                                     $this->alert->setText($this->getSuccessMsg());
                                     $this->wire('session')->remove('attempts');
+                                    $this->wire('session')->remove('submitted');
                                     // remove attempt session
                                     $this->wire('session')->remove('doubleSubmission-' . $this->getID());
                                     // remove the session for checking for double form submission
@@ -2146,6 +2147,7 @@
                                     // set error alert
                                     $this->wire('session')->set('errors', '1');
                                     $this->formErrors = $v->errors();
+
 
                                     // check if a CAPTCHA is enabled
                                     if ($this->getCaptchaType() != 'none') {
@@ -2220,7 +2222,12 @@
 
                                     // create session for max attempts if set, otherwise add 1 attempt.
                                     //this session contains the number of failed attempts and will be increased by 1 on each failed attempt
+
+                                    // set submitted session to 1, which means the form is submitted at least 1 time
+                                    $this->wire('session')->submitted = 1;
+
                                     if ($this->getMaxAttempts()) {
+
                                         $this->wire('session')->attempts += 1; // increase session on each invalid attempt
 
                                         if (($this->getMaxAttempts() - $this->wire('session')->attempts) == 0) {
@@ -2814,7 +2821,7 @@
                     $this->alert->setCSSClass('alert_dangerClass');
                     // return blocking text for too many failed attempts
                     if ($this->wire('session')->get('blocked') == 'maxAttempts') {
-                        if ($this->wire('session')->get('attempts') == $this->getMaxAttempts()) {
+                        if (($this->getMaxAttempts()) && ($this->wire('session')->get('attempts') == $this->getMaxAttempts())) {
                             $this->alert->setText($this->_('You have reached the max. number of allowed attempts and therefore you cannot submit the form once more. To reset the blocking and to submit the form anyway you have to close this browser, open it again and visit this page once more.'));
                         }
                     }
