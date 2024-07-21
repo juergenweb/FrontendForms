@@ -1250,3 +1250,9 @@ More details about how to use forms in CKEditor field are available inside the [
 - **A kind of namespace added to the main JS file of FrontendForms**
 
 To avoid conflicts of variables and functions of FrontendForms with other javascript files, I added some kind of namespace to the main JS file. Now all functions and variables run in their own scope and there should be no conflict with other libraries or JS files.
+
+## 2024-07-21
+
+- **Bug fixed on validation of checkbox if it is required**
+
+By default, checkboxes can have a value, but it is not mandatory. There was a bug validating a checkbox if it has no value. In this case the required validator has been ignored. An additional condition was added to check if an inputfield is type of checkbox. If so, then the validation rules added will run, even if the checkox has no value. Now the checkbox will be validated if it is checked or not even if there is no value set.
