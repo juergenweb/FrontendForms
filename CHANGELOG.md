@@ -1255,4 +1255,4 @@ To avoid conflicts of variables and functions of FrontendForms with other javasc
 
 - **Bug fixed on validation of checkbox if it is required**
 
-By default, checkboxes can have a value, but it is not mandatory. There was a bug validating a checkbox if it has no value. In this case the required validator has been ignored. An additional condition was added to check if an inputfield is type of checkbox. If so, then the validation rules added will run, even if the checkox has no value. Now the checkbox will be validated if it is checked or not even if there is no value set.
+By default, checkboxes can have a value, but it is not mandatory. There was a bug validating a checkbox if it has no value. In this case the required validator has been ignored. An additional condition was added to check if an inputfield is type of checkbox. If so, then the validation rules added will run, even if the checkox has no value. Now the checkbox will be validated if it is checked even if there is no value set.
