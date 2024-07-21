@@ -1256,3 +1256,7 @@ To avoid conflicts of variables and functions of FrontendForms with other javasc
 - **Bug fixed on validation of checkbox if it is required**
 
 By default, checkboxes can have a value, but it is not mandatory. There was a bug validating a checkbox if it has no value. In this case the required validator has been ignored. An additional condition was added to check if an inputfield is type of checkbox. If so, then the validation rules added will run, even if the checkox has no value. Now the checkbox will be validated if it is checked even if there is no value set.
+
+- **Calculation of new min time does not run on first form submission**
+
+If minTime() and/or maxTime() are set, the checkTimeDiff() method always calculates a new min time value after each form submission depending on the empty mandatory fields left. It makes no sense if the calculation starts at the first form submission, so I have changed this to start the calculation at the second submission.
