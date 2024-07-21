@@ -2068,7 +2068,6 @@
                                 foreach ($formElements as $element) {
                                     // run validation only if there is at least one validation rule set
 
-                                    bd($element->getRules());
                                     if (count($element->getRules()) > 0) {
                                         // add required validation to be the first
 
@@ -2147,7 +2146,6 @@
                                     // set error alert
                                     $this->wire('session')->set('errors', '1');
                                     $this->formErrors = $v->errors();
-                                    bd($this->formErrors);
 
                                     // check if a CAPTCHA is enabled
                                     if ($this->getCaptchaType() != 'none') {
