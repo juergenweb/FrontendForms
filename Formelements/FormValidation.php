@@ -60,7 +60,7 @@
          */
         public function checkTimeDiff(array $realFormElements): bool
         {
-
+          
             if (($this->form->getMinTime()) || ($this->form->getMaxTime())) {
                 // grab the page_load value
 
@@ -81,7 +81,8 @@
 
                 $numberOfRequiredFieldWithValues = count(array_filter($requiredFields));
                 // calculate new min time depending on the required fields, which has no value at the moment
-                if ($numberOfRequiredFieldWithValues) {
+                // this condition runs only after the second and further submission attempts - not on the firs attempt
+                if (($numberOfRequiredFieldWithValues) && (!is_null($this->wire('session')->submitted))) {
                     $newMinTime = (round(($this->form->getMinTime() * (count($requiredFields) - $numberOfRequiredFieldWithValues)) / count($requiredFields)));
                     if($newMinTime < 1) $newMinTime = 1; // set it to at least 1 to prevent error if newMinTime would be rounded to 0
                     $this->form->setMinTime((int)$newMinTime);
