@@ -1251,7 +1251,9 @@ More details about how to use forms in CKEditor field are available inside the [
 
 To avoid conflicts of variables and functions of FrontendForms with other javascript files, I added some kind of namespace to the main JS file. Now all functions and variables run in their own scope and there should be no conflict with other libraries or JS files.
 
-## 2024-07-21
+## [2.2.12] 2024-07-21
+
+Version 2.2.12 contains 1 bug fix, 1 improvement and 2 HTML5 validators.
 
 - **Bug fixed on validation of checkbox if it is required**
 
