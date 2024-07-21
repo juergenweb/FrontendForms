@@ -1260,3 +1260,7 @@ By default, checkboxes can have a value, but it is not mandatory. There was a bu
 - **Calculation of new min time does not run on first form submission**
 
 If minTime() and/or maxTime() are set, the checkTimeDiff() method always calculates a new min time value after each form submission depending on the empty mandatory fields left. It makes no sense if the calculation starts at the first form submission, so I have changed this to start the calculation at the second submission.
+
+- **HTML5 validation for IBAN and BIC added**
+
+The missing HTML5 validation for IBAN and BIC validation rules have been added now. 
