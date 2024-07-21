@@ -2751,9 +2751,9 @@ To display a form in a CKEditor field, you must include the full code for the fo
 The name of the function is also the name of the placeholder and the ID of the form. 
 The only parameter you need to add is the variable $id as the function's parameter. This variable will be replaced later on with the dynamic ID for the form. This ID cannont be changed manually.
 
-Instead of echoing the form at the end, you have to set a return command at the end.
+Instead of echoing the form, you have to set a return command at the end.
 
-Here you can see an example of a simple form wrapped inside a function.
+Here you can see an example of a simple form wrapped inside a function. You can copy this code to a template to see how it works in real life if you want.
 
 
 ```php
