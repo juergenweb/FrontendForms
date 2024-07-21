@@ -2804,7 +2804,7 @@ Every placeholder of the same type will be replaced with the same type of form, 
 This is accomplished by adding an increment number to the end of the form ID (e.g. contactform__1, contactform__2 and so on) automatically, 
 so you do not have to take care about it!
 
-And this is how it looks like on the frontend:
+This is how it looks like on the frontend:
 
 ![Placeholder in backend](https://github.com/juergenweb/FrontendForms/blob/main/images/forminterests-frontend.jpg?raw=true)
 
