@@ -241,7 +241,7 @@
 
         /**
          * Set a validator rule to validate the input value
-         * Checks first if the validator method exists, otherwise does nothing
+         * Checks first if the validator method exists, otherwise do nothing
          * Check https://processwire.com/api/ref/sanitizer/ for all sanitizer methods
          * @param string $validator - the name of the validator
          * @return $this
@@ -262,7 +262,6 @@
             // if only a integer has been added as allowed file size, convert it to kb, MB and so on on error messages
             if ($validator == 'allowedFileSize') {
                 if(is_int($variables[0])) {
-
                     $variables[0] = wireBytesStr($variables[0]);
                 }
             }
@@ -1141,6 +1140,53 @@
         {
             $this->removeAttribute('pattern');
         }
+
+        /**
+         * Add HTML5 attribute pattern for the BIC code only to the input tag
+         * Validator rule: checkBic
+         * @return void
+         */
+        protected function addHTML5checkBic(): void
+        {
+            $pattern = '[A-Z]{6}[A-Z2-9][A-NP-Z0-9][A-Z0-9]{3}';
+            $this->setAttribute('pattern', $pattern);
+        }
+
+        /**
+         * Remove attribute pattern for the BIC code only from the input tag
+         * Validator rule: checkBic
+         * Can be used on input type text and textarea
+         * @return void
+         */
+        protected function removeHTML5checkBic(): void
+        {
+            $this->removeAttribute('pattern');
+        }
+
+        /**
+         * Add HTML5 attribute pattern for the Iban code only to the input tag
+         * Validator rule: checkIban
+         * @return void
+         */
+        protected function addHTML5checkIban(): void
+        {
+            // This pattern is for international IBAN numbers
+            $pattern = '[A-Z]{2}\d{13,32}|(?=.{18,42}$)[A-Z]{2}\d{2}( )(\d{4}\1){2,7}\d{1,4}';
+            //$pattern = '[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}';
+            $this->setAttribute('pattern', $pattern);
+        }
+
+        /**
+         * Remove attribute pattern for the Iban code only from the input tag
+         * Validator rule: checkIban
+         * Can be used on input type text and textarea
+         * @return void
+         */
+        protected function removeHTML5checkIban(): void
+        {
+            $this->removeAttribute('pattern');
+        }
+
 
         /**
          * Add HTML5 attribute pattern for alphanumerical letters only to the input tag
