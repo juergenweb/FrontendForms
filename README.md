@@ -2825,7 +2825,7 @@ This is how it looks like on the frontend:
 
 You can only add forms via placeholders that are set via the function within the template of the displayed page. You can't view forms that are in another template.
 For example, you have a contact page, and there you have created the contact form inside a function. It is not possible
-to view this form on another page with another template (e.g. About us page using the about-us template). I can only be
-displayed on the contact page.
+to view this form on another page with another template (e.g. About us page using the about-us template). It can only be
+displayed on the same page.
 
 Placeholders can only be used in CKEditor fields, not in other fields like Textarea.
