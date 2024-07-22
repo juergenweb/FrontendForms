@@ -2761,7 +2761,7 @@ Enter the name of your placeholder between 2 opening and closing brackets. It do
 To display a form in a CKEditor field, you must include the full code for the form in a function inside the template.
 
 The name of the function is also the name of the placeholder and the ID of the form. 
-The only parameter you need to add is the variable $id as the function's parameter. This variable will be replaced later on with the dynamic ID for the form. This ID cannont be changed manually.
+The only parameter you need to add to the function is the variable $id. This variable will be replaced later on with the dynamic ID for the form and cannont be changed manually.
 
 Instead of echoing the form, you have to set a return command at the end.
 
