@@ -1285,7 +1285,8 @@
                 'input_useIPBan' => ['$form->useIPBan(false); // true, false',],
                 'input_preventIPs' => [
                     '$form->useIPBan(false); // true, false',
-                    '$form->testIPBan("146.70.36.200"); // ' . $this->_('Use this method to test, if IP ban works. Enter the IP address that should be tested.') . '<br>' . $this->_('This method is only for testing purposes, so do not forget to remove it afterwards.')
+                    '$form->testIPBan("146.70.36.200"); // ' . $this->_('Use this method to test, if IP ban works. Enter the IP address that should be tested.') . '<br>' .
+                    $this->_('This method is only for testing purposes, so do not forget to remove it afterwards.')
                 ],
                 'input_useHoneypot' => ['$form->useHoneypot(true); // true,false'],
                 'input_captchaType' => ['$form->disableCaptcha();'],
