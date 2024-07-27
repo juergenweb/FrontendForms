@@ -183,6 +183,7 @@ Comments,Kommentare,"should be identical to the weird name/title above",site/mod
 "This can be overwritten on the form by using these methods","Diese Einstellungen können mit diesen Methoden auf dem Formular überschrieben werden",,site/modules/FrontendForms/FrontendForms.module,d248bc06fcb2345c55dfd44c687e8210
 "Use this method to test, if IP ban works. Enter the IP address that should be tested.","Verwenden Sie diese Methode, um zu testen, ob das IP-Verbot funktioniert. Geben Sie die IP-Adresse ein, die getestet werden soll.",,site/modules/FrontendForms/FrontendForms.module,ae3f9d4b86fc69e0ada3f76bf6e57e52
 Seconds,Sekunden,,site/modules/FrontendForms/FrontendForms.module,8f19a8c7566af54ea8981029730e5465
+"This method is only for testing purposes, so do not forget to remove it afterwards.","Diese Methode ist nur für Testzwecke. Vergessen Sie daher nicht, diese nachher wieder zu löschen.",,site/modules/FrontendForms/FrontendForms.module,b9a5f2677904db4468d20a5fb37984ff
 Attempts,Versuche,,site/modules/FrontendForms/FrontendForms.module,7ba3b8236d48d4f4c5ec03c3fe6b75a9
 Colors,Farben,,site/modules/FrontendForms/FrontendForms.module,5d50889672f6f860d14f502de3de1957
 Lines,Linien,,site/modules/FrontendForms/FrontendForms.module,a0b0293a2db49f5f93c15a62e095c819
