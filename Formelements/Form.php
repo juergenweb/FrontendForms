@@ -2057,7 +2057,7 @@
 
                                     $fieldValue = $this->wire('input')->post($this->getID() . '-' . $element->getID());
 
-                                    if (is_null($fieldValue) && (!$element instanceof InputCheckbox)) { // exclude checkboxes because they are allowed to have no value
+                                    if (is_null($fieldValue) && (!$element instanceof InputCheckbox) && (!$element instanceof InputCheckboxMultiple)) { // exclude checkboxes because they are allowed to have no value
                                         $element->removeAllRules();
                                     }
 
@@ -2073,8 +2073,9 @@
 
                                         $rules = $this->putRequiredOnTop($element->getRules());
                                         foreach ($rules as $validatorName => $parameters) {
-                                            $v->rule($validatorName, $element->getAttribute('name'), ...
-                                                $parameters['options']);
+
+                                            $v->rule($validatorName, $element->getAttribute('name'), ...$parameters['options']);
+
                                             // Add custom error message text if present
                                             if (isset($parameters['customMsg'])) {
                                                 $v->message($parameters['customMsg']);
@@ -2147,7 +2148,6 @@
                                     // set error alert
                                     $this->wire('session')->set('errors', '1');
                                     $this->formErrors = $v->errors();
-
 
                                     // check if a CAPTCHA is enabled
                                     if ($this->getCaptchaType() != 'none') {
