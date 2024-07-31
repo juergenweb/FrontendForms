@@ -35,6 +35,16 @@ $hex->setDescription('Validator to check field contains a valid HEX color code')
 $hex->setNotes('Valid value: #666 or #666666, invalid value: #1548');
 $form->add($hex);
 
+$checkboxmultiarray = new \FrontendForms\InputCheckboxMultiple('multicheckbox');
+$checkboxmultiarray->setLabel('Please select checkbox 1 and 3');
+$checkboxmultiarray->setDescription('Validator to check if checkbox 1 and 3 of a multicheckbox field are checked');
+$checkboxmultiarray->addOption('Checkbox 1', '1');
+$checkboxmultiarray->addOption('Checkbox 2', '2');
+$checkboxmultiarray->addOption('Checkbox 3', '3');
+$checkboxmultiarray->setRule('required');
+$checkboxmultiarray->setRule('listContains' , '1');
+$checkboxmultiarray->setRule('listContains' , '3');
+$form->add($checkboxmultiarray);
 
 $min = new \FrontendForms\InputNumber('min');
 $min->setLabel('Validator min');
