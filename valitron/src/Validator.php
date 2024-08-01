@@ -461,6 +461,7 @@ class Validator
             $strict = $params[1];
         }
 
+        if(is_null($value)) $value = [];
         return in_array($params[0], $value, $strict);
     }
 
@@ -1588,6 +1589,7 @@ class Validator
     }
 
     private function isAssociativeArray($input){
+        if(is_null($input)) $input = [];
         //array contains at least one key that's not an can not be cast to an integer
         return count(array_filter(array_keys($input), 'is_string')) > 0;
     }
