@@ -38,7 +38,7 @@ IP,=,,site/modules/FrontendForms/FrontendFormsManager.module,a12a3079e14ced46e69
 "Not blocked - The IP is not on the list of permanent blocked IPs (Blacklist).","Nicht blockiert - Die IP steht nicht auf der Liste der dauerhaft gesperrten IPs (Blacklist).",,site/modules/FrontendForms/FrontendFormsManager.module,258de28492189633a51ef184dda6f87b
 "Blocked - The IP is currently on the list of permanent blocked IPs (Blacklist).","Blockiert - Die IP steht derzeit auf der Liste der dauerhaft gesperrten IPs (Blacklist).",,site/modules/FrontendForms/FrontendFormsManager.module,838b86b4a41333131eaf8865bf9bbb74
 "At the moment there are no entries about temporarily blocked IPs in the log files.","Momentan gibt es keine Einträge über temporär gesperrte IPs in den Logfiles.",,site/modules/FrontendForms/FrontendFormsManager.module,30d18d49315732b23244f10874fa96dd
-"To the full list of IPs that have been temporarily blocked at least once","Zur vollständigen Liste der IPs, die mindestens einmal vorübergehend gesperrt wurden",,site/modules/FrontendForms/FrontendFormsManager.module,b71a23090734c602becf39428bd43e6a
+"To all temporarily blocked IPs","Zu allen temporär gesperrten IPs",,site/modules/FrontendForms/FrontendFormsManager.module,d886dadad6f4bbcbe945bea88b35637a
 #,=,,site/modules/FrontendForms/FrontendFormsManager.module,01abfc750a0c942167651c40d088531d
 "Number of blocks","Anzahl der Sperrungen",,site/modules/FrontendForms/FrontendFormsManager.module,02281719187ced2a9763531b2d5cde35
 Info,=,,site/modules/FrontendForms/FrontendFormsManager.module,4059b0251f66a18cb56f544728796875
