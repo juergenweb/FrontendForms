@@ -1287,3 +1287,9 @@ So this is a sensible measure against spammers.
 - **Bug fixed for null values in validation rule "listContains"**
 
 I made 2 small changes in the Validator.php. The "listContains" validation rule now handles null values correctly.
+
+## 2024-08-10
+
+- **Bug for wrong url to privacy page fixed**
+
+If you are using the text version of the privacy text, the link to the privacy page was wrong and you will be always redirected to the homepage instead. This bug is fixed now.
