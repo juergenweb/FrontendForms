@@ -1266,3 +1266,22 @@ If minTime() and/or maxTime() are set, the checkTimeDiff() method always calcula
 - **HTML5 validation for IBAN and BIC added**
 
 The missing HTML5 validation for IBAN and BIC validation rules have been added now. 
+
+## [2.2.13] 2024-08-10
+
+Version 2.2.12 contains 1 upgrade for the FrontendFormsManager and one bug fix
+
+- **Upgrade for the FrontendFormsManager**
+
+The FrontendFormsManager now contains a new section that contains the number of temporary blocks of all IP addresses.
+Temporary means that these IPs are blocked over a session. As long as the session exists, these IPs will not be able to submit a form.
+
+You can also find the same section in the module configuration, but it is more user-friendly to work with blocks in the FrontendFormsManager than in the module configuration.
+
+Additionally, you also have a graph that shows the temporary blocking of each IP.
+
+The purpose of this section is to identify potential spammers and add their IPs to the blacklist. Any IP on the blacklist will no longer be able to submit a form on the website because the forms for those IPs will no longer be displayed.
+
+So this is a sensible measure against spammers.
+
+- **Upgrade for the FrontendFormsManager**
