@@ -2,6 +2,7 @@ en,de,description,file,hash
 "This chart indicates how many questions belong to a certain status.","Dieses Diagramm zeigt, wie viele Fragen einem bestimmten Status angehören.",,site/modules/FrontendForms/FrontendFormsManager.module,7a3466881a14c754ac4a48106c1b4bb5
 "This chart shows how many questions are displayed on the frontend (active) or not (inactive).","Dieses Diagramm zeigt, wie viele Fragen im Frontend angezeigt werden (aktiv) oder nicht (inaktiv).",,site/modules/FrontendForms/FrontendFormsManager.module,b6d75d0a454edfb28a9c5c048cb20b16
 "List of all questions for the simple question CAPTCHA","Liste aller Fragen für das einfache Frage CAPTCHA",,site/modules/FrontendForms/FrontendFormsManager.module,11da7aac15a18bb4d6307c26d44f4c6f
+"List of temporarily blocked IPs","Liste der vorübergehend gesperrten IPs",,site/modules/FrontendForms/FrontendFormsManager.module,81ec4869bae32a704d654f175ed5e531
 "Add a new question","Eine neue Frage hinzufügen",,site/modules/FrontendForms/FrontendFormsManager.module,b67f92900c8c7f5541224d8d14107249
 Status,=,,site/modules/FrontendForms/FrontendFormsManager.module,ec53a8c4f07baed5d8825072c89799be
 Visibility,Sichtbarkeit,,site/modules/FrontendForms/FrontendFormsManager.module,1729a56cfc89021478498fe0c89a843a
@@ -20,8 +21,38 @@ inactive,inaktiv,,site/modules/FrontendForms/FrontendFormsManager.module,19d3894
 "Questions for the SIMPLE TEXT CAPTCHA","Fragen für das EINFACHE FRAGE CAPTCHA",,site/modules/FrontendForms/FrontendFormsManager.module,b4c576f8a5b38eff98049ed9e4dc101a
 "Manage all questions for the SIMPLE QUESTION CAPTCHA","Verwalten Sie alle Fragen für das EINFACHE FRAGE CAPTCHA",,site/modules/FrontendForms/FrontendFormsManager.module,250019d88eeca10932e3d40bb09ce3b5
 "Questions statistics","Fragen Statistiken",,site/modules/FrontendForms/FrontendFormsManager.module,faec30dbd9ef07709d8c33fdd11cf66a
-"Manage all questions for the SIMPLE QUESTION CAPTCHA in one place.","Verwalten Sie alle Fragen für das EINFACHE FRAGE CAPTCHA an einem Ort.",,site/modules/FrontendForms/FrontendFormsManager.module,3d1b8b1393fde38144ad8ecba2a5fc68
+"List of all IPs that have been blocked temporarily","Liste aller IPs, die vorübergehend gesperrt wurden",,site/modules/FrontendForms/FrontendFormsManager.module,8512425380beff0a24d694b4ded45a3e
+"Information about all IP addresses that have been temporarily blocked due to too many unsuccessful form submissions.","Informationen über alle IP-Adressen, die aufgrund von zu vielen erfolglosen Formularübermittlungen vorübergehend gesperrt wurden.",,site/modules/FrontendForms/FrontendFormsManager.module,a18c55268179c73b3aa46d9a14df495b
+"Logging of blocked IPs is disabled.","Die Protokollierung blockierter IPs ist deaktiviert.",,site/modules/FrontendForms/FrontendFormsManager.module,7be7323cb06d3990bd8547f6871790c2
+"FrontendForms configuration",FrontendForms-Einstellungen,,site/modules/FrontendForms/FrontendFormsManager.module,47a600951cdd2cd37077b29a27ff2e87
+"If you want to show statistics about blocked IPs, you need to go to the %s and enable it first (Spam protection and security settings for the forms -> Measure 1: Restrict number of failed attempts).","Wenn Sie Statistiken über blockierte IPs anzeigen möchten, müssen Sie zuerst zu den %s gehen und die Protokollierung dort aktivieren (Spam-Schutz und Sicherheitseinstellungen für die Formulare -> Maßnahme 1: Anzahl der fehlgeschlagenen Versuche einschränken).",,site/modules/FrontendForms/FrontendFormsManager.module,ed20d52093a775ffe22177bdbcd71fa3
+"Temporarily Blocked IPs","Vorübergehend blockierte IPs",,site/modules/FrontendForms/FrontendFormsManager.module,b66f727f1347d3c063dc4f8cc3edcd0d
+"This chart shows the number of temporarily blocks for the 10 most temporarily blocked IPs in descending order.","Dieses Diagramm zeigt die Anzahl vorübergehender Sperrungen für die 10 am häufigsten vorübergehend gesperrten IPs in absteigender Reihenfolge.",,site/modules/FrontendForms/FrontendFormsManager.module,f98692d3cb41bd9be35703105edbcadb
+"Number of temporary blockings","Anzahl der vorübergehenden Sperrungen",,site/modules/FrontendForms/FrontendFormsManager.module,d143d66368a0f6e0d6e43027a952f41c
+IPs,=,,site/modules/FrontendForms/FrontendFormsManager.module,fef48b3b39a9c7cdf35ffca8bf736a75
+"Number of temporarily blockings","Anzahl der vorübergehenden Sperrungen",,site/modules/FrontendForms/FrontendFormsManager.module,aa183e25ae52cc52433d8bf32d39bb1c
+"Top 10 IPs with the most blockings","Top 10 IPs mit den meisten Sperrungen",,site/modules/FrontendForms/FrontendFormsManager.module,179c5a3e05d658ac00e7fce8f0d7f2a1
+IP,=,,site/modules/FrontendForms/FrontendFormsManager.module,a12a3079e14ced46e69ba52b8a90b21a
+"Number of blockings","Anzahl der Sperrungen",,site/modules/FrontendForms/FrontendFormsManager.module,ec6643b8937c561563dd33a8e91a617c
+"Not banned","Nicht gesperrt",,site/modules/FrontendForms/FrontendFormsManager.module,fa9c4cb43f1d45a9bcb3c17aac3b8603
+"Not blocked - The IP is not on the list of permanent blocked IPs (Blacklist).","Nicht blockiert - Die IP steht nicht auf der Liste der dauerhaft gesperrten IPs (Blacklist).",,site/modules/FrontendForms/FrontendFormsManager.module,258de28492189633a51ef184dda6f87b
+"Blocked - The IP is currently on the list of permanent blocked IPs (Blacklist).","Blockiert - Die IP steht derzeit auf der Liste der dauerhaft gesperrten IPs (Blacklist).",,site/modules/FrontendForms/FrontendFormsManager.module,838b86b4a41333131eaf8865bf9bbb74
+"At the moment there are no entries about temporarily blocked IPs in the log files.","Momentan gibt es keine Einträge über temporär gesperrte IPs in den Logfiles.",,site/modules/FrontendForms/FrontendFormsManager.module,30d18d49315732b23244f10874fa96dd
+"To the full list of IPs that have been temporarily blocked at least once","Zur vollständigen Liste der IPs, die mindestens einmal vorübergehend gesperrt wurden",,site/modules/FrontendForms/FrontendFormsManager.module,b71a23090734c602becf39428bd43e6a
+#,=,,site/modules/FrontendForms/FrontendFormsManager.module,01abfc750a0c942167651c40d088531d
+"Number of blocks","Anzahl der Sperrungen",,site/modules/FrontendForms/FrontendFormsManager.module,02281719187ced2a9763531b2d5cde35
+Info,=,,site/modules/FrontendForms/FrontendFormsManager.module,4059b0251f66a18cb56f544728796875
+"Add/remove IP to/from the blacklist ","Hinzufügen/Entfernen der IP zu/von der Blacklist",,site/modules/FrontendForms/FrontendFormsManager.module,ceb2b8baee1c56db529c7f81e479ea03
+"View details about this IP","Details zu dieser IP anzeigen",,site/modules/FrontendForms/FrontendFormsManager.module,f0b432894b4fa5276c7eda4168d20d6b
+"IP is blocked","IP ist gesperrt",,site/modules/FrontendForms/FrontendFormsManager.module,d165be43dae15da6ca52506f826bb3d4
+"Remove from blacklist","Von der Blacklist entfernen",,site/modules/FrontendForms/FrontendFormsManager.module,5ad3137edf46035a9faf9432f7cd0522
+"Add to blacklist","Zur Blacklist hinzufügen",,site/modules/FrontendForms/FrontendFormsManager.module,218ccb4c1ea08f5bfb6cd390c3ba94e5
+"IP is not blocked","IP is nicht gesperrt",,site/modules/FrontendForms/FrontendFormsManager.module,977f739fffa52c21a3c1eb749a3f8540
+"Any IP addresses that are blacklisted will not be able to submit forms, because in this case the forms will not be displayed.","IP-Adressen, die auf der Blacklist stehen, können keine Formulare absenden, da die Formulare in diesem Fall nicht angezeigt werden.",,site/modules/FrontendForms/FrontendFormsManager.module,9813b9e89bf43bd820bfe520251c1bf4
+"This is a security measure to exclude potential spammers.","Dies ist eine Sicherheitsmaßnahme, um potenzielle Spammer auszuschließen.",,site/modules/FrontendForms/FrontendFormsManager.module,08386e021693b022a97f42ffee376e0f
+"There are no temporarily blocked IPs entries inside the log files.","Es gibt keine Einträge über vorübergehend Sperrungen von IPs in den Protokolldateien.",,site/modules/FrontendForms/FrontendFormsManager.module,6831e9348a1272be22fab169a550afd2
 "Back to the dashboard","Zurück zur Übersicht",,site/modules/FrontendForms/FrontendFormsManager.module,86c9ce4b2e3b43353a23861c053a594b
+"Manage all questions for the SIMPLE QUESTION CAPTCHA in one place.","Verwalten Sie alle Fragen für das EINFACHE FRAGE CAPTCHA an einem Ort.",,site/modules/FrontendForms/FrontendFormsManager.module,3d1b8b1393fde38144ad8ecba2a5fc68
 Filter,=,,site/modules/FrontendForms/FrontendFormsManager.module,d7778d0c64b6ba21494c97f77a66885a
 "Filter by question text","Filtern nach Fragen-Text",,site/modules/FrontendForms/FrontendFormsManager.module,a6ff831f0edf7f8005760a999cb60e19
 "Filter questions by containing a specific word or phrase.","Filtern von Fragen anhand eines bestimmten Wortes oder einer Wortphrase",,site/modules/FrontendForms/FrontendFormsManager.module,cdab3dfcbbb5e5523be258f3207b0543
@@ -31,7 +62,6 @@ all,alle,,site/modules/FrontendForms/FrontendFormsManager.module,a181a603769c1f9
 "Filter by visibility","Filtern nach Sichtbarkeit",,site/modules/FrontendForms/FrontendFormsManager.module,603fbf05a5aa6253a7c6384853cb6689
 "Filter whether the questions are used by the CAPTCHA or not.","Filtern anhand des Kritieriums, ob die Frage beim CAPTCHA angezeigt wird oder nicht.",,site/modules/FrontendForms/FrontendFormsManager.module,2c7c44365ac7c8e1fb5bc34f654c812f
 "No questions have been created at the moment.","Im Moment wurden noch keine Frage erstellt",,site/modules/FrontendForms/FrontendFormsManager.module,70dfa5b7b0368e70377dcec64a197a8f
-#,=,,site/modules/FrontendForms/FrontendFormsManager.module,01abfc750a0c942167651c40d088531d
 Question,Frage,,site/modules/FrontendForms/FrontendFormsManager.module,a97ea56b0e00b2379736ae60869ff66a
 Created,"Erstellt am",,site/modules/FrontendForms/FrontendFormsManager.module,0eceeb45861f9585dd7a97a3e36f85c6
 User,Benutzer,,site/modules/FrontendForms/FrontendFormsManager.module,8f9bfe9d1345237cb3b2b205864da075
@@ -58,23 +88,3 @@ User,Benutzer,,site/modules/FrontendForms/FrontendFormsManager.module,8f9bfe9d13
 "If the total number of entries inside the table is higher, the table will be paginated.","Wenn die Gesamtzahl der Einträge in der Tabelle höher ist, wird die Tabelle paginiert.",,site/modules/FrontendForms/FrontendFormsManager.module,cf74d4fba3d676998324ae2e6b7cff1b
 "FrontendForms Manager",=,,site/modules/FrontendForms/FrontendFormsManager.module,1bc4ddb5b62b3fe81a7813f2f322c48a
 "Additional administration page for the FrontendForms module.","Zusätzliche Verwaltungsseite für das FrontendForms-Modul.",,site/modules/FrontendForms/FrontendFormsManager.module,0ff317d3baaddf1705c924fa4c6c040f
-en,de,description,file,hash
-"Accepted answers","Akzeptierte Antworten",,site/modules/FrontendForms/config/questionFields.php,cce75deb233360295f6767182c938f32
-"Add all accepted answers (each on a new line).","Fügen Sie alle akzeptierten Antworten hinzu (jede in einer neuen Zeile).",,site/modules/FrontendForms/config/questionFields.php,45d7ca50d976f3c4f755fa35821036d9
-"Custom error message","Eigene Fehlermeldung",,site/modules/FrontendForms/config/questionFields.php,ecc06d754e4dda5735774f2cea9a3b68
-"Set a custom error message if you want.","Geben Sie eine eigene Fehlermeldung ein, wenn Sie möchten.",,site/modules/FrontendForms/config/questionFields.php,8bd8b18e7770795be254c93810a372c4
-"This will overwrite the default error message if the CAPTCHA answer was wrong.","Dies überschreibt die Standard-Fehlermeldung, wenn die Antwort auf die CAPTCHA-Frage falsch war.",,site/modules/FrontendForms/config/questionFields.php,e16385405c0f47ad2ceb370f74bc2ab9
-"Success message",Erfolgsmeldung,,site/modules/FrontendForms/config/questionFields.php,eb348dd0d56400bd18e7c9e8d25cc666
-"Set a custom success message if you want.","Geben Sie eine eigene Erfolgsmeldung ein, wenn Sie möchten.",,site/modules/FrontendForms/config/questionFields.php,2e63c4d559b627072de5a4b21f1eb32c
-"This message will be shown, if the answer of the CAPTCHA was correct, but there were other errors.","Diese Meldung wird dann angezeigt, wenn die Antwort auf die CAPTCHA-Frage zwar richtig war, aber es noch weitere Fehler im Formular gab.",,site/modules/FrontendForms/config/questionFields.php,ce4c2231658c3a72e7aebe024e94aa51
-"Placeholder text","Platzhalter Text",,site/modules/FrontendForms/config/questionFields.php,910370309c0af1e93df0ae98ff8cfe5a
-"Set a placeholder text if you want.","Geben Sie einen Platzhalter-Text ein, wenn Sie möchten.",,site/modules/FrontendForms/config/questionFields.php,b973c03d6052d7606a019c01bfe3d5f6
-"Notes text",Hinweistext,,site/modules/FrontendForms/config/questionFields.php,74d5e1805d45df0b13e9479aa6ff2560
-"Set a notes text if you want.","Geben Sie einen Hinweistext ein, wenn Sie möchten.",,site/modules/FrontendForms/config/questionFields.php,8b110c326d0539657cfb11ea1c8872de
-"The notes text will be displayed below the input field.","Der Hinweistext wird unterhalb des Eingabefeldes angezeigt.",,site/modules/FrontendForms/config/questionFields.php,5246e64a8eba26d147ac489b70f1d603
-"Description text",Beschreibungstext,,site/modules/FrontendForms/config/questionFields.php,fc4c04ecf67db91c6464624c45b6d962
-"Set a description text if you want.","Geben Sie einen Beschreibungstext ein, wenn Sie möchten.",,site/modules/FrontendForms/config/questionFields.php,b28adfe52910e98d754b219d946b5168
-"The description text will be displayed below or above the label or below the input field.","Der Beschreibungstext wird ober- oder unterhalb der Feldbezeichnung oder unterhalb des Eingabefeldes angezeigt.",,site/modules/FrontendForms/config/questionFields.php,9208ed81e76d40f644bf2285b17f19f2
-"Description position","Position für den Beschreibungstext",,site/modules/FrontendForms/config/questionFields.php,91261839ea22b9ecf95e5fbb89ec8583
-"You can change the position of the description text if you want.","Sie können die Position des Beschreibungstextes ändern, wenn Sie möchten",,site/modules/FrontendForms/config/questionFields.php,9d9ec0ab13ea5dcc47e0265aea2de226
-"This will overwrite the default description position.","Dies überschreibt die Standard-Position",,site/modules/FrontendForms/config/questionFields.php,46f1e762ce350d92ef565e24cfd6249e
