@@ -1284,6 +1284,6 @@ The purpose of this section is to identify potential spammers and add their IPs 
 
 So this is a sensible measure against spammers.
 
-- **Bug fixed for null values in Validator.php**
+- **Bug fixed for null values in validation rule "listContains"**
 
-I have done 2 small changes inside the Validator.php. Now it handles null values properly. This was a missing piece in Valitron.
+I made 2 small changes in the Validator.php. The "listContains" validation rule now handles null values correctly.
