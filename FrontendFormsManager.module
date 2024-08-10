@@ -552,7 +552,7 @@
                 'title' => __('FrontendForms Manager', __FILE__),
                 'summary' => __('Additional administration page for the FrontendForms module.', __FILE__),
                 'author' => 'Jürgen Kern',
-                'version' => '1.0.0',
+                'version' => '1.1.0',
                 'icon' => 'area-chart',
                 'permanent' => false,
                 'autoload' => true,
