@@ -794,17 +794,19 @@
                 $out .= '<li>' . $notbanned_icon . ': ' . $this->_('Not blocked - The IP is not on the list of permanent blocked IPs (Blacklist).') . '</li>';
                 $out .= '<li>' . $banned_icon . ': ' . $this->_('Blocked - The IP is currently on the list of permanent blocked IPs (Blacklist).') . '</li>';
                 $out .= '</ul>';
+
+                // create the "all failed attempts" button
+                $button = $this->modules->get('InputfieldButton');
+                $button->value = $this->_('To all temporarily blocked IPs');
+                $button->setSecondary();
+                $button->attr('href', $this->config->urls->admin . 'setup/frontendforms-dashboard/list-of-failed-attempts');
+                $out .= '<div id="to-all-blocked-ips">'.$button->render().'</div>';
+
             } else {
                 // no entries
                 $out .= $this->_('At the moment there are no entries about temporarily blocked IPs in the log files.');
             }
 
-            // create the "all failed attempts" button
-            $button = $this->modules->get('InputfieldButton');
-            $button->value = $this->_('To all temporarily blocked IPs');
-            $button->setSecondary();
-            $button->attr('href', $this->config->urls->admin . 'setup/frontendforms-dashboard/list-of-failed-attempts');
-            $out .= $button->render();
             return $out;
         }
 
