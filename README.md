@@ -76,7 +76,7 @@ Take a look at the following example:
 ```php
 
 // if you are not using a namespace at the top of your template file, you only have to call the namespace without leading backslash at the beginning
-$form = new FrontenForms\Form('myForm'); // usage with custom ID inside the constructor and namespace in front of the class name.
+$form = new FrontendForms\Form('myForm'); // usage with custom ID inside the constructor and namespace in front of the class name.
 
 // but if you are using a template with a namespace you have to add the leading backslash to the FrontendForms namespace
 $form = new \FrontendForms\Form('myForm'); // take a look at the leading '\' in front of the namespace
@@ -158,7 +158,7 @@ This module comes with native support for Bootstrap 5, UIKit 3 and Pico CSS fram
 If you want to use your own classes for example of a framework that is not supported by default, you have to add each class in the backend inside the tab "Own CSS classes" This works fine, but has one big disadvantage: You can only change the classnames for the given ProcessWire installation. If you install a new ProcessWire site and you want to use the same classes again, you have to enter them once more.
 
 To make life a little bit easier, you can add your own json file including all the classes inside a new folder called "frameworks". You will find this folder under site/assets/files/frameworks. This folder will not be overwritten during an update.
-If you want to store your json file on another location (eg. site/templates/FrontenForms/frameworks), you have to enter the path inside the backend configuration. There is a text input field under the framework select, where you can enter the path to your custom directory.
+If you want to store your json file on another location (eg. site/templates/FrontendForms/frameworks), you have to enter the path inside the backend configuration. There is a text input field under the framework select, where you can enter the path to your custom directory.
 
 ### How does it work
 
