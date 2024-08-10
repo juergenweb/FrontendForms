@@ -527,3 +527,9 @@ en,de,description,file,hash
 "Simple question Captcha (Free text)","Einfache-Frage-Captcha (Freitext)",,site/modules/FrontendForms/Formelements/Captcha/variants/SimpleQuestionCaptcha.php,7f8c93e381be10c3cb9bebaa31387873
 "Please answer the question.","Bitte beantworten Sie die Frage",,site/modules/FrontendForms/Formelements/Captcha/variants/SimpleQuestionCaptcha.php,dd037cafd7ea6b996985f42b3598e6d6
 "is not in the correct format.","hat nicht das richtige Format.",,site/modules/FrontendForms/Formelements/CustomRules.php,717bbd629cd6af3c2239e23329293280
+"More information about %s","Mehr Informationen zu %s",,site/modules/FrontendForms/detail-view.php,77c41ffdf7bebe6e2f1896cf8ae78a73
+"Geo location",Geo-Location,,site/modules/FrontendForms/detail-view.php,0f66316eff804ffa836d2214d80f3756
+Country,Land,,site/modules/FrontendForms/detail-view.php,59716c97497eb9694541f7c3d37b1a4d
+Region,Region,,site/modules/FrontendForms/detail-view.php,f447ac856e7e72435904956e3b15f433
+City,Stadt/Ort,,site/modules/FrontendForms/detail-view.php,57d056ed0984166336b7879c2af3657f
+"We are sorry, but ip-api.com does not have any information about this IP address.","Es tut uns leid, aber ip-api.com hat keine Informationen über diese IP-Adresse.",,site/modules/FrontendForms/detail-view.php,ac598c39fd0d78fb3eff40b3a5b5cbbd
