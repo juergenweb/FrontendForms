@@ -24,6 +24,11 @@
         protected array $questionFields = []; // configuration array containing all question fields
         protected bool $langSupport = false; // language support is enabled (true) or not (false)
         protected bool $langSupportFields = false; // language support for fields on the frontend is enabled (true) or not (false)
+        protected array $frontendforms_config = [];
+        protected array $failedAttempts = []; // array containing ips as key and number of failed attempts as value
+
+        // objects
+        protected FrontendForms $frontendForms;
 
         /**
          * Constructor method which runs during class initialization
@@ -34,6 +39,11 @@
             parent::__construct();
             // include configuration file for the question fields
             include('config/questionFields.php');
+
+            // grab FrontendForms module to be able to use some methods of it
+            $this->frontendForms = wire('modules')->get('FrontendForms');
+
+            $this->frontendforms_config = wire('modules')->getConfig('FrontendForms');
 
             // set config values if present
             if ($this->input_paginationnumber)
@@ -80,6 +90,24 @@
                 $this->filtervalues = $this->wire('input')->post;
             }
 
+            // set failed attempts for the IPs
+            if (wire('log')->getTotalEntries('failed-attempts-frontendforms')) {
+
+                // group array by IP
+                $result = array();
+
+                foreach (wire('log')->getEntries('failed-attempts-frontendforms') as $element) {
+                    $data = json_decode($element['text']);
+                    $result[] = $data->IP;
+                }
+
+                $result = array_count_values($result);
+
+                arsort($result);
+                $this->failedAttempts = $result;
+
+            }
+
         }
 
         /**
@@ -97,12 +125,17 @@
             if (($process == 'FrontendFormsManager') || ($process == 'ProcessPageAdd')) {
 
                 if ($process == 'FrontendFormsManager') {
-                    $slug = $this->wire('input')->urlSegments[$this->wire('input')->pageNum];
+
+                    $slug = null;
+                    $pageNum = ($this->wire($this->wire('input')->pageNum)) ?? 1;
+                    $slug = $this->wire('input')->urlSegments[$pageNum];
 
                     $headlines = [
-                        'questions-for-the-simple-question-captcha' => $this->_('List of all questions for the simple question CAPTCHA')
+                        'questions-for-the-simple-question-captcha' => $this->_('List of all questions for the simple question CAPTCHA'),
+                        'list-of-failed-attempts' => $this->_('List of temporarily blocked IPs'),
                     ];
-                    if (array_key_exists($slug, $headlines)) {
+
+                    if (!is_null($slug) && array_key_exists($slug, $headlines)) {
                         $headline = $headlines[$slug];
                         // Overwrite the processBrowserTitle
                         $this->wire('processBrowserTitle', $headline);
@@ -122,6 +155,7 @@
 
             }
         }
+
 
         /**
          * Parse the csv file and get the translation according to a given text
@@ -577,11 +611,373 @@
 
                 $form->add($fieldsetQuestions);
 
+                // Failed attempts part
+                $fieldsetFailedAttempts = $this->modules->get('InputfieldFieldset');
+                $fieldsetFailedAttempts->label = $this->_('List of all IPs that have been blocked temporarily');
+
+                // table for failed attempts
+                $field = $this->modules->get('InputfieldMarkup');
+                $field->label = $this->_('Information about all IP addresses that have been temporarily blocked due to too many unsuccessful form submissions.');
+
+                // check first if logging of failed attempts is enabled
+                if (array_key_exists('input_logFailedAttempts', $this->frontendforms_config) && ($this->frontendforms_config['input_logFailedAttempts'])) {
+                    $field->value = $this->renderFailedAttemptsList();
+                } else {
+                    $text = $this->_('Logging of blocked IPs is disabled.') . '<br>';
+                    $link = '<a href="' . $this->wire('config')->urls->admin . 'module/edit?name=FrontendForms" target="_blank">' . $this->_('FrontendForms configuration') . '</a>';
+                    $text .= sprintf($this->_('If you want to show statistics about blocked IPs, you need to go to the %s and enable it first (Spam protection and security settings for the forms -> Measure 1: Restrict number of failed attempts).'), $link);
+                    $field->value = $text;
+                }
+
+                $field->columnWidth = 50;
+                $fieldsetFailedAttempts->add($field);
+
+                // create the chart field for failed attempts
+                $chartfield = $this->modules->get('InputfieldMarkup');
+                $chartfield->label = $this->_('Temporarily Blocked IPs');
+                $chartfield->value = $this->renderFailedAttemptsChart();
+                $chartfield->columnWidth = 50;
+                $fieldsetFailedAttempts->add($chartfield);
+
+                $form->add($fieldsetFailedAttempts);
+
                 return $form->render();
 
             }
 
         }
+
+        /**
+         * Render the charts for the failed attempts grouped by ID and number of failed attempts
+         * @return string
+         */
+        public function renderFailedAttemptsChart(): string
+        {
+
+            // page load
+            $out = '<div id="pageload-fac" style="width:100%;"><p>' . $this->_('This chart shows the number of temporarily blocks for the 10 most temporarily blocked IPs in descending order.') . '</p><canvas id="failed-attempts"></canvas></div>';
+            $out .= $this->createFailedAttemptsStatusChart();
+            return $out;
+        }
+
+        /**
+         * Create the Javascript for the failed attempts chart on the dashboard page
+         * @return string
+         */
+        protected function createFailedAttemptsStatusChart(): string
+        {
+
+            // run only if failed attempts exist
+            if ($this->failedAttempts) {
+
+                // slice the array after 10 entries
+                $data = array_slice($this->failedAttempts, 0, 10);
+
+            } else {
+                $data = [0];
+            }
+
+            $keys = array_keys($data);
+            $data = implode(', ', $data);
+
+            $k = [];
+            foreach ($keys as $key) {
+                $k[] = '"' . $key . '"';
+            }
+            $labels = implode(',', $k);
+
+            // output the script tag
+            return '<script>
+                  const fac = document.getElementById("failed-attempts");
+                
+                  new Chart(fac, {
+                    type: "bar",
+                    data: {
+                      labels: [' . $labels . '],
+                      datasets: [{
+                        label: "' . $this->_('Number of temporary blockings') . '" ,
+                        data: [' . $data . '],
+                        borderWidth: 1,
+                        backgroundColor: ["rgba(255, 99, 132, 0.2)",
+                        "rgba(175, 155, 178, 0.2)",
+                        "rgba(208, 25, 236, 0.2)",
+                        "rgba(25, 36, 30, 0.2)",
+                        "rgba(201, 203, 207, 0.2)",
+                        "rgba(153, 102, 255, 0.2)",
+                        "rgba(54, 162, 235, 0.2)",
+                        "rgba(75, 192, 192, 0.2)",
+                        "rgba(255, 205, 86, 0.2)",
+                        "rgba(255, 159, 64, 0.2)"],
+                      }],
+                    },
+                    options: {
+                        indexAxis: "y",
+                        scales: {
+                            y: {
+                               title: {
+                                    display: true,
+                                    text: "' . $this->_('IPs') . '"
+                                } 
+                            },
+                            x: {
+                                
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: "' . $this->_('Number of temporarily blockings') . '"
+                                },
+                                ticks: {
+                                    stepSize: 1
+                                }                               
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: "' . $this->_('Number of temporary blockings') . '"
+                            }
+                        }
+                     }   
+                    })
+                    
+                    </script>';
+        }
+
+
+        /**
+         * Render method to show a small table with failed attempts and a bar chart with forms and failed attempts
+         * @return string
+         */
+        protected function renderFailedAttemptsList(): string
+        {
+
+            $out = '';
+
+            if ($this->failedAttempts) {
+
+                $out .= '<h3>' . $this->_('Top 10 IPs with the most blockings') . '</h3>';
+                // create the statistic table for the failed attempts
+                $out .= '<table id="failedattempts-statistic">';
+                $out .= '<thead>';
+                $out .= '<td>' . $this->_('IP') . '</td>';
+                $out .= '<td>' . $this->_('Number of blockings') . '</td>';
+                $out .= '<td>' . $this->_('Status') . '</td>';
+                $out .= '</thead>';
+                $out .= '<tbody>';
+
+                foreach ($this->failedAttempts as $ip => $numberOfFailedAttempts) {
+                    $out .= '<tr>';
+                    $out .= '<td>' . $ip . '</td>';
+                    $out .= '<td>' . $numberOfFailedAttempts . '</td>';
+                    $status = $this->_('Not banned');
+                    $icon = $notbanned_icon = '<i class="fa fa-check"></i>';
+                    $banned_icon = '<i class="fa fa-times"></i>';
+                    // check if this IP is in the list of banned IPs
+                    if (array_key_exists('input_preventIPs', $this->frontendforms_config)) {
+                        $bannedList = $this->frontendforms_config['input_preventIPs'];
+                        if (!empty($bannedList)) {
+                            // create array out of textarea content
+                            $bannedList = array_filter(explode("\n", str_replace("\r", "", $bannedList)));
+                            if (in_array($ip, $bannedList)) {
+                                $icon = $banned_icon;
+                            }
+                        }
+                    }
+
+                    $out .= '<td>' . $icon . '</td>';
+                    $out .= '</tr>';
+                }
+                $out .= '</tbody>';
+
+                $out .= '</table>';
+                $out .= '<ul class="legend">';
+                $out .= '<li>' . $notbanned_icon . ': ' . $this->_('Not blocked - The IP is not on the list of permanent blocked IPs (Blacklist).') . '</li>';
+                $out .= '<li>' . $banned_icon . ': ' . $this->_('Blocked - The IP is currently on the list of permanent blocked IPs (Blacklist).') . '</li>';
+                $out .= '</ul>';
+            } else {
+                // no entries
+                $out .= $this->_('At the moment there are no entries about temporarily blocked IPs in the log files.');
+            }
+
+            // create the "all failed attempts" button
+            $button = $this->modules->get('InputfieldButton');
+            $button->value = $this->_('To the full list of IPs that have been temporarily blocked at least once');
+            $button->setSecondary();
+            $button->attr('href', $this->config->urls->admin . 'setup/frontendforms-dashboard/list-of-failed-attempts');
+            $out .= $button->render();
+            return $out;
+        }
+
+
+        /**
+         * List all suspicious IPs inside a paginated table
+         * @return string
+         * @throws \ProcessWire\WireException
+         * @throws \ProcessWire\WirePermissionException
+         */
+        public function ___executeListOfFailedAttempts(): string
+        {
+
+            $out = '';
+
+            // check if there are entries in the log file
+            if ($this->failedAttempts) {
+
+                // create a paginated array of all grouped logged entries that can be used with pagination later on
+                $ips = PageArray();
+
+                $n = 0;
+                foreach ($this->failedAttempts as $ip => $numberOfFailedAttempts) {
+                    $n++;
+                    $item = new Page();
+                    $item->set('id', $n);
+                    $item->set('name', $ip);
+                    $item->template = 'admin';
+                    $item->ip = $ip;
+                    $item->attempts = $numberOfFailedAttempts;
+                    $ips->add($item);
+                }
+
+                // default number of items per page to show
+                $items_per_page = $this->items_per_page;
+                $start = ($this->wire('input')->pageNum - 1) * $items_per_page;
+                $ips->setLimit($items_per_page);
+                $ips->setStart($start);
+
+                // slice only if the number of pages is higher than the number of items per page
+                if ($ips->count > $items_per_page) {
+                    $paginatedIPs = $ips->slice($start, $items_per_page);
+                    $counter = true;
+                } else {
+                    $paginatedIPs = $ips;
+                    $counter = false;
+                }
+
+                $table = $this->modules->get('MarkupAdminDataTable');
+                $table->encodeEntities = false;
+                $table->setEncodeEntities(false);
+                $table->headerRow([
+                    $this->_('#'),
+                    $this->_('IP'),
+                    $this->_('Number of blocks'),
+                    $this->_('Info'),
+                    $this->_('Status'),
+                    $this->_('Add/remove IP to/from the blacklist ')
+                ]);
+
+                $n = 0;
+
+                foreach ($paginatedIPs as $item) {
+
+                    // instantiate the more info button
+                    $infobutton = $this->wire('modules')->get('InputfieldButton');
+                    $infobutton->setSecondary();
+                    $infobutton->setSmall();
+                    $infobutton->value = $this->_('View details about this IP');
+                    $infobutton->attr('data-href', '/detail-view/' . $item->ip);
+                    $infobutton->addClass('pw-panel');
+
+                    // instantiate button object for adding/removing the IP to/from the blacklist
+                    $button = $this->wire('modules')->get('InputfieldSubmit');
+                    $button->setSmall();
+                    $button->name = 'submit_save_ip';
+                    $button->value = 'add';
+                    $button->setAttribute('data-from_id', 'Inputfield_submit_save_module');
+                    $button->value = $item->ip;
+
+                    $blockedIPs = $this->frontendforms_config['input_preventIPs'];
+                    if (empty($blockedIPs)) {
+                        $blockedIPs = [];
+                    } else {
+                        $blockedIPs = preg_split('/\r\n|\r|\n/', $blockedIPs);
+                    }
+
+                    if (in_array($item->ip, $blockedIPs)) {
+                        $status = $this->_('IP is blocked');
+                        // remove button
+                        $button->name = 'submit_remove_ip';
+                        $button->text = $this->_('Remove from blacklist');
+                        $button->setSecondary();
+                    } else {
+                        // create add button
+                        $button->text = $this->_('Add to blacklist');
+                        $status = $this->_('IP is not blocked');
+                    }
+
+                    $number = $counter ? $start + $n + 1 : $n + 1;
+                    $table->row(
+                        [
+                            $number,
+                            $item->ip,
+                            $item->attempts,
+                            $infobutton->render(),
+                            $status,
+                            $button->render()
+                        ]
+                    );
+                    $n++;
+                }
+
+                $out .= '<p>'.$this->_('Any IP addresses that are blacklisted will not be able to submit forms, because in this case the forms will not be displayed.').'<br>';
+                $out .= $this->_('This is a security measure to exclude potential spammers.').'</p>';
+
+                // render the table with the questions
+                $out .= $ips->getPaginationString($this->_('IPs'));
+
+                $out .= '<form id="blocked-ips" name="blocked-ips" action="' . $this->wire('input')->url . '" method="post">';
+                $out .= $table->render();
+                $out .= '</form>';
+                $out .= '<div id="blockedlist-pagination" class="pagination">' . $ips->renderPager() . '</div>';
+
+                if (isset($_POST)) {
+                    $ip = null;
+                    // add the given ip to the blacklist
+                    if (array_key_exists('submit_save_ip', $_POST)) {
+                        $ip = $_POST['submit_save_ip'];
+                        // add this ip to the list if it is a valid IP
+                        if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                            $blockedIPs[] = $ip;
+                        }
+                    } else if (array_key_exists('submit_remove_ip', $_POST)) {
+                        // remove the given ip from the blacklist
+                        $ip = $_POST['submit_remove_ip'];
+                        // remove $this IP from the list
+                        $key = array_search($ip, $blockedIPs, true);
+                        if ($key !== false) {
+                            unset($blockedIPs[$key]);
+                        }
+                    }
+                    if (!is_null($ip)) {
+
+                        // convert it back to a string and save it to the module configuration
+
+                        $ffdata = $this->frontendForms;
+
+                        $blockedIPs = array_filter($blockedIPs);
+                        $ffdata['input_preventIPs'] = implode("\n", array_unique($blockedIPs));
+
+                        $this->wire('modules')->saveConfig('FrontendForms', $ffdata);
+                        // finally redirect to make the changes visible
+                        $this->wire('session')->redirect($this->wire('input')->url);
+
+
+                    }
+                }
+
+
+            } else {
+                $out .= '<div id="no-results"><p>' . $this->_('There are no temporarily blocked IPs entries inside the log files.') . '</p></div>';
+            }
+
+            // add back to the dashboard button
+            $backbutton = $this->wire('modules')->get('InputfieldButton');
+            $backbutton->value = $this->_('Back to the dashboard');
+            $backbutton->attr('href', $this->config->urls->admin . 'setup/frontendforms-dashboard/');
+            $out .= $backbutton->render();
+
+            return $out;
+        }
+
 
         /**
          * Overview page for all questions for the SIMPLE TEXT CAPTCHA
@@ -769,7 +1165,7 @@
                     $question = $p->title;
 
                     // only for multi-language site
-                    if ($this->languages()) {
+                    if ($this->languages) {
                         $lang = $this->wire('user')->language->name;
 
                         $question = $p->getLanguageValue($lang, 'title');
@@ -902,11 +1298,11 @@
             foreach ($this->questionFields as $name => $fieldproperties) {
                 if (!wire('fields')->get($name)) {
 
-                    if($this->langSupportFields) {
-                        if($fieldproperties['fieldtype'] == 'FieldtypeTextarea'){
+                    if ($this->langSupportFields) {
+                        if ($fieldproperties['fieldtype'] == 'FieldtypeTextarea') {
                             $fieldproperties['fieldtype'] = 'FieldtypeTextareaLanguage';
                         }
-                        if($fieldproperties['fieldtype'] == 'FieldtypeText'){
+                        if ($fieldproperties['fieldtype'] == 'FieldtypeText') {
                             $fieldproperties['fieldtype'] = 'FieldtypeTextLanguage';
                         }
                     }
