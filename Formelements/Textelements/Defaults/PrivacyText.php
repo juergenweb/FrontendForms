@@ -27,7 +27,7 @@
             $this->policyLink = new Link();
             // set the privacy page id if it is configured inside the backend-configuration
             if ($this->frontendforms['input_privacy']) {
-                $this->setPolicyPageId((int)$this->frontendforms['input_privacy']);
+                $this->setPolicyPageId((int)$this->frontendforms['input_privacy'][0]);
             }
             $this->policyLink->setLinkText($this->privacy);
 
