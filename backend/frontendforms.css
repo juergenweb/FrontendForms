@@ -216,14 +216,14 @@ From https://javascriptarticles.com/pure-css-tooltip/
     text-align:right;
 }
 
-#questions-statistic {
+#questions-statistic, #failedattempts-statistic {
     margin: 10px 0 30px 0;
     border: 2px solid #f0f3f7;
     width: 100%;
     border-collapse: collapse;
 }
 
-#questions-statistic tr td {
+#questions-statistic tr td, #failedattempts-statistic tr td {
     padding: 5px 10px;
     border-bottom: 2px dotted #f0f3f7;
 }
@@ -233,8 +233,16 @@ From https://javascriptarticles.com/pure-css-tooltip/
     font-weight: bold;
 }
 
-#visiblity-legend {
+#visiblity-legend, ul.legend {
     list-style-type: none;
+}
+
+ul.legend {
+    font-size: 14px;
+    color: #6c8dae;
+}
+ul.legend i {
+    width: 20px;
 }
 
 .ff-hiddenvalue {
@@ -255,4 +263,13 @@ From https://javascriptarticles.com/pure-css-tooltip/
 
 .table-legend ul li {
     padding: 3px;
+}
+
+.pagination {
+    text-align:center;
+    margin-bottom: 5px;
+}
+
+.pagination > ul {
+    width: auto;
 }
