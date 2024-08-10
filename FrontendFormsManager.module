@@ -801,7 +801,7 @@
 
             // create the "all failed attempts" button
             $button = $this->modules->get('InputfieldButton');
-            $button->value = $this->_('To the full list of IPs that have been temporarily blocked at least once');
+            $button->value = $this->_('To all temporarily blocked IPs');
             $button->setSecondary();
             $button->attr('href', $this->config->urls->admin . 'setup/frontendforms-dashboard/list-of-failed-attempts');
             $out .= $button->render();
