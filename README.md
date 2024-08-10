@@ -2512,13 +2512,11 @@ CSRF-Protection and the check for double form subission are also disabled, but t
 ### What is the module FrontendFormsManager?
 FrontendFormsManger is a module that is delivered with FrontendForms, but is not installed by default, as it is not necessary for the operation of FrontendForms. 
 
-This module is for entering questions for the SIMPLE QUESTION CAPTCHA in an easy-to-use interface and to make these questions usable in all forms. So you can manage all your questions in one place and have the possibility to add, edit or delete questions or even publish or not publish them. It also includes a small statistical section with charts.
+### What can I do with this module?
 
-There are plans to expand this module with further options in the future, but for now it is only an add-on for the SIMPLE QUESTION CAPTCHA (June 2024).
+1. This module is for entering questions for the SIMPLE QUESTION CAPTCHA in an easy-to-use interface and to make these questions usable in all forms. So you can manage all your questions in one place and have the possibility to add, edit or delete questions or even publish or not publish them. It also includes a small statistical section with charts.
 
-If you do not use the SIMPLE QUESTION CAPTCHA, installing this module (at the time of writing) will not benefit you.
-
-To get it working, please select the "SINGLE QUESTION CAPTCHA" inside the tab "Spam protections and security settings for the forms" in the module configuration of FrontendForms.
+2. You can manage supicious IP adresses. These are IPs that have been temporary blocked after too many attempts to submit a form. FrontendFormsManager offers a little statistic section, where you can identify potential spammers by checking the number of blockings of a certain IP. Then you can decide if you want to add this IP to a blacklist or not. Any IPs on this blacklist cannot submit forms any longer, because the forms will not be displayed in this case.
 
 ### How does it work?
 
