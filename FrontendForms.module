@@ -289,11 +289,11 @@
             self::$framework = str_replace('.json', '', $this->input_framework);
 
             // set the default custom framework path
-            if(array_key_exists('input_customframeworkpath', $this->moduleConfig) && ($this->moduleConfig['input_customframeworkpath'])){
-                $cp = $this->wire('config')->paths->root.$this->moduleConfig['input_customframeworkpath'];
+            if (array_key_exists('input_customframeworkpath', $this->moduleConfig) && ($this->moduleConfig['input_customframeworkpath'])) {
+                $cp = $this->wire('config')->paths->root . $this->moduleConfig['input_customframeworkpath'];
                 // add trailing slash at the end, if it is missing
-                if(substr($cp, -1) != '/'){
-                    $cp = $cp.'/';
+                if (substr($cp, -1) != '/') {
+                    $cp = $cp . '/';
                 }
                 $this->customFrameworksPath = $cp;
             }
@@ -907,7 +907,7 @@
             $data = $event->arguments(1);
             // run only on FrontendForms module
             if ($class == 'FrontendForms') {
-                if (array_key_exists('input_blacklist', $data) && (!is_null($data['input_blacklist']))) {
+                if (!is_null($data['input_blacklist'])) {
                     $data['input_blacklist'] = $this->cleanUpPasswordList($data['input_blacklist']);
                 }
             }
@@ -1517,6 +1517,18 @@
         }
 
         /**
+         * Get various information about an IP address from ip-api.com
+         * @param string $ip
+         * @return \stdClass - returns a json-decoded object
+         */
+        public static function getIPData(string $ip): \stdClass
+        {
+            $iptolocation = 'http://ip-api.com/json/' . $ip;
+            $location = file_get_contents($iptolocation);
+            return json_decode($location);
+        }
+
+        /**
          * Render a link to domaintools.com for further information about the IP address
          * @param string $ip
          * @return string
@@ -1529,6 +1541,7 @@
             return $whoislookup;
         }
 
+
         /**
          * Render a detail view table for a given IP address inside the panel
          * @param string $ip
@@ -1539,9 +1552,9 @@
         protected function executeViewDetailsTable(string $ip): string
         {
             $logs = $this->wire('log')->getEntries('failed-attempts-frontendforms');
+            $headline = '<h2>'.sprintf($this->_('Failed attempts for IP %s'), $ip).'</h2>';
 
             $table = $this->wire('modules')->get('MarkupAdminDataTable');
-            $table->caption = sprintf($this->_('Failed attempts for IP %s'), $ip);
             $table->headerRow([
                 $this->_('Date'),
                 $this->_('URL'),
@@ -1552,10 +1565,12 @@
                 $text = json_decode($log['text']);
                 // grab only log with the given IP
                 if ($text->IP == $ip) {
-                    $table->row([$log['date'], $log['url'], $text->FormID]);
+                    $table->row([$this->_('Date').': '.$log['date'],
+                        $this->_('URL').': '.$log['url'],
+                        $this->_('Form-ID').': '.$text->FormID]);
                 }
             }
-            return $table->render();
+            return $headline.$table->render();
         }
 
         /**
@@ -1808,7 +1823,7 @@
             $customFrameworkPath->label = $this->_('Custom path for the CSS classes json file');
             $customFrameworkPath->description = $this->_('If you want to save your custom CSS class file in a directory other than site/assets/files/FrontendForms/frameworks/, you can enter the path to your custom directory here. Otherwise leave this field empty.');
             $notes = $this->_('Please enter the path starting with site (eg site/templates/FrontendForms/frameworks).');
-            $notes .= '<br>'.sprintf($this->_('You find more information about custom CSS json files %s.'), '<a target="_blank" href="https://github.com/juergenweb/FrontendForms/blob/main/README.md#support-for-css-frameworks">here</a>');
+            $notes .= '<br>' . sprintf($this->_('You find more information about custom CSS json files %s.'), '<a target="_blank" href="https://github.com/juergenweb/FrontendForms/blob/main/README.md#support-for-css-frameworks">here</a>');
             $customFrameworkPath->entityEncodeText = false;
 
             $customFrameworkPath->notes = $notes;
