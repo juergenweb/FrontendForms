@@ -273,3 +273,6 @@ ul.legend i {
 .pagination > ul {
     width: auto;
 }
+
+#to-all-blocked-ips {
+    margin-top: 10px;
