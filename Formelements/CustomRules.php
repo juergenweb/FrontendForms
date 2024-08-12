@@ -577,7 +577,7 @@
                 $xError = abs($sessionXPos - $xPos);
                 $yError = abs($sessionYPos - $yPos);
 
-                return ($xPos !== false && $yPos !== false && $sessionXPos !== false && $sessionYPos !== false && $xError < 0.0001 && $yError < 0.0001)
+                return ($xPos !== false && $yPos !== false && $sessionXPos !== false && $sessionYPos !== false && $xError < 0.0001 && $yError < 0.0001);
 
             }, $this->_('has not been solved correctly.'));
 
