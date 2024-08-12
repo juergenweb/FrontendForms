@@ -570,9 +570,10 @@
 
                 $xPos = $params[0] ?? false;
                 $yPos = $params[1] ?? false;
+                $id =  $params[2] ?? false;
 
-                $sessionXPos = $_SESSION['captcha_x'] ?? false;
-                $sessionYPos = $_SESSION['captcha_y'] ?? false;
+                $sessionXPos = $this->wire('session')->get($id.'-captcha_x') ?? false;
+                $sessionYPos = $this->wire('session')->get($id.'-captcha_y') ?? false;
 
                 $xError = abs($sessionXPos - $xPos);
                 $yError = abs($sessionYPos - $yPos);
