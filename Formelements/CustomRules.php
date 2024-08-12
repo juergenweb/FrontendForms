@@ -526,8 +526,7 @@
              * Check if IBAN is of the correct syntax
              * This validator is taken from cakephp 3.7 validation class.
              */
-            V::addRule('checkIban', function ($field, $value)
-            {
+            V::addRule('checkIban', function ($field, $value) {
                 $check = $value;
                 if (!preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/', $check)) {
                     return false;
@@ -556,14 +555,33 @@
             /**
              * Check if BIC code is in the right format
              */
-            V::addRule('checkBic', function ($field, $value)
-            {
+            V::addRule('checkBic', function ($field, $value) {
                 $pattern = '/^[a-z]{6}[0-9a-z]{2}([0-9a-z]{3})?\z/i';
                 return preg_match($pattern, $value);
             }, $this->_('is not in the correct format.'));
 
-        }
 
+            /**
+             * Check if the x and y positions of the slider CAPTCHA are correct
+             * This validator is only for internal usage on the slider CAPTCHA to provide
+             * server-side validation too.
+             */
+            V::addRule('checkSliderCaptcha', function ($field, $value, $params) {
+
+                $xPos = $params[0] ?? false;
+                $yPos = $params[1] ?? false;
+
+                $sessionXPos = $_SESSION['captcha_x'] ?? false;
+                $sessionYPos = $_SESSION['captcha_y'] ?? false;
+
+                $xError = abs($sessionXPos - $xPos);
+                $yError = abs($sessionYPos - $yPos);
+
+                return ($xPos !== false && $yPos !== false && $sessionXPos !== false && $sessionYPos !== false && $xError < 0.0001 && $yError < 0.0001)
+
+            }, $this->_('has not been solved correctly.'));
+
+        }
 
 
         /**
