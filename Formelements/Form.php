@@ -3397,7 +3397,7 @@
                     $descriptionPosition = $question->getLanguageValue($lang, 'ff_descposition')->value;
                 } else {
                     $title = $question->title;
-                    $answers = explode("\n", $question->answers);
+                    $answers = explode("\n", $question->ff_answers);
                     $successmsg = $question->ff_successmsg;
                     $errormsg = $question->ff_errormsg;
                     $placeholder = $question->ff_placeholder;
