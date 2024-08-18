@@ -2824,10 +2824,7 @@
             $to = $this->wire('config')->paths->assets . 'files/FrontendForms/';
             $from = $this->modulePath . 'assets/';
 
-            if($this->createFilesDir($from, $to)){
-                // create the custom frameworks classes folder
-                $this->createCustomFrameworksFolder();
-            }
+            $this->createFilesDir($from, $to);
 
             // copy captchaimage.php from site/modules/FrontendForms/Formfields/captcha/ to the root dir
             $this->createRemoveCaptchaImageFile(true);
@@ -2839,6 +2836,9 @@
             if(!$this->wire('files')->exists($this->wire('config')->paths->site . 'frontendforms-custom-templates/', 'dir')){
                 $this->wire('files')->mkdir($this->wire('config')->paths->site . 'frontendforms-custom-templates/');
             }
+
+            // create the custom frameworks classes folder
+            $this->createCustomFrameworksFolder();
 
         }
 
