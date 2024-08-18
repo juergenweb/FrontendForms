@@ -2824,7 +2824,10 @@
             $this->wire('files')->mkdir($this->temp_uploadPath);
 
             // create folder for the custom email templates
-            $this->wire('files')->mkdir($this->wire('config')->paths->site . 'frontendforms-custom-templates/');
+            if(!$this->wire('files')->exists($this->wire('config')->paths->site . 'frontendforms-custom-templates/', 'dir')){
+                $this->wire('files')->mkdir($this->wire('config')->paths->site . 'frontendforms-custom-templates/');
+            }
+
         }
 
         /**
