@@ -78,7 +78,7 @@
         protected bool $removeCaptchaLabel = false;
         protected bool $useCaptchaLabelAsPlaceholder = false;
         protected bool $showValueOnSameQuestionAgain = false;
-        protected InputText|InputRadioMultiple|null $captchafield;
+        protected InputText|InputRadioMultiple|InputCheckbox|null $captchafield;
         protected string|int|bool $useAriaAttributes = true; // use accessibility attributes
         // Mail properties - only needed if FrontendForms will be used to send emails
         protected array $mailPlaceholder = []; // associative array for usage in emails (['placeholdername' => 'text',...])
@@ -105,6 +105,8 @@
         protected string $notestag = 'p'; // set the default global tag for the notes element
         protected string $msgtag = 'p'; // set the default global tag for the message elements (success and error message)
         protected string|null $segments = null;
+
+
         /* objects */
         protected Alert $alert; // alert box
         protected RequiredTextHint $requiredHint; // hint to inform that all required fields have to be filled out
@@ -1937,8 +1939,8 @@
 
             // instantiate the Captcha field if set
             $useCaptcha = ($this->getCaptchaType() !== 'none');
-            if ($useCaptcha) {
 
+            if ($useCaptcha) {
 
                 // create the input field first
                 $this->captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
@@ -1962,12 +1964,23 @@
                 if ($this->captchaRequiredErrorMsg) {
                     $this->captchafield->setRule('required')->setCustomMessage($this->captchaRequiredErrorMsg);
                 } else {
-                    $this->captchafield->setRule('required')->setCustomMessage($this->_('Please fill out the security question.'));
+                    if($this->getCaptchaType() == 'SliderCaptcha'){
+                        $checkboxID = $this->getID().'-'.$this->captchafield->getID();
+                        // workaround for checked checkox with empty string as value
+                        // will be needed for the required validator to work properly in this case
+                        if(!is_null($input->$checkboxID) && ($input->$checkboxID == '')){
+                            $input->set($checkboxID, '1');
+                        }
+                        $this->captchafield->setRule('required')->setCustomMessage($this->_('Please verify that you are a human and not a bot.'));
+                    } else {
+                        $this->captchafield->setRule('required')->setCustomMessage($this->_('Please fill out the security question.'));
+                    }
                 }
 
             }
 
             // instantiates the FormValidation object
+
             $validation = new FormValidation($input, $this, $this->alert);
 
             // 1) check if this form was submitted and no other form on the same page
@@ -2023,6 +2036,12 @@
                                             $this->captchafield->setRule('compareTexts', $validValue)->setCustomMessage($errormsg);
                                         }
 
+                                    }
+
+                                    if($this->getCaptchaType() == 'SliderCaptcha'){
+
+                                        // add the servers side validation of the slider CAPTCHA
+                                        $this->captchafield->setRule('checkSliderCaptcha', $input[$this->getID().'-xPos'], $input[$this->getID().'-yPos'], $this->getID())->setCustomMessage($this->_('The Slider-Captcha was not solved correctly.'));
                                     }
 
                                     $formElements[] = $this->captchafield;
@@ -2144,7 +2163,6 @@
 
                                     return true;
                                 } else {
-
                                     // set error alert
                                     $this->wire('session')->set('errors', '1');
                                     $this->formErrors = $v->errors();
@@ -2728,6 +2746,20 @@
                 // create new array of inputfields only to position the honeypot field in between
                 $inputfieldKeys = [];
 
+                // only for the slider captcha
+                if($this->getCaptchaType() == 'SliderCaptcha'){
+
+                    $xPos = (float)rand()/(float)getrandmax();
+                    $yPos = (float)rand()/(float)getrandmax();
+
+                    $this->wire('session')->set($this->getID().'-captcha_x', $xPos);
+                    $this->wire('session')->set($this->getID().'-captcha_y', $yPos);
+
+                    // add x an y positions as data attributes for JavaScript usage later on
+                    $this->captchafield->setAttribute('data-x', $xPos);
+                    $this->captchafield->setAttribute('data-y', $yPos);
+                }
+
                 foreach ($this->formElements as $key => $element) {
                     if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
 
@@ -2778,6 +2810,22 @@
                         $ajaxredirectField->setAttribute('value', $this->ajaxRedirect);
                         $this->add($ajaxredirectField);
                     }
+                }
+
+                // only for the slider captcha -> add hidden fields for the x and y position
+
+                if($this->getCaptchaType() == 'SliderCaptcha'){
+
+                    $hiddenFieldX = new InputHidden('xPos');
+                    $hiddenFieldX->setAttribute('name', 'xPos');
+                    $hiddenFieldX->setAttribute('value', '-1');
+                    $this->add($hiddenFieldX);
+
+                    $hiddenFieldY = new InputHidden('yPos');
+                    $hiddenFieldY->setAttribute('name', 'yPos');
+                    $hiddenFieldY->setAttribute('value', '-1');
+                    $this->add($hiddenFieldY);
+
                 }
 
                 //create CSRF hidden field and add it to the form at the end
@@ -3360,7 +3408,9 @@
         {
             // need to include all, otherwise pages under the admin tree will not be listed
             $questions = $this->wire('pages')->find('template=ff_question,include=all,status=published,status!=hidden');
+
             $questionArray = [];
+
             $numberOfQuestions = $questions->count;
             if (!$numberOfQuestions) return $questionArray;
 
