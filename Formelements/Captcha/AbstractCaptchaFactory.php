@@ -21,6 +21,7 @@
         const TEXTCAPTCHA = 'text';
         const IMAGECAPTCHA = 'image';
         const QUESTIONCAPTCHA = 'question';
+        const SLIDERCAPTCHA = 'slider';
 
         // Text captcha variants of text captcha
         const DEFAULTTEXTCAPTCHA = 'DefaultTextCaptcha';
@@ -28,6 +29,7 @@
         const EVENTEXTCAPTCHA = 'EvenCharacterTextCaptcha';
         const SIMPLEMATHCAPTCHA = 'SimpleMathTextCaptcha';
         const SIMPLEQUESTIONCAPTCHA = 'SimpleTextCaptcha';
+
 
         protected function __construct()
         {
@@ -45,6 +47,8 @@
                 return self::TEXTCAPTCHA;
             } else if (str_ends_with($variant, 'ImageCaptcha')) {
                 return self::IMAGECAPTCHA;
+            } else if (str_ends_with($variant, 'SliderCaptcha')) {
+                return self::SLIDERCAPTCHA;
             }
             return self::QUESTIONCAPTCHA;
         }
@@ -76,6 +80,9 @@
                     break;
                 case(AbstractCaptchaFactory::QUESTIONCAPTCHA):
                     $factory = new QuestionCaptchaFactory();
+                    break;
+                case(AbstractCaptchaFactory::SLIDERCAPTCHA):
+                    $factory = new SliderCaptchaFactory();
                     break;
             }
 
