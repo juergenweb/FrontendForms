@@ -34,12 +34,13 @@
 
     use Exception;
     use FrontendForms\Form;
+    use stdClass;
     use Valitron\Validator;
 
     class FrontendForms extends WireData implements Module, ConfigurableModule
     {
 
-        // use API path to the GitHub repository for the 100 most common passwords
+        // use an API path to the GitHub repository for the 100 most common passwords
         const TOP_PASSWORDS = 'https://api.github.com/repos/danielmiessler/SecLists/contents/Passwords/Common-Credentials/10-million-password-list-top-100.txt';
         // This url contains the commits for the passwords including the dates of the commits (used for last modification date)
         const LAST_PASSWORDS_MODIFICATION_URL = 'https://api.github.com/repos/danielmiessler/SecLists/commits?path=/Passwords/Common-Credentials/10-million-password-list-top-100.txt';
@@ -58,13 +59,13 @@
         protected string $passwordPath = ''; // path to the top 100 passwords.txt file
         protected array $requirements = []; // the requirements as set in the pass field or in the module
         protected string $default_dateformat = ''; // the default date format as set in the processwire configuration file
-        protected array $passwordList = []; // array that hold all passwords from passwords.txt
+        protected array $passwordList = []; // array that holds all passwords from passwords.txt
         protected string $last_check = ''; // date of the last monthly check of passwords
         protected array $blacklist = []; // array of all passwords inside the blacklist as stored inside the db
 
         protected string $modulePath = ''; // path to this module folder
-        protected string $customFrameworksPath = ''; // path to the folder, where all custom framework json files can be stored
-        protected array $moduleConfig = []; // array that hold all module config values
+        protected string $customFrameworksPath = ''; // path to the folder, where all custom framework JSON files can be stored
+        protected array $moduleConfig = []; // array that holds all module config values
         protected string $lang = 'en'; // default language
 
         /* File uploads */
@@ -94,10 +95,10 @@
         /* Email configuration */
         protected string $input_emailTemplate = 'template_1.html'; // default email template
         protected array $mailProperties = []; // array of placeholder variables for HTML templates
-        protected array $emailTemplates = []; // email template names as numeric array
+        protected array $emailTemplates = []; // email template names as a numeric array
         protected string $emailTemplatesPath = ''; // path to the email templates folder
         protected string $custom_emailTemplatesPath = ''; // path to the custom email templates folder
-        protected array $mailPlaceholders = []; //  array the holds all custom mail properties for placeholder attributes as placeholder => value
+        protected array $mailPlaceholders = []; //  the array holds all custom mail properties for placeholder attributes as placeholder => value
         protected string $bodyHTML = ''; // declare property from WireMail class
         protected string $body = ''; // declare property from WireMail class
 
@@ -127,12 +128,12 @@
         protected string $input_captchaFontFamily = ''; // set the path to the folder where the font is located, that should be used
         protected array $input_captchaFonts = []; // array of all fonts found under the site tree
         protected string|int|null $input_charactersOffLine = 0; // set the characters off the line or in one line
-        protected $input_question = '';// the captcha question for the simple question captcha
-        protected $input_answers = '';// the possible answers
+        protected string|null $input_question = '';// the captcha question for the simple question captcha
+        protected string|null $input_answers = '';// the possible answers
 
         /* CAPTCHA background */
         protected string $input_bgcolorchooser = 'random'; // use random or custom background colors
-        protected string|int $input_bgnumberOfColors = 1; // the number of colors used for background
+        protected string|int $input_bgnumberOfColors = 1; // the number of colors used for the background
         protected string $input_bgCustomColors = '#ddd'; // the pre-defined custom color used for the background
 
         /* CAPTCHA distortion lines */
@@ -251,14 +252,14 @@
 
             parent::__construct();
 
-            // check if GD library is installed
+            // check if the GD library is installed
             $this->gd_lib = function_exists('gd_info');
             if (!$this->gd_lib) {
                 $this->warning($this->_('GD library is not installed/enabled. Please install/enable it to be able to use CAPTCHA images.'));
             }
 
             // add the appropriate values to properties, so you can get them everywhere inside the class
-            $this->modulePath = $this->wire('config')->paths->siteModules . 'FrontendForms/'; // set relative path to this module
+            $this->modulePath = $this->wire('config')->paths->siteModules . 'FrontendForms/'; // set the relative path to this module
             $this->customFrameworksPath = $this->wire('config')->paths->assets . 'files/FrontendForms/frameworks/';
             $this->moduleConfig = $this->wire('modules')->getConfig($this);
             $this->imagePath = $this->modulePath . 'captchaimages/'; // path to the images for the CAPTCHA
@@ -277,7 +278,7 @@
                 $this->blacklist = explode("\n", $this->input_blacklist);
             }
 
-            // create numeric array of all available email templates inside the email folder
+            // create a numeric array of all available email templates inside the email folder
             $this->setEmailTemplates();
 
             // check if custom framework folder exists, otherwise create it
@@ -291,7 +292,7 @@
             // set the default custom framework path
             if (array_key_exists('input_customframeworkpath', $this->moduleConfig) && ($this->moduleConfig['input_customframeworkpath'])) {
                 $cp = $this->wire('config')->paths->root . $this->moduleConfig['input_customframeworkpath'];
-                // add trailing slash at the end, if it is missing
+                // add trailing slash at the end if it is missing
                 if (substr($cp, -1) != '/') {
                     $cp = $cp . '/';
                 }
@@ -358,7 +359,10 @@
         /**
          * Create an InputfieldSelect for choosing a custom mail module
          * Internal method for modules, which are based on FrontendForms
+         * @param \ProcessWire\Modules $modules
+         * @param \ProcessWire\Module $module
          * @return \ProcessWire\InputfieldSelect
+         * @throws \ProcessWire\WirePermissionException
          */
         public static function createMailModuleInputfield(Modules $modules, Module $module): InputfieldSelect
         {
@@ -379,7 +383,7 @@
         /**
          * Get the response of a GitHub repository page by a given url
          * @param string $url
-         * @return mixed - returns the json object
+         * @return mixed - returns the JSON object
          * @throws WireException
          * @throws WireException
          */
@@ -402,7 +406,7 @@
             $file = file_get_contents($url, false, $context);
 
             if ($file) {
-                $response = json_decode($file); // contains all the response data as a json object
+                $response = json_decode($file); // contains all the response data as a JSON object
             } else {
                 // there was an error getting the file - write an error log
 
@@ -490,7 +494,7 @@
          */
         protected function addRemoveIpFromBanList(bool $add): void
         {
-            //create array of string
+            //create an array of string
             $ipAddresses = explode("\n", $this->moduleConfig['input_preventIPs']);
             if ($add) {
                 // add the value to $ipAddresses
@@ -528,7 +532,7 @@
 
         /**
          * Grab all email template files inside the email template folder
-         * Create an array of all email template names without extension
+         * Create an array of all email template names without an extension
          * @return void
          * @throws WireException
          */
@@ -585,7 +589,7 @@
          */
         public static function getSiteProfileName(): string
         {
-            // grab readme file if present
+            // grab the readme file if present
             $self = new self();
             $readme = $self->wire('files')->fileGetContents($self->wire('config')->paths->templates . '/readme.txt');
             if ($readme) {
@@ -698,7 +702,7 @@
 
                 $page = $event->object->getPage();
 
-                // get all field of the type FrontendComments on this page
+                // get all fields of the type FrontendComments on this page
                 $pageCommentFields = [];
                 foreach ($commentfields as $f) {
                     if ($page->hasField($f->name)) {
@@ -727,7 +731,7 @@
                     );
                 });
 
-                // move comment fields from the content tab to the new created comments tab
+                // move comment fields from the content tab to the newly created comments tab
                 $contentTab = $form->children->get('id=ProcessPageEditContent');
                 $commentsTab = $form->children->get('id=pagecommentstab');
                 foreach ($pageCommentFields as $fieldName) {
@@ -754,7 +758,7 @@
             //create instance of InputfieldPassword and set the requirement settings from field "pass" to it
             $this->password_field = $this->wire('fields')->get('pass');
             $this->password_object = new InputfieldPassword();
-            if (!$this->password_field->requirements) // password field was not saved til now, so requirements are not stored
+            if (!$this->password_field->requirements) // the password field was not saved till now, so requirements are not stored
             {
                 $this->password_field->requirements = ['letter', 'digit'];
             }
@@ -797,7 +801,7 @@
             $this->addHookBefore('Modules::saveConfig', $this, 'setImageHeight');
             // if an image captcha is selected than set the height of the image to 2/3 of the width
             $this->addHookBefore('Modules::saveConfig', $this, 'cleanUpBlacklist');
-            // if the pass config field will be saved update the blacklist
+            // if the pass config field is saved update the blacklist
             $this->addHookAfter('Fields::saved', $this, 'updateBlacklist');
 
             // Hook for replacing form placeholders inside CKEditor fields
@@ -813,7 +817,7 @@
             $this->addHookBefore('Page::render', $this, 'findFontFiles');
 
             // Show details about the blocked IP address inside a panel
-            $this->wire->addHook('/detail-view/{ip}', function () { // event variable is needed
+            $this->wire->addHook('/detail-view/{ip}', function () { // event variable is necessary
                 if ($this->wire('modules')->isInstalled('LanguageSupport')) {
                     // grab current user lang from session
                     $this->wire('user')->language = $this->wire('session')->get('userlang');
@@ -827,7 +831,7 @@
 
         /**
          * Set the height of the image to 2/3 of the width if an image CAPTCHA was selected
-         * This is needed because the images are in 3/2 format
+         * This is necessary because the images are in 3/2 format
          * @param HookEvent $event
          * @return void
          */
@@ -851,7 +855,7 @@
         {
             //grab current blacklist data
             if ($overwrite) {
-                // old data will be deleted and only the values from the top 100 list will be used
+                // old data will be deleted and only the values from the list of the top 100 will be used
                 $blacklist = implode("\n", $this->passwordList);
             } else {
                 // merge blacklist from the db and the password list from passwords.txt
@@ -930,7 +934,7 @@
         }
 
         /**
-         * Check if a save button for adding IP address to the black list was submitted
+         * Check if a save button for adding IP address to the blacklist was submitted
          * If yes, then save this IP address to the blacklist of banned IP addresses
          * @return void
          * @throws WireException
@@ -946,7 +950,7 @@
         }
 
         /**
-         * Check if a save button for removing an IP address from the black list was submitted
+         * Check if a save button for removing an IP address from the blacklist was submitted
          * If yes, this IP address will be removed from the blacklist of banned IP addresses
          * @return void
          * @throws WireException
@@ -1002,7 +1006,7 @@
         protected function sanitizeMultilineTextarea(string|null $value): array
         {
             if ($value != null) {
-                // create array of string with separator \n
+                // create an array of string with separator \n
                 $items = explode("\n", $value);
                 $value = [];
                 foreach ($items as $item) {
@@ -1061,7 +1065,7 @@
                             unset($dataArray[$key]);
                         }
                     }
-                    // create string from array again
+                    // create string from an array again
                     $dataArray = implode("\n", $dataArray);
                     $value->{$fieldname} = $dataArray;
                     $event->arguments(0, $value);
@@ -1070,7 +1074,7 @@
         }
 
         /**
-         * Check if value is a valid HEX code
+         * Check if the value is a valid HEX code
          * @param string $hex
          * @return bool
          */
@@ -1140,9 +1144,9 @@
          */
         protected function downloadPasswordsFromGitHub(): bool
         {
-            $filedata = $this->getDataFromGitHub(self::TOP_PASSWORDS); //load json data from the txt.file
+            $filedata = $this->getDataFromGitHub(self::TOP_PASSWORDS); //load JSON data from the txt.file
             if ($filedata) {
-                //get content of file from GitHub
+                //get content of the file from GitHub
                 $download_content = $this->wire('files')->fileGetContents($filedata->download_url);
                 // create or overwrite existing file passwords.txt
                 return (bool)($this->wire('files')->filePutContents($this->passwordPath, $download_content));
@@ -1165,7 +1169,7 @@
             // let us check some conditions if it is necessary to update the passwords
             if ($this->wire('files')->exists($this->passwordPath)) {
 
-                // check if last check was in the same month or not
+                // check if the last check was in the same month or not
 
                 $check = $this->wire('datetime')->date('Y-m', $this->last_check) != $this->wire('datetime')->date('Y-m');
                 if ($check) {
@@ -1173,7 +1177,7 @@
                     // save the check date to the database
                     $this->last_check = $data['last_check'] = $this->wire('datetime')->date($this->default_dateformat);
                     // grab data from GitHub
-                    $github_data = $this->getDataFromGitHub(self::LAST_PASSWORDS_MODIFICATION_URL); //load json data from the file
+                    $github_data = $this->getDataFromGitHub(self::LAST_PASSWORDS_MODIFICATION_URL); //load JSON data from the file
 
                     if ($github_data) {
                         $last_update = $github_data[0]->commit->author->date; // last modification date on GitHub
@@ -1205,7 +1209,7 @@
          */
         protected function deleteUploadedFilesAfterSending(): void
         {
-            // all files were sent -> so empty the temp folder
+            // all files were sent -> so empty the temp folders
             $files = $this->wire('files')->find($this->temp_uploadPath);
             foreach ($files as $file) {
                 $this->wire('files')->unlink($file);
@@ -1306,9 +1310,9 @@
         }
 
         /**
-         * Add the module javascript and CSS file to the frontend
+         * Add the module JavaScript and CSS file to the frontend
          * JS files will be added before the closing body tag
-         * CSS files will be added before the closing head tag
+         * CSS files are added before the closing head tag
          * @param HookEvent $event
          * @return void
          * @throws WireException
@@ -1322,11 +1326,29 @@
                 return;
             }
 
+            // add js variables as translatable strings to the head section if slider captcha is selected
+            if($this->input_captchaType == 'SliderCaptcha') {
+                $sliderdata = [
+                    'barText' => $this->_('Slide right to fill'),
+                    'loadingText' => $this->_('Loading'),
+                    'failedText' => $this->_('Try again!'),
+                ];
+                $script = '<script>const slidertexts = ' . json_encode($sliderdata) . ';</script>';
+
+                $event->return = str_replace('</head>', $script . '</head>', $event->return);
+            }
+
             $version = $this->getModuleInfo()['version'];
             if (!$this->input_removeJS) {
 
                 $js = '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.js?v=' . $version . '"></script>' . PHP_EOL;
-                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '&time=' . time() . '" defer></script>' . PHP_EOL;
+                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '" defer></script>' . PHP_EOL;
+
+                // load slidercaptcha.js only if this captcha type is selected
+                if ($this->input_captchaType == 'SliderCaptcha') {
+                    $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms-slidercaptcha.js?v=' . $version . '" defer></script>' . PHP_EOL;
+                }
+
                 $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
             }
             if (!$this->input_removeCSS) {
@@ -1358,7 +1380,7 @@
                 $moduleVersion = $this->wire('modules')->getModuleInfo('FieldtypeFrontendComments')['version'];
 
                 // add CSS files to the frontend
-                $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsmain.css?v=' . $moduleVersion . '&time=' . time() . '"/>' . PHP_EOL;
+                $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsmain.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
                 $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
 
                 // check which markup/framework is enabled
@@ -1366,7 +1388,7 @@
 
                 if ($framework === 'none.json') {
                     // add default CSS file
-                    $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsnone.css?v=' . $moduleVersion . '&time=' . time() . '"/>' . PHP_EOL;
+                    $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsnone.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
                     $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
                 }
 
@@ -1379,15 +1401,15 @@
 
                     if ($this->wire('fields')->get($field)['input_fc_stars']) {
 
-                        // add star rating css to the frontend
-                        $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'star-rating.css?v=' . $moduleVersion . '&time=' . time() . '"/>' . PHP_EOL;
+                        // add star rating CSS to the frontend
+                        $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'star-rating.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
                         $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
 
                         // add star rating js to the frontend
                         $js = '<script src="' . $url . 'star-rating.min.js?v=' . $moduleVersion . '&time=' . time() . '"></script>' . PHP_EOL;
 
                         //comments-stars
-                        $js .= "<script>var stars = new StarRating('.star-rating');</script>" . PHP_EOL;
+                        $js .= "<script>let stars = new StarRating('.star-rating');</script>" . PHP_EOL;
                         $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
                         break;
                     }
@@ -1440,7 +1462,7 @@
                             $formName = $formNameParts[0];
                             $formCount = $formNameParts[1] ?? 1;
 
-                            // Replace with nothing if placeholders are unknown
+                            // Replace it with nothing if placeholders are unknown
                             if ($formName != $formFullName) return '';
 
                             // Get form number on the page
@@ -1521,7 +1543,7 @@
          * @param string $ip
          * @return \stdClass - returns a json-decoded object
          */
-        public static function getIPData(string $ip): \stdClass
+        public static function getIPData(string $ip): stdClass
         {
             $iptolocation = 'http://ip-api.com/json/' . $ip;
             $location = file_get_contents($iptolocation);
@@ -1552,7 +1574,7 @@
         protected function executeViewDetailsTable(string $ip): string
         {
             $logs = $this->wire('log')->getEntries('failed-attempts-frontendforms');
-            $headline = '<h2>'.sprintf($this->_('Failed attempts for IP %s'), $ip).'</h2>';
+            $headline = '<h2>' . sprintf($this->_('Failed attempts for IP %s'), $ip) . '</h2>';
 
             $table = $this->wire('modules')->get('MarkupAdminDataTable');
             $table->headerRow([
@@ -1565,12 +1587,12 @@
                 $text = json_decode($log['text']);
                 // grab only log with the given IP
                 if ($text->IP == $ip) {
-                    $table->row([$this->_('Date').': '.$log['date'],
-                        $this->_('URL').': '.$log['url'],
-                        $this->_('Form-ID').': '.$text->FormID]);
+                    $table->row([$this->_('Date') . ': ' . $log['date'],
+                        $this->_('URL') . ': ' . $log['url'],
+                        $this->_('Form-ID') . ': ' . $text->FormID]);
                 }
             }
-            return $headline.$table->render();
+            return $headline . $table->render();
         }
 
         /**
@@ -1597,7 +1619,7 @@
 
                 // create all table rows
                 foreach ($data as $ip => $entry) {
-                    // create link to open panel
+                    // create a link to open panel
                     $details = '';
                     if (!$this->input->get('modal')) {
                         $button = $this->wire('modules')->get('InputfieldButton');
@@ -2189,6 +2211,7 @@
                     $captchaType->addOption($className, $option->title, ['flow' => 'up', 'tooltip' => $option->desc]);
                 }
 
+
                 $captchaType->attr('value', $this->input_captchaType);
                 $captchaType->required = 1;
                 $captchaType->notes = $this->_('Most visitors do not like CAPTCHAS, so it is recommended to use it only if you have problems with spam. If a CAPTCHA is enabled and you want to disable it on a certain form, please use the following method:');
@@ -2208,7 +2231,7 @@
                 $width = ($this->input_captchaType == 'image') ? 50 : 33;
                 $captchaWidth->columnWidth = $width;
                 $captchaWidth->required = 1;
-                $captchaWidth->showIf = "input_captchaType!=none|SimpleQuestionCaptcha";
+                $captchaWidth->showIf = "input_captchaType!=none|SimpleQuestionCaptcha|SliderCaptcha";
                 $fieldsetbasic->add($captchaWidth, $inputfields);
 
                 // set height of the captcha image
@@ -2221,7 +2244,7 @@
                 $captchaHeight->attr('min', 10);
                 $captchaHeight->columnWidth = 33;
                 $captchaHeight->requiredIf = "input_captchaType=SimpleQuestionCaptcha";
-                $captchaHeight->showIf = "input_captchaType!=none|DefaultImageCaptcha|SimpleQuestionCaptcha";
+                $captchaHeight->showIf = "input_captchaType!=none|DefaultImageCaptcha|SimpleQuestionCaptcha|SliderCaptcha";
                 $fieldsetbasic->add($captchaHeight, $inputfields);
 
                 // set the question field
@@ -2261,7 +2284,7 @@
                 $fieldsetBackgroundSettings->label = $this->_('Image background settings');
                 $fieldsetBackgroundSettings->collapsed = 1;// by default, this fieldset should be collapsed
                 $fieldsetBackgroundSettings->description = $this->_('Set the styling of the background for the CAPTCHA image.');
-                $fieldsetBackgroundSettings->showIf = "input_captchaType!=none|DefaultImageCaptcha";
+                $fieldsetBackgroundSettings->showIf = "input_captchaType!=none|DefaultImageCaptcha|slider";
 
                 // Random or custom colors
                 $bgcolorchooser = $this->wire('modules')->get('InputfieldRadios');
@@ -2308,7 +2331,7 @@
                 $fieldsetTextCaptcha->label = $this->_('Character settings');
                 $fieldsetTextCaptcha->collapsed = 1;// by default, this fieldset should be collapsed
                 $fieldsetTextCaptcha->description = $this->_('Set the styling of the text (character string or calculation) based on your own preferences.');
-                $fieldsetTextCaptcha->showIf = "input_captchaType!=none|DefaultImageCaptcha";
+                $fieldsetTextCaptcha->showIf = "input_captchaType!=none|DefaultImageCaptcha|slider";
 
                 // Select the font family
                 $refreshLink = $this->wire('modules')->get('InputFieldSubmit');
@@ -2395,7 +2418,7 @@
                 $fieldsetDistortionlines->label = $this->_('Distortion lines');
                 $fieldsetDistortionlines->collapsed = 1; // by default, this fieldset should be collapsed
                 $fieldsetDistortionlines->description = $this->_('Add distortion lines over the image to make it more difficult for spam bots to read the content.');
-                $fieldsetDistortionlines->showIf = "input_captchaType!=none";
+                $fieldsetDistortionlines->showIf = "input_captchaType!=none|slider";
 
                 // Set the number of distortion lines
                 $captchaNumberOfLines = $this->wire('modules')->get('InputfieldInteger');
@@ -2551,7 +2574,7 @@
                     $requirementsLabels = $this->password_field->requirementsLabels;
                 }
 
-                foreach ($this->password_field->requirements as $value => $label) {
+                foreach ($this->password_field->requirements as $label) {
                     if (array_key_exists($label, $requirementsLabels))
                         $hintText .= '<li>' . $requirementsLabels[$label] . '</li>';
                 }
