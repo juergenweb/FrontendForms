@@ -1293,3 +1293,8 @@ I made 2 small changes in the Validator.php. The "listContains" validation rule 
 - **Bug for wrong url to privacy page fixed**
 
 If you are using the text version of the privacy text, the link to the privacy page was wrong and you will be always redirected to the homepage instead. This bug is fixed now.
+
+- **New Captcha added**
+
+A new slider captcha has been added. This captcha must be solved by placing a puzzle piece in the correct position. This captcha is of the same type as the [Slide Captcha module](https://processwire.com/modules/captcha-slide/), but it is not the same and runs with its own code. This is why you don't need to install this captcha module either. This captcha is fully integrated with FrontendForms and all you have to do is select the slider captcha in the module configuration.
+
