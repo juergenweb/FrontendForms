@@ -326,6 +326,10 @@ Possible answers:
 
 This CAPTCHA can be used if you want to make a CAPTCHA more personally by asking something about the company or a person.
 
+#### Slider CAPTCHA
+
+This captcha uses a puzzle piece that has to be solved by pulling the slider into the correct position. It will be validated on the server too. 
+
 ### Measure 6: Password blacklist
 If you are dealing with user login/registration on your site, there is always a risk, that clients use unsafe passwords
 and this could be a serious security issue for an account to be hacked.
