@@ -2792,8 +2792,7 @@
          */
         public function ___install(): void
         {
-            // create the custom frameworks classes folder
-            $this->createCustomFrameworksFolder();
+
 
             //save default module configurations on install
             $data = self::getDefaultData();
@@ -2825,7 +2824,10 @@
             $to = $this->wire('config')->paths->assets . 'files/FrontendForms/';
             $from = $this->modulePath . 'assets/';
 
-            $this->createFilesDir($from, $to);
+            if($this->createFilesDir($from, $to)){
+                // create the custom frameworks classes folder
+                $this->createCustomFrameworksFolder();
+            }
 
             // copy captchaimage.php from site/modules/FrontendForms/Formfields/captcha/ to the root dir
             $this->createRemoveCaptchaImageFile(true);
@@ -2850,9 +2852,8 @@
         public function ___upgrade($fromVersion, $toVersion): void
         {
 
-            // create the custom frameworks classes folder
-            $this->createCustomFrameworksFolder();
-            
+
+
             // copy new captchaimage.php to the root
             $this->createRemoveCaptchaImageFile(true);
             // create temp_uploads folder again
@@ -2865,6 +2866,8 @@
             // create custom email template folder if it does not exist
             $this->wire('files')->mkdir($this->wire('config')->paths->site . 'frontendforms-custom-templates/');
 
+            // create the custom frameworks classes folder
+            $this->createCustomFrameworksFolder();
         }
 
         /**
