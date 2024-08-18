@@ -281,12 +281,6 @@
             // create a numeric array of all available email templates inside the email folder
             $this->setEmailTemplates();
 
-            // check if custom framework folder exists, otherwise create it
-            if (!$this->wire('files')->exists($this->customFrameworksPath)) {
-                $this->wire('files')->mkdir($this->customFrameworksPath);
-            }
-
-
             self::$framework = str_replace('.json', '', $this->input_framework);
 
             // set the default custom framework path
@@ -302,6 +296,19 @@
             //get all classes from the currently loaded framework from the folder CSSClasses
             $this->defaultClasses = json_decode(file_get_contents(self::getCSSClassFile($this->input_framework, $this->customFrameworksPath)));
 
+        }
+
+        /**
+         * Create the folder for custom frameworks classes file if it does not exist
+         * @return void
+         * @throws \ProcessWire\WireException
+         */
+        protected function createCustomFrameworksFolder(): void
+        {
+            // check if custom framework folder exists, otherwise create it
+            if (!$this->wire('files')->exists($this->customFrameworksPath)) {
+                $this->wire('files')->mkdir($this->customFrameworksPath);
+            }
         }
 
 
@@ -2785,6 +2792,9 @@
          */
         public function ___install(): void
         {
+            // create the custom frameworks classes folder
+            $this->createCustomFrameworksFolder();
+
             //save default module configurations on install
             $data = self::getDefaultData();
             //save the path to the default font file manually to the config data
@@ -2839,6 +2849,10 @@
          */
         public function ___upgrade($fromVersion, $toVersion): void
         {
+
+            // create the custom frameworks classes folder
+            $this->createCustomFrameworksFolder();
+            
             // copy new captchaimage.php to the root
             $this->createRemoveCaptchaImageFile(true);
             // create temp_uploads folder again
