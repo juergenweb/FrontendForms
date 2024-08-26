@@ -31,6 +31,7 @@ class Label extends TextElements
         parent::__construct($id);
         $this->enableAsterisk = $this->frontendforms['input_showasterisk']; // from global settings
         $this->setCSSClass('labelClass');
+        $this->setTag('label');
     }
 
     /**
