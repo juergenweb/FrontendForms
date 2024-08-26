@@ -131,6 +131,7 @@ class InputCheckboxMultiple extends Input
                         if (!$this->directionHorizontal) {
                             $checkbox->getLabel()->append('<br>');
                         }
+
                 }
 
                 if (in_array($checkbox->getAttribute('value'), $this->getDefaultValue())) {
@@ -147,6 +148,7 @@ class InputCheckboxMultiple extends Input
                 } else {
                     $out .= $checkbox->render();
                 }
+
             }
 
             // add additional wrapper over multiple checkboxes
