@@ -113,6 +113,7 @@ class InputRadioMultiple extends Input
                             $this->appendLabel(false);
                             break;
                         default:
+                            $radio->getLabel()->append('<br>');
                     }
                 } else {
                     switch ($this->markupType) {
@@ -146,8 +147,10 @@ class InputRadioMultiple extends Input
                 }
                 // Render label after input tag or wrap input tag with label tag
                 if ($this->getAppendLabel()) {
+
                     $out .= $radio->___renderInputRadio() . $radio->getLabel()->render();
                 } else {
+
                     $out .= $radio->render();
                 }
             }
