@@ -1288,7 +1288,7 @@ So this is a sensible measure against spammers.
 
 I made 2 small changes in the Validator.php. The "listContains" validation rule now handles null values correctly.
 
-## 2024-08-10
+## [2.2.14] 2024-08-27
 
 - **Bug for wrong url to privacy page fixed**
 
@@ -1298,3 +1298,6 @@ If you are using the text version of the privacy text, the link to the privacy p
 
 A new slider captcha has been added. This captcha must be solved by placing a puzzle piece in the correct position. This captcha is of the same type as the [Slide Captcha module](https://processwire.com/modules/captcha-slide/), but it is not the same and runs with its own code. This is why you don't need to install this captcha module either. This captcha is fully integrated with FrontendForms and all you have to do is select the slider captcha in the module configuration.
 
+- **Bug for label tag on checkbox/radio multiple fixed**
+
+The label tag of checkbox and radio multiple had been rendered as a div instead of a label tag. This is fixed now. Thanks to donatasben for reporting this issue. 
