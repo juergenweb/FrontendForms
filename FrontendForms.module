@@ -123,6 +123,7 @@
         protected string $input_captchaCharset = ''; // the characters that should be used to create the random text string
         protected string|int $input_captchaHeight = 60; // the height of the captcha image
         protected string|int $input_captchaWidth = 180; // the width of the captcha image
+        protected string|int $input_offset = 5; // the offset of the puzzle piece of the slider captcha
         protected string $input_captchaTextColor = ''; // the text color of the captcha image
         protected string|int $input_captchaFontsize = 20; // the font size of the captcha text
         protected string $input_captchaFontFamily = ''; // set the path to the folder where the font is located, that should be used
@@ -215,6 +216,7 @@
                 'input_captchaCharset' => 'abcdefghijklmnpqrstuvwxyz123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
                 'input_captchaHeight' => 50,
                 'input_captchaWidth' => 150,
+                'input_offset' => 5,
                 'input_question' => '',
                 'input_answers' => '',
                 'input_bgcolorchooser' => 'custom',
@@ -1339,6 +1341,7 @@
                     'barText' => $this->_('Slide right to fill'),
                     'loadingText' => $this->_('Loading'),
                     'failedText' => $this->_('Try again!'),
+                    'offset' => $this->input_offset
                 ];
                 $script = '<script>const slidertexts = ' . json_encode($sliderdata) . ';</script>';
 
@@ -1353,13 +1356,13 @@
 
                 // load slidercaptcha.js only if this captcha type is selected
                 if ($this->input_captchaType == 'SliderCaptcha') {
-                    $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms-slidercaptcha.js?v=' . $version . '" defer></script>' . PHP_EOL;
+                    $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms-slidercaptcha.js?v=' . $version .'" defer></script>' . PHP_EOL;
                 }
 
                 $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
             }
             if (!$this->input_removeCSS) {
-                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css?v=' . $version . '">' . PHP_EOL;
+                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css?v=' . $version .'">' . PHP_EOL;
                 $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
             }
             $modules = $this->wire('modules');
@@ -1537,6 +1540,7 @@
             self::addUnitToLabel($event, 'input_minTime', $this->_('Seconds'));
             self::addUnitToLabel($event, 'input_maxTime', $this->_('Seconds'));
             self::addUnitToLabel($event, 'input_captchaWidth', 'px');
+            self::addUnitToLabel($event, 'input_offset', 'px');
             self::addUnitToLabel($event, 'input_captchaHeight', 'px');
             self::addUnitToLabel($event, 'input_captchaFontsize', 'px');
             self::addUnitToLabel($event, 'input_maxAttempts', $this->_('Attempts'));
@@ -2225,6 +2229,22 @@
                 $width = ($this->input_captchaType == 'image') ? 50 : 33;
                 $captchaType->columnWidth = $width;
                 $fieldsetbasic->add($captchaType, $inputfields);
+
+                // set the offset of the puzzle piece (only on slider CAPTCHA)
+                $captchaOffset = $this->wire('modules')->get('InputfieldInteger');
+                $captchaOffset->label = $this->_('Offset');
+                $captchaOffset->description = $this->_('Please set the offset in px for the puzzle piece.');
+                $captchaOffset->notes = $this->_('The lower the value, the more precisely the puzzle piece must be placed (highest allowed value: 25)');
+                $captchaOffset->attr('name', 'input_offset');
+                $captchaOffset->attr('type', 'number');
+                $captchaOffset->attr('value', $this->input_offset);
+                $captchaOffset->attr('min', 0);
+                $captchaOffset->attr('max', 25); // a max offset of 25px is allowed
+                $captchaOffset->columnWidth = 50;
+                $captchaOffset->required = 1;
+                $captchaOffset->requiredIf = "input_captchaType=SliderCaptcha";
+                $captchaOffset->showIf = "input_captchaType=SliderCaptcha";
+                $fieldsetbasic->add($captchaOffset, $inputfields);
 
                 // set width of the captcha image (only on text CAPTCHAS)
                 $captchaWidth = $this->wire('modules')->get('InputfieldInteger');
