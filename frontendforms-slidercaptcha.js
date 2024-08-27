@@ -238,6 +238,7 @@
             }), o = Math.sqrt(e.map(u).reduce(i) / n.length);
             t = o !== 0
         }
+        
         return {spliced: Math.abs(r - this.x) < this.options.offset, verified: t}
     };
     n.reset = function () {
@@ -256,14 +257,13 @@
 
 function showSliderCaptcha(formid, x, y) {
 // ----set-captcha with script
-    console.log(slidertexts);
     let texts = slidertexts["barText"];
-    console.log(texts);
     var captcha = sliderCaptcha({
         id: formid + '-captcha',
         loadingText: slidertexts["loadingText"],
         failedText: slidertexts["failedText"],
         barText: slidertexts["barText"],
+        offset: slidertexts["offset"],
         onSuccess: function () {
             setTimeout(function () {
                 //alert('Your captcha is successfully verified.');
