@@ -2204,6 +2204,7 @@
                 // BASIC-SETTINGS
                 $fieldsetbasic = $this->wire('modules')->get('InputfieldFieldset');
                 $fieldsetbasic->label = $this->_('Basic settings');
+                $fieldsetbasic->columnWidth = 100;
                 $fieldsetbasic->collapsed = 1;
 
                 // Enable/disable CAPTCHA on forms
@@ -2222,29 +2223,13 @@
                     $captchaType->addOption($className, $option->title, ['flow' => 'up', 'tooltip' => $option->desc]);
                 }
 
-
+                $captcha50 = ['DefaultImageCaptcha', 'SliderCaptcha'];
                 $captchaType->attr('value', $this->input_captchaType);
                 $captchaType->required = 1;
                 $captchaType->notes = $this->_('Most visitors do not like CAPTCHAS, so it is recommended to use it only if you have problems with spam. If a CAPTCHA is enabled and you want to disable it on a certain form, please use the following method:');
-                $width = ($this->input_captchaType == 'image') ? 50 : 33;
+                $width = in_array($this->input_captchaType, ['DefaultImageCaptcha', 'SliderCaptcha']) ? 50 : 33;
                 $captchaType->columnWidth = $width;
                 $fieldsetbasic->add($captchaType, $inputfields);
-
-                // set the offset of the puzzle piece (only on slider CAPTCHA)
-                $captchaOffset = $this->wire('modules')->get('InputfieldInteger');
-                $captchaOffset->label = $this->_('Offset');
-                $captchaOffset->description = $this->_('Please set the offset in px for the puzzle piece.');
-                $captchaOffset->notes = $this->_('The lower the value, the more precisely the puzzle piece must be placed (highest allowed value: 25)');
-                $captchaOffset->attr('name', 'input_offset');
-                $captchaOffset->attr('type', 'number');
-                $captchaOffset->attr('value', $this->input_offset);
-                $captchaOffset->attr('min', 0);
-                $captchaOffset->attr('max', 25); // a max offset of 25px is allowed
-                $captchaOffset->columnWidth = 50;
-                $captchaOffset->required = 1;
-                $captchaOffset->requiredIf = "input_captchaType=SliderCaptcha";
-                $captchaOffset->showIf = "input_captchaType=SliderCaptcha";
-                $fieldsetbasic->add($captchaOffset, $inputfields);
 
                 // set width of the captcha image (only on text CAPTCHAS)
                 $captchaWidth = $this->wire('modules')->get('InputfieldInteger');
@@ -2255,7 +2240,7 @@
                 $captchaWidth->attr('value', $this->input_captchaWidth);
                 $captchaWidth->attr('min', 10);
                 $captchaWidth->attr('max', 900); // images are 900*600px, so set max width to 900px
-                $width = ($this->input_captchaType == 'image') ? 50 : 33;
+                $width = in_array($this->input_captchaType, ['DefaultImageCaptcha', 'SliderCaptcha']) ? 50 : 33;
                 $captchaWidth->columnWidth = $width;
                 $captchaWidth->required = 1;
                 $captchaWidth->showIf = "input_captchaType!=none|SimpleQuestionCaptcha|SliderCaptcha";
@@ -2273,6 +2258,22 @@
                 $captchaHeight->requiredIf = "input_captchaType=SimpleQuestionCaptcha";
                 $captchaHeight->showIf = "input_captchaType!=none|DefaultImageCaptcha|SimpleQuestionCaptcha|SliderCaptcha";
                 $fieldsetbasic->add($captchaHeight, $inputfields);
+
+                // set the offset of the puzzle piece (only on slider CAPTCHA)
+                $captchaOffset = $this->wire('modules')->get('InputfieldInteger');
+                $captchaOffset->label = $this->_('Offset');
+                $captchaOffset->description = $this->_('Please set the offset in px for the puzzle piece.');
+                $captchaOffset->notes = $this->_('The lower the value, the more precisely the puzzle piece must be placed (highest allowed value: 25)');
+                $captchaOffset->attr('name', 'input_offset');
+                $captchaOffset->attr('type', 'number');
+                $captchaOffset->attr('value', $this->input_offset);
+                $captchaOffset->attr('min', 0);
+                $captchaOffset->attr('max', 25); // a max offset of 25px is allowed
+                $captchaOffset->columnWidth = 50;
+                $captchaOffset->required = 1;
+                $captchaOffset->requiredIf = "input_captchaType=SliderCaptcha";
+                $captchaOffset->showIf = "input_captchaType=SliderCaptcha";
+                $fieldsetbasic->add($captchaOffset, $inputfields);
 
                 // set the question field
                 $question = $this->wire('modules')->get('InputfieldText');
