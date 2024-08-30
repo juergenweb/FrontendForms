@@ -3067,8 +3067,8 @@
                 $this->setMailPlaceholder($fieldname . 'label', $field->getLabel()->getText());
                 $this->setMailPlaceholder($fieldname . 'value', $field->getAttribute('value'));
             }
-            // if the field is not a text element, set the name attribute if not set before
-            if (!is_subclass_of($field, 'FrontendForms\TextElements')) {
+            // if the field is not a text element and not a markup, set the name attribute if not set before
+            if ((!is_subclass_of($field, 'FrontendForms\TextElements')) && (get_class($field) != 'FrontendForms\Markup')) {
 
                 // Add id of the form as prefix for the name attribute of the field
                 if($field->hasAttribute('name')){
