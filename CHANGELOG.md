@@ -1306,4 +1306,4 @@ The label tag of checkbox and radio multiple had been rendered as a div instead 
 
 - **Bug in Form.php fixed by using Markup class in combination with hasAttribute() method**
 
-Thanks to Donatas for reporting a bug inside the Form.php where form elements of the class "Markup" will be used inside the form and the usage of the hasAttribute() method on line [3071](https://github.com/juergenweb/FrontendForms/blob/main/Formelements/Form.php#L3071).
+Thanks to Donatas for reporting a bug in the Form.php where form elements of the "Markup" class are used within the form, and using the hasAttribute() method causes an error message on line [3071](https://github.com/juergenweb/FrontendForms/blob/main/Formelements/Form.php#L3071).
