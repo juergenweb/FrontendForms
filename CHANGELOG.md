@@ -1301,3 +1301,9 @@ A new slider captcha has been added. This captcha must be solved by placing a pu
 - **Bug for label tag on checkbox/radio multiple fixed**
 
 The label tag of checkbox and radio multiple had been rendered as a div instead of a label tag. This is fixed now. Thanks to donatasben for reporting this issue. 
+
+## 2024-08-30
+
+- **Bug in Form.php fixed by using Markup class in combination with hasAttribute() method**
+
+Thanks to Donatas for reporting a bug inside the Form.php where form elements of the class "Markup" will be used inside the form and the usage of the hasAttribute() method on line 3071.
