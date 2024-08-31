@@ -1302,8 +1302,12 @@ A new slider captcha has been added. This captcha must be solved by placing a pu
 
 The label tag of checkbox and radio multiple had been rendered as a div instead of a label tag. This is fixed now. Thanks to donatasben for reporting this issue. 
 
-## 2024-08-30
+## [2.2.15] 2024-08-30
 
 - **Bug fixed inside in the Form.php caused by using the hasAttribute() method in combination with elements of the Markup class**
 
 Thanks to Donatas for reporting a bug in the Form.php where form elements of the "Markup" class are used within the form, and using the hasAttribute() method causes an error message on line [3071](https://github.com/juergenweb/FrontendForms/blob/main/Formelements/Form.php#L3071).
+
+- **New configuration field for embedding JS and CCS files added**
+
+A new configuration field in the backend allows you to select on which pages the JS and CSS files should be embedded. This increases the loading performance of pages, because the the files can only be added to pages that contain a form and not on all pages.
