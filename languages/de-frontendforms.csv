@@ -280,7 +280,7 @@ Details,=,,site/modules/FrontendForms/FrontendForms.module,3ec365dd533ddb7ef3d1c
 "Current class","Aktuelle Klasse",,site/modules/FrontendForms/FrontendForms.module,e7a61cfa8747480af7070c6f8e63c812
 "Settings for stylesheets and scripts","Einstellungen für die Stylesheets und Skripte",,site/modules/FrontendForms/FrontendForms.module,d8e4d251281d05f85acf5cc936fa7f4d
 "Javascript setting","JavaScript Einstellung",,site/modules/FrontendForms/FrontendForms.module,c454d41006c3a47ef050056608a6b7d9
-"Remove all module Javascript files from frontend","Die Einbindung aller Javascript-Dateien für dieses Module unterbinden",,site/modules/FrontendForms/FrontendForms.module,73e95f708b3641dc5fca104171c32081
+"Remove all module Javascript files from frontend","Die Einbindung aller Javascript-Dateien für dieses Modul unterbinden",,site/modules/FrontendForms/FrontendForms.module,73e95f708b3641dc5fca104171c32081
 "All JavaScript files, which will be needed for some features of the form, will added before the closing body tag on the frontend by default . You can prevent the embedding of the scripts completely by checking the box.","Alle JavaScript-Dateien, die für einige Funktionen des Formulars benötigt werden, werden standardmäßig vor dem schließenden body-Tag im Frontend hinzugefügt. Sie können das Einbetten der Skripte vollständig verhindern, indem Sie das Häkchen setzen.",,site/modules/FrontendForms/FrontendForms.module,456ec8e7a08a31fa2153bbea0091440c
 "CSS setting","CSS Einstellungen",,site/modules/FrontendForms/FrontendForms.module,6bfa90ae9f841ec2adedb46975347afd
 "Remove frontendforms.css from template","Die Einbindung der CSS-Datei frontendforms.css beim Template unterbinden",,site/modules/FrontendForms/FrontendForms.module,40332d3353119c2a3709b3207527f745
