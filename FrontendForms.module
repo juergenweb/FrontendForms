@@ -1967,7 +1967,7 @@
             $fieldset1->add($fieldsetMarkup, $inputfields);
 
             $fieldsetAssets = $this->wire('modules')->get('InputfieldFieldset');
-            $fieldsetAssets->label = $this->_('Settings for the stylesheets and scripts');
+            $fieldsetAssets->label = $this->_('Settings for stylesheets and scripts');
             $fieldsetAssets->collapsed = 1;
 
             // Remove JS on Frontend
@@ -1975,8 +1975,8 @@
             $removeJS->attr('name', 'input_removeJS');
             $removeJS->attr('checked', $this->input_removeJS === 1 ? 'checked' : '');
             $removeJS->label = $this->_('Javascript setting');
-            $removeJS->label2 = $this->_('Remove frontendforms.js from template');
-            $removeJS->notes = $this->_('A small JavaScript, which will be needed for some features of the form, will added before the closing body tag on the frontend by default . You can remove the embedding of the script file by checking the box.');
+            $removeJS->label2 = $this->_('Remove all module Javascript files from frontend');
+            $removeJS->notes = $this->_('All JavaScript files, which will be needed for some features of the form, will added before the closing body tag on the frontend by default . You can prevent the embedding of the scripts completely by checking the box.');
             $removeJS->columnWidth = 50;
             $fieldsetAssets->add($removeJS, $inputfields);
 
