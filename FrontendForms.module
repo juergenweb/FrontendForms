@@ -1967,7 +1967,7 @@
             $fieldset1->add($fieldsetMarkup, $inputfields);
 
             $fieldsetAssets = $this->wire('modules')->get('InputfieldFieldset');
-            $fieldsetAssets->label = $this->_('Remove stylesheets and scripts');
+            $fieldsetAssets->label = $this->_('Settings for the stylesheets and scripts');
             $fieldsetAssets->collapsed = 1;
 
             // Remove JS on Frontend
