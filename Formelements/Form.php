@@ -651,6 +651,14 @@
          */
         public function generalPlaceholders(): array
         {
+
+            // check if $_SERVER['HTTP_USER_AGENT'] key exists, otherwise add 'n/a' as value
+            if(array_key_exists('HTTP_USER_AGENT', $_SERVER)){
+                $browser = $_SERVER['HTTP_USER_AGENT'];
+            } else {
+                $browser = $this->_('n/a');
+            }
+            
             return [
                 'domainlabel' => $this->_('Domain'),
                 'domainvalue' => $this->wire('config')->urls->httpRoot,
@@ -667,7 +675,7 @@
                 'usernamelabel' => $this->_('Username'),
                 'usernamevalue' => $this->user->name,
                 'browserlabel' => $this->_('Browser'),
-                'browservalue' => $_SERVER['HTTP_USER_AGENT'],
+                'browservalue' => $browser,
                 'donotreplayvalue' => $this->_('This is an auto generated message, please do not reply.')
             ];
         }
