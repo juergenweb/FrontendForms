@@ -1311,3 +1311,15 @@ Thanks to Donatas for reporting a bug in the Form.php where form elements of the
 - **New configuration field for embedding JS and CCS files added**
 
 A new configuration field in the backend allows you to select on which pages the JS and CSS files should be embedded. This increases the loading performance of pages, because the the files can only be added to pages that contain a form and not on all pages.
+
+## 2024-10-08
+
+- **Remove hover command on tables at "template_1" email template**
+
+There was as CSS hover effect added to td elements on tables inside the template_1 email template. This makes no sense and has been removed.
+
+
+- **New method to stop random rotation of Honeypot field added**
+
+A user reported an issue at a complex grid form, where the rotation of the Honeypot field breaks the layout. This should not be happen, but now you can disable the Honeypot field rotation to position the Honeypot field fixed on the very first position. 
+Read more
