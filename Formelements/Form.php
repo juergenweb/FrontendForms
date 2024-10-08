@@ -105,6 +105,7 @@
         protected string $notestag = 'p'; // set the default global tag for the notes element
         protected string $msgtag = 'p'; // set the default global tag for the message elements (success and error message)
         protected string|null $segments = null;
+        protected string|null|bool|int $stopHoneypotRotation = false; // Honeypotfield will be positioned randomly (false) or stays at the top of the form (true)
 
 
         /* objects */
@@ -558,6 +559,17 @@
         }
 
         /**
+         * Whether to rotate the Honeypot field randomly or not
+         * @param bool|int|string|null $stop
+         * @return $this
+         */
+        public function stopHoneypotRotation(bool|int|null|string $stop = false): self
+        {
+            $this->stopHoneypotRotation = boolval($stop);
+            return $this;
+        }
+
+        /**
          * Get the setting value if Ajax should be used to submit the form
          * @return bool
          */
@@ -658,7 +670,7 @@
             } else {
                 $browser = $this->_('n/a');
             }
-            
+
             return [
                 'domainlabel' => $this->_('Domain'),
                 'domainvalue' => $this->wire('config')->urls->httpRoot,
@@ -2804,10 +2816,17 @@
                     }
                 }
 
-                // add honeypot on the random number field position
                 if (($this->frontendforms['input_useHoneypot']) && ($inputfieldKeys)) {
-                    shuffle($inputfieldKeys);
-                    array_splice($this->formElements, $inputfieldKeys[0], 0, [$this->createHoneypot()]);
+
+                    $honeypot = $this->createHoneypot();
+                    if($this->stopHoneypotRotation){
+                        // add honeypot field on the first position of the form
+                        array_unshift($this->formElements , $honeypot);
+                    } else {
+                        // add honeypot on the random number field position
+                        shuffle($inputfieldKeys);
+                        array_splice($this->formElements, $inputfieldKeys[0], 0, [$honeypot]);
+                    }
                 }
 
                 // create hidden Ajax redirect input if set
