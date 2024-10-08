@@ -524,7 +524,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [getFormElementsByClass()](#getformelementsbyclass---get-all-form-fields-of-a-specific-class)  | get all formfields of a specific class  |
 | [setErrorMsg()](#seterrormsg---overwrite-the-default-error-message-after-form-submission)  | overwrite the default error message after form submission  |
 | [setSuccessMsg()](#setsuccessmsg---overwrite-the-default-success-message-after-form-submission)  | overwrite the default success message after form submission  |
-| [useFormElementsWrapper()](#useformelementswrapper---addrmove-an-additional-div-container-wrapper-over-all-form-fields)  | add/rmove an additional div container (wrapper) over all form fields  |
+| [useFormElementsWrapper()](#useformelementswrapper---addrmove-an-additional-div-container-wrapper-over-all-form-fields)  | add/remove an additional div container (wrapper) over all form fields  |
 | [getFormElementsWrapper()](#getformelementswrapper---get-the-form-elements-wrapper-object)  | get the form elements wrapper object  |
 | [appendLabelOnCheckboxes(), appendLabelOnRadios()](#appendlabeloncheckboxes-and-appendlabelonradios-for-checkboxes-and-radio-buttons)  | for checkboxes and radio buttons  |
 | [setUploadPath()](#setuploadpath---change-the-default-storage-location-for-uploaded-files)  | change the default storage location for uploaded files  |
@@ -716,7 +716,7 @@ With this method you can overwrite the default success message which appears ins
 ```php
   $form->setSuccessMsg('Congratulations, your message was submitted successfully!');
 ```
-### useFormElementsWrapper() - add/rmove an additional div container (wrapper) over all form fields
+### useFormElementsWrapper() - add/remove an additional div container (wrapper) over all form fields
 A user requested this functionality for usage with a specific framework (I cannot remember which one), so I have added this functionality.
 With this method you can wrap all form fields in an extra div, or remove the wrapper.
 
