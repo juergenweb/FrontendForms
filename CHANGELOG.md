@@ -1312,7 +1312,7 @@ Thanks to Donatas for reporting a bug in the Form.php where form elements of the
 
 A new configuration field in the backend allows you to select on which pages the JS and CSS files should be embedded. This increases the loading performance of pages, because the the files can only be added to pages that contain a form and not on all pages.
 
-## 2024-10-08
+## [2.2.16] 2024-10-08
 
 - **Remove hover command on tables at "template_1" email template**
 
@@ -1321,5 +1321,6 @@ There was as CSS hover effect added to td elements on tables inside the template
 
 - **New method to stop random rotation of Honeypot field added**
 
-A user reported an issue at a complex grid form, where the rotation of the Honeypot field breaks the layout. This should not be happen, but now you can disable the Honeypot field rotation to position the Honeypot field fixed on the very first position. 
-Read more
+A user reported an issue at a complex grid form, where the rotation of the Honeypot field breaks the layout. This should not be happen, but now you can disable the Honeypot field rotation to position the Honeypot field fixed on the very first position.
+
+[Read more](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#stophoneypotrotation---stop-the-randomly-rotation-of-the-honeypot-field-on-per-form-base)
