@@ -562,6 +562,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setDescriptionTag()](#setdescriptiontag---change-the-tag-for-the-input-field-description-on-this-form)  | Change the tag for the input field description on per form base |
 | [setNotesTag()](#setnotestag---change-the-tag-for-the-input-field-notes-text-on-this-form)  | Change the tag for the input field notes text on per form base |
 | [setMsgTag()](#setmessagetag---change-the-tag-for-the-input-field-error-and-success-message-text-on-this-form)  | Change the tag for the success and error message on per form base |
+| [stopHoneypotRotation()](#setmessagetag---change-the-tag-for-the-input-field-error-and-success-message-text-on-this-form)  | Stop the Honeypot field from randomly position and add it fixed to the very first position of the form |
 
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
@@ -1144,10 +1145,18 @@ $form`->setNotesTag('small');
 
 ### setMessageTag() - Change the tag for the input field error and success message text on this form
 
-Wtih this method you can overwrite the global tag for the input field messages on per form base.
+With this method you can overwrite the global tag for the input field messages on per form base.
 
 ```php
-$form`->setMessageTag('div');
+$form->setMessageTag('div');
+```
+
+### stopHoneypotRotation() - Stop the randomly rotation of the Honeypot field on per form base
+
+With this method you can stop the randomly rotation of the Honeypot field. The Honeypot field will be positioned fixed on the very first position of the form. This can be used if the rotation of the Honeypot field breaks the layout of your form (should not happen, but it could be in very rare cases).
+
+```php
+$form->stopHoneypotRotation(true); // default is false
 ```
 
 ## Input field methods
