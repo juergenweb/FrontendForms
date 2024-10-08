@@ -562,7 +562,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setDescriptionTag()](#setdescriptiontag---change-the-tag-for-the-input-field-description-on-this-form)  | Change the tag for the input field description on per form base |
 | [setNotesTag()](#setnotestag---change-the-tag-for-the-input-field-notes-text-on-this-form)  | Change the tag for the input field notes text on per form base |
 | [setMsgTag()](#setmessagetag---change-the-tag-for-the-input-field-error-and-success-message-text-on-this-form)  | Change the tag for the success and error message on per form base |
-| [stopHoneypotRotation()](#setmessagetag---change-the-tag-for-the-input-field-error-and-success-message-text-on-this-form)  | Stop the Honeypot field from randomly position and add it fixed to the very first position of the form |
+| [stopHoneypotRotation(#stophoneypotrotation---stop-the-randomly-rotation-of-the-honeypot-field-on-per-form-base)](#setmessagetag---change-the-tag-for-the-input-field-error-and-success-message-text-on-this-form)  | Stop the Honeypot field from randomly position and add it fixed to the very first position of the form |
 
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
