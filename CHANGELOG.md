@@ -1327,7 +1327,7 @@ A user reported an issue at a complex grid form, where the rotation of the Honey
 
 ## [2.2.17] 2024-10-19
 
-- **Class names of the slider CAPTCHA have beenchanged to prevent naming conflicts**
+- **Class names of the slider CAPTCHA have been changed to prevent naming conflicts**
 
 According to an [issue report by DrewPH](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/12/#comment-245163) in the forum, I have changed all class names of the slider CATPTCHA by adding the prefix "ffm", which stands for "FrontendForms module".
 
