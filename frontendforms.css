@@ -119,8 +119,8 @@ Created: 08.07.2022
   Slider Captcha
 -------------------------------------------------------- */
 
-.block {
-    position: absolute;
+.ffm-block {
+    position: absolute!important;
     left: 0;
     top: 0;
 }
@@ -136,7 +136,7 @@ Created: 08.07.2022
     border: 1px solid #e6e8eb;
 }
 
-.sliderContainer {
+.ffm-sliderContainer {
     position: relative;
     text-align: center;
     height: 40px;
@@ -149,7 +149,7 @@ Created: 08.07.2022
     padding: 0 5px;
 }
 
-.sliderbg {
+.ffm-sliderbg {
     position: absolute;
     left: 0;
     right: 0;
@@ -161,7 +161,7 @@ Created: 08.07.2022
 }
 
 
-.sliderContainer .sliderIcon:before {
+.ffm-sliderContainer .ffm-sliderIcon:before {
     margin:0;
     padding: 0;
     font-size: 30px;
@@ -178,39 +178,39 @@ Created: 08.07.2022
 
 }
 
-.sliderContainer_fail .sliderIcon:before {
+.ffm-sliderContainer_fail .ffm-sliderIcon:before {
     content: '\0000d7';
     font-size: 40px;
     top: -3px;
 }
 
-.sliderContainer_fail .slider {
+.ffm-sliderContainer_fail .ffm-slider {
     background-color: #f35c59 !important;
     color: #fff;
 }
 
-.sliderContainer_fail .sliderMask {
+.ffm-sliderContainer_fail .ffm-sliderMask {
     background-color: #f7dcdd;
 }
 
-.sliderContainer_success .sliderIcon:before {
+.ffm-sliderContainer_success .ffm-sliderIcon:before {
     content: '\002713';
 }
 
-.sliderContainer_success .slider {
+.ffm-sliderContainer_success .ffm-slider {
     background-color: #02c076 !important;
     color: #fff;
 }
 
-.sliderContainer_success .sliderMask {
+.ffm-sliderContainer_success .ffm-sliderMask {
     background-color: #D2F4EF;
 }
 
-.sliderContainer_active .sliderText, .sliderContainer_success .sliderText, .sliderContainer_fail .sliderText {
+.ffm-sliderContainer_active .ffm-sliderText, .ffm-sliderContainer_success .ffm-sliderText, .ffm-sliderContainer_fail .ffm-sliderText {
     left: -3000em
 }
 
-.sliderMask {
+.ffm-sliderMask {
     position: absolute;
     left: 0;
     top: 0;
@@ -220,7 +220,7 @@ Created: 08.07.2022
     border-radius: 2px;
 }
 
-.slider {
+.ffm-slider {
     position: absolute;
     margin:0;
     padding: 0;
@@ -239,19 +239,19 @@ Created: 08.07.2022
     justify-content: center;
 }
 
-.slider:hover {
+.ffm-slider:hover {
     background: #009efb;
     color: #fff;
     border-color: #009efb;
 }
 
 
-.sliderText {
+.ffm-sliderText {
     font-size: 20px;
     position: relative;
 }
 
-.refreshIcon {
+.ffm-refreshIcon {
     position: absolute;
     right: 5px;
     top: 5px;
@@ -265,7 +265,7 @@ Created: 08.07.2022
     border-radius: 50px;
 }
 
-.refreshIcon:before {
+.ffm-refreshIcon:before {
     content: '\0027f3';
     font-size: 19px;
     position: relative;
@@ -273,7 +273,7 @@ Created: 08.07.2022
     font-style: normal;
 }
 
-.refreshIcon:hover {
+.ffm-refreshIcon:hover {
     color: #45494c;
     background: #f7f9fa;
 }
