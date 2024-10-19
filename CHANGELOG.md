@@ -1324,3 +1324,20 @@ There was as CSS hover effect added to td elements on tables inside the template
 A user reported an issue at a complex grid form, where the rotation of the Honeypot field breaks the layout. This should not be happen, but now you can disable the Honeypot field rotation to position the Honeypot field fixed on the very first position.
 
 [Read more](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#stophoneypotrotation---stop-the-randomly-rotation-of-the-honeypot-field-on-per-form-base)
+
+## [2.2.17] 2024-10-19
+
+- **Class names of the slider CAPTCHA have beenchanged to prevent naming conflicts**
+
+According to an [issue report by DrewPH](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/12/#comment-245163) in the forum, I have changed all class names of the slider CATPTCHA by adding the prefix "ffm", which stands for "FrontendForms module".
+
+The problem was that the class name "block" of one element of the slider CAPTCHA results in a conflict with CSS of other elements on a site. This class name was indeed not really unique ;-). To prevent further conflicts in the future I have decided to re-name all other classes of the CAPTCHA elements too to make them more unique.
+
+*Please note:* If you have overwritten the CSS for these classes by your own (fe to change a color or something like that), you have to take care about the new class names. This means that you have to adapt your overwritten CSS to the new class names.
+ 
+
+Files that have been changed:
+
+- frontendforms.css
+- frontendforms-slidercaptcha.js
+
