@@ -79,10 +79,10 @@
             }, v = function (n, t) {
                 var i = document.createElement("canvas");
                 return i.width = n, i.height = t, i
-            }, f = v(this.options.width - 2, this.options.height), e = f.cloneNode(!0), t = n("div", "sliderContainer"),
-            l = n("i", "refreshIcon " + this.options.repeatIcon), o = n("div", "sliderMask"), y = n("div", "sliderbg"),
-            s = n("div", "slider"), a = n("i", "sliderIcon"), h = n("span", "sliderText"), u, c;
-        e.className = "block";
+            }, f = v(this.options.width - 2, this.options.height), e = f.cloneNode(!0), t = n("div", "ffm-sliderContainer"),
+            l = n("i", "ffm-refreshIcon " + this.options.repeatIcon), o = n("div", "ffm-sliderMask"), y = n("div", "ffm-sliderbg"),
+            s = n("div", "ffm-slider"), a = n("i", "ffm-sliderIcon"), h = n("span", "ffm-sliderText"), u, c;
+        e.className = "ffm-block";
         h.innerHTML = this.options.barText;
         u = this.$element;
         u.appendChild(f);
@@ -196,16 +196,16 @@
             n.slider.style.left = e - 1 + "px";
             o = (n.options.width - 60) / (n.options.width - 40) * e;
             n.block.style.left = o + "px";
-            n.sliderContainer.classList.add("sliderContainer_active");
+            n.sliderContainer.classList.add("ffm-sliderContainer_active");
             n.sliderMask.style.width = e + 4 + "px";
             f.push(Math.round(c))
         }, s = function (u) {
             var o, e;
             if (!t || (t = !1, o = u.clientX || u.changedTouches[0].clientX, o === r)) return !1;
-            n.sliderContainer.classList.remove("sliderContainer_active");
+            n.sliderContainer.classList.remove("ffm-sliderContainer_active");
             n.trail = f;
             e = n.verify();
-            e.spliced && e.verified ? (n.sliderContainer.classList.add("sliderContainer_success"), i(n.options.onSuccess) && n.options.onSuccess.call(n.$element)) : (n.sliderContainer.classList.add("sliderContainer_fail"), i(n.options.onFail) && n.options.onFail.call(n.$element), setTimeout(function () {
+            e.spliced && e.verified ? (n.sliderContainer.classList.add("ffm-sliderContainer_success"), i(n.options.onSuccess) && n.options.onSuccess.call(n.$element)) : (n.sliderContainer.classList.add("ffm-sliderContainer_fail"), i(n.options.onFail) && n.options.onFail.call(n.$element), setTimeout(function () {
                 n.text.innerHTML = n.options.failedText;
                 n.reset()
             }, 1e3))
@@ -242,8 +242,8 @@
         return {spliced: Math.abs(r - this.x) < this.options.offset, verified: t}
     };
     n.reset = function () {
-        this.sliderContainer.classList.remove("sliderContainer_fail");
-        this.sliderContainer.classList.remove("sliderContainer_success");
+        this.sliderContainer.classList.remove("ffm-sliderContainer_fail");
+        this.sliderContainer.classList.remove("ffm-sliderContainer_success");
         this.slider.style.left = 0;
         this.block.style.left = 0;
         this.sliderMask.style.width = 0;
