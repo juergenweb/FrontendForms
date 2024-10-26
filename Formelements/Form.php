@@ -44,7 +44,7 @@
 
         /* properties */
 
-        protected $load_time = ''; // the time, when the form was loaded
+        protected string|int $load_time = ''; // the time, when the form was loaded
         protected array $storedFiles = []; // array that holds all files (including overwritten filenames)
         protected string $doubleSubmission = ''; // value hold by the double form submission session
         protected string $defaultRequiredTextPosition = 'top'; // the default required text position
@@ -64,7 +64,7 @@
         // properties for the simple question Captcha
         protected string|null $question = ''; // the question as string
         protected array|null $answers = []; // all acceptable answers as an array
-        protected array|null $captchaPosition = null; // array that holds the reference field as key and the position as value
+        protected array|null $captchaPosition = null; // array that holds the reference field as the key and the position as value
         protected string|null $captchaSuccessMsg = ''; // set a success message for the captcha field
         protected string|null $captchaErrorMsg = ''; // overwrite the default error message for the CAPTCHA validation
         protected string|null $captchaRequiredErrorMsg = ''; // overwrite the default error message for the CAPTCHA required validation
@@ -106,8 +106,7 @@
         protected string $msgtag = 'p'; // set the default global tag for the message elements (success and error message)
         protected string|null $segments = null;
         protected string|null|bool|int $stopHoneypotRotation = false; // Honeypotfield will be positioned randomly (false) or stays at the top of the form (true)
-
-
+        
         /* objects */
         protected Alert $alert; // alert box
         protected RequiredTextHint $requiredHint; // hint to inform that all required fields have to be filled out
@@ -127,7 +126,6 @@
             parent::__construct();
 
             $this->load_time = time(); // set the load time
-
 
             // set the path to the template folder for the email templates
             $this->emailTemplatesDirPath = $this->wire('config')->paths->siteModules . 'FrontendForms/email_templates/';
@@ -197,7 +195,7 @@
             $this->getFormElementsWrapper()->setAttribute('id',
                 $this->getAttribute('id') . '-formelementswrapper'); // add id
             $this->getFormElementsWrapper()->setAttribute('class',
-                $this->frontendforms['input_wrapperFormElementsCSSClass']); // add css class to the wrapper element
+                $this->frontendforms['input_wrapperFormElementsCSSClass']); // add CSS class to the wrapper element
             $this->useDoubleFormSubmissionCheck($this->useDoubleFormSubmissionCheck);
             $this->setRequiredText($this->getLangValueOfConfigField('input_requiredText'));
             $this->logFailedAttempts($this->frontendforms['input_logFailedAttempts']); // enable or disable the logging of blocked visitor's IP depending on config settings
@@ -207,6 +205,12 @@
             $this->setCaptchaType($this->frontendforms['input_captchaType']); // enable or disable the captcha and set type of captcha
             // set the folder of the page in assets/files as default target folder for file uploads
             $this->setUploadPath($this->wire('config')->paths->assets . 'files/' . $this->page->id . '/');
+
+            $ajaxMsg = '';
+            if(array_key_exists('input_ajaxMsg', $this->frontendforms )){
+                $ajaxMsg = $this->getLangValueOfConfigField('input_ajaxMsg');
+            }
+            $this->setAjaxMessage($ajaxMsg);
 
             // Global tags for label, description,...
 
@@ -251,9 +255,22 @@
             // add a hook method after sending the mail to remove the session variable "templateloaded"
             $this->addHookAfter('WireMail::send', $this, 'removeTemplateSession');
 
-            // create questions array for the simple text CAPTCHA
+            // create the questions array for the simple text CAPTCHA
             $this->question_array = $this->getCaptchaQuestions();
 
+        }
+
+        /**
+         * Set a custom info message, that will be displayed during an AJAX call to inform the user
+         * @param string $ajaxmsg
+         * @return $this
+         */
+        public function setAjaxMessage(string $ajaxmsg): void
+        {
+            if ($ajaxmsg === '') {
+                $ajaxmsg = $this->_('Please be patient... the form will be validated!');
+            }
+            $this->frontendforms['input_ajaxMsg'] = trim($ajaxmsg);
         }
 
         /**
@@ -288,7 +305,7 @@
 
         /**
          * Change the message tag for all elements inside the form
-         * @param string $messagetag
+         * @param string $msgtag
          * @return void
          */
         public function setMessageTag(string $msgtag): void
@@ -302,7 +319,7 @@
          * @param string|null $question
          * @param array|null $answers
          * @param array $options - add all other question parameters like notes, description, placeholder to the
-         *     question
+         * question
          * @return $this
          */
         public function setSecurityQuestion(string|null $question, array|null $answers, array $options = []): self
@@ -315,7 +332,7 @@
                 }
             }
 
-            // add this question to the questions array
+            // add this question to the question array
             $array = [
                 'question' => $question,
                 'answers' => $answers
@@ -404,7 +421,7 @@
         /**
          * Remove the label tag from the CAPTCHA if needed
          * Optionally, you can display the value of the label as placeholder text by setting the parameter to true
-         * @param bool $usePlaceholder -> true: label text will be displayed as placeholder text, false: not
+         * @param bool $usePlaceholder -> true: the label text will be displayed as placeholder text, false: not
          * @return $this
          */
         public function removeCaptchaLabel(bool $usePlaceholder = false): self
@@ -415,8 +432,8 @@
         }
 
         /**
-         * Show the entered value inside a multi-question CAPTCHA again, if the question is the same as before and the
-         * value was valid This method is only designed for the simple question CAPTCHA with multiple random questions
+         * Show the entered value inside a multi-question CAPTCHA again if the question is the same as before and the
+         * value was valid, this method is only designed for the simple question CAPTCHA with multiple random questions
          * @param bool $show
          * @return $this
          */
@@ -887,7 +904,7 @@
         {
             $mail = $event->object;
 
-            // do not add a template if template is set to "none"
+            // do not add a template if the template is set to "none"
             if ($mail->email_template !== 'none') {
 
                 // set the placeholder for the title if present
@@ -964,7 +981,7 @@
         /**
          * Load a template file from the given path including php code and output it as a string
          * @param string $templatePath - the path to the template that should be rendered
-         * @return string - the html template
+         * @return string - the HTML template
          */
         protected function loadTemplate(string $templatePath): string
         {
@@ -1073,9 +1090,9 @@
             if (!is_null($placeholderValue)) {
                 $placeholderName = strtoupper(trim($placeholderName));
                 if (is_array($placeholderValue)) {
-                    // check if array is multidimensional like multiple file uploads
+                    // check if the array is multidimensional like multiple file uploads
                     if (count($placeholderValue) == count($placeholderValue, COUNT_RECURSIVE)) {
-                        // one-dimensional: convert array of values to comma separated string
+                        // one-dimensional: convert the array of values to comma separated string
                         $placeholderValue = implode(', ', $placeholderValue);
                     } else {
                         $file_names = [];
@@ -1351,7 +1368,7 @@
         }
 
         /**
-         * Convert post values to a string
+         * Convert post-values to a string
          * @param bool $showButtonValues
          * @return string
          */
@@ -1544,7 +1561,7 @@
          * @param array $questions
          * @return void
          */
-        public function setSimpleQuestionCaptchaRandomRotation(array $questions)
+        public function setSimpleQuestionCaptchaRandomRotation(array $questions): void
         {
             $this->setSecurityQuestions($questions);
         }
@@ -1555,7 +1572,7 @@
          * @return void
          * @throws \ProcessWire\WireException
          */
-        protected function getRandomQuestion(array $questions)
+        protected function getRandomQuestion(array $questions): void
         {
             if ($questions) {
                 // check if the chosen CAPTCHA type is the simple question CAPTCHA
@@ -1572,15 +1589,12 @@
 
                             $question_array_array['question'] = $random_question_array['question'];
                             $question_array_array['answers'] = $random_question_array['answers'];
-                            // unset the question and the answers keys from the array
+                            // unset the question and the answer keys from the array
                             unset($random_question_array['question']);
                             unset($random_question_array['answers']);
                             // unset values that will be displayed only after post
                             unset($random_question_array['successMsg']);
                             unset($random_question_array['errorMsg']);
-
-                            // get all other array keys if there are some left
-                            if ($questions) {
 
                                 // set additional properties if present
                                 foreach ($random_question_array as $name => $value) {
@@ -1590,7 +1604,6 @@
                                     }
                                 }
 
-                            }
                         }
                     }
 
@@ -1639,6 +1652,7 @@
          * You can enter pure name or name attribute including form prefix
          * @param string $name - the name attribute of the input field
          * @return string|array|null
+         * @throws \ProcessWire\WireException
          */
         public function getValue(string $name): string|array|null
         {
@@ -1679,6 +1693,7 @@
          * If there are sanitizers set for the form values, they will be applied
          * @param bool $buttonValue : If there are buttons set the value of the buttons will be applied too
          * @return array|null
+         * @throws \ProcessWire\WireException
          */
         public function getValues(bool $buttonValue = false): array|null
         {
@@ -1766,7 +1781,7 @@
 
         /**
          * Get all elements of the form that are an object of a specific class
-         * Returns an array containing all objects of the given class (eg all Button elements)
+         * Returns an array containing all objects of the given class (e.g., all Button elements)
          * @param string $class
          * @return array
          */
@@ -2092,7 +2107,7 @@
                                     }
 
                                     // check if the field is inside the POST array
-                                    // if not (eg field is disabled), then remove all validation rules, because no user input can be entered
+                                    // if not (e.g., field is disabled), then remove all validation rules, because no user input can be entered
 
                                     $fieldValue = $this->wire('input')->post($this->getID() . '-' . $element->getID());
 
@@ -2146,7 +2161,7 @@
                                             // exclude this CAPTCHA types from using the checkCaptcha rule
                                             $nonCheckCaptchaTypes = ['SimpleQuestionCaptcha'];
                                             if (!in_array($this->getCaptchaType(), $nonCheckCaptchaTypes)) {
-                                                // check if custom error message has been set
+                                                // check if the custom error message has been set
                                                 if ($this->captchaErrorMsg) {
                                                     $v->rule('checkCaptcha', $element->getAttribute('name'),
                                                         $this->wire('session')->get('captcha_' . $this->getID()))->message($this->captchaErrorMsg);
@@ -2176,7 +2191,7 @@
                                     $this->wire('session')->remove($this->getAttribute('id') . '-email');
                                     $this->wire('session')->remove($this->getAttribute('id') . '-username');
 
-                                    // finally add the files including the overwritten filenames to the array
+                                    // finally, add the files including the overwritten filenames to the array
                                     if ($this->storedFiles) {
                                         $this->uploaded_files = $this->storedFiles;
                                     }
@@ -2261,7 +2276,7 @@
                                     // create session for max attempts if set, otherwise add 1 attempt.
                                     //this session contains the number of failed attempts and will be increased by 1 on each failed attempt
 
-                                    // set submitted session to 1, which means the form is submitted at least 1 time
+                                    // set the submitted session to 1, which means the form is submitted at least 1 time
                                     $this->wire('session')->submitted = 1;
 
                                     if ($this->getMaxAttempts()) {
@@ -2337,9 +2352,10 @@
         }
 
         /**
-         * Internal method to add all form values to the values array
+         * Internal method to add all form values to the values' array
          * All sanitizers applied to an input element will be used before they will be added to the array
          * @return void
+         * @throws \ProcessWire\WireException
          */
         private function setValues(): void
         {
@@ -2445,7 +2461,7 @@
 
         /**
          * Set a redirect url after the form has been submitted successfully via Ajax
-         * This forces a Javascript redirect after the form has been validated without errors
+         * This forces a JavaScript redirect after the form has been validated without errors
          * @param string|null $url
          * @return $this
          */
@@ -2582,7 +2598,7 @@
             // if Ajax submit was selected, add an aditional data attribute to the form tag
             if ($this->getSubmitWithAjax()) {
 
-                // check if a user has Javascript enabled, otherwise show a warning message inside an alert box
+                // check if a user has JavaScript enabled, otherwise show a warning message inside an alert box
                 $warningAlert = new Alert();
                 $warningAlert->setCSSClass('alert_warningClass');
                 $warningAlert->prepend('<noscript>');
@@ -2654,7 +2670,7 @@
             $this->formElements = array_values($this->formElements);
 
             $buttons = $this->getElementsbyClass('Button');
-            // get first button
+            // get the first button
             if ($buttons) {
 
                 $refKey = key($buttons[0]);
@@ -2713,7 +2729,7 @@
                         $this->captchafield->setLabel('');
                     }
 
-                    // sort the privacy elements that checkbox is before text, if both will be used
+                    // sort the privacy elements that checkbox is before text, if both are used
                     $privacyElements = [];
                     $privacyCheckbox = $this->getElementsbyClass('Privacy');
                     if ($privacyCheckbox) {
@@ -2739,7 +2755,7 @@
                             }
                         }
 
-                        // change the position of the CAPTCHA, if position change was set via API
+                        // change the position of the CAPTCHA if position change was set via API
                         $customizeCaptchaPosition = $this->getCaptchaPosition();
 
                         if (($this->getCaptchaType() != 'none') && ($customizeCaptchaPosition)) {
@@ -2753,7 +2769,7 @@
                                 }
                             }
 
-                            // add correction for the "before" position, if the reference object is the last item in array
+                            // add correction for the "before" position if the reference object is the last item in the array
                             $before_pos = ($ref_position != array_key_last($this->formElements)) ? $ref_position : $ref_position - 1;
 
                             $new_pos = (reset($customizeCaptchaPosition) === 'before') ? $before_pos : $ref_position + 1;
@@ -2763,7 +2779,7 @@
 
                 }
 
-                // create new array of inputfields only to position the honeypot field in between
+                // create the new array of inputfields only to position the honeypot field in between
                 $inputfieldKeys = [];
 
                 // only for the slider captcha
@@ -2775,7 +2791,7 @@
                     $this->wire('session')->set($this->getID().'-captcha_x', $xPos);
                     $this->wire('session')->set($this->getID().'-captcha_y', $yPos);
 
-                    // add x an y positions as data attributes for JavaScript usage later on
+                    // add x and y positions as data attributes for JavaScript usage later on
                     $this->captchafield->setAttribute('data-x', $xPos);
                     $this->captchafield->setAttribute('data-y', $yPos);
                 }
@@ -2830,7 +2846,7 @@
                 }
 
                 // create hidden Ajax redirect input if set
-                // this value can be grabbed afterwards via Javascript to make a JS redirect
+                // this value can be grabbed afterwards via JavaScript to make a JS redirect
                 if ($this->getSubmitWithAjax()) {
                     if ($this->ajaxRedirect) {
                         $ajaxredirectField = new InputHidden('ajax_redirect');
@@ -2910,7 +2926,7 @@
                 if ($this->showForm && (($this->wire('session')->get('blocked') == null))) {
 
                     //add required texts
-                    $this->prepend($this->renderRequiredText('top')); // required text hint at the top
+                    $this->prepend($this->renderRequiredText('top')); // required a text hint at the top
                     $this->append($this->renderRequiredText('bottom')); // required text hint at bottom
                     $formElements = '';
 
@@ -2935,7 +2951,7 @@
                         // Label and description (Only on input fields)
                         if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
 
-                            // set the description position on per form base if description text is present
+                            // set the description position on per form base if the description text is present
                             if ($element->getDescription()->getText()) {
                                 // set position from form setting if no individual position has been set
                                 if (is_null($element->getDescription()->getPosition())) {
@@ -2978,7 +2994,7 @@
                                     // create progressbar and info text for form submission
                                     $submitInfo = new Alert();
                                     $submitInfo->setCSSClass('alert_primaryClass');
-                                    $submitInfo->setContent($this->createProgressbar() . $this->_('Please be patient... the form will be validated!'));
+                                    $submitInfo->setContent($this->createProgressbar() . $this->frontendforms['input_ajaxMsg']);
                                     $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo->___render() . '</div>';
                                 }
                             }
@@ -3072,7 +3088,7 @@
             // add or remove wrapper divs on each form element
             if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
 
-                // check if usage of inputwrapper is set on per field base
+                // check if the usage of inputwrapper is set on per field base
                 if (is_null($field->getUsageOfInputWrapper())) {
                     $useinputwrapper = $this->useInputWrapper;
                 } else {
@@ -3081,7 +3097,7 @@
 
                 $field->useInputWrapper($useinputwrapper);
 
-                // check if usage of fieldwrapper is set on per field base
+                // check if the usage of fieldwrapper is set on per field base
                 if (is_null($field->getUsageOfFieldWrapper())) {
                     $usefieldwrapper = $this->useFieldWrapper;
                 } else {
