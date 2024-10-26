@@ -283,8 +283,7 @@ function showSliderCaptcha(formid, x, y) {
 }
 
 
-/** Add eventlistener to all slider captcha checkboxes **/
-window.onload = function () {
+function listenToSliderCaptchaCheckboxes(){
 
     let checkedBoxes = document.getElementsByClassName("ff-slidercaptcha-checkbox");
 
@@ -300,6 +299,7 @@ window.onload = function () {
 
         checkedBoxes[i].addEventListener("click", function (e) {
             e.preventDefault();
+
             // load canvas into the captcha div if it does not exist
             let wrapper = document.getElementById(id + "-captcha");
             if ((!wrapper.innerHTML) && (wrapper.getAttribute("data-validated") == "false")) {
@@ -308,5 +308,9 @@ window.onload = function () {
 
         }, false);
     }
+}
 
+/** Add eventlistener to all slider captcha checkboxes **/
+window.onload = function () {
+    listenToSliderCaptchaCheckboxes();
 }
