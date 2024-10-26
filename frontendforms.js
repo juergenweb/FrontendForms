@@ -42,10 +42,14 @@ let frontendformsmain = function () {
 
         // initialize all forms for the conditional form dependencies
         let frontendforms = document.getElementsByTagName('form');
+
         if (frontendforms.length > 0) {
             for (let i = 0; i < frontendforms.length; i++) {
+
                 let formID = frontendforms[i].id;
-                mfConditionalFields("#" + formID, {rules: "inline", dynamic: true, debug: true});
+                if(formID){
+                    mfConditionalFields("#" + formID, {rules: "inline", dynamic: true, debug: true});
+                }
             }
         }
 
