@@ -1352,12 +1352,12 @@
             if (!$this->input_removeJS) {
 
                 $js = '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.js?v=' . $version . '"></script>' . PHP_EOL;
-                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '" defer></script>' . PHP_EOL;
-
-                // load slidercaptcha.js only if this captcha type is selected
+                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version. '" defer></script>' . PHP_EOL;
+// load slidercaptcha.js only if this captcha type is selected
                 if ($this->input_captchaType == 'SliderCaptcha') {
                     $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms-slidercaptcha.js?v=' . $version . '" defer></script>' . PHP_EOL;
                 }
+
 
                 if ($this->input_pagelist) {
                     if (in_array($page->id, $this->input_pagelist)) {
@@ -2023,6 +2023,19 @@
             $hideProgressBar->notes = $this->_('Usually, a progressbar with a text will be displayed during the submission of a form via Ajax to inform the user that the form will be submitted. This could be helpful to users, if the submission will take a little more time.');
 
             $fieldset2->add($hideProgressBar, $inputfields);
+
+            // Custom message during Ajax request
+            $ajaxMsg = $this->wire('modules')->get('InputfieldText');
+            $ajaxMsg->name = 'input_ajaxMsg';
+            $ajaxMsg->label = $this->_('AJAX form submission info text');
+            $ajaxMsg->value = $this->input_ajaxMsg;
+            $ajaxMsgText = $this->_('This text will be displayed next to the progress bar during a form is submitted via AJAX.') . ' ';
+            $ajaxMsgText .= $this->_('If nothing is entered, a default text will be displayed instead.');
+            $ajaxMsg->description = $ajaxMsgText;
+            $ajaxMsg->notes = $this->_('Can be overwritten on each form.');
+            $ajaxMsg->useLanguages = true;
+
+            $fieldset2->add($ajaxMsg, $inputfields);
 
             $inputfields->add($fieldset2);
 
