@@ -1362,3 +1362,5 @@ According to a user request by DrewPH, a new configuration field to customize th
 - **New method setAjaxMessage() added**
 
 This method does the same as the previous mentioned new configuration field, but you can change the global info text on per form base. This means that you can overwrite the default or global value of the info text for the AJAX request directly on the form. So each form can have a different text that will be displayed during the AJAX request.
+
+Read more about this new method [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#setajaxmessage---customize-the-info-text-during-an-ajax-submission-on-per-form-base)
