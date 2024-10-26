@@ -3,12 +3,11 @@ JavaScript file for FrontendForms module
 contains no JQuery - pure JavaScript
 */
 
-// run all functions inside its own scope to prevent conflicts with other Javascript variables and functions
+// run all functions inside its own scope to prevent conflicts with other JavaScript variables and functions
 let frontendformsmain = function () {
 
-
     /*
-    Javascript counter in seconds
+    JavaScript counter in seconds
     Outputs a timer in seconds depending on values set in data attributes
     */
     function submitCounter() {
@@ -33,11 +32,13 @@ let frontendformsmain = function () {
         }
     }
 
-    window.onload = function () {
+    window.addEventListener("load", function () {
+
         submitCounter();
         ajaxSubmit();
         jumpToAnchor();
         maxCharsCounterReverse();
+
 
         // initialize all forms for the conditional form dependencies
         let frontendforms = document.getElementsByTagName('form');
@@ -48,7 +49,8 @@ let frontendformsmain = function () {
             }
         }
 
-    }
+    });
+
 
     /*
     Show or hide the password in the password field by checking/unchecking the show/hide checkbox below the input field
@@ -423,9 +425,8 @@ let frontendformsmain = function () {
         const urlParams = new URLSearchParams(window.location.search);
         const anchor = urlParams.get('fc-anchor');
         if (anchor) {
-            console.log(urlParams);
+
             urlParams.delete("fc-anchor");
-            console.log(urlParams);
             location.hash = "#" + anchor;
         }
     }
@@ -444,15 +445,21 @@ let frontendformsmain = function () {
         textarea.addEventListener("input", event => {
             const target = event.currentTarget;
             const maxLength = target.getAttribute("maxlength");
-            const currentLength = target.value.length;
-            const counterSpan = document.getElementById(target.id + '-char_count');
 
-            // if max number of characters is reached, output a special info message
-            if (currentLength === maxLength) {
-                counterSpan.innerHTML = counterSpan.dataset.maxreached;
-            } else {
-                // change the current length inside span element
-                counterSpan.children[0].innerHTML = maxLength - currentLength;
+            if (maxLength) {
+
+                const currentLength = target.value.length;
+                const counterSpan = document.getElementById(target.id + '-char_count');
+
+                if (counterSpan) {
+                    // if max number of characters is reached, output a special info message
+                    if (currentLength === maxLength) {
+                        counterSpan.innerHTML = counterSpan.dataset.maxreached;
+                    } else {
+                        // change the current length inside the span element
+                        counterSpan.children[0].innerHTML = maxLength - currentLength;
+                    }
+                }
             }
         });
     }
