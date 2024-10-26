@@ -1341,7 +1341,7 @@ Files that have been changed:
 - frontendforms.css
 - frontendforms-slidercaptcha.js
 
-## [x.x.xx] 2024-10-26
+## [2.2.18] 2024-10-26
 
 - **JS Bug fixed if textarea counter is not present at a textarea field**
 
@@ -1354,3 +1354,11 @@ To run the field dependencies function mfConditionalFields() on a form, it is ma
 - **JS Bug fixed for calling Slider CAPTCHA after AJAX call again**
 
 The Slider CAPTCHA has not been loaded again if form has been submitted via AJAX, but there were errors. This bug has been fixed now and the CAPTCHA loads properly. 
+
+- **New configuration field for AJAX submission added**
+
+According to a user request by DrewPH, a new configuration field to customize the text of the info message next to the progress bar during an AJAX request has been added. By default the message "Please be patient... the form will be validated!" will be displayed. This text can be changed now inside the module configuration inside the AJAX tab.
+
+- **New method setAjaxMessage() added**
+
+This method does the same as the previous mentioned new configuration field, but you can change the global info text on per form base. This means that you can overwrite the default or global value of the info text for the AJAX request directly on the form. So each form can have a different text that will be displayed during the AJAX request.
