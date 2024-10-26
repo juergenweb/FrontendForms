@@ -1346,3 +1346,7 @@ Files that have been changed:
 - **JS Bug fixed if textarea counter is not present at a textarea field**
 
 According to an issue report [here](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/12/#comment-245295) in the forum, the bug has been fixed now.
+
+- **JS Bug fixed for calling mfConditionalFields() on forms with no ID attribute**
+
+To run the field dependencies function mfConditionalFields() on a form, it is mandatory that the form has an ID attribute. If not an error occurs inside the console. This bug has been fixed now.
