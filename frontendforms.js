@@ -404,6 +404,8 @@ let frontendformsmain = function () {
                             ajaxSubmit();
                             // start counter
                             submitCounter();
+                            // load a new Slider CAPTCHA if this CAPTCHA type has been selected
+                            listenToSliderCaptchaCheckboxes();
                         }
 
                     }
