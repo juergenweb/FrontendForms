@@ -1345,4 +1345,4 @@ Files that have been changed:
 
 - **JS Bug fixed if textarea counter is not present at a textarea field**
 
-According to an issue report [here](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=245295) in the forum, the bug has been fixed now.
+According to an issue report [here](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/12/#comment-245295) in the forum, the bug has been fixed now.
