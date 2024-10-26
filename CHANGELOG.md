@@ -1350,3 +1350,7 @@ According to an issue report [here](https://processwire.com/talk/topic/26015-fro
 - **JS Bug fixed for calling mfConditionalFields() on forms with no ID attribute**
 
 To run the field dependencies function mfConditionalFields() on a form, it is mandatory that the form has an ID attribute. If not an error occurs inside the console. This bug has been fixed now.
+
+- **JS Bug fixed for calling Slider CAPTCHA after AJAX call again**
+
+The Slider CAPTCHA has not been loaded again if form has been submitted via AJAX, but there were errors. This bug has been fixed now and the CAPTCHA loads properly. 
