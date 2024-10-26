@@ -1159,6 +1159,17 @@ With this method you can stop the randomly rotation of the Honeypot field. The H
 $form->stopHoneypotRotation(true); // default is false
 ```
 
+### setAjaxMessage() - Customize the info text during an AJAX submission on per form base
+
+With this method you can change the text, that will be displayed next to the progress bar during an AJAX form submission.
+By default the following text will be displayed: 'Please be patient... the form will be validated!'.
+This can be changed inside the module configuration, where you can overwrite this default text by your own.
+This method overwrites either the default text or the text set inside the module configuration on the form itself.
+
+```php
+$form->setAjaxMessage('Submitting your enquiry...');
+```
+
 ## Input field methods
 
 For better understanding of methods explained afterwards, take a look of the anatomy of input fields first.
