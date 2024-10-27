@@ -17,6 +17,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 9. Contains an optional additonal module (FrontendForms Manager) for installation to provide an userfriendly UI for the SIMPLE QUESTION CAPTCHA
 10. Support for inputfield dependencies (show/hide fields depending on values of other fields)
 11. Support for using forms inside CKEditor fields via placeholders
+12. Support for [RockLanguage](https://processwire.com/modules/rock-language/)
 
 ## Requirements
 * PHP>=8.0.0
