@@ -1364,3 +1364,10 @@ According to a user request by DrewPH, a new configuration field to customize th
 This method does the same as the previous mentioned new configuration field, but you can change the global info text on per form base. This means that you can overwrite the default or global value of the info text for the AJAX request directly on the form. So each form can have a different text that will be displayed during the AJAX request.
 
 Read more about this new method [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#setajaxmessage---customize-the-info-text-during-an-ajax-submission-on-per-form-base)
+
+## 2024-10-27
+
+- **Support for RockLanguage added**
+
+If you have installed the [RockLanguage](https://processwire.com/modules/rock-language/) module by Bernhard Baumrock, this module now supports the automatic sync of the language files. This means that you do not have to take care about new translations after you have downloaded a new version of FrontendForms. All new translations (at the moment only German translations) will be synced with your your language files. 
+The (old) CSV files usage is still supported.
