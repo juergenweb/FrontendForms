@@ -313,7 +313,13 @@
             }
         }
 
-
+        /**
+         * Get the path of the CSS file for the given framework
+         * @param string $framework
+         * @param string $customFrameworksPath
+         * @return string
+         * @throws \ProcessWire\WireException
+         */
         public static function getCSSClassFile(string $framework, string $customFrameworksPath): string
         {
             $modulePath = wire('config')->paths->siteModules . 'FrontendForms' . DIRECTORY_SEPARATOR;
@@ -1462,8 +1468,6 @@
             foreach ($fields as $field) {
                 if (($field->type == 'FieldtypeTextarea') && ($field->contentType == 1)) {
 
-                    $name = $field->name;
-
                     // Save found placeholders temporarily to iterate their number
                     $foundForms = $page->data('found-forms', []);
 
@@ -1476,7 +1480,6 @@
                         function ($matches) use ($page, $event, $namespace) {
 
                             // This is where the magic happens
-                            $formHtml = $matches[0];
                             $formFullName = strtolower($matches[2]);
 
                             $out = '';
@@ -1507,7 +1510,7 @@
                             // Push to the global page variable
                             $page->data('found-forms', $foundForms);
 
-                            // Create the dynamic function name (with or without namespace
+                            // Create the dynamic function name (with or without a namespace
                             if ($namespace) {
                                 $functionName = $namespace . DIRECTORY_SEPARATOR . $formName;
                             } else {
@@ -2258,7 +2261,6 @@
                     $captchaType->addOption($className, $option->title, ['flow' => 'up', 'tooltip' => $option->desc]);
                 }
 
-                $captcha50 = ['DefaultImageCaptcha', 'SliderCaptcha'];
                 $captchaType->attr('value', $this->input_captchaType);
                 $captchaType->required = 1;
                 $captchaType->notes = $this->_('Most visitors do not like CAPTCHAS, so it is recommended to use it only if you have problems with spam. If a CAPTCHA is enabled and you want to disable it on a certain form, please use the following method:');
@@ -2266,7 +2268,7 @@
                 $captchaType->columnWidth = $width;
                 $fieldsetbasic->add($captchaType, $inputfields);
 
-                // set width of the captcha image (only on text CAPTCHAS)
+                // set the width of the captcha image (only on text CAPTCHAS)
                 $captchaWidth = $this->wire('modules')->get('InputfieldInteger');
                 $captchaWidth->label = $this->_('Image width');
                 $captchaWidth->description = $this->_('Please enter the width of the CAPTCHA image.');
@@ -2451,7 +2453,7 @@
                 $input_captchaCharset->showIf = "input_captchaType!=SimpleMathTextCaptcha";
                 $fieldsetTextCaptcha->add($input_captchaCharset, $inputfields);
 
-                // set number of characters for text CAPTCHA
+                // set the number of characters for text CAPTCHA
                 $captchaNumberOfCharacters = $this->wire('modules')->get('InputfieldInteger');
                 $captchaNumberOfCharacters->label = $this->_('Number of characters');
                 $captchaNumberOfCharacters->description = $this->_('Enter the number of character you want the text to consist of (A recommended value is 4 or 5).');
@@ -2651,7 +2653,7 @@
             $hintText .= '<p>' . sprintf($this->_('If you have the permission to change the password requirements, you can do it %s.'),
                     $link) . '</p>';
 
-            // information about last update of the list
+            // information about the last update of the list
             $update = $this->_('The password list will be checked once a month automatically if something has been changed on GitHub.');
             $updatedata = '';
 
@@ -2686,7 +2688,7 @@
 
             $content .= '<div class="uk-alert-warning" data-uk-alert>' . $hintText . '</div>';
 
-            // create HTML ol list of passwords
+            // create an HTML ol list of passwords
             if ($this->passwordList) {
                 // if the list is longer than 100, cut all passwords after number 100
                 $arr = array_filter($this->passwordList);
@@ -2782,7 +2784,7 @@
         }
 
         /**
-         * Create new directory and copy files from other directory to this directory
+         * Create new directory and copy files from another directory to this directory
          * Afterwards delete the old directory
          * These files are images for email templates
          * @param string $from
@@ -2792,7 +2794,7 @@
          */
         protected function createFilesDir(string $from, string $to): void
         {
-            // if directory exists or directory was created successfully
+            // if a directory exists or directory was created successfully
             if (($this->wire('files')->exists($to)) || ($this->wire('files')->mkdir($to))) {
                 // check if files exists in the modules assets folder
                 if ($this->wire('files')->exists($from)) {
@@ -2831,7 +2833,7 @@
                     $this->wire('session')->warning(implode('<br>', $warning_text), Notice::allowMarkup);
                 }
             }
-            // try to unlink the file on uninstall
+            // try to unlink the file on uninstallation
             try {
                 // unlink the captcha.php file
                 $this->wire('files')->unlink($from);
@@ -2842,7 +2844,7 @@
         }
 
         /**
-         * Run during install
+         * Run during installation
          * @return void
          * @throws WireException
          */
@@ -2861,7 +2863,7 @@
                 $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
                 $data['last_check'] = $this->wire('datetime')->date($this->default_dateformat);
                 // load password list data from GitHub (https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-100.txt)
-                $githubdata = $this->getDataFromGitHub(self::LAST_PASSWORDS_MODIFICATION_URL); //load json data from the file
+                $githubdata = $this->getDataFromGitHub(self::LAST_PASSWORDS_MODIFICATION_URL); //load JSON data from the file
                 $last_update = $githubdata[0]->commit->author->date; // last modification date on GitHub
                 $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat, $last_update);
                 $this->password_field = wire('fields')->get('pass');
@@ -2926,7 +2928,7 @@
         }
 
         /**
-         * Run during uninstall
+         * Run during uninstallation
          * @return void
          * @throws WireException
          */
@@ -2937,7 +2939,7 @@
             $to = $this->modulePath . 'assets/';
             $this->createFilesDir($from, $to);
             $this->createRemoveCaptchaImageFile(false); // delete captchaimage.php from root
-            // remove passwords.txt - should be downloaded on next install
+            // remove passwords.txt - should be downloaded on next installation
             $this->wire('files')->unlink($this->passwordPath);
         }
 
