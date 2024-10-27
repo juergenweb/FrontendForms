@@ -1,0 +1,12 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Captcha\/variants\/SliderCaptcha.php",
+    "textdomain": "site--modules--frontendforms--formelements--captcha--variants--slidercaptcha-php",
+    "translations": {
+        "c323bd0275e1fed3b8343e450e3c7378": {
+            "text": "="
+        },
+        "eff39d161054adaf3995f2c7988aaef2": {
+            "text": "Bewegen Sie ein Puzzle-St\u00fcck"
+        }
+    }
+}

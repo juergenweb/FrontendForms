@@ -1,0 +1,12 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Captcha\/variants\/DefaultTextCaptcha.php",
+    "textdomain": "site--modules--frontendforms--formelements--captcha--variants--defaulttextcaptcha-php",
+    "translations": {
+        "7c62e8d4b13ecc03f28bb44905a5ec51": {
+            "text": "Zufallstext Captcha"
+        },
+        "3c6c9439c3e38d0da29b7629a300c3c5": {
+            "text": "Geben Sie den Text aus dem Bild in das Eingabefeld ein."
+        }
+    }
+}

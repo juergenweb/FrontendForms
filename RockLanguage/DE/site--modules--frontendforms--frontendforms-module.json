@@ -1,0 +1,885 @@
+{
+    "file": "site\/modules\/FrontendForms\/FrontendForms.module",
+    "textdomain": "site--modules--frontendforms--frontendforms-module",
+    "translations": {
+        "3f73c9dc2eed9de2758f0bf0c32893f4": {
+            "text": "Die GD-Bibliothek ist nicht installiert\/aktiviert. Bitte installieren\/aktivieren Sie diese, um die CAPTCHA-Funktion verwenden zu k\u00f6nnen."
+        },
+        "0e482f9f5b5ee24fc1c79e192f3e775f": {
+            "text": "Leider konnte die Datei, welche die Passw\u00f6rter enth\u00e4lt, nicht von GitHub heruntergeladen werden."
+        },
+        "8c1cf6d64804d4ace27e32e7328ba784": {
+            "text": "Die Passwort-Blacklist wurde manuell aktualisiert."
+        },
+        "3c9c17c611ca47bc9a610fff9ab8a41e": {
+            "text": "Die IP-Adresse %s wurde zur IP-Blacklist hinzugef\u00fcgt."
+        },
+        "b537ea59941fa9c24d70efa853c70b20": {
+            "text": "Die IP-Adresse %s wurde von der IP-Blacklist entfernt."
+        },
+        "a4738ea29c2c5ace3adeefbcc56f593c": {
+            "text": "Die Blacklist der Passw\u00f6rter vom Modul FrontendForms wurde aktualisiert"
+        },
+        "143f13c4b36b268ecbc7a7e80e7a7660": {
+            "text": "%s ist keine g\u00fcltige IP-Adresse und wurde daher gel\u00f6scht."
+        },
+        "1553a16436f49f007d1ccc3ad6da67be": {
+            "text": "%s ist kein g\u00fcltiger Farbcode und wurde daher gel\u00f6scht."
+        },
+        "8af25e171cbe1bc3c510609cef747360": {
+            "text": "Der Farbcode %s entspricht keinem g\u00fcltigen Farbcode im HEX-Format und wurde daher auf den Standardwert %s zur\u00fcckgesetzt."
+        },
+        "05d5bf0f900e06d69f77a037499e4d0f": {
+            "text": "Geben Sie ein Datumsformat in der PHP-Dateformat-Syntax ein (z. B. Y-m-d). %s"
+        },
+        "8b9e799eb009d097d46c45aae0a90b83": {
+            "text": "Das Standardformat ist %s"
+        },
+        "a959f5151c4d15bf318ece417a112b4e": {
+            "text": "Geben Sie ein Zeitformat in der PHP-Dateformat-Syntax ein (z. B. H:i:s). %s"
+        },
+        "2047dbfc9f2dc1e1932ba5b3e5348e1e": {
+            "text": "Diese Einstellung kann mit dieser Methode auf dem Formular \u00fcberschrieben werden"
+        },
+        "d248bc06fcb2345c55dfd44c687e8210": {
+            "text": "Diese Einstellungen k\u00f6nnen mit diesen Methoden auf dem Formular \u00fcberschrieben werden"
+        },
+        "ae3f9d4b86fc69e0ada3f76bf6e57e52": {
+            "text": "Verwenden Sie diese Methode, um zu testen, ob das IP-Verbot funktioniert. Geben Sie die IP-Adresse ein, die getestet werden soll."
+        },
+        "8f19a8c7566af54ea8981029730e5465": {
+            "text": "Sekunden"
+        },
+        "7ba3b8236d48d4f4c5ec03c3fe6b75a9": {
+            "text": "Versuche"
+        },
+        "5d50889672f6f860d14f502de3de1957": {
+            "text": "Farben"
+        },
+        "a0b0293a2db49f5f93c15a62e095c819": {
+            "text": "Linien"
+        },
+        "de25d7fa7d62d750a846b81dcb3b37f9": {
+            "text": "\u00d6ffnet in einem neuen Fenster"
+        },
+        "294f7882d547e02ee8934197e3ee43f7": {
+            "text": "Genauere Informationen \u00fcber die IP-Adresse %s auf www.domaintools.com"
+        },
+        "c7c54e3411829686d669490ff05d0094": {
+            "text": "Fehlerhafte Versuche f\u00fcr die IP-Adresse %s"
+        },
+        "44749712dbec183e983dcd78a7736c41": {
+            "text": "Datum"
+        },
+        "e6b391a8d2c4d45902a23a8b6585703d": {
+            "text": "="
+        },
+        "de2beed414f268855270166b3474b45a": {
+            "text": "Formular-ID"
+        },
+        "75ba8d70e3692ba200f0e0df37b4d2ae": {
+            "text": "IP-Adresse"
+        },
+        "8f9bfe9d1345237cb3b2b205864da075": {
+            "text": "Benutzer"
+        },
+        "59deadcbf685b2ad32b7668720ce083d": {
+            "text": "Blacklist Eintrag"
+        },
+        "02281719187ced2a9763531b2d5cde35": {
+            "text": "Anzahl der Sperrungen"
+        },
+        "3ec365dd533ddb7ef3d1c111186ce872": {
+            "text": "="
+        },
+        "9b63ca019aacfd9a7917473e1720afbb": {
+            "text": "Hinzuf\u00fcgen\/entfernen der IP von der Black List"
+        },
+        "6e9783376d951cfd780e9fdb67a0f02c": {
+            "text": "Details anzeigen"
+        },
+        "5ad3137edf46035a9faf9432f7cd0522": {
+            "text": "Von der Blacklist entfernen"
+        },
+        "218ccb4c1ea08f5bfb6cd390c3ba94e5": {
+            "text": "Zur Blacklist hinzuf\u00fcgen"
+        },
+        "ee765dab27b2a05c8e2f670c2e6968ad": {
+            "text": "Es sind leider keine Daten vorhanden. Bitte \u00fcberpr\u00fcfen Sie ob das loggen aktiviert is."
+        },
+        "7a07ed63e2a6c4a1c8119b711075aff2": {
+            "text": "Markup und Styling Einstellung f\u00fcr die Formulare"
+        },
+        "93acc85a7149f81e94ce8c38c98301b0": {
+            "text": "T\u00e4tigen Sie Ihre globalen Einstellungen f\u00fcr die Ausgabe. Die meisten dieser Einstellungen k\u00f6nnen f\u00fcr jedes Formular \u00fcberschrieben werden."
+        },
+        "6175c8574382c56b54af9989e0bbf521": {
+            "text": "Einstellungen f\u00fcr die Pflichtfelder"
+        },
+        "6e84806e22592cd29d58f62816fc69df": {
+            "text": "Asterisk f\u00fcr Pflichtfelder"
+        },
+        "dffe9621d38ef2d6cde5d19b8a5fad89": {
+            "text": "Einen Asterisk nach dem Label-Tag zu Pflichtfeldern hinzuf\u00fcgen."
+        },
+        "ac4210c3245df9966263e8bc71a1836c": {
+            "text": "F\u00fcgt ein span element mit einem Asterisk nach dem Label-Tag bei Pflichtfeldern hinzu (<span class=\"asterisk\">*<\/span>)."
+        },
+        "52fe89faf69cb2128424b868ece04de9": {
+            "text": "Sie k\u00f6nnen auch die CSS Pseudo-Klasse :after nutzen um einen Asterisk nach dem Label Tag einzuf\u00fcgen. Aus diesem Grund k\u00f6nnen Sie die Einf\u00fcgung des Asterisk Mark-up unterbinden."
+        },
+        "84dfb4afaa9b4a8beafb21f1eddc74a9": {
+            "text": "Keinen Hinweis f\u00fcr Pflichtfelder anzeigen"
+        },
+        "86172a610c2ef5eba8f95d683853535a": {
+            "text": "Hinweis f\u00fcr Pflichtfelder oben anzeigen"
+        },
+        "fd7afae8d1a6c5f8b586dd648f2edb34": {
+            "text": "Hinweis f\u00fcr Pflichtfelder unten anzeigen"
+        },
+        "8842b7eaca395f94ccf4247a3dec7fb2": {
+            "text": "Die Anzeige des Textes unterbinden (kein), den Text vor (oben) oder nach (unten) dem Formular anzeigen."
+        },
+        "419482be203a6d6e6ca5dfab534db3c4": {
+            "text": "Anzeigen\/verstecken der Anzeige des Textes f\u00fcr die Pflichtfelder und Festsetzung der Position"
+        },
+        "a310d89389c61c1262dc8b170e54b418": {
+            "text": "Kann bei jedem Formular \u00fcberschrieben werden."
+        },
+        "5119a3299816914535285e9a1ce65c89": {
+            "text": "Der Hinweistext f\u00fcr Besucher, dass alle Pflichtfelder ausgef\u00fcllt werden m\u00fcssen"
+        },
+        "d7c2c8b972d23974722479d00df373b9": {
+            "text": "Dieser Text wird entsprechend ihren Einstellungen angezeigt."
+        },
+        "4f391e9c54871cb2ba07440e4dcde2f8": {
+            "text": "Wenn nichts eingegeben wird, dann wird stattdessen ein Standardtext verwendet."
+        },
+        "365bb743041cffedef0b75f080a11457": {
+            "text": "Einstellungen f\u00fcr Meldungen nach dem Absenden des Formulars"
+        },
+        "a30590d3607a49d08ba70125889fdc4c": {
+            "text": "Text nach erfolgreicher Absendung des Formulars"
+        },
+        "b9490a4a1dbf80bf51629efa398fd4c4": {
+            "text": "Dieser Text wird angezeigt, nachdem das Formular erfolgreich gesendet wurde."
+        },
+        "98a115741f55482456b6723baeced037": {
+            "text": "Text nach fehlgeschlagener Absendung des Formulars"
+        },
+        "99bc0368b6b8e031527fc78678727a3a": {
+            "text": "Dieser Text wird angezeigt, nachdem Fehler beim Versuch das Formular zu senden aufgetreten sind."
+        },
+        "8a1577b8f1c200d0151b7eed3147615a": {
+            "text": "Einstellungen f\u00fcr das Markup und Styling der Formulare und Eingabefelder"
+        },
+        "498dd7c80478c5b43acfd468ce925bf6": {
+            "text": "Wrapper Container zu Formularfelder hinzuf\u00fcgen"
+        },
+        "418fa1a1a214848b688ca0929d30fdf1": {
+            "text": "Einen Wrapper Container zum Input-Feld hinzuf\u00fcgen (input wrapper)"
+        },
+        "02edb6924c99d44eac912630d17ee98b": {
+            "text": "Einen \u00e4u\u00dferen Wrapper-Conainer zu jedem Formular-Feld hinzuf\u00fcgen (field wrapper)"
+        },
+        "bccc224dcd0922cf59461e2d3f29dc14": {
+            "text": "Einen zus\u00e4tzlichen Wrapper-Container zwischen dem \u00f6ffnenden und schlie\u00dfenden Form Tag hinzuf\u00fcgen"
+        },
+        "276d962ba9474e7cd0f834019b88c00a": {
+            "text": "Einen Wrapper-Container \u00fcber alle Formularfelder hinzuf\u00fcgen"
+        },
+        "31d74429df3f5c9334d1f91751e0f73e": {
+            "text": "In seltenen F\u00e4llen wird ein extra Container \u00fcber alle Formular-Elemente ben\u00f6tigt, welche sich zwischen dem \u00f6ffnenden und schlie\u00dfenden form tag befindet. F\u00fcr diesen Fall kann der Container durch anklicken der Box hinzugef\u00fcgt werden."
+        },
+        "dca03e2707a55b83d6d2eb3aa549ff24": {
+            "text": "Eine CSS-Klasse zu diesem extra Container hinzuf\u00fcgen"
+        },
+        "fddbf871807bca492cfdce44610e6f71": {
+            "text": "Standardm\u00e4\u00dfig wird eine einzigartige ID hinzugef\u00fcgt, aber wenn Sie zur Gestaltung des Containers eine spezielle CSS-Klasse ben\u00f6tigen, dann k\u00f6nnen Sie diese in das Feld eintragen."
+        },
+        "e22428c686e2484d13fe958b6dd96ded": {
+            "text": "Ausgabe rendern"
+        },
+        "b8ab6902234d473780a27431e7c004fe": {
+            "text": "W\u00e4hlen Sie aus, ob Sie ein CSS-Framework f\u00fcr die Formularausgabe nutzen m\u00f6chten oder nicht"
+        },
+        "672c694e3c32de003ed77fa07f6420cc": {
+            "text": "Keines"
+        },
+        "3d40631076ed8bbd19e7aaa78cd4f123": {
+            "text": "Den Label-Tag nach dem Input Tag bei Checkboxen und Radio Buttons anzeigen"
+        },
+        "420b58ba111ac466843ceb296be2b1c4": {
+            "text": "Standardm\u00e4\u00dfig werden Checkboxen und Radio Buttons mit dem Label Tag umgeben. Wenn Sie aber m\u00f6chten, dass der Label Tag erst nach dem Input Tag angezeigt wird, dann markieren Sie die entsprechende Box."
+        },
+        "cf44c50f0e34ccaa350623b45fb893ab": {
+            "text": "Label bei Checkboxen nach dem Input Tag anzeigen"
+        },
+        "0e575171cddf029c5b9fdc05725397cc": {
+            "text": "Label bei Radio Buttons nach dem Input Tag anzeigen"
+        },
+        "2aa8d951a33a4ede2260e61e9030b6d7": {
+            "text": "Eigene CSS Klassen"
+        },
+        "89c12578095929b622dee02997775ec3": {
+            "text": "Sie k\u00f6nnen jede CSS-Klasse mit Ihren eigenen Klassennamen \u00fcberschreiben. Wenn Sie mehrere Klassen gleichzeitig hinzuf\u00fcgen m\u00f6chten, trennen Sie diese bitte mit einem Leerzeichen (z. B. Klasse1 Klasse2)."
+        },
+        "3e17fd7790ba1feceace786e775d2ba7": {
+            "text": "CSS Klasse f\u00fcr %s"
+        },
+        "e7a61cfa8747480af7070c6f8e63c812": {
+            "text": "Aktuelle Klasse"
+        },
+        "c454d41006c3a47ef050056608a6b7d9": {
+            "text": "JavaScript Einstellung"
+        },
+        "6bfa90ae9f841ec2adedb46975347afd": {
+            "text": "CSS Einstellungen"
+        },
+        "40332d3353119c2a3709b3207527f745": {
+            "text": "Die Einbindung der CSS-Datei frontendforms.css beim Template unterbinden"
+        },
+        "a0a34efcb7026e3f77c8e54472b84fd8": {
+            "text": "Standardm\u00e4\u00dfig wird im Frontend eine kleine CSS-Datei f\u00fcr die Formulare hinzugef\u00fcgt. Sie k\u00f6nnen die Einbettung der CSS-Datei unterbinden, indem Sie das Kontrollk\u00e4stchen aktivieren."
+        },
+        "60b194eab605784a5b4d24e228c2e76d": {
+            "text": "Ajax Formular-\u00dcbermittlung"
+        },
+        "565bc477c715412ea8ce5d0fcf65f22f": {
+            "text": "Formulare mittels Ajax absenden"
+        },
+        "7236e01a0c420ee025e2ff26d8d4d21f": {
+            "text": "Wenn das K\u00e4stchen angekreuzt ist, wird jedes Formular und dessen Formulardaten mittels Ajax \u00fcbermittelt. Das bedeutet, dass die Seite nach dem Absenden nicht neu geladen wird."
+        },
+        "21b577392733c28766c3c34d5bddf53d": {
+            "text": "Bitte beachten Sie, wenn Javascript nicht aktiviert ist, wird nach jedem Absenden eines Formulars die Seite neu geladen, was jedoch unter bestimmten Umst\u00e4nden zu Problemen f\u00fchren kann, wenn kein Neuladen der Seite gew\u00fcnscht ist. Wenn Javascript nicht aktiviert ist, wird dem Benutzer eine Warnmeldung \u00fcber dem Formular angezeigt."
+        },
+        "32d0a0932303e72b8cd4da077ecf6838": {
+            "text": "Ausblenden des Fortschrittsbalkens w\u00e4hrend der Formular\u00fcbermittlung"
+        },
+        "30526da4a80e9236f977949cad94b787": {
+            "text": "Wenn das Kontrollk\u00e4stchen aktiviert ist, wird der Fortschrittsbalken w\u00e4hrend der Formular\u00fcbermittlung mittels Ajax nicht angezeigt."
+        },
+        "17c6f55cd8c47c8c64246835709f7893": {
+            "text": "In der Regel wird w\u00e4hrend des Absendens eines Formulars mittels Ajax ein Fortschrittsbalken mit einem Text angezeigt, um den Benutzer dar\u00fcber zu informieren, dass das Formular abgeschickt wird. Dies k\u00f6nnte f\u00fcr Benutzer als Info hilfreich sein, wenn die Einreichung etwas mehr Zeit in Anspruch nimmt."
+        },
+        "5386484801d01d2ece73fbc5f605f739": {
+            "text": "E-Mail Einstellungen"
+        },
+        "7ba64fb164e72d97660308b67acfefbe": {
+            "text": "HTML E-Mail Template Einstellungen"
+        },
+        "7a646761a1d8fa416125a58d609c221d": {
+            "text": "kein HTML Template"
+        },
+        "cebf3687d25bd4915ed8816bf8f91604": {
+            "text": "Entscheiden Sie, ob Sie ein HTML Template f\u00fcr Ihre E-Mails verwenden wollen, oder nicht"
+        },
+        "99d4cdbb31bb961f30c4d20dfc7afb39": {
+            "text": "Wenn Sie FrontendForms mit der PW WireMail-Klasse zum Senden von E-Mails verwenden, k\u00f6nnen Sie eine HTML-E-Mail-Vorlage verwenden, indem Sie dem WireMail-Objekt die mailTemplate()-Methode hinzuf\u00fcgen. Kann auf jedem Formular \u00fcberschrieben werden."
+        },
+        "534fd46732986cba0efeda8701592427": {
+            "text": "Datumsformat"
+        },
+        "11775982c70c55a70765a0a3e82ecc41": {
+            "text": "z.B. Y-m-d"
+        },
+        "72283172f716e7c34b35b50ff698535f": {
+            "text": "Geben Sie ein globales Datumsformat ein, welches f\u00fcr Datumsangaben in E-Mail-Vorlagen verwendet werden kann."
+        },
+        "08d069d5db8652e62598ac3a655f95d8": {
+            "text": "Zeitformat"
+        },
+        "5f370f31237cf69ef9557bb195412608": {
+            "text": "z.B H:i"
+        },
+        "e198ef21e8a32d2793314a7ddc09d72a": {
+            "text": "Geben Sie ein globales Zeitformat ein, welches f\u00fcr Zeitangaben in E-Mail-Vorlagen verwendet werden kann."
+        },
+        "3d68b09877695bf8ec9113899ff693ad": {
+            "text": "Datenschutz Einstellungen"
+        },
+        "3b75aac75dc5f26614dab746da7b081d": {
+            "text": "Seite f\u00fcr die Datenschutz Richtlinien"
+        },
+        "b2037d2cf34d31283e27629ce628a7b1": {
+            "text": "Der Link zu dieser Seite wird innerhalb der Privacy Klasse f\u00fcr die Erstellung der \"Datenschutz Richtlinie  akzeptieren\" Checkbox genutzt."
+        },
+        "d948b0979419edaaf3ede78b08431a01": {
+            "text": "Spamschutz und Sicherheitseinstellungen f\u00fcr die Formulare"
+        },
+        "c7ba82e5e96eb3b6e938a23b4c6b604f": {
+            "text": "Nehmen Sie Ihre globalen Einstellungen f\u00fcr Spamschutz und Sicherheit vor. Die meisten Einstellungen k\u00f6nnen bei Bedarf pro Formular \u00fcberschrieben werden."
+        },
+        "5bfa0474e524b8ae2987579a69cc4dfd": {
+            "text": "Ma\u00dfnahme 1: Anzahl der Fehlversuche einschr\u00e4nken"
+        },
+        "e446ef24e3fe0ea378879d31137081d6": {
+            "text": "Maximale Anzahl fehlgeschlagener Versuche"
+        },
+        "12aed548ee688777aedc68a3ffeaa02d": {
+            "text": "Bitte legen Sie die maximal erlaubte Anzahl fehlgeschlagener Versuche zum Absenden eines Formulars fest."
+        },
+        "754b0201c107af8438c3fc0dff871d81": {
+            "text": "Wenn auf 0 gesetzt, ist diese Funktion deaktiviert. Nach Erreichen des Limits wird der Benutzer f\u00fcr die aktuelle Sitzung blockiert und alle Browserfenster m\u00fcssen geschlossen werden, um die Blockierung aufzuheben."
+        },
+        "f61c8434d727f79a4ed033ae983a64b9": {
+            "text": "IP-Adressen blockierter Besucher loggen"
+        },
+        "b5df7d3e871c3e99fe9235b5e95ab2fe": {
+            "text": "Wenn diese Box markiert ist, dann wird ein Eintrag mit der IP-Adresse des Besuchers, der Formular ID und dem Datum in die Log-Dateien geschrieben, sobald ein Besucher gesperrt wurde."
+        },
+        "78a1cef918f4226af7097ed07914ea7d": {
+            "text": "Bitte beachten Sie, dass Sie Ihre Nutzer in Ihrer Datenschutzerkl\u00e4rung darauf hinweisen m\u00fcssen, dass in diesem Fall die IP-Adresse gespeichert wird."
+        },
+        "5504982d2bb660c3327806054dc09d5c": {
+            "text": "Ma\u00dfnahme 2: Zeitfalle \u2013 Messung der Zeit bis zum Absenden des Formulars"
+        },
+        "c18393d954f62604d9f34be940b2b4ab": {
+            "text": "Mindestzeit f\u00fcr das Absenden des Formulars"
+        },
+        "0485473a9712015f60760549e57e2c6d": {
+            "text": "Bitte legen Sie die Mindestzeit in Sekunden fest, bevor ein Formular abgesendet werden darf."
+        },
+        "7c7ae07258f9227ba85f1f8ee9e005eb": {
+            "text": "Wenn auf 0 gesetzt, ist diese Funktion deaktiviert. Diese Funktion misst die Zeit zwischen dem Laden und Absenden eines Formulars. Wenn es zu schnell abgesendet wird (z. B. ein Spam-Bot), f\u00fchrt dies zu einem Formularfehler."
+        },
+        "5622c3cbb7ef8c0fae9e2e28120a2e38": {
+            "text": "Maximale Zeit bis zum Absenden des Formulars"
+        },
+        "9e3909f2bb5f12b4b6b4514d23f41bdf": {
+            "text": "Bitte stellen Sie die maximale Zeit in Sekunden ein, bis zu der ein Formular abgesendet werden muss."
+        },
+        "d31721ec7a27f1cd09ec10f10cebf88f": {
+            "text": "Wenn auf 0 gesetzt, ist diese Funktion deaktiviert. Diese Funktion misst die Zeit zwischen dem Laden und Absenden eines Formulars. Wenn die Zeitspanne zu lange ist (z. B. wenn ein Spam-Bot das Formular analysiert), f\u00fchrt dies zu einem Formularfehler."
+        },
+        "4320c93ec048c331f3ad3e101522f505": {
+            "text": "Ma\u00dfnahme 3: Honeypot field"
+        },
+        "81644780bcc7945b7e9a887d8c959f4b": {
+            "text": "Ein Honeypot-Feld zum Formular hinzuf\u00fcgen"
+        },
+        "ccc4f0013866de7c16f450c3697e17e5": {
+            "text": "Wenn die Box markiert ist, dann wird ein unsichtbares Honeypot-Feld als Spam-Schutz zum Formular hinzugef\u00fcgt."
+        },
+        "27dd2d676c95f2a4eb948201642370cf": {
+            "text": "Es wird empfohlen das Honeypot-Feld zu verwenden. Deaktivieren Sie diese Funktion nur, wenn Sie einen wirklich guten Grund dazu haben."
+        },
+        "4f534cf37ae3780a28e420034d067e92": {
+            "text": "Ma\u00dfnahme 4: IP-Blacklist verwenden"
+        },
+        "938c38d175ad8e62e626c1cde8188ab9": {
+            "text": "Die IP-Adresse von Besuchern \u00fcberpr\u00fcfen"
+        },
+        "df6cc1214358a05197841883566dc289": {
+            "text": "Die Pr\u00fcfung der Besucher IP-Adressen in Bezug auf die Blacklist aktivieren"
+        },
+        "98c877cac3653e94f97c9bafcbc1b769": {
+            "text": "Sie k\u00f6nnen IP-Adressen, welche m\u00f6glicherweise Schaden auf der Seite verursachen k\u00f6nnten, von der Anzeige der Formulare ausschlie\u00dfen. Durch ankreuzen\/entfernen des Hakens bei der Box k\u00f6nnen sie die Pr\u00fcfung aktivieren oder unterbinden."
+        },
+        "55f5519cb2dac23306b2462b50f77aa2": {
+            "text": "Dies funktioniert aber nur, sofern mindestens 1 Eintrag im n\u00e4chsten Eingabefeld vorhanden ist"
+        },
+        "dfe3af10424e82fb310981855ad187b8": {
+            "text": "Blacklist der verbotenen IP-Adressen"
+        },
+        "581afc9021929d07a2eaf6015e23df2e": {
+            "text": "Bitte geben Sie jede IP-Adresse in einer neuen Zeile ein. Jeder Besuch einer unten aufgef\u00fchrten IP-Adresse verhindert die Darstellung des Formulars im Frontend. Besucher sehen stattdessen eine Meldung, die \u00fcber die gesperrte IP-Adresse informiert."
+        },
+        "ac2812338c71d2f2dee5988591a7758a": {
+            "text": "Tipp: Sie k\u00f6nnen sich die Logdatei f\u00fcr fehlgeschlagene Anmeldeversuche ansehen und dort z. IP-Adressen herausfiltern, die sehr h\u00e4ufig vorkommen . Funktioniert nur, wenn die Protokollierung fehlgeschlagener Versuche aktiviert ist."
+        },
+        "0c18fdfd8f844b5490c3cc306b661716": {
+            "text": "(deaktiviert: Bitte aktivieren Sie GD lib um CAPTCHAs verwenden zu k\u00f6nnen)"
+        },
+        "9119b3ae6e7f3e3cc764b332e5c4b0f3": {
+            "text": "Ma\u00dfnahme 5: CAPTCHA"
+        },
+        "93d74901738e996378295fb0a59bb977": {
+            "text": "Grundeinstellungen"
+        },
+        "8edddf79a5b26d52c5d88d5df2ef5c53": {
+            "text": "Ein CAPTCHA verwenden"
+        },
+        "e9df51855a34a5fc76ac19ae2feb3a01": {
+            "text": "W\u00e4hlen Sie aus, ob Sie ein CAPTCHA verwenden m\u00f6chten und wenn ja, welches."
+        },
+        "b23bb4764e36673626f332b94178c5ec": {
+            "text": "Kein CAPTCHA"
+        },
+        "adef035ce4d4b3a4429ad4f3816e0c9f": {
+            "text": "Die meisten Besucher m\u00f6gen keine CAPTCHAS, daher wird empfohlen, sie nur zu verwenden, wenn Sie Probleme mit Spam haben. Wenn ein CAPTCHA aktiviert ist und Sie es auf einem bestimmten Formular deaktivieren m\u00f6chten, verwenden Sie bitte die folgende Methode:"
+        },
+        "6fed80a8c8ded2f5e14a687e4a443abc": {
+            "text": "Bildbreite"
+        },
+        "d3d1465e3f3487c41ab326e01b1af0f5": {
+            "text": "Bitte geben Sie die Breite des CAPTCHA-Bildes ein."
+        },
+        "31ae3fed05208e141c7d53e5ba81f7b3": {
+            "text": "Bitte geben Sie die H\u00f6he des CAPTCHA-Bildes ein."
+        },
+        "2aa3aa9d021c7cfffb5afa08f52fbc51": {
+            "text": "Bildh\u00f6he"
+        },
+        "ee19916811cfab5d6de311e94d3c49a9": {
+            "text": "Einstellungen f\u00fcr den Bildhintergrund"
+        },
+        "1d44ca6ef8dd52497b29a9c37f76eaf2": {
+            "text": "Legen Sie das Design des Hintergrunds f\u00fcr das CAPTCHA-Bild fest."
+        },
+        "f25c9776cc2d89abe89e9fa7f2281652": {
+            "text": "Zuf\u00e4llige oder benutzerdefinierte Farben"
+        },
+        "71c08e5d1f7f44044a094b39bf5e565a": {
+            "text": "W\u00e4hlen Sie aus, ob Sie (eine) bestimmte Farbe(n) oder (eine) zuf\u00e4llige(n) Farbe(n) f\u00fcr den Hintergrund verwenden m\u00f6chten."
+        },
+        "55d725efd297c4b468dc7518cc40eb82": {
+            "text": "Wenn Sie die Farbe(n) an Ihr Projektdesign anpassen m\u00f6chten, wird empfohlen, benutzerdefinierte Farbe(n) anstelle von zuf\u00e4lligen Farben zu verwenden."
+        },
+        "ebabdd05abebec507a4c6ef7146dcaba": {
+            "text": "Benutzerdefinierte Farbe(n)"
+        },
+        "d120d366f6a0e5056d21f11cc3559ff9": {
+            "text": "Zuf\u00e4llige Farbe(n)"
+        },
+        "99274ce1196f2c3e23a38225b8bbed64": {
+            "text": "Anzahl der Farben"
+        },
+        "587cc4e09504f450da1a3b95a6092fe9": {
+            "text": "W\u00e4hlen Sie aus, wie viele zuf\u00e4llige Farben f\u00fcr den Hintergrund verwendet werden sollen"
+        },
+        "9b8f7d9269ac6709628797704e7a4b77": {
+            "text": "Wenn der Wert auf 0 gesetzt ist, gibt es keine Begrenzung f\u00fcr die Farben, aber es wird empfohlen, den Wert nicht zu hoch einzustellen. Ein guter Ausgangspunkt ist 5."
+        },
+        "9b046f93a31816c966e27f64b05d9cd7": {
+            "text": "Die Farbe(n) f\u00fcr den Hintergrund"
+        },
+        "76fe7dd3b8f82c279b2763d6ca04bc22": {
+            "text": "Geben Sie die Farben f\u00fcr den Hintergrund im HEX-Farbformat ein (zB #ddd). Jede Farbe muss in eine neue Zeile geschrieben werden."
+        },
+        "3ba79bd84460b3fc81eebc4843037163": {
+            "text": "Mindestens eine Farbe ist erforderlich. Es wird jedoch empfohlen, mehr als 1 Farbe zu verwenden, um den Hintergrund inhomogener zu gestalten und somit f\u00fcr Spam-Bots das Lesen des Inhalts zu erschweren."
+        },
+        "afed711430f187894468d6b1f4aa183d": {
+            "text": "Zeichen-Einstellungen"
+        },
+        "283c028cbe75c4877a15759ac4930553": {
+            "text": "Legen Sie die Gestaltung des Textes (Zufallstext oder Berechnung) nach Ihren eigenen Vorlieben fest."
+        },
+        "472cc19d33b43f35dcd12ec4cb24caa7": {
+            "text": "Aktualisieren Sie alle Schriftartdateien"
+        },
+        "4c0ff9700cc0ef77c92b2627bdcd1fb8": {
+            "text": "Schriftart"
+        },
+        "8f4bd2facb32186e5968770712baddd0": {
+            "text": "W\u00e4hlen Sie die Schriftart f\u00fcr den Text aus."
+        },
+        "8c521358e299e7318acc203ed1db0ea1": {
+            "text": "Wenn im Eingabefeld keine Dateien verf\u00fcgbar sind oder Sie die Seite \u00fcbertragen haben, klicken Sie bitte auf die Schaltfl\u00e4che unten, um alle Schriftartdateien zu aktualisieren."
+        },
+        "c4943062b634c56348c67fdebba808eb": {
+            "text": "Schriftgr\u00f6\u00dfe"
+        },
+        "60973eb094a3786a796064423aa20426": {
+            "text": "Legen Sie die Schriftgr\u00f6\u00dfe f\u00fcr den Text fest."
+        },
+        "ad32ba59a021a0d085e49b3659b49a61": {
+            "text": "Schriftfarbe"
+        },
+        "27809ad6c5bcee11ff20693795d45b0c": {
+            "text": "Legen Sie die Schriftfarbe f\u00fcr den Text fest."
+        },
+        "ffa799e120c7103672b4557e76df0f8a": {
+            "text": "Bitte geben Sie einen g\u00fcltigen HEX-Farbcode ein."
+        },
+        "5f3ecf11d83ac2aa0b53a9bbeea203d0": {
+            "text": "Zeichensatz"
+        },
+        "6a85062d0c804b4c5adf43fa1ca5aed5": {
+            "text": "Geben Sie die Zeichen ein, die verwendet werden sollen, um einen zuf\u00e4lligen Text f\u00fcr CAPTCHAS zu erstellen."
+        },
+        "c1a1e703a48e07a079ac1ccb0f0d8aa0": {
+            "text": "Anzahl der Zeichen"
+        },
+        "fb1c8d142fac600867b13d5f067ed462": {
+            "text": "Geben Sie die Anzahl der Zeichen ein, aus denen der Text bestehen soll (ein empfohlener Wert ist 4 oder 5)."
+        },
+        "15a582488065b792fb92fe9386197434": {
+            "text": "Zeichen nicht in einer Zeile"
+        },
+        "860dc181140a829f649a0755ae31d021": {
+            "text": "Zeichen per Zufallsprinzip positionieren"
+        },
+        "c37d99f65e8e2085868792f5e1f4b5ff": {
+            "text": "Wenn diese Option aktiviert ist, werden die Zeichen, aus denen der Text besteht, nicht in einer Zeile angezeigt. Sie werden zuf\u00e4llig in verschiedenen Positionen und Winkeln angezeigt (empfohlen)."
+        },
+        "4beb44eafdd5231978423b469bd971a1": {
+            "text": "Verzerrungslinien"
+        },
+        "e7e24b0cf5186dc4c18173adbd031c94": {
+            "text": "F\u00fcgen Sie Verzerrungslinien \u00fcber dem Bild hinzu, um Spam-Bots das Lesen des Inhalts zu erschweren."
+        },
+        "8519b96a86ba24b5f6883b8200b91b9f": {
+            "text": "Anzahl der Verzerrungslinien"
+        },
+        "72d25d42255fc8d96adbfd4c5e9ba8f2": {
+            "text": "W\u00e4hlen Sie aus, wieviele Linien \u00fcber das Bild gezogen werden sollen."
+        },
+        "14e239cd93d64e4390ed975a753bfaf3": {
+            "text": "Wenn der Wert auf 0 gesetzt wird, dann ist diese Funktion deaktiviert. Die maximale Anzahl ist 100. Sie k\u00f6nnen die Anzahl in 5er-Schritten eingeben. \u00dcberpr\u00fcfen Sie anschlie\u00dfend im Frontend, indem Sie das CAPTCHA mehrmals aktualisieren, ob die Anzahl der Zeilen zu niedrig oder zu hoch ist."
+        },
+        "491a6cac8541cc78d7925c3ceef7f024": {
+            "text": "W\u00e4hlen Sie aus, ob Sie (eine) bestimmte Farbe(n) oder (eine) zuf\u00e4llige Farbe(n) f\u00fcr die Linien verwenden m\u00f6chten."
+        },
+        "4d242c36821c23128c3179f40c446885": {
+            "text": "Benutzerdefinierte Farben"
+        },
+        "62bb385691974ed7640884c322b44caa": {
+            "text": "Zuf\u00e4llige Farben"
+        },
+        "f630b4caba21e4aaffa8ae4f44336dd5": {
+            "text": "W\u00e4hlen Sie aus, wie viele zuf\u00e4llige Farben f\u00fcr die Linien verwendet werden sollen."
+        },
+        "84b49b3ce15277fa4de2a0f77d0fe387": {
+            "text": "Wenn Sie den Wert 0 eingeben, entspricht die Anzahl der verwendeten Farben der Anzahl der Verzerrungslinien. Andererseits entspricht der eingegebene Wert der Anzahl der verwendeten Farben."
+        },
+        "b9907f099940b663fa9e076f641480cd": {
+            "text": "Die Farbe(n) f\u00fcr die Linien \u00fcber dem Bild"
+        },
+        "5e91bb7b7d7257ccb7a9c60771ef7012": {
+            "text": "Geben Sie die Farben f\u00fcr die Linien im HEX-Farbformat ein (zB #000). Jede Farbe muss in eine neue Zeile geschrieben werden."
+        },
+        "511caa2f1e3219908a3597d4f5288adf": {
+            "text": "Mindestens eine Farbe ist erforderlich, es wird jedoch empfohlen, mehr als 1 Farbe zu verwenden, um die Linien inhomogener zu gestalten und somit f\u00fcr Spam-Bots das Lesen des Inhalts zu erschweren."
+        },
+        "48bcdf367c079bbfc5f5233f6432bd9e": {
+            "text": "Bildfilter"
+        },
+        "6dd9fd1b2f363d2d5c5e8365f429891f": {
+            "text": "F\u00fcgen Sie Filter zu Bildern hinzu, um die Erkennung des Inhalts zu erschweren."
+        },
+        "8b52de510bc5497ac43abfe566be48ab": {
+            "text": "Verwischen"
+        },
+        "bbef5aa6cc8511a8edca9773fa084861": {
+            "text": "Verwischen Sie das Bild, indem Sie den Unsch\u00e4rfewert ausw\u00e4hlen: Je h\u00f6her der Wert, desto st\u00e4rker der Unsch\u00e4rfeeffekt."
+        },
+        "7d80c2f87c30b8aa210c4bb6650f4a1a": {
+            "text": "Wenn Sie den Wert 0 eingeben, wird der Blur-Effekt deaktiviert. Der Maximalwert betr\u00e4gt 10."
+        },
+        "ede099ef4618afd096177ccb467e265e": {
+            "text": "Verpixeln"
+        },
+        "b2dad63dabd1b3e13d1da4808e29ef1e": {
+            "text": "Verpixeln Sie das Bild, indem Sie den Verpixelungswert ausw\u00e4hlen: Je h\u00f6her der Wert, desto st\u00e4rker der Verpixelungseffekt."
+        },
+        "bbe0703acd4b287327a3656e78aca3dc": {
+            "text": "Wenn Sie den Wert 0 eingeben, wird der Pixeleffekt deaktiviert. Der Maximalwert betr\u00e4gt 5."
+        },
+        "d3f6975213fb5546d8486b54b025dbd7": {
+            "text": "Graustufen"
+        },
+        "4aa81c1497ba7c1440416a9141c944ed": {
+            "text": "Entfernen Sie Farben aus dem Bild"
+        },
+        "7aee2ffca0b08af0d124bbfb2a4cfa4d": {
+            "text": "Durch Anklicken des K\u00e4stchens werden alle Farben des Bildes entfernt."
+        },
+        "5ee3e61a7f764ca8a3bd077cf845e39b": {
+            "text": "Ma\u00dfnahme 6: Passwortfeldeinstellungen"
+        },
+        "133caad862ece632e59451e3b1cd6c07": {
+            "text": "Erh\u00f6hen Sie die Sicherheit Ihrer Website, indem Sie Passw\u00f6rter mit einer Blacklist beliebter Passw\u00f6rter vergleichen. Dies ist n\u00fctzlich, wenn Sie eine Benutzerregistrierung auf Ihrer Website anbieten, um zu verhindern, dass Benutzer unsichere Passw\u00f6rter verwenden."
+        },
+        "1d7943b0b5369c708f0b1940e07ae03e": {
+            "text": "Passw\u00f6rter Blacklist"
+        },
+        "0d115dd1fb4cf58b2ec6dc7822f3a88c": {
+            "text": "Geben Sie Passw\u00f6rter ein, die verboten sind (jeder Eintrag in einer neuen Zeile)."
+        },
+        "ce1c6c0ced054ae23a321c48b45ac302": {
+            "text": "Diese Liste wird vom \"safePassword\"-Validator verwendet, um ein Passwortfeld gegen unsichere Passw\u00f6rter zu validieren."
+        },
+        "b6cf1acd91e352816808c3913e07c5d1": {
+            "text": "Der Validator gibt false zur\u00fcck, wenn das Passwort auf der Blacklist gefunden wurde, ansonsten true."
+        },
+        "d790ea07d2e07faf567a50419d39dca2": {
+            "text": "Die Liste wird automatisch mit den passenden Passw\u00f6rtern aus der Top-100-Passwortliste weiter unten abgeglichen, aber Sie k\u00f6nnen auch Ihre eigenen Passw\u00f6rter hinzuf\u00fcgen \u2013 diese werden w\u00e4hrend der Aktualisierung der Blacklist nicht \u00fcberschrieben."
+        },
+        "993f2e329f72b2d0870250b5c50f5d73": {
+            "text": "Aktuelle Anzahl der Eintr\u00e4ge in der Blacklist: %s."
+        },
+        "bb2213b318964547475f73f3fb953dc0": {
+            "text": "Letzte Aktualisierung der Blacklist: %s."
+        },
+        "1a2221effd2dd07046ab56d166bcce74": {
+            "text": "Liste der 100 h\u00e4ufigsten Passw\u00f6rter"
+        },
+        "6b79473f36991081d423f6513a123adf": {
+            "text": "Die Passw\u00f6rter in der folgenden Liste sind unsicher und stellen ein ernsthaftes Sicherheitsproblem f\u00fcr jedes Konto auf Ihrer Website dar."
+        },
+        "d0b42da605a0606ecd8fa960841ce7af": {
+            "text": "Alle Passw\u00f6rter wurden von %s (Open Web Application Security Project) \u00fcbernommen."
+        },
+        "77c85a1a4109581578458405b756c2e9": {
+            "text": "Quelle der Passw\u00f6rter: %s"
+        },
+        "46889411c124e301871882ff4073fc92": {
+            "text": "Bitte beachten Sie:"
+        },
+        "59b1ad05932fd2b86fc45b0e09b198df": {
+            "text": "Nur Passw\u00f6rter, die Ihren Passwortanforderungen entsprechen, werden nach dem Dr\u00fccken des Update-Button oder w\u00e4hrend des automatischen Updates zur Blacklist hinzugef\u00fcgt."
+        },
+        "458339b982f4d2daa634c9b1e9d089fb": {
+            "text": "Passw\u00f6rter, welche Ihre Passwortanforderungen nicht erf\u00fcllen, m\u00fcssen nicht auf der Liste stehen und werden vorher ausgefiltert. Die Blacklist sollte so kurz wie m\u00f6glich sein, um Performance-Probleme zu vermeiden."
+        },
+        "a25acf3cd1f2fdd333d1303edb97e150": {
+            "text": "Sollte Ihre Blacklist sehr lang sein, so w\u00e4re es ratsam, die Passwortanforderungen zu erh\u00f6hen."
+        },
+        "f9fbc00e63ce069fc76155e22f858b11": {
+            "text": "Wenn keine Passw\u00f6rter aus dieser Liste zur Blacklist hinzugef\u00fcgt werden, bedeutet das nicht, dass es nicht funktionieren w\u00fcrde \u2013 es bedeutet, dass Ihre Passwortanforderungen hoch genug sind, um alle diese Passw\u00f6rter vorher herauszufiltern."
+        },
+        "96823f990b24a8434d6f384f886cac1f": {
+            "text": "Aktuelle Einstellungen f\u00fcr Passwortanforderungen:"
+        },
+        "27c0974a7e22792e2c0e27e54f96e9c6": {
+            "text": "Ein Passwort muss mindestens eines der folgenden Zeichen enthalten:"
+        },
+        "ae7850d0d0d0551097e9f426b2bfde13": {
+            "text": "Zur Bearbeitungsseite des Passwortfeldes"
+        },
+        "6c92285fa6d3e827b198d120ea3ac674": {
+            "text": "hier"
+        },
+        "845532b7dd03d16d0343c17a7311c660": {
+            "text": "Wenn Sie die Berechtigung haben, die Passwortanforderungen zu \u00e4ndern, k\u00f6nnen Sie dies %s tun."
+        },
+        "93cbe1827920bbdd2573c4ae92a7950c": {
+            "text": "Die Passwortliste wird einmal im Monat automatisch \u00fcberpr\u00fcft, ob sich auf GitHub etwas ge\u00e4ndert hat."
+        },
+        "28ecd261247fe6c61a385d3ab4fc2685": {
+            "text": "Datum des letzten Downloads: %s (%s)."
+        },
+        "b96ea78424deca4e1032adb0802d1412": {
+            "text": "Datum der letzten \u00c4nderung auf GitHub: %s (%s)."
+        },
+        "22c7c49c85ed49c7858df6c8cb21edc5": {
+            "text": "Datum der letzten Passwortpr\u00fcfung: %s (%s)."
+        },
+        "6bc6e0d1f764efb00040aac49eaaec53": {
+            "text": "Nach der Pr\u00fcfung werden alle Passw\u00f6rter, die Ihre Passwortanforderungen erf\u00fcllen und nicht auf Ihrer Blacklist stehen, automatisch zu dieser hinzugef\u00fcgt."
+        },
+        "e3ffe31b2046f8826e95d725ebaef1fd": {
+            "text": "Sie m\u00fcssen diese nicht manuell hinzuf\u00fcgen."
+        },
+        "e912e71e62f77e3fffe781d3c91974fd": {
+            "text": "Wenn Sie nicht bis zur n\u00e4chsten automatischen Aktualisierung warten m\u00f6chten, k\u00f6nnen Sie Ihre Blacklist manuell aktualisieren, indem Sie auf den Button \"Blacklist manuell aktualisieren\" klicken."
+        },
+        "6329ceb780aab5da57c1c79443c73c39": {
+            "text": "Blacklist manuell aktualisieren"
+        },
+        "417a20d3e4484f039e5b24f93d03da6e": {
+            "text": "Die 100 h\u00e4ufigsten Passw\u00f6rter in %s (Letzte Aktualisierung der Liste auf GitHub: %s)"
+        },
+        "99de8df35b1830663c49b938281472c3": {
+            "text": "Passw\u00f6rter mit einem farbigen Hintergrund befinden sich bereits auf Ihrer Blacklist."
+        },
+        "572d75e94ed50b9994a0d578b2c553ce": {
+            "text": "Leider existiert die Datei passwords.txt nicht. Bitte klicken Sie oben auf den \"Blacklist manuell aktualisieren\" Button."
+        },
+        "9d9f46a2c4ba5210752aef4b7d02a010": {
+            "text": "Ma\u00dfnahme 7: HTML5 Browser Validierung"
+        },
+        "24f55ddac7dd6ef394098749b8a036c8": {
+            "text": "Verwenden Sie zus\u00e4tzlich zur serverseitigen Validierung die HTML5-Browservalidierung"
+        },
+        "c5a17e8c2b7f04018408ec66aa34c363": {
+            "text": "Aktivieren Sie die HTML5-Browservalidierung zus\u00e4tzlich zur serverseitigen Validierung."
+        },
+        "42042bf663dfeb3433bc58011513377f": {
+            "text": "Aktivieren Sie die HTML 5-Browservalidierung"
+        },
+        "12bdfe265ea4f08d713dc1e7531573d8": {
+            "text": "Wenn das Kontrollk\u00e4stchen aktiviert ist, wird das Formular vom Browser im Frontend mithilfe von HTML5-Attributen validiert"
+        },
+        "b78ab1cd18483245a5ab325e6b209ed0": {
+            "text": "Das Formular wird in jedem Fall auf dem Server validiert, aber Sie k\u00f6nnen auch die HTML5-Browservalidierung verwenden, damit die Formularwerte auch validiert werden, bevor sie an den Server gesendet werden."
+        },
+        "8f2bb91c583e42fa3e2b720a6c8a192f": {
+            "text": "Statistiken blockierter Besucher"
+        },
+        "af58911ece7a676214c04009bdf307f6": {
+            "text": "Lassen Sie sich Informationen \u00fcber blockierte Besucher (IP-Adresse, Formular) aus den Log-Dateien anzeigen"
+        },
+        "ceb9f0db8a96d4c417d41c44f465a2e6": {
+            "text": "Es gibt leider nichts anzuzeigen - Die Log-Datei existiert nicht."
+        },
+        "33c59b12a511c6aa18139beefd6860cb": {
+            "text": "Die Protokollierung von Fehlversuchen ist nicht aktiviert. Wenn Sie diese Funktion nutzen m\u00f6chten, m\u00fcssen Sie diese in \"Ma\u00dfnahme 1: Anzahl der Fehlversuche einschr\u00e4nken\" aktivieren."
+        },
+        "5635cc4f8b96d3c90275341be0068233": {
+            "text": "Die \"Maximale Anzahl der Fehlversuche\" muss gr\u00f6\u00dfer als 0 sein und das Kontrollk\u00e4stchen \"Fehlversuche protokollieren\" muss aktiviert sein."
+        },
+        "460d997b9205d3a198de11fdb0a23c14": {
+            "text": "Gehen Sie zu den Einstellungen, um die Protokollierung fehlgeschlagener Versuche zu aktivieren"
+        },
+        "8413c683b4b27cc3f4dbd4c90329d8ba": {
+            "text": "Kommentare"
+        },
+        "6adf97f83acf6453d4a6a4b1070f3754": {
+            "text": "keines"
+        },
+        "1d0f09e611ab678bcef1e00af34c5d0f": {
+            "text": "Verwendung von Custom-Mail-Modulen"
+        },
+        "3b56242115af067eb546fc11abd5c4e2": {
+            "text": "W\u00e4hlen Sie Ihre bevorzugtes Modul zum Senden vom Mails aus."
+        },
+        "eac81cf85a218bdfa7a2b63d062fe715": {
+            "text": "Standardm\u00e4\u00dfig werden alle E-Mails mit WireMail versendet, aber Sie k\u00f6nnen in diesem Feld auch ein benutzerdefiniertes Modul f\u00fcr den Versand von E-Mails ausw\u00e4hlen."
+        },
+        "a835c133140136c0416a5045dec59326": {
+            "text": "Bestimmen Sie die Position der Eingabefeld-Beschreibung"
+        },
+        "69749f3e4e496cf5ca8751d7f376deea": {
+            "text": "Standardm\u00e4\u00dfig wird die Eingabefeld-Beschreibung unterhalb des Eingabefeldes angezeigt. Sie k\u00f6nnen diese aber auch direkt vor oder nach dem Label anzeigen lassen."
+        },
+        "024432684785ecba47cfb7084c991a7b": {
+            "text": "Kann bei jeden Formular und auch direkt bei jeden Eingabefeld \u00fcberschrieben werden."
+        },
+        "e1f95af6b2b8cc77ca357af807df6083": {
+            "text": "Vor dem Label"
+        },
+        "1e2b06cfb055315bf2f71e90ae0ce5b0": {
+            "text": "Nach dem Label"
+        },
+        "d10fa5e10f988fcc438a488bb2f5dede": {
+            "text": "Nach dem Eingabefeld"
+        },
+        "df8fab9f40e065403f37075117b2a501": {
+            "text": "Die captchaimage.php Datei konnte nicht in das Stammverzeichnis (%s) kopiert werden, da das Stammverzeichnis nicht beschreibbar ist."
+        },
+        "891175e69759b61ded4cced3cd78c7f3": {
+            "text": "Machen Sie sich keine Sorgen! Um dieses Problem zu beheben, verschieben Sie die Datei bitte selbst von \"\/site\/modules\/FrontendForms\/Formelements\/Captcha\/captchaimage.php\" nach \"%s\"."
+        },
+        "eab3c0ee882228e43d1bf3acf4e8dd25": {
+            "text": "Andernfalls erhalten Sie eine Fehlermeldung, wenn Sie versuchen, das CAPTCHA in Ihren Formularen zu verwenden."
+        },
+        "43741f6690a2e9fdfeb31bec1256a6e3": {
+            "text": "Bitte geben Sie eine einfache Frage ein."
+        },
+        "a97ea56b0e00b2379736ae60869ff66a": {
+            "text": "Frage"
+        },
+        "26deae250b75041ac95356308282b3cd": {
+            "text": "Die Frage sollte so einfach wie m\u00f6glich zu beantworten sein."
+        },
+        "9ab98b4c1aeeff244bb72c7c32a24bb3": {
+            "text": "Zum Beispiel: Welche Farbe hat ein gr\u00fcner Apfel"
+        },
+        "2a7d24a0ec9fd2aa89bf61daf2cfd703": {
+            "text": "Bitte geben Sie verschiedene akzeptierte Antworten ein (jede in eine eigene Zeile!!)."
+        },
+        "cce75deb233360295f6767182c938f32": {
+            "text": "Akzeptierte Antworten"
+        },
+        "0a21b20cae23f15cb9670eaa9a43c176": {
+            "text": "Sie k\u00f6nnen so viele Antworten eingeben, wie Sie m\u00f6chten, aber mindestens eine muss eingegeben werden. Sie m\u00fcssen nicht auf Gro\u00df- und Kleinschreibung achten (zum Beispiel: \"Gr\u00fcn\" ist dasselbe wie \"gr\u00fcn\")."
+        },
+        "718ff6327d50b46b85385ef573e025b9": {
+            "text": "Geben Sie mehrere Antworten ein, die akzeptiert werden (jede in einer neuen Zeile). Zum Beispiel: gr\u00fcn, Farbe gr\u00fcn, ist gr\u00fcn"
+        },
+        "df7e7a4b40e471bef3d8def9d6650d13": {
+            "text": "Benutzerdefinierter Pfad f\u00fcr die JSON-Datei der CSS-Klassen"
+        },
+        "fd0b6fed9e7e756313769a11093ff20d": {
+            "text": "Wenn Sie Ihre benutzerdefinierte CSS-Klassendatei in einem anderen Verzeichnis als site\/assets\/files\/FrontendForms\/frameworks\/ speichern m\u00f6chten, k\u00f6nnen Sie hier den Pfad zu Ihrem benutzerdefinierten Verzeichnis eingeben. Andernfalls lassen Sie dieses Feld leer."
+        },
+        "2faa0d1d2f63b7b5358d8d351efed3ee": {
+            "text": "Bitte geben Sie den Pfad beginnend mit site ein (z.B. site\/templates\/FrontendForms\/frameworks)."
+        },
+        "2f97875791a2ed2f8d0e37fe2459f06c": {
+            "text": "Weitere Informationen \u00fcber benutzerdefinierte CSS-json-Dateien finden Sie %s."
+        },
+        "a851fbfd023fc53cfd4c3fc913aaf0a7": {
+            "text": "Tag f\u00fcr das Label-Element"
+        },
+        "47a88281427cf3e734aab194a5afded8": {
+            "text": "\u00c4ndern Sie den Tag (p, div,..) f\u00fcr das Label eines Eingabefeldes."
+        },
+        "b4f0a0ac5d61c175e3047e45e049eb5f": {
+            "text": "Wenn Sie mit dem f\u00fcr dieses Element verwendeten Tag nicht zufrieden sind, k\u00f6nnen Sie diesen nach Ihren Bed\u00fcrfnissen \u00e4ndern. Andernfalls lassen Sie dieses Feld leer."
+        },
+        "d12f6160684a8a387e5230025dd672f9": {
+            "text": "Tag f\u00fcr das Beschreibungs-Element"
+        },
+        "36c96e06adda682dc4ad349f4e8d6db9": {
+            "text": "\u00c4ndern Sie den Tag (p, div,..) f\u00fcr die Beschreibung eines Eingabefeldes."
+        },
+        "4d0e0ce61cfb19d808810f874b7a692f": {
+            "text": "Tag f\u00fcr das Hinweis-Element"
+        },
+        "fb6b6fcbd43277c375589aa25f68aca9": {
+            "text": "\u00c4ndern Sie den Tag (p, div,..) f\u00fcr den Hinweistext eines Eingabefeldes."
+        },
+        "ad269b44f7c4efb0b648213a1ec7ff7b": {
+            "text": "Tag f\u00fcr die Meldungselemente (Erfolgs- und Fehlermeldung)"
+        },
+        "99db3bbafc897f6819b0bb8e0621e5d6": {
+            "text": "\u00c4ndern Sie den Tag (p, div,..) f\u00fcr die Meldungselemente eines Eingabefeldes."
+        },
+        "658a5b22c4343bcf0c40d64bc3ec7696": {
+            "text": "W\u00e4hlen Sie die Seite aus, die Ihre Datenschutzerkl\u00e4rung enth\u00e4lt, indem Sie einen Suchbegriff f\u00fcr den Titel dieser Seite eingeben (z. B. Datenschutz)."
+        },
+        "979083b28045c36b48be1d5fa27be1a5": {
+            "text": "Es wurden keine Passwortanforderungen festgelegt!"
+        },
+        "b9a5f2677904db4468d20a5fb37984ff": {
+            "text": "Diese Methode ist nur f\u00fcr Testzwecke. Bitte vergessen Sie nicht, diese sp\u00e4ter wieder zu entfernen."
+        },
+        "e76d67cace68112a07c87cd19864fc08": {
+            "text": "Nach rechts schieben"
+        },
+        "16bfbf9c462762cf1cba4134ec53c504": {
+            "text": "Laden"
+        },
+        "0912f8f8b87c237b8415f1b4c0a50438": {
+            "text": "Nochmal versuchen!"
+        },
+        "dfd0a82c4bf37b1e90b690a22a20692e": {
+            "text": "="
+        },
+        "768eca1ed547eca00ccf011d5965dcf3": {
+            "text": "Bitte stellen Sie den Offset in px f\u00fcr das Puzzleteil ein."
+        },
+        "125e79ecb78f0bd719a4f1ce1d0b0bcd": {
+            "text": "Je niedriger der Wert, desto genauer muss das Puzzleteil platziert werden (h\u00f6chst m\u00f6glicher Wert: 25)"
+        },
+        "a3c1dae595f12b1d20954db60efb7a5c": {
+            "text": "Bitte w\u00e4hlen Sie alle Seiten aus, auf denen die JS- und CSS-Dateien eingebunden werden sollen (dies ist nur wirksam, wenn die Einbindung der Dateien nicht durch die vorherige Einstellung verhindert wurde)."
+        },
+        "4c980e4cbf50cceddad74368d2abca34": {
+            "text": "Aus Performance-Gr\u00fcnden wird empfohlen, die JS- und CSS-Dateien nur auf Seiten einzubinden, die ein Formular enthalten. Wenn nichts ausgew\u00e4hlt ist, werden die Dateien auf jeder Seite eingebettet, sofern die Einbindung nicht unterbunden wurde."
+        },
+        "01c376e54db1d210c8bc0dba9b4a2f6f": {
+            "text": "W\u00e4hlen Sie die Einbettung der JS- und CSS-Dateien nur auf bestimmten Seiten aus"
+        },
+        "d8e4d251281d05f85acf5cc936fa7f4d": {
+            "text": "Einstellungen f\u00fcr die Stylesheets und Skripte"
+        },
+        "73e95f708b3641dc5fca104171c32081": {
+            "text": "Die Einbindung aller Javascript-Dateien f\u00fcr dieses Modul unterbinden"
+        },
+        "456ec8e7a08a31fa2153bbea0091440c": {
+            "text": "Alle JavaScript-Dateien, die f\u00fcr einige Funktionen des Formulars ben\u00f6tigt werden, werden standardm\u00e4\u00dfig vor dem schlie\u00dfenden body-Tag im Frontend hinzugef\u00fcgt. Sie k\u00f6nnen das Einbetten der Skripte vollst\u00e4ndig verhindern, indem Sie das H\u00e4kchen setzen."
+        },
+        "222be968e8865753b0dbd5ea083b877e": {
+            "text": "Infotext zur AJAX-Formular\u00fcbermittlung"
+        },
+        "091a75fbe174b195242b44b8a2cc2194": {
+            "text": "Dieser Text wird neben dem Fortschrittsbalken angezeigt, wenn ein Formular \u00fcber AJAX gesendet wird."
+        }
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Captcha\/AbstractCaptcha.php",
+    "textdomain": "site--modules--frontendforms--formelements--captcha--abstractcaptcha-php",
+    "translations": {
+        "b52dc33684da9e3d394738b7d0dd2725": {
+            "text": "Bitte anklicken, um ein neues Captcha zu laden"
+        },
+        "7c89feb583d9e778c3533017b111263d": {
+            "text": "Bild neu laden"
+        },
+        "45d048c35e3cfd449dc0a1b503cd103a": {
+            "text": "="
+        }
+    }
+}

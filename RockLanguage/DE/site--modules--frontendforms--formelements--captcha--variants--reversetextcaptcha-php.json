@@ -1,0 +1,12 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Captcha\/variants\/ReverseTextCaptcha.php",
+    "textdomain": "site--modules--frontendforms--formelements--captcha--variants--reversetextcaptcha-php",
+    "translations": {
+        "d8c8728824019c0866b958d0b2562edd": {
+            "text": "Umgekehrter Text Captcha"
+        },
+        "167b8554feab7647d47863b05a0da92f": {
+            "text": "Geben Sie den Text aus dem Bild in umgekehrter Reihenfolge (von rechts nach links) in das Eingabefeld ein."
+        }
+    }
+}

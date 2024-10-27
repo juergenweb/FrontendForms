@@ -1,0 +1,273 @@
+{
+    "file": "site\/modules\/FrontendForms\/FrontendFormsManager.module",
+    "textdomain": "site--modules--frontendforms--frontendformsmanager-module",
+    "translations": {
+        "7a3466881a14c754ac4a48106c1b4bb5": {
+            "text": "Dieses Diagramm zeigt, wie viele Fragen einem bestimmten Status angeh\u00f6ren."
+        },
+        "b6d75d0a454edfb28a9c5c048cb20b16": {
+            "text": "Dieses Diagramm zeigt, wie viele Fragen im Frontend angezeigt werden (aktiv) oder nicht (inaktiv)."
+        },
+        "11da7aac15a18bb4d6307c26d44f4c6f": {
+            "text": "Liste aller Fragen f\u00fcr das einfache Frage CAPTCHA"
+        },
+        "b67f92900c8c7f5541224d8d14107249": {
+            "text": "Eine neue Frage hinzuf\u00fcgen"
+        },
+        "ec53a8c4f07baed5d8825072c89799be": {
+            "text": "="
+        },
+        "1729a56cfc89021478498fe0c89a843a": {
+            "text": "Sichtbarkeit"
+        },
+        "fbb44b4487415b134bce9c790a27fe5e": {
+            "text": "gesamt"
+        },
+        "8f888fedf6bd5ff7c93c6d76bb8dc21c": {
+            "text": "ver\u00f6ffentlicht"
+        },
+        "3ebd43fb0ca85e5d4aae6b6f19703a39": {
+            "text": "unver\u00f6ffentlicht"
+        },
+        "662f707d5491e9bce8238a6c0be92190": {
+            "text": "versteckt"
+        },
+        "4cef2f30ac7d33419d00c1d93a090095": {
+            "text": "gesperrt"
+        },
+        "41f480750b7d85340eee17c9c4c86d76": {
+            "text": "Anzahl der Fragen"
+        },
+        "5d99646dc04ed596b3a8e3d5f0850221": {
+            "text": "Status Typen"
+        },
+        "15d92a0b27416a4cf0353a2fc9ab47c0": {
+            "text": "Anzahl der Fragen pro Status und gesamt"
+        },
+        "c76a5e84e4bdee527e274ea30c680d79": {
+            "text": "aktiv"
+        },
+        "19d3894f53ce79c3f836f26cf8a3be3b": {
+            "text": "inaktiv"
+        },
+        "030d05d170cb366307d5429bba5565f9": {
+            "text": "Sichtbarkeits-Arten"
+        },
+        "d39bcbd03e435bfd2c2fd76836f73b44": {
+            "text": "Anzahl der aktiven und inaktiven Fragen sowie gesamt"
+        },
+        "b4c576f8a5b38eff98049ed9e4dc101a": {
+            "text": "Fragen f\u00fcr das EINFACHE FRAGE CAPTCHA"
+        },
+        "250019d88eeca10932e3d40bb09ce3b5": {
+            "text": "Verwalten Sie alle Fragen f\u00fcr das EINFACHE FRAGE CAPTCHA"
+        },
+        "faec30dbd9ef07709d8c33fdd11cf66a": {
+            "text": "Fragen Statistiken"
+        },
+        "3d1b8b1393fde38144ad8ecba2a5fc68": {
+            "text": "Verwalten Sie alle Fragen f\u00fcr das EINFACHE FRAGE CAPTCHA an einem Ort."
+        },
+        "86c9ce4b2e3b43353a23861c053a594b": {
+            "text": "Zur\u00fcck zur \u00dcbersicht"
+        },
+        "d7778d0c64b6ba21494c97f77a66885a": {
+            "text": "="
+        },
+        "a6ff831f0edf7f8005760a999cb60e19": {
+            "text": "Filtern nach Fragen-Text"
+        },
+        "cdab3dfcbbb5e5523be258f3207b0543": {
+            "text": "Filtern von Fragen anhand eines bestimmten Wortes oder einer Wortphrase"
+        },
+        "5dd5cd6670a0fc8e47a47aa94d27b8b2": {
+            "text": "Filtern nach Statuts"
+        },
+        "a181a603769c1f98ad927e7367c7aa51": {
+            "text": "alle"
+        },
+        "000abf628b1abccf65a23698208fba18": {
+            "text": "Filtern von Fragen anhand des Seiten-Status."
+        },
+        "603fbf05a5aa6253a7c6384853cb6689": {
+            "text": "Filtern nach Sichtbarkeit"
+        },
+        "2c7c44365ac7c8e1fb5bc34f654c812f": {
+            "text": "Filtern anhand des Kritieriums, ob die Frage beim CAPTCHA angezeigt wird oder nicht."
+        },
+        "70dfa5b7b0368e70377dcec64a197a8f": {
+            "text": "Im Moment wurden noch keine Frage erstellt"
+        },
+        "01abfc750a0c942167651c40d088531d": {
+            "text": "="
+        },
+        "a97ea56b0e00b2379736ae60869ff66a": {
+            "text": "Frage"
+        },
+        "0eceeb45861f9585dd7a97a3e36f85c6": {
+            "text": "Erstellt am"
+        },
+        "8f9bfe9d1345237cb3b2b205864da075": {
+            "text": "Benutzer"
+        },
+        "797223ea50a1191aa3d0422321f76900": {
+            "text": "wird im Frontend beim CAPTCHA angezeigt"
+        },
+        "91f9f3dcf32e3b35db975d303846f22c": {
+            "text": "wird nicht im Frontend beim CAPTCHA angezeigt"
+        },
+        "78132c6a7ffcd380dc877b1dbe22442e": {
+            "text": "Es gibt keine Fragen."
+        },
+        "2a3db08ece9db0589d17f4a28b9958f8": {
+            "text": "Eine neue Frage erstellen"
+        },
+        "4d6068e701c464a4b4023a05ecd65d0d": {
+            "text": "Bis jetzt wurden noch keine Fragen erstellt."
+        },
+        "d0031a5235e9b380ac6e5bb32339871f": {
+            "text": "Wenn Sie das EINFACHE FRAGE CAPTCHA verwenden m\u00f6chten, dann k\u00f6nnen Sie hier Frage erstellen, bearbeiten oder l\u00f6schen indem Sie auf den Button weiter unten klicken."
+        },
+        "ce0627ddbd2ef785a69b2dade92a6526": {
+            "text": "Fragen mit Status \"ver\u00f6ffentlicht\""
+        },
+        "b238945e7898bc2cede56b8869597000": {
+            "text": "Fragen mit Status \"unver\u00f6ffentlicht\""
+        },
+        "9c85fc674962371bd807fbe470036600": {
+            "text": "Fragen mit Status \"versteckt\""
+        },
+        "e8ab2227c04f89d371197383d8357820": {
+            "text": "Fragen mit Status \"gesperrt\""
+        },
+        "efb5e6d1eef98b26cf23e8c0173f40bd": {
+            "text": "Aktive Fragen (werden im Frontend angezeigt)"
+        },
+        "298f462198b72d314c26d68f806c476b": {
+            "text": "Inaktive Fragen (werden nicht im Frontend angezeigt)"
+        },
+        "dcd943b0f5e1a473f4803395af5e4706": {
+            "text": "Gesamtanzahl aller Fragen"
+        },
+        "23f5c75c7b296cce7ec039ba05ffd91d": {
+            "text": "Hinzuf\u00fcgen\/bearbeiten\/l\u00f6schen von Fragen"
+        },
+        "f8c3bdf54db5392744acd4c74b3fb9af": {
+            "text": "Vom Standardwert \u00fcbernehmen"
+        },
+        "67d69ad5b86f9485a1ffe5c3925fc540": {
+            "text": "Oberhalb der Eingabefeld-Bezeichnung (Label)"
+        },
+        "ea516aff53231f573565309917786352": {
+            "text": "Unterhalb der Eingabefeld-Bezeichnung (Label)"
+        },
+        "99496a9f358b973e5c475c6c38441cc7": {
+            "text": "Unterhalb des Eingabefeldes (Input)"
+        },
+        "0f6125bce53a7f802da8d9feb2ae7e40": {
+            "text": "Paginationsnummer f\u00fcr Daten-Tabellen"
+        },
+        "c8afe997985601d8ab23420fe9a9d5a3": {
+            "text": "Bitte w\u00e4hlen Sie aus, wie viele Eintr\u00e4ge in einer Datentabelle pro Seite angezeigt werden sollen."
+        },
+        "cf74d4fba3d676998324ae2e6b7cff1b": {
+            "text": "Wenn die Gesamtzahl der Eintr\u00e4ge in der Tabelle h\u00f6her ist, wird die Tabelle paginiert."
+        },
+        "1bc4ddb5b62b3fe81a7813f2f322c48a": {
+            "text": "="
+        },
+        "0ff317d3baaddf1705c924fa4c6c040f": {
+            "text": "Zus\u00e4tzliche Verwaltungsseite f\u00fcr das FrontendForms-Modul."
+        },
+        "81ec4869bae32a704d654f175ed5e531": {
+            "text": "Liste der vor\u00fcbergehend gesperrten IPs"
+        },
+        "8512425380beff0a24d694b4ded45a3e": {
+            "text": "Liste aller IPs, die vor\u00fcbergehend gesperrt wurden"
+        },
+        "a18c55268179c73b3aa46d9a14df495b": {
+            "text": "Informationen \u00fcber alle IP-Adressen, die aufgrund von zu vielen erfolglosen Formular\u00fcbermittlungen vor\u00fcbergehend gesperrt wurden."
+        },
+        "7be7323cb06d3990bd8547f6871790c2": {
+            "text": "Die Protokollierung blockierter IPs ist deaktiviert."
+        },
+        "47a600951cdd2cd37077b29a27ff2e87": {
+            "text": "FrontendForms-Einstellungen"
+        },
+        "ed20d52093a775ffe22177bdbcd71fa3": {
+            "text": "Wenn Sie Statistiken \u00fcber blockierte IPs anzeigen m\u00f6chten, m\u00fcssen Sie zuerst zu den %s gehen und die Protokollierung dort aktivieren (Spam-Schutz und Sicherheitseinstellungen f\u00fcr die Formulare -> Ma\u00dfnahme 1: Anzahl der fehlgeschlagenen Versuche einschr\u00e4nken)."
+        },
+        "b66f727f1347d3c063dc4f8cc3edcd0d": {
+            "text": "Vor\u00fcbergehend blockierte IPs"
+        },
+        "f98692d3cb41bd9be35703105edbcadb": {
+            "text": "Dieses Diagramm zeigt die Anzahl vor\u00fcbergehender Sperrungen f\u00fcr die 10 am h\u00e4ufigsten vor\u00fcbergehend gesperrten IPs in absteigender Reihenfolge."
+        },
+        "d143d66368a0f6e0d6e43027a952f41c": {
+            "text": "Anzahl der vor\u00fcbergehenden Sperrungen"
+        },
+        "fef48b3b39a9c7cdf35ffca8bf736a75": {
+            "text": "="
+        },
+        "aa183e25ae52cc52433d8bf32d39bb1c": {
+            "text": "Anzahl der vor\u00fcbergehenden Sperrungen"
+        },
+        "179c5a3e05d658ac00e7fce8f0d7f2a1": {
+            "text": "Top 10 IPs mit den meisten Sperrungen"
+        },
+        "a12a3079e14ced46e69ba52b8a90b21a": {
+            "text": "="
+        },
+        "ec6643b8937c561563dd33a8e91a617c": {
+            "text": "Anzahl der Sperrungen"
+        },
+        "fa9c4cb43f1d45a9bcb3c17aac3b8603": {
+            "text": "Nicht gesperrt"
+        },
+        "258de28492189633a51ef184dda6f87b": {
+            "text": "Nicht blockiert - Die IP steht nicht auf der Liste der dauerhaft gesperrten IPs (Blacklist)."
+        },
+        "838b86b4a41333131eaf8865bf9bbb74": {
+            "text": "Blockiert - Die IP steht derzeit auf der Liste der dauerhaft gesperrten IPs (Blacklist)."
+        },
+        "30d18d49315732b23244f10874fa96dd": {
+            "text": "Momentan gibt es keine Eintr\u00e4ge \u00fcber tempor\u00e4r gesperrte IPs in den Logfiles."
+        },
+        "02281719187ced2a9763531b2d5cde35": {
+            "text": "Anzahl der Sperrungen"
+        },
+        "4059b0251f66a18cb56f544728796875": {
+            "text": "="
+        },
+        "ceb2b8baee1c56db529c7f81e479ea03": {
+            "text": "Hinzuf\u00fcgen\/Entfernen der IP zu\/von der Blacklist"
+        },
+        "f0b432894b4fa5276c7eda4168d20d6b": {
+            "text": "Details zu dieser IP anzeigen"
+        },
+        "d165be43dae15da6ca52506f826bb3d4": {
+            "text": "IP ist gesperrt"
+        },
+        "5ad3137edf46035a9faf9432f7cd0522": {
+            "text": "Von der Blacklist entfernen"
+        },
+        "218ccb4c1ea08f5bfb6cd390c3ba94e5": {
+            "text": "Zur Blacklist hinzuf\u00fcgen"
+        },
+        "977f739fffa52c21a3c1eb749a3f8540": {
+            "text": "IP is nicht gesperrt"
+        },
+        "9813b9e89bf43bd820bfe520251c1bf4": {
+            "text": "IP-Adressen, die auf der Blacklist stehen, k\u00f6nnen keine Formulare absenden, da die Formulare in diesem Fall nicht angezeigt werden."
+        },
+        "08386e021693b022a97f42ffee376e0f": {
+            "text": "Dies ist eine Sicherheitsma\u00dfnahme, um potenzielle Spammer auszuschlie\u00dfen."
+        },
+        "6831e9348a1272be22fab169a550afd2": {
+            "text": "Es gibt keine Eintr\u00e4ge \u00fcber vor\u00fcbergehend Sperrungen von IPs in den Protokolldateien."
+        },
+        "d886dadad6f4bbcbe945bea88b35637a": {
+            "text": "Zu allen tempor\u00e4r gesperrten IPs"
+        }
+    }
+}

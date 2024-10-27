@@ -1,0 +1,114 @@
+{
+    "file": "site\/modules\/FrontendForms\/valitron\/errormessages.php",
+    "textdomain": "site--modules--frontendforms--valitron--errormessages-php",
+    "translations": {
+        "2e6530ea732a56c9eed09d995a64be55": {
+            "text": "enth\u00e4lt Nicht-ASCII-Zeichen."
+        },
+        "ee66f9c9930cb33d2a5dde9b240d3f7e": {
+            "text": "ist erforderlich."
+        },
+        "c3e99e59b3b51e343792bdf6ce436df9": {
+            "text": "muss mit %s identisch sein."
+        },
+        "61cfe2e511129ea95796b676de390540": {
+            "text": "muss sich von %s unterscheiden."
+        },
+        "5ff975f896afc1a3d44f7e5cf2523562": {
+            "text": "muss akzeptiert werden."
+        },
+        "75872da653850e5b56523af104ac02ad": {
+            "text": "muss numerisch sein."
+        },
+        "81495f3842f92cd64795702e235405e6": {
+            "text": "muss eine Ganzzahl sein."
+        },
+        "f87f5f2581a89c78c83ac7f3aed4f44d": {
+            "text": "muss %s Zeichen lang sein."
+        },
+        "b51bf268215336cb80ace35cff438844": {
+            "text": "muss gr\u00f6\u00dfer als %s sein."
+        },
+        "0691a08af1a152688286eb8add501c7a": {
+            "text": "muss kleiner als %s sein."
+        },
+        "803beb393544dd8a3ab29e2691b80f30": {
+            "text": "enth\u00e4lt einen ung\u00fcltigen Wert."
+        },
+        "f67e06439cbd618893452c020dbc1f84": {
+            "text": "ist keine g\u00fcltige IP-Adresse."
+        },
+        "1217bb805238358651e226239f031863": {
+            "text": "ist keine g\u00fcltige IPv4-Adresse."
+        },
+        "58f0671d229a1a23c95be8cc20636dc9": {
+            "text": "ist keine g\u00fcltige IPv6-Adresse."
+        },
+        "89d61ec4bae366d43110c39f661a67e7": {
+            "text": "ist keine g\u00fcltige E-Mail-Adresse."
+        },
+        "e16866d3a2aeb2dd82f0ac06e67abf99": {
+            "text": "ist keine g\u00fcltige E-Mail-Adresse, da kein aktiver DNS-Eintrag gefunden werden konnte."
+        },
+        "9c5e4caaddc4981285aef0c974929410": {
+            "text": "ist keine g\u00fcltige URL."
+        },
+        "405af4194051a23541c1e05ee21d5fde": {
+            "text": "muss eine aktive Dom\u00e4ne sein."
+        },
+        "6fa45c5bcf153f480b9281dd1869a75c": {
+            "text": "darf nur Buchstaben enthalten."
+        },
+        "4c2a73271ed51ceba27bb5d6a19bad5e": {
+            "text": "darf nur Buchstaben und\/oder die Ziffern 0-9 enthalten."
+        },
+        "8f4e0f444527dd742530675c121c03d5": {
+            "text": "darf nur die Buchstaben, Ziffern von 0-9, Bindestriche und Unterstriche enthalten."
+        },
+        "e58b6d2840b3789206a02fbde99a0b8e": {
+            "text": "enth\u00e4lt ung\u00fcltige Zeichen."
+        },
+        "38ec50423094dafeb375e91cdd2465db": {
+            "text": "ist kein g\u00fcltiges Datum."
+        },
+        "ab2918e64139bf4338d017157fd502bb": {
+            "text": "muss ein Datum im Format %s sein."
+        },
+        "d8a0511946c3db07a440988df95a5886": {
+            "text": "muss ein Datum vor %s sein."
+        },
+        "df46f2ba544e38477259e7543ae35656": {
+            "text": "muss ein Datum nach %s sein."
+        },
+        "ca2cf8d958faf269597e9ed8a17f2e8a": {
+            "text": "muss %s enthalten."
+        },
+        "4776fea62d0eb6aad4b7b407f94577f7": {
+            "text": "muss ein Wahrheitswert sein."
+        },
+        "496a6f57f86df1a3dca456809557ce2d": {
+            "text": "muss zwischen %s und %s Zeichen lang sein."
+        },
+        "da8c3186551908c612175e3fd131008c": {
+            "text": "muss eine g\u00fcltige Kreditkartennummer sein."
+        },
+        "e182229cb2673058e47817337b731535": {
+            "text": "muss mindestens %s Zeichen lang sein."
+        },
+        "0469824161acd62b71bbb34072cb7bcb": {
+            "text": "darf %s Zeichen nicht \u00fcberschreiten."
+        },
+        "f5af264fb5c442dc9766f1984f2d8692": {
+            "text": "muss eine Instanz von %s sein."
+        },
+        "76117bca0e24c5caf8645279712c42a6": {
+            "text": "darf nur einzigartige Elemente enthalten."
+        },
+        "3fb8919799ddfdba930fbb44f484fbd1": {
+            "text": "enth\u00e4lt ein Element, welches nicht in der Liste enthalten ist."
+        },
+        "3f27bc263791779a69e946f06e55bf8d": {
+            "text": "enth\u00e4lt nicht alle erforderlichen Schl\u00fcssel."
+        }
+    }
+}

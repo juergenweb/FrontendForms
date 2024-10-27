@@ -1,0 +1,9 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Inputs\/defaults\/SendCopy.php",
+    "textdomain": "site--modules--frontendforms--formelements--inputelements--inputs--defaults--sendcopy-php",
+    "translations": {
+        "7313e5cce02f10d1d6a22dea1aedc9eb": {
+            "text": "Eine Kopie dieser Nachricht an mich senden"
+        }
+    }
+}

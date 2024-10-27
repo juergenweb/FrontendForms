@@ -1,0 +1,12 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Captcha\/variants\/SimpleQuestionCaptcha.php",
+    "textdomain": "site--modules--frontendforms--formelements--captcha--variants--simplequestioncaptcha-php",
+    "translations": {
+        "dd037cafd7ea6b996985f42b3598e6d6": {
+            "text": "Bitte beantworten Sie die Frage"
+        },
+        "7f8c93e381be10c3cb9bebaa31387873": {
+            "text": "Einfache-Frage-Captcha (Freitext)"
+        }
+    }
+}

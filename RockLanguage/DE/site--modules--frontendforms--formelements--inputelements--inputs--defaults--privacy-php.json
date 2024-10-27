@@ -1,0 +1,18 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Inputs\/defaults\/Privacy.php",
+    "textdomain": "site--modules--frontendforms--formelements--inputelements--inputs--defaults--privacy-php",
+    "translations": {
+        "28f678f8feb29d236b6dfcb02190ba21": {
+            "text": "Ich akzeptiere die Datenschutzrichtlinien"
+        },
+        "9a5b98e025ebe5fd1adbddccc94ad638": {
+            "text": "Sie m\u00fcssen die Datenschutzrichtlinien akzeptieren"
+        },
+        "fa2ead697d9998cbc65c81384e6533d5": {
+            "text": "Datenschutz-Richtlinien"
+        },
+        "2b91037b0240c93155085ce8c0768cb9": {
+            "text": "Zur Seite mit den Datenschutz-Richtlininen"
+        }
+    }
+}

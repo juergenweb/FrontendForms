@@ -1,0 +1,9 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Inputs\/defaults\/FileUploadMultiple.php",
+    "textdomain": "site--modules--frontendforms--formelements--inputelements--inputs--defaults--fileuploadmultiple-php",
+    "translations": {
+        "c837009ce96fdfc1615d310bc667f996": {
+            "text": "Laden Sie mehrere Dateien hoch"
+        }
+    }
+}

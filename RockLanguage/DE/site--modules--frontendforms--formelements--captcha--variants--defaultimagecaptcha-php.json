@@ -1,0 +1,12 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Captcha\/variants\/DefaultImageCaptcha.php",
+    "textdomain": "site--modules--frontendforms--formelements--captcha--variants--defaultimagecaptcha-php",
+    "translations": {
+        "1e27db1c7a9a959ca4cd75964525fa2d": {
+            "text": "Bild CAPTCHA"
+        },
+        "5972e22698d0e9faba6397ce1b6b6f74": {
+            "text": "Ordnen sie das Bild einer Kategorie zu"
+        }
+    }
+}

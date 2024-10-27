@@ -1,0 +1,12 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Textarea\/Textarea.php",
+    "textdomain": "site--modules--frontendforms--formelements--inputelements--textarea--textarea-php",
+    "translations": {
+        "ef4384b98530cb2c2cdd7f9828d0ada2": {
+            "text": "Sie haben die maximale Anzahl von Zeichen erreicht."
+        },
+        "c265a6b5fe0229c56cdf89d9ff9d7754": {
+            "text": "Sie haben noch %s Zeichen \u00fcbrig."
+        }
+    }
+}

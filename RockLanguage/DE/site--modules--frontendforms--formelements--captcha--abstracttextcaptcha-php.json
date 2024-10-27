@@ -1,0 +1,15 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Captcha\/AbstractTextCaptcha.php",
+    "textdomain": "site--modules--frontendforms--formelements--captcha--abstracttextcaptcha-php",
+    "translations": {
+        "ad1ca00ca558c196b2ffa224309706e4": {
+            "text": "Diese Datei ist keine TrueType Schriftart Datei."
+        },
+        "d472945618bae0b84ca5082c7d916966": {
+            "text": "Diese Datei existiert nicht unter dem angegebenen Pfad"
+        },
+        "f985413aacdc4d6e125cd3b6fb2a3eae": {
+            "text": "CAPTCHA Sicherheitsabfrage"
+        }
+    }
+}

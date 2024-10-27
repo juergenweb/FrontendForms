@@ -1,0 +1,63 @@
+{
+    "file": "site\/modules\/FrontendForms\/config\/questionFields.php",
+    "textdomain": "site--modules--frontendforms--config--questionfields-php",
+    "translations": {
+        "cce75deb233360295f6767182c938f32": {
+            "text": "Akzeptierte Antworten"
+        },
+        "45d7ca50d976f3c4f755fa35821036d9": {
+            "text": "F\u00fcgen Sie alle akzeptierten Antworten hinzu (jede in einer neuen Zeile)."
+        },
+        "ecc06d754e4dda5735774f2cea9a3b68": {
+            "text": "Eigene Fehlermeldung"
+        },
+        "8bd8b18e7770795be254c93810a372c4": {
+            "text": "Geben Sie eine eigene Fehlermeldung ein, wenn Sie m\u00f6chten."
+        },
+        "e16385405c0f47ad2ceb370f74bc2ab9": {
+            "text": "Dies \u00fcberschreibt die Standard-Fehlermeldung, wenn die Antwort auf die CAPTCHA-Frage falsch war."
+        },
+        "eb348dd0d56400bd18e7c9e8d25cc666": {
+            "text": "Erfolgsmeldung"
+        },
+        "2e63c4d559b627072de5a4b21f1eb32c": {
+            "text": "Geben Sie eine eigene Erfolgsmeldung ein, wenn Sie m\u00f6chten."
+        },
+        "ce4c2231658c3a72e7aebe024e94aa51": {
+            "text": "Diese Meldung wird dann angezeigt, wenn die Antwort auf die CAPTCHA-Frage zwar richtig war, aber es noch weitere Fehler im Formular gab."
+        },
+        "910370309c0af1e93df0ae98ff8cfe5a": {
+            "text": "Platzhalter Text"
+        },
+        "b973c03d6052d7606a019c01bfe3d5f6": {
+            "text": "Geben Sie einen Platzhalter-Text ein, wenn Sie m\u00f6chten."
+        },
+        "74d5e1805d45df0b13e9479aa6ff2560": {
+            "text": "Hinweistext"
+        },
+        "8b110c326d0539657cfb11ea1c8872de": {
+            "text": "Geben Sie einen Hinweistext ein, wenn Sie m\u00f6chten."
+        },
+        "5246e64a8eba26d147ac489b70f1d603": {
+            "text": "Der Hinweistext wird unterhalb des Eingabefeldes angezeigt."
+        },
+        "fc4c04ecf67db91c6464624c45b6d962": {
+            "text": "Beschreibungstext"
+        },
+        "b28adfe52910e98d754b219d946b5168": {
+            "text": "Geben Sie einen Beschreibungstext ein, wenn Sie m\u00f6chten."
+        },
+        "9208ed81e76d40f644bf2285b17f19f2": {
+            "text": "Der Beschreibungstext wird ober- oder unterhalb der Feldbezeichnung oder unterhalb des Eingabefeldes angezeigt."
+        },
+        "91261839ea22b9ecf95e5fbb89ec8583": {
+            "text": "Position f\u00fcr den Beschreibungstext"
+        },
+        "9d9ec0ab13ea5dcc47e0265aea2de226": {
+            "text": "Sie k\u00f6nnen die Position des Beschreibungstextes \u00e4ndern, wenn Sie m\u00f6chten"
+        },
+        "46f1e762ce350d92ef565e24cfd6249e": {
+            "text": "Dies \u00fcberschreibt die Standard-Position"
+        }
+    }
+}

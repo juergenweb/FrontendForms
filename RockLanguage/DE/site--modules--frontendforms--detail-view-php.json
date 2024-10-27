@@ -1,0 +1,24 @@
+{
+    "file": "site\/modules\/FrontendForms\/detail-view.php",
+    "textdomain": "site--modules--frontendforms--detail-view-php",
+    "translations": {
+        "77c41ffdf7bebe6e2f1896cf8ae78a73": {
+            "text": "Zus\u00e4tzliche Informationen \u00fcber %s"
+        },
+        "0f66316eff804ffa836d2214d80f3756": {
+            "text": "Geographischer Standort"
+        },
+        "59716c97497eb9694541f7c3d37b1a4d": {
+            "text": "Land"
+        },
+        "f447ac856e7e72435904956e3b15f433": {
+            "text": "Region"
+        },
+        "57d056ed0984166336b7879c2af3657f": {
+            "text": "Stadt"
+        },
+        "ac598c39fd0d78fb3eff40b3a5b5cbbd": {
+            "text": "Es tut uns leid, aber ip-api.com hat keine Informationen \u00fcber diese IP-Adresse."
+        }
+    }
+}

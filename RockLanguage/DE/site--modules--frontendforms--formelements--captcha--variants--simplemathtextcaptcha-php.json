@@ -1,0 +1,12 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Captcha\/variants\/SimpleMathTextCaptcha.php",
+    "textdomain": "site--modules--frontendforms--formelements--captcha--variants--simplemathtextcaptcha-php",
+    "translations": {
+        "d0995c2ec8c5df0820426833eb777396": {
+            "text": "Mathematik Captcha"
+        },
+        "dc841e6076d43a6c8b03338a39a97e68": {
+            "text": "Geben Sie das Ergebnis der Berechnung in das Eingabefeld ein."
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Inputs\/defaults\/Phone.php",
+    "textdomain": "site--modules--frontendforms--formelements--inputelements--inputs--defaults--phone-php",
+    "translations": {
+        "bcc254b55c4a1babdf1dcb82c207506b": {
+            "text": "Telefon"
+        }
+    }
+}

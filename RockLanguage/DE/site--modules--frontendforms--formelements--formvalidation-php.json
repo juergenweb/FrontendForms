@@ -1,0 +1,57 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/FormValidation.php",
+    "textdomain": "site--modules--frontendforms--formelements--formvalidation-php",
+    "translations": {
+        "c2d918e53348ee8896137bec79036f84": {
+            "text": "Sekunden \u00fcbrig"
+        },
+        "1793e600a6822489f25244c196a05085": {
+            "text": "Sekunde \u00fcbrig"
+        },
+        "1196c16ef68e26acc46dae99fcc50522": {
+            "text": "Sie haben das Formular innerhalb von %s abgeschickt. Das scheint f\u00fcr einen Menschen ziemlich schnell zu sein. Ihr Verhalten \u00e4hnelt eher einem Spam-Bot. Bitte warten Sie mindestens %s, bis Sie das Formular erneut absenden."
+        },
+        "2447d344db3fb15973b24ddd51a615b8": {
+            "text": "Sie haben das Formular nach %s abgeschickt. Das scheint f\u00fcr einen Menschen ziemlich langsam zu sein. Ihr Verhalten \u00e4hnelt eher einem Spam-Bot. Bitte reichen Sie das Formular das n\u00e4chste Mal innerhalb von %s ein. Sie sind jetzt blockiert und m\u00fcssen den Browser schlie\u00dfen. Um die Sperrung aufzuheben, \u00f6ffnen Sie danach diese Seite erneut."
+        },
+        "7436f942d5ea836cb84f1bb2527d8286": {
+            "text": "Monat"
+        },
+        "172a8327fcd3685ab3c0f740d031da09": {
+            "text": "Woche"
+        },
+        "628b7db04235f228d40adc671413a8c8": {
+            "text": "Tag"
+        },
+        "896c55cc5e46fab38ce9f51ebf7bfcd3": {
+            "text": "Stunde"
+        },
+        "0a7d55be9d12a369a6a8da0fb517fba4": {
+            "text": "Minute"
+        },
+        "a9f0e61a137d86aa9db53465e0801612": {
+            "text": "Sekunde"
+        },
+        "da36cfaf48b9e19896e23e1207040d1e": {
+            "text": "Monate"
+        },
+        "ae60f11ab51860bdb22794a943335a34": {
+            "text": "Wochen"
+        },
+        "44fdec47036f482b68b748f9d786801b": {
+            "text": "Tage"
+        },
+        "73cdddd7730abfc13a55efb9f5685a3b": {
+            "text": "Stunden"
+        },
+        "640fd0cc0ffa0316ae087652871f4486": {
+            "text": "Minuten"
+        },
+        "783e8e29e6a8c3e22baa58a19420eb4f": {
+            "text": "Sekunden"
+        },
+        "be5d5d37542d75f93a87094459f76678": {
+            "text": "und"
+        }
+    }
+}

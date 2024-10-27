@@ -1,0 +1,141 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Form.php",
+    "textdomain": "site--modules--frontendforms--formelements--form-php",
+    "translations": {
+        "fa1cb3adb3f8108c13402b3f24ca237b": {
+            "text": "Diese E-Mail wurde automatisch erstellt. Bitte antworten Sie daher nicht auf diese E-Mail Adresse."
+        },
+        "eae639a70006feff484a39363c977e24": {
+            "text": "="
+        },
+        "1148d7bddfe056b3cc5a4fcf68227d19": {
+            "text": "Besuchte Seite"
+        },
+        "a12a3079e14ced46e69ba52b8a90b21a": {
+            "text": "="
+        },
+        "b6e43da299780697382d42fc98d3959c": {
+            "text": "Datum\/Zeit"
+        },
+        "a76d4ef5f3f6a672bbfab2865563e530": {
+            "text": "Zeit"
+        },
+        "44749712dbec183e983dcd78a7736c41": {
+            "text": "Datum"
+        },
+        "f6039d44b29456b20f8f373155ae4973": {
+            "text": "Benutzername"
+        },
+        "ef15fd2f45e6bb5ce57587895ba64f93": {
+            "text": "="
+        },
+        "665de5f0541888cc1c06e12ad167e513": {
+            "text": "Dies ist eine automatisch generierte Nachricht. Bitte antworten sie nicht darauf."
+        },
+        "cae724dd18de0c8ca83d1e05bc546dbd": {
+            "text": "%s ist keine g\u00fcltige IP-Adresse"
+        },
+        "feaed8b52507d421a9953e0a9ec9a687": {
+            "text": "Alle Felder, welche mit (*) markiert sind, stellen Pflichtfelder dar und m\u00fcssen in jeden Fall ausgef\u00fcllt werden."
+        },
+        "a0e0f33630289d49200c61cac7900200": {
+            "text": "Vielen Dank f\u00fcr Ihre Nachricht."
+        },
+        "552663e8ba6eb0a7c5c16727f8d19bcc": {
+            "text": "Es sind leider Fehler aufgetreten. Bitte \u00fcberpr\u00fcfen Sie Ihre Eingaben noch einmal."
+        },
+        "e02d8cd38e0f708a9633f46793e31a27": {
+            "text": "Bitte dieses Feld nicht ausf\u00fcllen"
+        },
+        "79845fb11e473b1a0811ca2543f04b9c": {
+            "text": "Versuche"
+        },
+        "1db222fece0e7454c122788bf892adf8": {
+            "text": "Versuch"
+        },
+        "45010ad705310127fdc90740a9ffd232": {
+            "text": "Sie haben noch %s %s \u00fcbrig, bis Sie aus Sicherheitsgr\u00fcnden gesperrt werden."
+        },
+        "47ad76bd199affac60644bad8dcb8061": {
+            "text": "Dies ist Fehlversuch %s. Sie haben noch einen Versuch das Formular erfolgreich abzusenden. Danach werden Sie aus Sicherheitsgr\u00fcnden gesperrt."
+        },
+        "8f42b5d8ad7d0119ad65510e26fa715c": {
+            "text": "Sie haben Javascript nicht aktiviert. Dies k\u00f6nnte zu Problemen f\u00fchren. Bitte aktivieren Sie Javascript, um das Formular problemlos absenden zu k\u00f6nnen."
+        },
+        "092284a62a0f8c62fa528c0cfd3d157c": {
+            "text": "Es tut uns leid, aber Ihre IP-Adresse %s steht auf der Liste der verbotenen IP-Adressen. Daher wird das Formular nicht angezeigt. Wenn Sie glauben, dass Ihre IP-Adresse f\u00e4lschlicherweise auf der Liste steht, wenden Sie sich bitte an den Administrator der Website."
+        },
+        "9604672fb8882c926b1fcf42c89576d7": {
+            "text": "Sie haben die max. Anzahl von Versuchen erreicht und aus diesem Grund k\u00f6nnen Sie das Formular nun nicht mehr absenden. Um die Sperrung aufzuheben und das Formular dennoch abzusenden schlie\u00dfen Sie bitte den Browser, \u00f6ffnen ihn erneut und besuchen Sie diese Seite noch einmal."
+        },
+        "e4e8a61a31a079875c2721207825142e": {
+            "text": "Bitte haben Sie etwas Geduld... Das Formular wird gepr\u00fcft!"
+        },
+        "84cdc76cabf41bd7c961f6ab12f117d8": {
+            "text": "Jahr"
+        },
+        "75aeb98e5241592ad6a6c2c4c78a16ef": {
+            "text": "Jahre"
+        },
+        "7436f942d5ea836cb84f1bb2527d8286": {
+            "text": "Monat"
+        },
+        "da36cfaf48b9e19896e23e1207040d1e": {
+            "text": "Monate"
+        },
+        "628b7db04235f228d40adc671413a8c8": {
+            "text": "Tag"
+        },
+        "44fdec47036f482b68b748f9d786801b": {
+            "text": "Tage"
+        },
+        "896c55cc5e46fab38ce9f51ebf7bfcd3": {
+            "text": "Stunde"
+        },
+        "73cdddd7730abfc13a55efb9f5685a3b": {
+            "text": "Stunden"
+        },
+        "0a7d55be9d12a369a6a8da0fb517fba4": {
+            "text": "Minute"
+        },
+        "640fd0cc0ffa0316ae087652871f4486": {
+            "text": "Minuten"
+        },
+        "a9f0e61a137d86aa9db53465e0801612": {
+            "text": "Sekunde"
+        },
+        "783e8e29e6a8c3e22baa58a19420eb4f": {
+            "text": "Sekunden"
+        },
+        "72cf6df09879e3c5e34778bf6f1bc965": {
+            "text": "E-Mail konnte aufgrund einer fehlerhaften Konfiguration in den Einstellungen nicht gesendet werden."
+        },
+        "d057415baac33355d5a125df279bd512": {
+            "text": "CAPTCHA"
+        },
+        "a3d9ae2d065e5a27c531a7dacd1735a4": {
+            "text": "Die Antwort ist falsch!"
+        },
+        "1bb62f28bc5d389b36a0e42b2a2d6a63": {
+            "text": "Sie haben keine Frage f\u00fcr Ihre Fragen-CAPTCHA hinzugef\u00fcgt!"
+        },
+        "1661e10f0e3721d8a4c907fee18e6425": {
+            "text": "Sie haben keine Antworten f\u00fcr Ihre Fragen-CAPTCHA hinzugef\u00fcgt!"
+        },
+        "7101c396b133aa31a4ddfc686b2c093a": {
+            "text": "Wenn Sie diesen Fehler nicht korrigieren, k\u00f6nnen Sie dieses Fragen-CAPTCHA nicht verwenden und es wird auch nicht angezeigt."
+        },
+        "d0c2b717657a0924062bd7c85fb01bea": {
+            "text": "Bitte f\u00fcllen Sie die Sicherheitsabfrage aus."
+        },
+        "4242b7d19729028c08f56fae785702c7": {
+            "text": "Bitte best\u00e4tigen Sie, dass Sie eine Mensch und keine Roboter sind."
+        },
+        "85b79eefe57522eeae18cd39fb97837a": {
+            "text": "Das Slider-Captcha wurde nicht richtig gel\u00f6st."
+        },
+        "274b68192b056e268f128ff63bfcd4a4": {
+            "text": "k.A."
+        }
+    }
+}

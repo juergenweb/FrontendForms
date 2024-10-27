@@ -1,0 +1,9 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Inputs\/defaults\/Email.php",
+    "textdomain": "site--modules--frontendforms--formelements--inputelements--inputs--defaults--email-php",
+    "translations": {
+        "ce8ae9da5b7cd6c3df2929543a9af92d": {
+            "text": "E-Mail"
+        }
+    }
+}

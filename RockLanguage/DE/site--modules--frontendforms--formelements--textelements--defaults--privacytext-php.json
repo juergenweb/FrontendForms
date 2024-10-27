@@ -1,0 +1,12 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Textelements\/Defaults\/PrivacyText.php",
+    "textdomain": "site--modules--frontendforms--formelements--textelements--defaults--privacytext-php",
+    "translations": {
+        "2c34ad3fc22ef60c91a73189e7f26e8e": {
+            "text": "Durch das Absenden des Formulars stimmen sie unseren %s zu."
+        },
+        "953a9a5b5747639204478270493a532d": {
+            "text": "Bedingungen und Datenschutzbestimmungen"
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Select\/defaults\/Language.php",
+    "textdomain": "site--modules--frontendforms--formelements--inputelements--select--defaults--language-php",
+    "translations": {
+        "4994a8ffeba4ac3140beb89e8d41f174": {
+            "text": "Sprache"
+        }
+    }
+}

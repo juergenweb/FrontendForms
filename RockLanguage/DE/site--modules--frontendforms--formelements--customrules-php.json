@@ -1,0 +1,108 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/CustomRules.php",
+    "textdomain": "site--modules--frontendforms--formelements--customrules-php",
+    "translations": {
+        "5f20144817f8a8a10c0c3e42aaacb234": {
+            "text": "muss eindeutig sein. Dieser Benutzername wird bereits verwendet. Bitte w\u00e4hlen Sie einen anderen aus."
+        },
+        "0692f1d96297b3d3ebb476ecb909b71f": {
+            "text": "und Benutzername stimmen nicht \u00fcberein."
+        },
+        "a19a1f724a26244cf7542e78fce6082d": {
+            "text": "erf\u00fcllt nicht die Bedingungen."
+        },
+        "efde12902a00485cee4d631f54f55f81": {
+            "text": "enth\u00e4lt nicht erlaubte Zeichen. Der Benutzername darf nur Kleinbuchstaben a-z, Ziffern 0-9 sowie Bindestriche und Unterstriche (keine Leerzeichen) enthalten."
+        },
+        "b413595e71b40c70836a66e8f056896d": {
+            "text": "muss einzigartig sein. Diese E-Mail-Adresse wird schon verwendet. Bitte verwenden Sie eine andere E-Mail-Adresse."
+        },
+        "8233c64b0291b99ef0d07c47db79105a": {
+            "text": "ist nicht das gleiche Passwort wie jenes, welches in der Datenbank gespeichert ist."
+        },
+        "c557836813d5c70d5972372d2a7a9ed4": {
+            "text": "und E-Mail stimmen nicht \u00fcberein."
+        },
+        "d31207aca9f42e43d83c917e59838466": {
+            "text": "ist nicht boolesch wahr."
+        },
+        "42debde15fa968c06bc0d5b38d569ee1": {
+            "text": "ist nicht boolesch falsch."
+        },
+        "3bfd649d64d7881e876082ba4296ea72": {
+            "text": "hat nicht den erwarteten Wert."
+        },
+        "2f7e4c69803bcbdc44e9404b3e3ac19b": {
+            "text": "ist nicht richtig."
+        },
+        "d5aa7f638be76a8922285c2a5fffe4c7": {
+            "text": "muss sich von dem angegebenen Wert unterscheiden."
+        },
+        "9dc911237765edb7f22808f0b2102b63": {
+            "text": "muss sich vom alten Passwort unterscheiden."
+        },
+        "4d9ecb529945a9c05dc622c41cb7ab08": {
+            "text": "Wert ist nicht korrekt."
+        },
+        "5da3ffa343c2825257dc7f7b35b1ff21": {
+            "text": "ist in der Liste der beliebtesten Passw\u00f6rter und wird daher nicht gespeichert. Bitte w\u00e4hlen Sie ein anderes aus."
+        },
+        "05e14bb8d5644c5393b8ba6b3047cd2c": {
+            "text": "ist gr\u00f6\u00dfer als die zul\u00e4ssige Dateigr\u00f6\u00dfe von %s."
+        },
+        "e73de70795c028bc6fabdaf499a9e38f": {
+            "text": "verursachte einen Fehler beim Hochladen."
+        },
+        "e9104007e1d2a05266de336a3d10a55b": {
+            "text": "ist nicht vom Typ der  erlaubten Dateitypen: %s."
+        },
+        "2588b342e65a171fe8e5433b310a9223": {
+            "text": "ist gr\u00f6\u00dfer als die max. zul\u00e4ssige Dateigr\u00f6\u00dfe."
+        },
+        "7d0b6ffe466c0b12216be0168d5c2136": {
+            "text": "ist vom Typ der verbotenen Dateitypen: %s."
+        },
+        "f0c45ecb171ec186a5dbc0ce9957c073": {
+            "text": "ist keine g\u00fcltige Zeitangabe. Sie m\u00fcssen die Zeit im Format HH:MM:SS (z.B. 19:00:00) eingeben"
+        },
+        "cba20ded2eec02144db964c8fab90000": {
+            "text": "ist keine g\u00fcltige Monatsangabe. Sie m\u00fcssen das Monat (inklusive Jahr) im Format YYYY-MM (z.B 2023-06) eingeben"
+        },
+        "fb6eb0f6821ca0cfffc7fb19fc2b1dde": {
+            "text": "ist keine g\u00fcltige Wochenangabe. Sie m\u00fcssen die Woche (inklusive Jahr) im Format YYYY-Www (z.B 2023-W06) eingeben"
+        },
+        "47d0b991eb42ea41be94a77c66ad608b": {
+            "text": "ist kein g\u00fcltiger Hexadecimal-Farbcode."
+        },
+        "631c49fb2a0a41ae81fb7c7dc09a6571": {
+            "text": "muss ein Datum vor %s sein."
+        },
+        "b83a396a69b272c4b79df4a61c18009f": {
+            "text": "muss ein Datum nach %s sein."
+        },
+        "265d89403b5c013461609c89ab268bc7": {
+            "text": "muss ein Datum innerhalb des erlaubten Zeitraumes sein."
+        },
+        "0f3f63f95068a11bfa7ad25ca209fedc": {
+            "text": "muss ein Datum au\u00dferhalb des verbotenen Zeitraumes sein."
+        },
+        "3218c4d1407f03ef0c210f61d3f5c19c": {
+            "text": "enth\u00e4lt ung\u00fcltige Zeichen f\u00fcr einen Namen."
+        },
+        "8eae7d44a736423d717bfe942ae4855a": {
+            "text": "beinhaltet eine Datei, welche den selben Dateinamen besitzt als eine Datei im Zielverzeichnis."
+        },
+        "53948e8d9415688d2cc9a14f2d39e32f": {
+            "text": "Bitte geben Sie nur eine Array als zweiten Parameter ein."
+        },
+        "344c4c52e2af19e1a0b9a78d95b46bd4": {
+            "text": "enth\u00e4lt nicht die richtige Antwort."
+        },
+        "717bbd629cd6af3c2239e23329293280": {
+            "text": "hat nicht das richtige Format."
+        },
+        "c4e23eb773320ea4b732526b763d3849": {
+            "text": "wurde nicht richtig gel\u00f6st."
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Captcha\/variants\/EvenCharacterTextCaptcha.php",
+    "textdomain": "site--modules--frontendforms--formelements--captcha--variants--evencharactertextcaptcha-php",
+    "translations": {
+        "07919a26035f7d7aaec32087cc2c0b4d": {
+            "text": "Jedes zweite Zeichen Captcha"
+        },
+        "923fb30f185465aa974330e30a9a97c7": {
+            "text": "Geben Sie jedes zweite Zeichen vom Text aus dem Bild in das Eingabefeld ein."
+        }
+    }
+}

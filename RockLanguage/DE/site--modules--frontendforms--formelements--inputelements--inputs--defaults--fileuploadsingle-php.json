@@ -1,0 +1,9 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Inputs\/defaults\/FileUploadSingle.php",
+    "textdomain": "site--modules--frontendforms--formelements--inputelements--inputs--defaults--fileuploadsingle-php",
+    "translations": {
+        "e14f1d680e8b3d40bc2744468332eb46": {
+            "text": "Laden Sie eine Datei hoch"
+        }
+    }
+}

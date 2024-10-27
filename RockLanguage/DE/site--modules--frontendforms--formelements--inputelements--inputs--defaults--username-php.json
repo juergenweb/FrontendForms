@@ -1,0 +1,9 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Inputs\/defaults\/Username.php",
+    "textdomain": "site--modules--frontendforms--formelements--inputelements--inputs--defaults--username-php",
+    "translations": {
+        "f6039d44b29456b20f8f373155ae4973": {
+            "text": "Benutzername"
+        }
+    }
+}
