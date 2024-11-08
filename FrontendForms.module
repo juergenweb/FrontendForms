@@ -638,6 +638,7 @@
                 $mail = $event->object;
                 $form = $event->arguments(0);
 
+
                 // check if temp_uploads folder exists - otherwise create it
                 if (!$this->wire('files')->exists($this->temp_uploadPath)) {
                     $this->wire('files')->mkdir($this->temp_uploadPath);
@@ -659,7 +660,7 @@
                         }
                         // save the file in addition under the upload path
                         if ($keep_files) {
-                            $this->wire('files')->copy($this->temp_uploadPath, $path);
+                            $this->wire('files')->copy($this->temp_uploadPath, $form->getUploadPath());
                         } else {
                             $this->wire('files')->unlink($path);
                         }
