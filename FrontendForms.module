@@ -634,8 +634,8 @@
              * $mail is the WireMail object
              */
             wire()->addHookMethod('WireMail::sendAttachments', function ($event) {
-                $mail = $event->object;
 
+                $mail = $event->object;
                 $form = $event->arguments(0);
 
                 // check if temp_uploads folder exists - otherwise create it
@@ -644,6 +644,7 @@
                 }
 
                 $keep_files = ($event->arguments(1)) ? ($event->arguments(1)) : false;
+
                 // get the paths of the currently uploaded files
                 $fileNames = $form->getUploadedFiles();
                 if ($fileNames) {
@@ -656,14 +657,11 @@
                         } else {
                             $mail->attachment($this->temp_uploadPath . $file_name);
                         }
-                        if ((is_bool($keep_files)) && (!$keep_files)) {
-                            // unlink the file in the page folder under site/assets/files/...
-                            $this->wire('files')->unlink($path);
+                        // save the file in addition under the upload path
+                        if ($keep_files) {
+                            $this->wire('files')->copy($this->temp_uploadPath, $path);
                         } else {
-                            if ((is_string($keep_files)) && ($keep_files != '')) {
-                                $this->wire('files')->copy($path, $keep_files);
-                                $this->wire('files')->unlink($path);
-                            }
+                            $this->wire('files')->unlink($path);
                         }
                     }
                 }
@@ -1358,7 +1356,7 @@
             if (!$this->input_removeJS) {
 
                 $js = '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.js?v=' . $version . '"></script>' . PHP_EOL;
-                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version. '" defer></script>' . PHP_EOL;
+                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '" defer></script>' . PHP_EOL;
 // load slidercaptcha.js only if this captcha type is selected
                 if ($this->input_captchaType == 'SliderCaptcha') {
                     $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms-slidercaptcha.js?v=' . $version . '" defer></script>' . PHP_EOL;
