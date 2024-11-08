@@ -1235,6 +1235,15 @@
         }
 
         /**
+         * Get the upload path for files
+         * @return string
+         */
+        public function getUploadPath(): string
+        {
+            return $this->uploadPath;
+        }
+
+        /**
          * This method is only for testing of ip addresses that should be banned
          * Enter ip addresses as a numeric array
          * @param string $ip
