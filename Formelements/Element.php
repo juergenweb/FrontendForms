@@ -61,6 +61,7 @@
             // a fieldwrapper is always necessary in this case to show or hide an element if it is a child of the Inputfield class
             if (is_subclass_of($this, 'FrontendForms\Inputfields')) {
                 $this->useFieldWrapper(true);
+                $this->getFieldWrapper()->setAttribute('class', 'fieldwrapper'); // important 
             } else {
                 // add a wrapper element for showing and hiding
                 if(str_starts_with($container, '.')){
@@ -73,6 +74,7 @@
                     $attribute = 'class';
                     $value = $container;
                 }
+
                 $this->wrap()->setAttribute($attribute, $value);
             }
             $this->conditions = $rule;
