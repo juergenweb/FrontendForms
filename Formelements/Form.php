@@ -2098,6 +2098,7 @@
                                 $sanitizedValues = [];
 
                                 foreach ($formElements as $element) {
+
                                     // remove all form elements which have the disabled attribute, because they do not send values
                                     if (!$element->hasAttribute('disabled')) {
                                         if ($element instanceof InputFile) {
@@ -2115,10 +2116,14 @@
                                         $element->removeAllRules();
                                     }
 
+
                                     // check if the field is inside the POST array
                                     // if not (e.g., field is disabled), then remove all validation rules, because no user input can be entered
-
-                                    $fieldValue = $this->wire('input')->post($this->getID() . '-' . $element->getID());
+                                    if($element instanceof InputFile){
+                                        $fieldValue = $_FILES; // files are not inside the post array
+                                    } else {
+                                        $fieldValue = $this->wire('input')->post($this->getID() . '-' . $element->getID());
+                                    }
 
                                     if (is_null($fieldValue) && (!$element instanceof InputCheckbox) && (!$element instanceof InputCheckboxMultiple)) { // exclude checkboxes because they are allowed to have no value
                                         $element->removeAllRules();
@@ -2210,6 +2215,7 @@
                                     // set error alert
                                     $this->wire('session')->set('errors', '1');
                                     $this->formErrors = $v->errors();
+
 
                                     // check if a CAPTCHA is enabled
                                     if ($this->getCaptchaType() != 'none') {
