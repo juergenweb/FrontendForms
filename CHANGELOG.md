@@ -1378,10 +1378,13 @@ The (old) CSV files usage is still supported.
 ## [2.2.19] 2024-11-09
 
 - **Bug fixed: class "fieldwrapper" has not been added to outer container if inputfield dependencies are used**
+
   If inputfield dependencies are used, the most outer container must contain the class "fieldwrapper" to show or hide certain form elements. This was not the case and has been fixed now.
   
 - **Bug fixed: validation rules on file inputfields have been removed accidentaly**
+
   The problem was, that all validation rules on file upload fields have been removed due to a wrong if-condition. This has been fixed now.
   
 - **New method getUploadPath() added**
+
   This method is primarly for internal usage and outputs the path, were uploaded files will be stored.
