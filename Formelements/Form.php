@@ -2517,7 +2517,9 @@
          */
         public function formContainsElementByClass(string $className): int
         {
-            $className = wireClassNamespace($className, true);
+
+            //$className = wireClassNamespace($className, true); // leads to problem with Phalcon framework
+            $className = '\\FrontendForms\\'.$className;
             $number = (count(array_filter($this->formElements, function ($entry) use ($className) {
                 return ($entry instanceof $className);
             })));
@@ -2557,7 +2559,8 @@
         {
             $elements = [];
             if ($this->formContainsElementByClass($className)) {
-                $className = wireClassNamespace($className, true);
+                //$className = wireClassNamespace($className, true); // leads to problem with Phalcon framework
+                $className = '\\FrontendForms\\'.$className;
                 $elements[] = array_filter($this->formElements, function ($entry) use ($className) {
                     return ($entry instanceof $className);
                 });
