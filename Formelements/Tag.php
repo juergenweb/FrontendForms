@@ -20,7 +20,7 @@ use ProcessWire\WireException;
 use ProcessWire\WirePermissionException;
 
 
-\ProcessWire\wire('classLoader')->addNamespace('ProcessWire', '.'.__DIR__ . 'FrontendForms');
+\ProcessWire\wire('classLoader')->addNamespace('ProcessWire', __DIR__);
 
 abstract class Tag extends Wire
 {
