@@ -1389,8 +1389,12 @@ The (old) CSV files usage is still supported.
 
   This method is primarly for internal usage and outputs the path, were uploaded files will be stored.
 
-## 2024-11-14
+## [2.2.20] 2024-11-14
 
 - **Namespace problem by usage with Phalcon PHP-framework fixed**
 
   According to this [issue](https://github.com/juergenweb/FrontendForms/issues/19), I removed the usage of the wireClassNamespace() function by using a hard-coded namespace instead.
+
+- **Classloader path fixed**
+
+Thanks to Donatas for providing a [pull request](https://github.com/juergenweb/FrontendForms/pull/20) to fix a path problem inside the Tag.php.  
