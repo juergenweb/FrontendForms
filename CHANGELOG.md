@@ -1398,3 +1398,9 @@ The (old) CSV files usage is still supported.
 - **Classloader path fixed**
 
 Thanks to Donatas for providing a [pull request](https://github.com/juergenweb/FrontendForms/pull/20) to fix a path problem inside the Tag.php.  
+
+## 2024-12-08
+
+- **Wrong logo path fixed**
+
+At the email template *template_3.html* there was a wrong logo path which prevents the logo to be displayed inside the email. This has been fixed now.
