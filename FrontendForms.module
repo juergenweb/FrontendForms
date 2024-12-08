@@ -94,6 +94,7 @@
 
         /* Email configuration */
         protected string $input_emailTemplate = 'template_1.html'; // default email template
+        protected array $email_template_files = []; // array containing all pathes to the email template files
         protected array $mailProperties = []; // array of placeholder variables for HTML templates
         protected array $emailTemplates = []; // email template names as a numeric array
         protected string $emailTemplatesPath = ''; // path to the email templates folder
@@ -556,10 +557,13 @@
             $custom_templateFiles = $this->wire('files')->find($this->custom_emailTemplatesPath, ['extensions' => 'html']);
             $templateFiles = $this->wire('files')->find($this->emailTemplatesPath, ['extensions' => 'html']);
             $files = array_merge($custom_templateFiles, $templateFiles);
-            $fileNames = [];
+
+            $fileNames = $pathes_to_files = [];
             foreach ($files as $file) {
+                $pathes_to_files[pathinfo($file, PATHINFO_BASENAME)] = $file;
                 $fileNames[] = pathinfo($file, PATHINFO_BASENAME);
             }
+            $this->email_template_files = $pathes_to_files;
             $this->emailTemplates = $fileNames; // set it to property emailTemplates
         }
 
@@ -795,12 +799,18 @@
             $this->addHookBefore('InputfieldText::processInput', $this, 'sanitizeColorValues');
             $this->addHookBefore('Inputfield::render', $this, 'addLinkToNotes');
             $this->addHookBefore('Page::render', $this, 'downloadPasswords');
+            $this->addHookAfter('Page::render', $this, 'initializeImagePicker');
+
 
 
             // add CSS and JS to the backend
             $version = $this->getModuleInfo()['version'] . '-' . time();
             $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version . '&time=' . time());
             $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version . '&time=' . time());
+
+            // add image picker js and CSS files to the backend (used for the email template select)
+            $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.css');
+            $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.min.js');
 
             // add CSS and JS links to the frontend template
             $this->addHookAfter('Page::render', $this, 'addAssets');
@@ -1214,6 +1224,17 @@
                     wire('modules')->saveConfig($this, $data);
                 }
             }
+        }
+
+        protected function initializeImagePicker(HookEvent $event): void
+        {
+            $page = $event->object;
+            // don't add this to frontend pages
+            if ($page->template->name !== 'admin') {
+                return;
+            }
+            $initialize = '<script>$("select").imagepicker({show_label  : true})</script>';
+            $event->return = str_replace('</body>', $initialize . '</body>', $event->return);
         }
 
         /**
@@ -2051,13 +2072,31 @@
                 $emailTemplate = $this->wire('modules')->get('InputfieldSelect');
                 $emailTemplate->label = $this->_('HTML email template setting');
                 $emailTemplate->attr('name', 'input_emailTemplate');
+                $emailTemplate->attr('class', 'imagepicker');
                 //  create options
-                $templates = [];
-                $templates['none'] = $this->_('no HTML template');
+                $placeholderimage = $this->wire('config')->urls->$this . 'images/templatepreviews/emailtemplate-placeholder-image.png';
+                $noneimage = $this->wire('config')->urls->$this . 'images/templatepreviews/none.png';
+                $emailTemplate->addOption( 'none', $this->_('no HTML template'), ['data-img-src' => $noneimage]);
+
                 foreach ($this->emailTemplates as $template) {
-                    $templates[$template] = $template;
+
+                    $p =  pathinfo($this->email_template_files[$template]);
+                    $absolutedir = $p['dirname'];
+                    $relativedir = strstr($p['dirname'], '/site');
+                    $filename = $p['filename'].'.png';
+                    $previewImage = $relativedir.'/'.$filename;
+                    $previewPath = $absolutedir.'/'.$filename;
+
+                    if(file_exists($previewPath)) {
+                        $path = $previewImage;
+                    } else {
+                        $path = $placeholderimage;
+                    }
+
+                    // add data-img-src for the image picker
+                    $emailTemplate->addOption($template, $template, ['data-img-src' => $path]);
                 }
-                $emailTemplate->addOptions($templates);
+                //$emailTemplate->addOptions($templates);
                 $emailTemplate->attr('value', $this->input_emailTemplate);
                 $emailTemplate->required = 1;
                 $emailTemplate->description = $this->_('Choose whether you want to use the HTML template for your emails and if so, which one.');
