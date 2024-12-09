@@ -2360,9 +2360,9 @@ ProcessWire is shipped with the WireMail class to send emails.
 Unfortunately this class does not support the usage of stylish HTML email templates by default, so I decided to enhance
 this class with a new method to simply choose an email template, which is stored inside the [email_templates folder](https://github.com/juergenweb/FrontendForms/tree/main/email_templates) of this module.
 
-This module comes with a few email templates out of the box, which you can use for sending stylish HTML emails. In the backend configuration you will find a setting, where
-you can select your prefered HTML template globally.
+This module contains some email templates that you can use to send stylish HTML emails. In the backend configuration, you will find a setting where you can select your preferred HTML template globally. This is done with an easy-to-use image picker.
 
+![Template select](https://github.com/juergenweb/FrontendForms/blob/main/images/templates-elect.png?raw=true)
 
 
 ## Custom email templates
@@ -2370,11 +2370,15 @@ If you want to use your own custom email templates, an extra folder called **"fr
 
 Please put all your own custom email templates inside this folder and not in the default email templates folder as described in the previous point. Otherwise your custom email templates will get lost after an update.
 
-If you want to display a thumbnail of your custom template
+If you want to display a thumbnail of your custom template in the template selector, as mentioned in the previous section, you'll need to create the thumbnail of your template yourself and place it next to the custom template file in the **frontendforms-custom-templates** folder.
+
+*Please note:* To properly display the template's thumbnail, you need to save it in PNG format and in the size of 200x200px.
 
 If you want to use another folder than the mentioned folder **"frontendforms-custom-templates"**, you can also create this folder manually and put all your custom templates inside. 
 
 In this case you have to add the complete path to the mail templates to the mailTemplate() method (see the next point).
+
+**Just to mention:** In this case, your custom templates will not be displayed inside the template selector in the backend.
 
 To create your own custom templates, I recommend you to study the templates inside the email templates folder and adapt them to your needs.
 The custom email templates folder will be created during the install process automatically. If it is not there, please create it manually.
