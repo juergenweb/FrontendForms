@@ -2360,10 +2360,17 @@ ProcessWire is shipped with the WireMail class to send emails.
 Unfortunately this class does not support the usage of stylish HTML email templates by default, so I decided to enhance
 this class with a new method to simply choose an email template, which is stored inside the [email_templates folder](https://github.com/juergenweb/FrontendForms/tree/main/email_templates) of this module.
 
+This module comes with a few email templates out of the box, which you can use for sending stylish HTML emails. In the backend configuration you will find a setting, where
+you can select your prefered HTML template globally.
+
+
+
 ## Custom email templates
 If you want to use your own custom email templates, an extra folder called **"frontendforms-custom-templates"** will be created during the install process under the site directory. So you will find this folder here: site/frontendforms-custom-template/.
 
 Please put all your own custom email templates inside this folder and not in the default email templates folder as described in the previous point. Otherwise your custom email templates will get lost after an update.
+
+If you want to display a thumbnail of your custom template
 
 If you want to use another folder than the mentioned folder **"frontendforms-custom-templates"**, you can also create this folder manually and put all your custom templates inside. 
 
