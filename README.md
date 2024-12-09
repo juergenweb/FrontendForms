@@ -2362,7 +2362,7 @@ this class with a new method to simply choose an email template, which is stored
 
 This module contains some email templates that you can use to send stylish HTML emails. In the backend configuration, you will find a setting where you can select your preferred HTML template globally. This is done with an easy-to-use image picker.
 
-![Template select](https://github.com/juergenweb/FrontendForms/blob/main/images/templates-elect.png?raw=true)
+![Template select](https://github.com/juergenweb/FrontendForms/blob/main/images/template-select.png?raw=true)
 
 
 ## Custom email templates
