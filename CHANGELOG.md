@@ -1399,8 +1399,13 @@ The (old) CSV files usage is still supported.
 
 Thanks to Donatas for providing a [pull request](https://github.com/juergenweb/FrontendForms/pull/20) to fix a path problem inside the Tag.php.  
 
-## 2024-12-08
+## [2.2.21] 2024-12-09
 
 - **Wrong logo path fixed**
 
 At the email template *template_3.html* there was a wrong logo path which prevents the logo to be displayed inside the email. This has been fixed now.
+
+- **New userfriendly HTML email template selector added**
+
+The default select input element for selecting a email template globally has been replaced by a stylish image picker, which displays thumbnails of the email templates. Now you can see, what the template looks like instead of seeing only the name of the template file.
+You can read more about it [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#email-templates)
