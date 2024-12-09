@@ -2082,7 +2082,7 @@
 
                     $p =  pathinfo($this->email_template_files[$template]);
                     $absolutedir = $p['dirname'];
-                    $relativedir = strstr($p['dirname'], '/site');
+                    $relativedir = strstr($p['dirname'], '/site/modules');
                     $filename = $p['filename'].'.png';
                     $previewImage = $relativedir.'/'.$filename;
                     $previewPath = $absolutedir.'/'.$filename;
