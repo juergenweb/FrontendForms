@@ -169,7 +169,7 @@
                 'summary' => 'Create forms and validate them using the Valitron library.',
                 'author' => "Jürgen Kern",
                 'href' => 'https://github.com/juergenweb/FrontendForms',
-                'version' => '2.2.21',
+                'version' => '2.2.22',
                 'singular' => true,
                 'autoload' => true,
                 'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
@@ -1233,7 +1233,7 @@
             if ($page->template->name !== 'admin') {
                 return;
             }
-            $initialize = '<script>$("select").imagepicker({show_label  : true})</script>';
+            $initialize = '<script>$("select.ff-imagepicker").imagepicker({show_label  : true})</script>';
             $event->return = str_replace('</body>', $initialize . '</body>', $event->return);
         }
 
@@ -2072,7 +2072,7 @@
                 $emailTemplate = $this->wire('modules')->get('InputfieldSelect');
                 $emailTemplate->label = $this->_('HTML email template setting');
                 $emailTemplate->attr('name', 'input_emailTemplate');
-                $emailTemplate->attr('class', 'imagepicker');
+                $emailTemplate->attr('class', 'ff-imagepicker');
                 //  create options
                 $placeholderimage = $this->wire('config')->urls->$this . 'images/templatepreviews/emailtemplate-placeholder-image.png';
                 $noneimage = $this->wire('config')->urls->$this . 'images/templatepreviews/none.png';
