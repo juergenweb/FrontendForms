@@ -1409,3 +1409,9 @@ At the email template *template_3.html* there was a wrong logo path which preven
 
 The default select input element for selecting a email template globally has been replaced by a stylish image picker, which displays thumbnails of the email templates. Now you can see, what the template looks like instead of seeing only the name of the template file.
 You can read more about it [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#email-templates)
+
+## [2.2.22] 2024-12-11
+
+- **Bug related to JQuery image-picker script fixed**
+
+The initialization of the image-picker script resulted in manipulation of all select inputs on the site. The cause of this was, that script affected all select inputs instead of a specific one for the template selector. This has been fixed now. Thanks to Chris-PW from the forum for reporting this issue.
