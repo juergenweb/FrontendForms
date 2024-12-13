@@ -1361,7 +1361,8 @@
             }
 
             // add js variables as translatable strings to the head section if slider captcha is selected
-            if ($this->input_captchaType == 'SliderCaptcha') {
+
+            if ($this->input_captchaType == 'SliderCaptcha' && $page->sliderCaptcha) {
                 $sliderdata = [
                     'barText' => $this->_('Slide right to fill'),
                     'loadingText' => $this->_('Loading'),
@@ -1385,7 +1386,7 @@
                 $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '" defer></script>' . PHP_EOL;
 
                 // load slidercaptcha.js only if this captcha type is selected
-                if ($this->input_captchaType == 'SliderCaptcha') {
+                if ($this->input_captchaType == 'SliderCaptcha' && $page->sliderCaptcha) {
                     $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms-slidercaptcha.js?v=' . $version . '" defer></script>' . PHP_EOL;
                 }
 
