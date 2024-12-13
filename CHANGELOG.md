@@ -1422,15 +1422,19 @@ The new features come from a user request by donatasben. Thanks for your suggest
 
 - **Performance update: JavaScript loading on certain conditions added**
 
-By default there were only 2 conditions, that could be set in the backend: load all JS or does not load JS at all on the frontend. 
-This module contains 3 different Javascript files, that will be added to the frontend: The main JS files, the JS file for field conditions and the JS file for the Slider Captcha.
-If set, that JS should be loaded, than the main JS and the field condition JS will be loaded, independent if you are using field conditions or not.
-The first performance update contains now a check, if at least 1 field condition will be used on a field on page or not. If no one of the field contains a field condition, then the appropriate field conditions JS will not be added to the page.
-The second performance update contains a check if the Slider Captcha was selected in the backend and the Slider Captach will not be disabled on per form base on a page. So if you have enabled the Slider Captcha globally, but you have disabled it on all forms on a certain page, then the JS file for the slider Captcha will not be added to the frontend (independent of the backend settings).
+By default, there were only 2 conditions that could be set in the backend: load all JavaScript files in the frontend or not.
+
+This module contains 3 different javascript files that are added to the frontend: The main JS file, the JS file for field conditions, and the JS file for the slider captcha.
+
+If embedding the JS files is selected, then the main JS and the JS field condition will be loaded, regardless of whether you use field conditions or not.
+
+The first performance update now includes a check for whether or not at least 1 field condition is used on a field on the page. If none of the fields contain a field condition, the corresponding JS field condition file is not added to the page.
+
+The second performance update includes a check if the slider captcha has been selected in the backend and that the slider captcha is not disabled on per form base on a page. So if you have enabled the slider captcha globally, but have disabled it in all forms on a given page, then the JS file for the slider captcha will not be added to the frontend (regardless of the backend settings).
 
 - **API update: Enable/disable JS/CSS files on per form base**
 
-Until now you had only the possibility to enable/disable the embedding of JS/CSS on the frontend in the backend configuration.
+Until now, you only had the option to enable/disable the embedding of JS/CSS in the frontend in the backend configuration.
 
 Now you can enable/disable this on per form base too by using 2 new methods: [useCSS()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#usecss---enabledisable-the-embedding-of-css-files-on-per-form-base) and [useJS()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#usejs---enabledisable-the-embedding-of-js-files-on-per-form-base).
 
