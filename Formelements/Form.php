@@ -290,6 +290,7 @@
             // set default value for field conditions to false if it was not set before
             if(!isset($this->page->field_conditions))
                 $this->page->field_conditions = false;
+
         }
 
         /**
@@ -2666,6 +2667,11 @@
             // redirect after successful form validation if set
             if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
                 $this->wire('session')->redirect($this->getRedirectURL());
+            }
+
+            // check if slider Captcha has been selected and was not disabled on per form base
+            if($this->frontendforms['input_captchaType'] == 'SliderCaptcha'){
+                $this->page->sliderCaptcha = true;
             }
 
             $out = '';
