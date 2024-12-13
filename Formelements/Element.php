@@ -19,6 +19,7 @@
     {
         protected ?Wrapper $wrapper = null; // wrapper object
         protected array|null $conditions = null; // string containing the conditions as json string
+        protected bool $contains_conditions = false; // bool value if conditions are used on this input field
 
         /**
          * @param string|null $id
@@ -40,6 +41,15 @@
         public function getConditions(): array|null
         {
             return $this->conditions;
+        }
+
+        /**
+         * Get the value, if this element contains field conditions (true) or not(false)
+         * @return bool
+         */
+        public function containsConditions(): bool
+        {
+            return $this->contains_conditions;
         }
 
         /**
@@ -78,6 +88,7 @@
                 $this->wrap()->setAttribute($attribute, $value);
             }
             $this->conditions = $rule;
+            $this->contains_conditions = true;
         }
 
 
