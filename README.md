@@ -565,6 +565,8 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setMsgTag()](#setmessagetag---change-the-tag-for-the-input-field-error-and-success-message-text-on-this-form)  | Change the tag for the success and error message on per form base |
 | [stopHoneypotRotation()](#stophoneypotrotation---stop-the-randomly-rotation-of-the-honeypot-field-on-per-form-base)  | Stop the Honeypot field from randomly positioning and add it fixed to the very first position of the form |
 | [setAjaxMessage()](#setajaxmessage---customize-the-info-text-during-an-ajax-submission-on-per-form-base)  | Customize the info text during an AJAX submission on per form base |
+| [useJS()](#setajaxmessage---customize-the-info-text-during-an-ajax-submission-on-per-form-base)  | Enable/disable the embedding of JS files of this module on per form base |
+| [useCSS()](#setajaxmessage---customize-the-info-text-during-an-ajax-submission-on-per-form-base)  | Enable/disable the embedding of CSS files of this module on per form base |
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
@@ -1169,6 +1171,30 @@ This method overwrites either the default text or the text set inside the module
 
 ```php
 $form->setAjaxMessage('Submitting your enquiry...');
+```
+
+### useJS() - Enable/disable the embedding of JS files on per form base
+
+With this method you can enable/disable the embedding of the modules JS files on the frontend on per form base. If you have multiple forms on a page, then it
+will be checked, which form has the embedding of the JS file enabled and wich not. If there is at least 1 form with enabled JS files, then the JS files will be embedded
+on the frontend (independent of the setting of the other forms on the page).
+
+So this is an API method, to set the embedding of the Javascript files directly on the form and not only in the backend.
+
+```php
+$form->useJS(false); // enable (true) or disable (false) the embedding of the modules JS files on the frontend (default is true)
+```
+
+### useCSS() - Enable/disable the embedding of CSS files on per form base
+
+With this method you can enable/disable the embedding of the modules CSS file on the frontend on per form base. If you have multiple forms on a page, then it
+will be checked, which form has the embedding of the CSS file enabled and wich not. If there is at least 1 form with enabled CSS file, then the CSS file will be embedded
+on the frontend (independent of the setting of the other forms on the page).
+
+So this is an API method, to set the embedding of the CSS file directly on the form and not only in the backend.
+
+```php
+$form->useCSS(false); // enable (true) or disable (false) the embedding of the modules CSS file on the frontend (default is true)
 ```
 
 ## Input field methods
