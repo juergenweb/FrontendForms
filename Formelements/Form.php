@@ -108,12 +108,13 @@
         protected string|null|bool|int $stopHoneypotRotation = false; // Honeypotfield will be positioned randomly (false) or stays at the top of the form (true)
         
         /* objects */
+        protected Page $page; // the current page object, where the form is integrated
         protected Alert $alert; // alert box
         protected RequiredTextHint $requiredHint; // hint to inform that all required fields have to be filled out
         protected Wrapper $formElementsWrapper; // the wrapper object over all form elements
         protected User $user; // the user, who views the form (the page)
         protected Language $userLang; // the language object of the user/visitor
-        protected Page $page; // the current page object, where the form is used
+
         protected object $captcha; // the captcha object
 
         /**
@@ -258,6 +259,63 @@
             // create the questions array for the simple text CAPTCHA
             $this->question_array = $this->getCaptchaQuestions();
 
+
+            // set default values for loading JS from the module config
+            $useJS = $useCSS = '1';
+            if(isset($this->frontendforms['input_removeJS']) && ($this->frontendforms['input_removeJS'] != '')) {
+                $useJS = '0';
+            }
+            if(isset($this->frontendforms['input_removeCSS']) && ($this->frontendforms['input_removeCSS'] != '')) {
+                $useCSS = '0';
+            }
+
+            // check if property useJS exists
+            if(isset($this->page->useJS)){
+                $jsArray = $this->page->useJS;
+                $jsArray[$this->getID()] = $useJS;
+                $this->page->useJS = $jsArray;
+            } else {
+                $this->page->useJS = [$this->getID() => $useJS];
+            }
+
+            // check if property useJS exists
+            if(isset($this->page->useCSS)){
+                $cssArray = $this->page->useCSS;
+                $cssArray[$this->getID()] = $useCSS;
+                $this->page->useCSS = $cssArray;
+            } else {
+                $this->page->useCSS = [$this->getID() => $useCSS];
+            }
+
+            // set default value for field conditions to false if it was not set before
+            if(!isset($this->page->field_conditions))
+                $this->page->field_conditions = false;
+        }
+
+        /**
+         * Remove all the FrontendForms JS files on per form base
+         * @return $this
+         */
+        public function useJS(bool $use = true): self
+        {
+            $value = $use ? '1' : '0';
+            $removeJS = $this->page->useJS;
+            $removeJS[$this->getID()] = $value;
+            $this->page->useJS = $removeJS;
+            return $this;
+        }
+
+        /**
+         * Remove all the FrontendForms CSS files on per form base
+         * @return $this
+         */
+        public function useCSS(bool $use = true): self
+        {
+            $value = $use ? '1' : '0';
+            $removeCSS = $this->page->useCSS;
+            $removeCSS[$this->getID()] = $value;
+            $this->page->useCSS = $removeCSS;
+            return $this;
         }
 
         /**
@@ -2605,7 +2663,6 @@
          */
         public function render(): string
         {
-
             // redirect after successful form validation if set
             if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
                 $this->wire('session')->redirect($this->getRedirectURL());
@@ -2632,6 +2689,12 @@
 
             // Check if the form contains file upload fields, then add enctype attribute
             foreach ($this->formElements as $obj) {
+
+                // check if the field contains a field condition
+                if($obj->containsConditions()){
+                    $this->page->field_conditions = true;
+                }
+
                 if ($obj instanceof InputFile) {
                     $this->setAttribute('enctype', 'multipart/form-data');
                     break;
