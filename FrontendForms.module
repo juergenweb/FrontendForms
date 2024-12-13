@@ -802,7 +802,6 @@
             $this->addHookAfter('Page::render', $this, 'initializeImagePicker');
 
 
-
             // add CSS and JS to the backend
             $version = $this->getModuleInfo()['version'] . '-' . time();
             $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version . '&time=' . time());
@@ -1375,34 +1374,47 @@
             }
 
             $version = $this->getModuleInfo()['version'];
-            if (!$this->input_removeJS) {
+            if (!$this->input_removeJS || $page->useJS) {
 
-                $js = '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.js?v=' . $version . '"></script>' . PHP_EOL;
+                $js = '';
+                // check if at field conditions are used inside this form, if so add the JavaScript file to the page
+                if($page->field_conditions) {
+                    $js = '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.js?v=' . $version . '"></script>' . PHP_EOL;
+                }
+
                 $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version . '" defer></script>' . PHP_EOL;
-// load slidercaptcha.js only if this captcha type is selected
+
+                // load slidercaptcha.js only if this captcha type is selected
                 if ($this->input_captchaType == 'SliderCaptcha') {
                     $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms-slidercaptcha.js?v=' . $version . '" defer></script>' . PHP_EOL;
                 }
 
-
                 if ($this->input_pagelist) {
                     if (in_array($page->id, $this->input_pagelist)) {
-                        $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
+                        if (array_filter($page->useJS)) {
+                            $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
+                        }
                     }
                 } else {
-                    $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
+                    if (array_filter($page->useJS)) {
+                        $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
+                    }
                 }
 
             }
 
-            if (!$this->input_removeCSS) {
+            if (!$this->input_removeCSS || $page->useCSS) {
                 $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css?v=' . $version . '">' . PHP_EOL;
                 if ($this->input_pagelist) {
                     if (in_array($page->id, $this->input_pagelist)) {
-                        $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
+                        if (array_filter($page->useCSS)) {
+                            $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
+                        }
                     }
                 } else {
-                    $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
+                    if (array_filter($page->useCSS)) {
+                        $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
+                    }
                 }
             }
             $modules = $this->wire('modules');
@@ -2076,18 +2088,18 @@
                 //  create options
                 $placeholderimage = $this->wire('config')->urls->$this . 'images/templatepreviews/emailtemplate-placeholder-image.png';
                 $noneimage = $this->wire('config')->urls->$this . 'images/templatepreviews/none.png';
-                $emailTemplate->addOption( 'none', $this->_('no HTML template'), ['data-img-src' => $noneimage]);
+                $emailTemplate->addOption('none', $this->_('no HTML template'), ['data-img-src' => $noneimage]);
 
                 foreach ($this->emailTemplates as $template) {
 
-                    $p =  pathinfo($this->email_template_files[$template]);
+                    $p = pathinfo($this->email_template_files[$template]);
                     $absolutedir = $p['dirname'];
                     $relativedir = strstr($p['dirname'], '/site/modules');
-                    $filename = $p['filename'].'.png';
-                    $previewImage = $relativedir.'/'.$filename;
-                    $previewPath = $absolutedir.'/'.$filename;
+                    $filename = $p['filename'] . '.png';
+                    $previewImage = $relativedir . '/' . $filename;
+                    $previewPath = $absolutedir . '/' . $filename;
 
-                    if(file_exists($previewPath)) {
+                    if (file_exists($previewPath)) {
                         $path = $previewImage;
                     } else {
                         $path = $placeholderimage;
