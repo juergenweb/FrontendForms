@@ -565,8 +565,8 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setMsgTag()](#setmessagetag---change-the-tag-for-the-input-field-error-and-success-message-text-on-this-form)  | Change the tag for the success and error message on per form base |
 | [stopHoneypotRotation()](#stophoneypotrotation---stop-the-randomly-rotation-of-the-honeypot-field-on-per-form-base)  | Stop the Honeypot field from randomly positioning and add it fixed to the very first position of the form |
 | [setAjaxMessage()](#setajaxmessage---customize-the-info-text-during-an-ajax-submission-on-per-form-base)  | Customize the info text during an AJAX submission on per form base |
-| [useJS()](#setajaxmessage---customize-the-info-text-during-an-ajax-submission-on-per-form-base)  | Enable/disable the embedding of JS files of this module on per form base |
-| [useCSS()](#setajaxmessage---customize-the-info-text-during-an-ajax-submission-on-per-form-base)  | Enable/disable the embedding of CSS files of this module on per form base |
+| [useJS()](#usejs---enabledisable-the-embedding-of-js-files-on-per-form-base)  | Enable/disable the embedding of JS files of this module on per form base |
+| [useCSS()](#usecss---enabledisable-the-embedding-of-css-files-on-per-form-base)  | Enable/disable the embedding of CSS files of this module on per form base |
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
