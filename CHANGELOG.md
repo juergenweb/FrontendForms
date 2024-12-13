@@ -1415,3 +1415,23 @@ You can read more about it [here](https://github.com/juergenweb/FrontendForms?ta
 - **Bug related to JQuery image-picker script fixed**
 
 The initialization of the image-picker script resulted in manipulation of all select inputs on the site. The cause of this was, that script affected all select inputs instead of a specific one for the template selector. This has been fixed now. Thanks to Chris-PW from the forum for reporting this issue.
+
+## [2.2.23] 2024-12-13
+
+The new features come from a user request by donatasben. Thanks for your suggestions!
+
+- **Performance update: JavaScript loading on certain conditions added**
+
+By default there were only 2 conditions, that could be set in the backend: load all JS or does not load JS at all on the frontend. 
+This module contains 3 different Javascript files, that will be added to the frontend: The main JS files, the JS file for field conditions and the JS file for the Slider Captcha.
+If set, that JS should be loaded, than the main JS and the field condition JS will be loaded, independent if you are using field conditions or not.
+The first performance update contains now a check, if at least 1 field condition will be used on a field on page or not. If no one of the field contains a field condition, then the appropriate field conditions JS will not be added to the page.
+The second performance update contains a check if the Slider Captcha was selected in the backend and the Slider Captach will not be disabled on per form base on a page. So if you have enabled the Slider Captcha globally, but you have disabled it on all forms on a certain page, then the JS file for the slider Captcha will not be added to the frontend (independent of the backend settings).
+
+- **API update: Enable/disable JS/CSS files on per form base**
+
+Until now you had only the possibility to enable/disable the embedding of JS/CSS on the frontend in the backend configuration.
+
+Now you can enable/disable this on per form base too by using 2 new methods: useJS() and useCSS().
+
+This new functionality takes care of looking at all forms on a page. If at least 1 form has JS enabled, then the JS file will be embedden, otherwise not. This works on the CSS files too.
