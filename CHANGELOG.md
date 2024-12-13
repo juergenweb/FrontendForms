@@ -1432,6 +1432,6 @@ The second performance update contains a check if the Slider Captcha was selecte
 
 Until now you had only the possibility to enable/disable the embedding of JS/CSS on the frontend in the backend configuration.
 
-Now you can enable/disable this on per form base too by using 2 new methods: useJS() and useCSS().
+Now you can enable/disable this on per form base too by using 2 new methods: [useCSS()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#usecss---enabledisable-the-embedding-of-css-files-on-per-form-base) and [useJS()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#usejs---enabledisable-the-embedding-of-js-files-on-per-form-base).
 
 This new functionality takes care of looking at all forms on a page. If at least 1 form has JS enabled, then the JS file will be embedden, otherwise not. This works on the CSS files too.
