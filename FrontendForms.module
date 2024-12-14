@@ -1405,7 +1405,7 @@
             }
 
             if (!$this->input_removeCSS || $page->useCSS) {
-                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css?v=' . $version . '">' . PHP_EOL;
+                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.min.css?v=' . $version . '">' . PHP_EOL;
                 if ($this->input_pagelist) {
                     if (in_array($page->id, $this->input_pagelist)) {
                         if (array_filter($page->useCSS)) {
