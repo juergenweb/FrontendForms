@@ -1442,6 +1442,8 @@ This new functionality takes care of looking at all forms on a page. If at least
 
 ## 2024-12-14
 
-- **Loading of minified versions of the JavaScript files added**
+- **Loading of minified versions of the JavaScript and CSS files added**
 
-I've added a minified version of all 3 module JavaScript files to the module to save a bit of headroom and boost performance. Now only the minimized versions are added to the frontend. The standard versions are still available, but are only used for further development.
+I've added a minified version of all 3 module JavaScript files and the CSS file to the module to save a bit of headroom and boost performance. Now only the minimized versions are added to the frontend. The standard versions are still available, but are only used for further development.
+
+So, if you want to take a look at these files, it is better to look at the non-minified versions.
