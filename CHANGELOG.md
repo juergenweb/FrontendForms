@@ -1439,3 +1439,9 @@ Until now, you only had the option to enable/disable the embedding of JS/CSS in 
 Now you can enable/disable this on per form base too by using 2 new methods: [useCSS()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#usecss---enabledisable-the-embedding-of-css-files-on-per-form-base) and [useJS()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#usejs---enabledisable-the-embedding-of-js-files-on-per-form-base).
 
 This new functionality takes care of looking at all forms on a page. If at least 1 form has JS enabled, then the JS file will be embedden, otherwise not. This works on the CSS files too.
+
+## 2024-12-14
+
+- **Loading of minified versions of the JavaScript files added**
+
+I've added a minified version of all 3 module JavaScript files to the module to save a bit of headroom and boost performance. Now only the minimized versions are added to the frontend. The standard versions are still available, but are only used for further development.
