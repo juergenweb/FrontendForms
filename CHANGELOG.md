@@ -1440,10 +1440,20 @@ Now you can enable/disable this on per form base too by using 2 new methods: [us
 
 This new functionality takes care of looking at all forms on a page. If at least 1 form has JS enabled, then the JS file will be embedden, otherwise not. This works on the CSS files too.
 
-## 2024-12-14
+## [2.2.24] 2024-12-15
+
+This is a performance update only.
 
 - **Loading of minified versions of the JavaScript and CSS files added**
 
 I've added a minified version of all 3 module JavaScript files and the CSS file to the module to save a bit of headroom and boost performance. Now only the minimized versions are added to the frontend. The standard versions are still available, but are only used for further development.
 
 So, if you want to take a look at these files, it is better to look at the non-minified versions.
+
+- **Pagelist select for adding JS and CSS removed and automatic form detection on page added**
+
+In the module configuration, you had the option to select the pages where the JS and CSS files should be inserted, in order to load only the files on pages where there is at least 1 form. This increased performance by loading these scripts only on pages with forms and not on all pages.
+
+This is no longer necessary, as an automatic check has been added to check whether forms are present on a page or not. If so, then the files will be inserted into the page if the embedding is not prevented by another setting.
+
+With this new feature, you don't have to worry about whether or not to load the files on a page.
