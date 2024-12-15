@@ -291,6 +291,15 @@
             if(!isset($this->page->field_conditions))
                 $this->page->field_conditions = false;
 
+            // add this form to the property ff_forms of the page array, which contains the id of all forms of this page
+            if(isset($this->page->ff_forms)) {
+                $forms = $this->page->ff_forms;
+                $forms[] = $this->getID();
+                $this->page->ff_forms = $forms;
+            } else {
+                $this->page->ff_forms = [$this->getID()];
+            }
+
         }
 
         /**
