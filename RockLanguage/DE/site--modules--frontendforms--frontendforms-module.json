@@ -857,15 +857,6 @@
         "125e79ecb78f0bd719a4f1ce1d0b0bcd": {
             "text": "Je niedriger der Wert, desto genauer muss das Puzzleteil platziert werden (h\u00f6chst m\u00f6glicher Wert: 25)"
         },
-        "a3c1dae595f12b1d20954db60efb7a5c": {
-            "text": "Bitte w\u00e4hlen Sie alle Seiten aus, auf denen die JS- und CSS-Dateien eingebunden werden sollen (dies ist nur wirksam, wenn die Einbindung der Dateien nicht durch die vorherige Einstellung verhindert wurde)."
-        },
-        "4c980e4cbf50cceddad74368d2abca34": {
-            "text": "Aus Performance-Gr\u00fcnden wird empfohlen, die JS- und CSS-Dateien nur auf Seiten einzubinden, die ein Formular enthalten. Wenn nichts ausgew\u00e4hlt ist, werden die Dateien auf jeder Seite eingebettet, sofern die Einbindung nicht unterbunden wurde."
-        },
-        "01c376e54db1d210c8bc0dba9b4a2f6f": {
-            "text": "W\u00e4hlen Sie die Einbettung der JS- und CSS-Dateien nur auf bestimmten Seiten aus"
-        },
         "d8e4d251281d05f85acf5cc936fa7f4d": {
             "text": "Einstellungen f\u00fcr die Stylesheets und Skripte"
         },
