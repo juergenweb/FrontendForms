@@ -1335,6 +1335,8 @@
                 'input_global_desc_tag' => ['$form->setDescriptionTag("div");'],
                 'input_global_notes_tag' => ['$form->setNotesTag("div");'],
                 'input_global_msg_tag' => ['$form->setMessageTag("div");'],
+                'input_removeCSS' => ['$form->useCSS(false); // true or false'],
+                'input_removeJS' => ['$form->useJS(false); // true or false'],
             ];
             if (!array_key_exists($field->name, $fields)) {
                 return;
@@ -1361,25 +1363,27 @@
             }
 
             // add js variables as translatable strings to the head section if slider captcha is selected
+            // inject them only if the page contains at least 1 form or the page is selected in the module config
+            if (!is_null($page->ff_forms)) {
+                if ($this->input_captchaType == 'SliderCaptcha' && $page->sliderCaptcha) {
+                    $sliderdata = [
+                        'barText' => $this->_('Slide right to fill'),
+                        'loadingText' => $this->_('Loading'),
+                        'failedText' => $this->_('Try again!'),
+                        'offset' => $this->input_offset
+                    ];
+                    $script = '<script>const slidertexts = ' . json_encode($sliderdata) . ';</script>';
 
-            if ($this->input_captchaType == 'SliderCaptcha' && $page->sliderCaptcha) {
-                $sliderdata = [
-                    'barText' => $this->_('Slide right to fill'),
-                    'loadingText' => $this->_('Loading'),
-                    'failedText' => $this->_('Try again!'),
-                    'offset' => $this->input_offset
-                ];
-                $script = '<script>const slidertexts = ' . json_encode($sliderdata) . ';</script>';
-
-                $event->return = str_replace('</head>', $script . '</head>', $event->return);
+                    $event->return = str_replace('</head>', $script . '</head>', $event->return);
+                }
             }
 
             $version = $this->getModuleInfo()['version'];
-            if (!$this->input_removeJS || $page->useJS) {
+            if ((!is_null($page->ff_forms)) && (!$this->input_removeJS || $page->useJS)) {
 
                 $js = '';
                 // check if at field conditions are used inside this form, if so add the JavaScript file to the page
-                if($page->field_conditions) {
+                if ($page->field_conditions) {
                     $js = '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.min.js?v=' . $version . '"></script>' . PHP_EOL;
                 }
 
@@ -1390,34 +1394,22 @@
                     $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms-slidercaptcha.min.js?v=' . $version . '" defer></script>' . PHP_EOL;
                 }
 
-                if ($this->input_pagelist) {
-                    if (in_array($page->id, $this->input_pagelist)) {
-                        if (array_filter($page->useJS)) {
-                            $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
-                        }
-                    }
-                } else {
-                    if (array_filter($page->useJS)) {
-                        $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
-                    }
+                if (array_filter($page->useJS)) {
+                    $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
                 }
 
             }
 
-            if (!$this->input_removeCSS || $page->useCSS) {
+            if ((!is_null($page->ff_forms)) && (!$this->input_removeCSS || $page->useCSS)) {
+
                 $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.min.css?v=' . $version . '">' . PHP_EOL;
-                if ($this->input_pagelist) {
-                    if (in_array($page->id, $this->input_pagelist)) {
-                        if (array_filter($page->useCSS)) {
-                            $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
-                        }
-                    }
-                } else {
-                    if (array_filter($page->useCSS)) {
-                        $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
-                    }
+
+                if (!is_null($page->ff_forms) && array_filter($page->useCSS)) {
+                    $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
                 }
+
             }
+
             $modules = $this->wire('modules');
             if ($modules->isInstalled('FieldtypeFrontendComments')) {
 
@@ -2025,14 +2017,6 @@
             $removeCSS->notes = $this->_('A small CSS file for the forms will be added to the template by default. You can remove the embedding of the CSS file by checking the box.');
             $removeCSS->columnWidth = 50;
             $fieldsetAssets->add($removeCSS, $inputfields);
-
-            $sitepages = $this->wire('modules')->get('InputfieldPageListSelectMultiple');
-            $sitepages->attr('name', 'input_pagelist');
-            $sitepages->description = $this->_('Please select all pages where the JS and CSS files should be included (this is only effective if the integration of the files was not prevented by the previous setting).');
-            $sitepages->notes = $this->_('For performance reasons, it is recommended that you only include the JS and CSS files on pages that contain a form. If nothing is selected, the files will be embedded on each page, if set.');
-            $sitepages->label = $this->_('Select the embedding of the JS and CSS files only on specific pages');
-            $sitepages->attr('value', $this->input_pagelist);
-            $fieldsetAssets->add($sitepages);
 
             $fieldset1->add($fieldsetAssets, $inputfields, $inputfields);
             $inputfields->add($fieldset1);
