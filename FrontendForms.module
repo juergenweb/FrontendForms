@@ -1476,7 +1476,6 @@
         {
             $page = $event->object;
 
-
             // don't run on admin pages
             if ($page->template->name === 'admin') {
                 return;
@@ -1491,7 +1490,8 @@
             $fields = $template->fieldgroup;
 
             foreach ($fields as $field) {
-                if (($field->type == 'FieldtypeTextarea') && ($field->contentType == 1)) {
+
+                if (($field->type == 'FieldtypeTextarea' || $field->type == 'FieldtypeTextareaLanguage' ) && ($field->contentType == 1)) {
 
                     // Save found placeholders temporarily to iterate their number
                     $foundForms = $page->data('found-forms', []);
