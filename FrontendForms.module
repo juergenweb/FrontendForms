@@ -812,7 +812,7 @@
             $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.min.js');
 
             // add CSS and JS links to the frontend template
-            $this->addHookAfter('Page::render', $this, 'addAssets');
+            $this->addHookAfter('Page::render', $this, 'addAssets',['priority' => 999]);
             // hooks after inputfield integer render
             $this->addHookAfter('InputfieldInteger::render', $this, 'inputfieldIntegerRenderAfter');
             // outputs examples how to overwrite global settings
@@ -1372,7 +1372,7 @@
                         'failedText' => $this->_('Try again!'),
                         'offset' => $this->input_offset
                     ];
-                    $script = '<script>const slidertexts = ' . json_encode($sliderdata) . ';</script>';
+                    $script = '<script>var slidertexts = ' . json_encode($sliderdata) . ';</script>';
 
                     $event->return = str_replace('</head>', $script . '</head>', $event->return);
                 }
