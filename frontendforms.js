@@ -48,7 +48,9 @@ let frontendformsmain = function () {
 
                 let formID = frontendforms[i].id;
                 if(formID){
-                    mfConditionalFields("#" + formID, {rules: "inline", dynamic: true, debug: true});
+                    if (typeof mfConditionalFields !== 'undefined'){
+                        mfConditionalFields("#" + formID, {rules: "inline", dynamic: true, debug: true});
+                    }
                 }
             }
         }
