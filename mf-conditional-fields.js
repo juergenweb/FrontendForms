@@ -11,7 +11,7 @@
  */
 "use strict";
 const mfConditionalFields = (forms, options = {}) => {
-
+   
     // Ensure the passed form(s) is in the correct format (array of elements)
     switch (typeof forms) {
         case 'string':
@@ -635,10 +635,4 @@ const mfConditionalFields = (forms, options = {}) => {
         }
         return false;
     }
-}
-
-if (typeof (window) !== 'undefined') {
-    // Set megaForms as a browser global
-    window.mfConditionalFields = mfConditionalFields;
-
 }
