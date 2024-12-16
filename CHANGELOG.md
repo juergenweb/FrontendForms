@@ -1457,3 +1457,21 @@ In the module configuration, you had the option to select the pages where the JS
 This is no longer necessary, as an automatic check has been added to check whether forms are present on a page or not. If so, then the files will be inserted into the page if the embedding is not prevented by another setting.
 
 With this new feature, you don't have to worry about whether or not to load the files on a page.
+
+## [2.2.25] 2024-12-16
+
+This updated fixes some bugs.
+
+- **Adding higher priority to addAssets() hook**
+
+The priority has been increased from 100 to 999 because this hook method is supposed to run later. There was a conflict with another Page::render hook and this is now resolved with the new priority.
+
+- **Using form placeholders in multilanguage Textareas fixed**
+
+Multilingual text areas were not taken into account when you use placeholders for forms in them. This is now fixed.
+
+
+- **Javascript error in frontendforms.js fixed**
+
+Due to the selective loading of the mf-conditional-fields.js, an error occurred when this JS file was not loaded. This bug has now been fixed by first checking if this file exists before executing the mfConditionalFields function.
+
