@@ -169,7 +169,7 @@
                 'summary' => 'Create forms and validate them using the Valitron library.',
                 'author' => "Jürgen Kern",
                 'href' => 'https://github.com/juergenweb/FrontendForms',
-                'version' => '2.2.26',
+                'version' => '2.2.25',
                 'singular' => true,
                 'autoload' => true,
                 'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
@@ -344,7 +344,7 @@
             }
 
             if($inherit) {
-                $select->addOption('inherit', $this->_('Inherit from FrontendForms').'<br>('.$this->input_emailTemplate.')', ['data-img-src' => $inheritImage]);
+                $select->addOption('inherit', $this->_('Inherit from FrontendForms').'<div class="ff-email-template-selected">('.$this->input_emailTemplate.')</div>', ['data-img-src' => $inheritImage]);
                 // re-order the array
                 $allOptions = $select->getOptions();
                 $newArray = array_merge(array_splice($allOptions, -1), $allOptions);
