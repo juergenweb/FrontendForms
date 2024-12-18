@@ -860,8 +860,8 @@
             $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version . '&time=' . time());
 
             // add image picker js and CSS files to the backend (used for the email template select)
-            $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.css');
-            $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.min.js');
+            $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.css?v=' . $version);
+            $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.min.js?v=' . $version);
 
             // add CSS and JS links to the frontend template
             $this->addHookAfter('Page::render', $this, 'addAssets', ['priority' => 999]);
