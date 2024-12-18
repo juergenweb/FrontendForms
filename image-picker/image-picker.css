@@ -8,7 +8,7 @@ ul.thumbnails.image_picker_selector {
   padding: 0px;
   margin: 0px; }
 /* line 15, source/sass/image-picker.scss */
-ul.thumbnails .thumbnail.selected .ff-email-template-selected {
+ul.thumbnails .thumbnail .ff-email-template-selected {
   background:#ffd;
   color: #8d939e;
   position:absolute;
@@ -32,6 +32,7 @@ ul.thumbnails.image_picker_selector li {
   position:relative;
   margin: 0px 12px 12px 0px;
   text-align: center;
+  font-size: 12px;
   float: left; }
 /* line 35, source/sass/image-picker.scss */
 ul.thumbnails.image_picker_selector li .thumbnail {
