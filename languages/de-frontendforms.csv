@@ -180,6 +180,8 @@ seconds,Sekunden,,site/modules/FrontendForms/Formelements/FormValidation.php,783
 and,und,,site/modules/FrontendForms/Formelements/FormValidation.php,be5d5d37542d75f93a87094459f76678
 en,de,description,file,hash
 "GD library is not installed/enabled. Please install/enable it to be able to use CAPTCHA images.","Die GD-Bibliothek ist nicht installiert/aktiviert. Bitte installieren/aktivieren Sie diese, um die CAPTCHA-Funktion verwenden zu können.",,site/modules/FrontendForms/FrontendForms.module,3f73c9dc2eed9de2758f0bf0c32893f4
+"no HTML template","kein HTML Template",,site/modules/FrontendForms/FrontendForms.module,7a646761a1d8fa416125a58d609c221d
+"Inherit from FrontendForms","Von FrontendForms übernehmen",,site/modules/FrontendForms/FrontendForms.module,5bfe6a369b802afdb9bb4909ac726c2d
 "Sorry, but the file including the password list could not be downloaded from GitHub.","Leider konnte die Datei, welche die Passwörter enthält, nicht von GitHub heruntergeladen werden.",,site/modules/FrontendForms/FrontendForms.module,0e482f9f5b5ee24fc1c79e192f3e775f
 Comments,Kommentare,"should be identical to the weird name/title above",site/modules/FrontendForms/FrontendForms.module,8413c683b4b27cc3f4dbd4c90329d8ba
 "The password blacklist has been updated manually.","Die Passwort-Blacklist wurde manuell aktualisiert.",,site/modules/FrontendForms/FrontendForms.module,8c1cf6d64804d4ace27e32e7328ba784
@@ -297,7 +299,6 @@ Details,=,,site/modules/FrontendForms/FrontendForms.module,3ec365dd533ddb7ef3d1c
 "This text will be displayed next to the progress bar during a form is submitted via AJAX.","Dieser Text wird neben dem Fortschrittsbalken angezeigt, wenn ein Formular über AJAX gesendet wird.",,site/modules/FrontendForms/FrontendForms.module,091a75fbe174b195242b44b8a2cc2194
 "Email settings","E-Mail Einstellungen",,site/modules/FrontendForms/FrontendForms.module,5386484801d01d2ece73fbc5f605f739
 "HTML email template setting","HTML E-Mail Template Einstellungen",,site/modules/FrontendForms/FrontendForms.module,7ba64fb164e72d97660308b67acfefbe
-"no HTML template","kein HTML Template",,site/modules/FrontendForms/FrontendForms.module,7a646761a1d8fa416125a58d609c221d
 "Choose whether you want to use the HTML template for your emails and if so, which one.","Entscheiden Sie, ob Sie ein HTML Template für Ihre E-Mails verwenden wollen, oder nicht",,site/modules/FrontendForms/FrontendForms.module,cebf3687d25bd4915ed8816bf8f91604
 "If you are using FrontendForms with the PW WireMail class to send emails, you can use a HTML email template by adding the mailTemplate() method to the WireMail object. Can be overwritten on each form.","Wenn Sie FrontendForms mit der PW WireMail-Klasse zum Senden von E-Mails verwenden, können Sie eine HTML-E-Mail-Vorlage verwenden, indem Sie dem WireMail-Objekt die mailTemplate()-Methode hinzufügen. Kann auf jedem Formular überschrieben werden.",,site/modules/FrontendForms/FrontendForms.module,99d4cdbb31bb961f30c4d20dfc7afb39
 "Date format",Datumsformat,,site/modules/FrontendForms/FrontendForms.module,534fd46732986cba0efeda8701592427
