@@ -301,6 +301,58 @@
 
         }
 
+        public function createEmailTemplatesOptions(InputfieldSelect $select, bool $inherit = false)
+        {
+
+            //  create options
+            $placeholderimage = $this->wire('config')->urls->$this . 'images/templatepreviews/emailtemplate-placeholder-image.png';
+            $noneimage = $this->wire('config')->urls->$this . 'images/templatepreviews/none.png';
+
+            if($inherit) {
+                if($this->input_emailTemplate == 'none'){
+                   $inheritImage = $noneimage;
+                } else {
+                    $inheritImage = $placeholderimage;
+                }
+            }
+
+            $select->addOption('none', $this->_('no HTML template'), ['data-img-src' => $noneimage]);
+
+            foreach ($this->emailTemplates as $template) {
+
+                $p = pathinfo($this->email_template_files[$template]);
+                $absolutedir = $p['dirname'];
+                $relativedir = strstr($p['dirname'], '/site/modules');
+                $filename = $p['filename'] . '.png';
+                $previewImage = $relativedir . '/' . $filename;
+                $previewPath = $absolutedir . '/' . $filename;
+
+                if (file_exists($previewPath)) {
+                    $path = $previewImage;
+                } else {
+                    $path = $placeholderimage;
+                }
+
+                if($inherit) {
+                    if($this->input_emailTemplate == $template) {
+                        $inheritImage = $path;
+                    }
+                }
+
+                // add data-img-src for the image picker
+                $select->addOption($template, $template, ['data-img-src' => $path]);
+            }
+
+            if($inherit) {
+                $select->addOption('inherit', $this->_('Inherit from FrontendForms').'<br>('.$this->input_emailTemplate.')', ['data-img-src' => $inheritImage]);
+                // re-order the array
+                $allOptions = $select->getOptions();
+                $newArray = array_merge(array_splice($allOptions, -1), $allOptions);
+                $select->setOptions($newArray);
+            }
+
+        }
+
         /**
          * Create the folder for custom frameworks classes file if it does not exist
          * @return void
@@ -812,7 +864,7 @@
             $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.min.js');
 
             // add CSS and JS links to the frontend template
-            $this->addHookAfter('Page::render', $this, 'addAssets',['priority' => 999]);
+            $this->addHookAfter('Page::render', $this, 'addAssets', ['priority' => 999]);
             // hooks after inputfield integer render
             $this->addHookAfter('InputfieldInteger::render', $this, 'inputfieldIntegerRenderAfter');
             // outputs examples how to overwrite global settings
@@ -1491,7 +1543,7 @@
 
             foreach ($fields as $field) {
 
-                if (($field->type == 'FieldtypeTextarea' || $field->type == 'FieldtypeTextareaLanguage' ) && ($field->contentType == 1)) {
+                if (($field->type == 'FieldtypeTextarea' || $field->type == 'FieldtypeTextareaLanguage') && ($field->contentType == 1)) {
 
                     // Save found placeholders temporarily to iterate their number
                     $foundForms = $page->data('found-forms', []);
@@ -2070,30 +2122,10 @@
                 $emailTemplate->label = $this->_('HTML email template setting');
                 $emailTemplate->attr('name', 'input_emailTemplate');
                 $emailTemplate->attr('class', 'ff-imagepicker');
-                //  create options
-                $placeholderimage = $this->wire('config')->urls->$this . 'images/templatepreviews/emailtemplate-placeholder-image.png';
-                $noneimage = $this->wire('config')->urls->$this . 'images/templatepreviews/none.png';
-                $emailTemplate->addOption('none', $this->_('no HTML template'), ['data-img-src' => $noneimage]);
 
-                foreach ($this->emailTemplates as $template) {
+                // create and add all options
+                $this->createEmailTemplatesOptions($emailTemplate);
 
-                    $p = pathinfo($this->email_template_files[$template]);
-                    $absolutedir = $p['dirname'];
-                    $relativedir = strstr($p['dirname'], '/site/modules');
-                    $filename = $p['filename'] . '.png';
-                    $previewImage = $relativedir . '/' . $filename;
-                    $previewPath = $absolutedir . '/' . $filename;
-
-                    if (file_exists($previewPath)) {
-                        $path = $previewImage;
-                    } else {
-                        $path = $placeholderimage;
-                    }
-
-                    // add data-img-src for the image picker
-                    $emailTemplate->addOption($template, $template, ['data-img-src' => $path]);
-                }
-                //$emailTemplate->addOptions($templates);
                 $emailTemplate->attr('value', $this->input_emailTemplate);
                 $emailTemplate->required = 1;
                 $emailTemplate->description = $this->_('Choose whether you want to use the HTML template for your emails and if so, which one.');
