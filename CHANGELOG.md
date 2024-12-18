@@ -1475,3 +1475,11 @@ Multilingual text areas were not taken into account when you use placeholders fo
 
 Due to the selective loading of the mf-conditional-fields.js, an error occurred when this JS file was not loaded. This bug has now been fixed by first checking if this file exists before executing the mfConditionalFields function.
 
+## [2.2.26] 2024-12-18
+
+This updated contains a some new code for other modules base on FrontendForms.
+
+- **New method for creating email template options added**
+
+A new method, which could be used in other modules based on Frontenforms has been added. This new method creates the new email template selector switch with images of each email template, as used inside the module configuration of this module.
+With this new method, this new nice image picker select could be used in other modules too (and will be added to this modules in the future).
