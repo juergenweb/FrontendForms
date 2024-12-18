@@ -871,6 +871,9 @@
         },
         "091a75fbe174b195242b44b8a2cc2194": {
             "text": "Dieser Text wird neben dem Fortschrittsbalken angezeigt, wenn ein Formular \u00fcber AJAX gesendet wird."
+        },
+        "5bfe6a369b802afdb9bb4909ac726c2d": {
+            "text": "Von FrontendForms \u00fcbernehmen"
         }
     }
 }
