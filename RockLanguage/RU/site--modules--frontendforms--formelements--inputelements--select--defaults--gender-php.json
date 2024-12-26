@@ -1,0 +1,21 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Select\/defaults\/Gender.php",
+    "textdomain": "site--modules--frontendforms--formelements--inputelements--select--defaults--gender-php",
+    "translations": {
+        "019ec3132cdf8ee0f2e2a75cf5d3e459": {
+            "text": "\u041f\u043e\u043b"
+        },
+        "992eda0d64a430fa5c7925d23ef9d0a3": {
+            "text": "\u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430 \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435"
+        },
+        "c4f448df316abb13eb7eada722c57902": {
+            "text": "\u041c\u0443\u0436\u0447\u0438\u043d\u0430"
+        },
+        "e7ddb7cd777b59610b220bcfa80bd95f": {
+            "text": "\u0416\u0435\u043d\u0449\u0438\u043d\u0430"
+        },
+        "e67561dfc51195ce1ac515406291900e": {
+            "text": "\u0414\u0440\u0443\u0433\u043e\u0435"
+        }
+    }
+}

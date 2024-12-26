@@ -1,0 +1,33 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Captcha\/AbstractImageCaptcha.php",
+    "textdomain": "site--modules--frontendforms--formelements--captcha--abstractimagecaptcha-php",
+    "translations": {
+        "118f3464042a036c52a1087e923a307e": {
+            "text": "\u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430, \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0442\u043e, \u0447\u0442\u043e \u0432\u044b \u0432\u0438\u0434\u0438\u0442\u0435 \u043d\u0430 \u043a\u0430\u0440\u0442\u0438\u043d\u043a\u0435 \u0432\u044b\u0448\u0435."
+        },
+        "161e7ce7bfdc89ab4b9f52c1d4c94212": {
+            "text": "\u0416\u0438\u0432\u043e\u0442\u043d\u043e\u0435"
+        },
+        "e9989db5dabeea617f40c8dbfd07f5fb": {
+            "text": "\u0410\u0432\u0442\u043e\u043c\u043e\u0431\u0438\u043b\u044c"
+        },
+        "338d1f8007f0c84287d9963d5ea36aeb": {
+            "text": "\u0426\u0432\u0435\u0442\u043e\u043a"
+        },
+        "aebfe46795575772b7cf413e25caeab9": {
+            "text": "\u0414\u043e\u043c"
+        },
+        "bc03219e367d3a4b7b1758c8af598174": {
+            "text": "\u041e\u0437\u0435\u0440\u043e"
+        },
+        "ec9903c79dd510ffa43f69ee867a9002": {
+            "text": "\u0413\u043e\u0440\u0430"
+        },
+        "3b0c14770e6bd663518496da60f524da": {
+            "text": "\u0414\u0435\u0440\u0435\u0432\u043e"
+        },
+        "2caf429ed0a858c9cb2b6456d1914fe1": {
+            "text": "\u041f\u043e\u043b\u0435 \u043a\u0430\u043f\u0442\u0447\u0430 \u0434\u043b\u044f \u0437\u0430\u0449\u0438\u0442\u044b \u043e\u0442 \u0441\u043f\u0430\u043c\u0430"
+        }
+    }
+}
