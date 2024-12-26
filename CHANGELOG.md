@@ -1483,3 +1483,7 @@ This updated contains a some new code for other modules base on FrontendForms.
 
 A new method, which could be used in other modules based on Frontenforms has been added. This new method creates the new email template selector switch with images of each email template, as used inside the module configuration of this module.
 With this new method, this new nice image picker select could be used in other modules too (and will be added to this modules in the future).
+
+## 2024-12-26
+
+- Russion language files added to the RockLanguage folder (Thanks to andy-scboy).
