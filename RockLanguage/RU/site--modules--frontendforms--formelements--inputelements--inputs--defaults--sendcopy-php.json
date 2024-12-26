@@ -1,9 +1,0 @@
-{
-    "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Inputs\/defaults\/SendCopy.php",
-    "textdomain": "site--modules--frontendforms--formelements--inputelements--inputs--defaults--sendcopy-php",
-    "translations": {
-        "7313e5cce02f10d1d6a22dea1aedc9eb": {
-            "text": "\u041e\u0442\u043f\u0440\u0430\u0432\u044c\u0442\u0435 \u043c\u043d\u0435 \u043a\u043e\u043f\u0438\u044e \u043c\u043e\u0435\u0433\u043e \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f"
-        }
-    }
-}
