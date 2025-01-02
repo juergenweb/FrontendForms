@@ -49,7 +49,9 @@
          */
         public function containsConditions(): bool
         {
-            return $this->contains_conditions;
+            if ($this instanceof Inputfields)
+                return $this->contains_conditions;
+            return false;
         }
 
         /**
