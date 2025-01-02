@@ -41,6 +41,14 @@
 
         }
 
+        /**
+        * Do not check for conditions
+        */
+        public function containsConditions(): bool
+        {
+            return false;
+        }
+
         public function getID(): void
         {
 
