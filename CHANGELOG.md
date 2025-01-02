@@ -1487,3 +1487,7 @@ With this new method, this new nice image picker select could be used in other m
 ## 2024-12-26
 
 - Russion language files added to the RockLanguage folder (Thanks to andy-scboy).
+
+- [Issue #24 fixed - error for non-existing method containsConditions() inside Markup class](https://github.com/juergenweb/FrontendForms/issues/24)
+
+  The absence of the containsConditions() method inside the Markup class leads to an error, so this method has been added to this class and the containsConditions() method has been rewritten to output always false if form object is not of type inputfield.
