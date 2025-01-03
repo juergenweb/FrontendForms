@@ -106,7 +106,7 @@
         protected string $msgtag = 'p'; // set the default global tag for the message elements (success and error message)
         protected string|null $segments = null;
         protected string|null|bool|int $stopHoneypotRotation = false; // Honeypotfield will be positioned randomly (false) or stays at the top of the form (true)
-        
+
         /* objects */
         protected Page $page; // the current page object, where the form is integrated
         protected Alert $alert; // alert box
@@ -181,8 +181,8 @@
             $this->showForm = $this->allowFormViewByIP(); // show or hide the form depending on the IP ban
             $this->setAttribute('method', 'post'); // default is post
             // take care about url segments if enabled
-            $this->segments = ($this->wire('input')->urlSegmentStr())??  '';
-            $this->setAttribute('action', $this->page->url.$this->segments); // stay on the same page - needs to run after the API is ready
+            $this->segments = ($this->wire('input')->urlSegmentStr()) ?? '';
+            $this->setAttribute('action', $this->page->url . $this->segments); // stay on the same page - needs to run after the API is ready
             $this->setAttribute('id', $id); // set the id
             $this->setAttribute('name', $this->getID() . '-' . time());
             $this->setHtml5Validation($this->frontendforms['input_html5_validation']);
@@ -208,7 +208,7 @@
             $this->setUploadPath($this->wire('config')->paths->assets . 'files/' . $this->page->id . '/');
 
             $ajaxMsg = '';
-            if(array_key_exists('input_ajaxMsg', $this->frontendforms )){
+            if (array_key_exists('input_ajaxMsg', $this->frontendforms)) {
                 $ajaxMsg = $this->getLangValueOfConfigField('input_ajaxMsg');
             }
             $this->setAjaxMessage($ajaxMsg);
@@ -224,7 +224,7 @@
             $this->setDescriptionTag($descTag);
 
             // 3) Notes
-            $defaultNotesTag = ($this->frontendforms['input_framework'] === 'pico2.json')? 'small' : 'p';
+            $defaultNotesTag = ($this->frontendforms['input_framework'] === 'pico2.json') ? 'small' : 'p';
             $notesTag = (!empty($this->frontendforms['input_global_notes_tag'])) ? $this->frontendforms['input_global_notes_tag'] : $defaultNotesTag;
             $this->setNotesTag($notesTag);
 
@@ -262,15 +262,15 @@
 
             // set default values for loading JS from the module config
             $useJS = $useCSS = '1';
-            if(isset($this->frontendforms['input_removeJS']) && ($this->frontendforms['input_removeJS'] != '')) {
+            if (isset($this->frontendforms['input_removeJS']) && ($this->frontendforms['input_removeJS'] != '')) {
                 $useJS = '0';
             }
-            if(isset($this->frontendforms['input_removeCSS']) && ($this->frontendforms['input_removeCSS'] != '')) {
+            if (isset($this->frontendforms['input_removeCSS']) && ($this->frontendforms['input_removeCSS'] != '')) {
                 $useCSS = '0';
             }
 
             // check if property useJS exists
-            if(isset($this->page->useJS)){
+            if (isset($this->page->useJS)) {
                 $jsArray = $this->page->useJS;
                 $jsArray[$this->getID()] = $useJS;
                 $this->page->useJS = $jsArray;
@@ -279,7 +279,7 @@
             }
 
             // check if property useJS exists
-            if(isset($this->page->useCSS)){
+            if (isset($this->page->useCSS)) {
                 $cssArray = $this->page->useCSS;
                 $cssArray[$this->getID()] = $useCSS;
                 $this->page->useCSS = $cssArray;
@@ -288,11 +288,11 @@
             }
 
             // set default value for field conditions to false if it was not set before
-            if(!isset($this->page->field_conditions))
+            if (!isset($this->page->field_conditions))
                 $this->page->field_conditions = false;
 
             // add this form to the property ff_forms of the page array, which contains the id of all forms of this page
-            if(isset($this->page->ff_forms)) {
+            if (isset($this->page->ff_forms)) {
                 $forms = $this->page->ff_forms;
                 $forms[] = $this->getID();
                 $this->page->ff_forms = $forms;
@@ -750,7 +750,7 @@
         {
 
             // check if $_SERVER['HTTP_USER_AGENT'] key exists, otherwise add 'n/a' as value
-            if(array_key_exists('HTTP_USER_AGENT', $_SERVER)){
+            if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
                 $browser = $_SERVER['HTTP_USER_AGENT'];
             } else {
                 $browser = $this->_('n/a');
@@ -1673,13 +1673,13 @@
                             unset($random_question_array['successMsg']);
                             unset($random_question_array['errorMsg']);
 
-                                // set additional properties if present
-                                foreach ($random_question_array as $name => $value) {
-                                    $methodName = 'setCaptcha' . ucfirst($name);
-                                    if (method_exists($this, $methodName)) {
-                                        $this->$methodName($value);
-                                    }
+                            // set additional properties if present
+                            foreach ($random_question_array as $name => $value) {
+                                $methodName = 'setCaptcha' . ucfirst($name);
+                                if (method_exists($this, $methodName)) {
+                                    $this->$methodName($value);
                                 }
+                            }
 
                         }
                     }
@@ -2076,11 +2076,11 @@
                 if ($this->captchaRequiredErrorMsg) {
                     $this->captchafield->setRule('required')->setCustomMessage($this->captchaRequiredErrorMsg);
                 } else {
-                    if($this->getCaptchaType() == 'SliderCaptcha'){
-                        $checkboxID = $this->getID().'-'.$this->captchafield->getID();
+                    if ($this->getCaptchaType() == 'SliderCaptcha') {
+                        $checkboxID = $this->getID() . '-' . $this->captchafield->getID();
                         // workaround for checked checkox with empty string as value
                         // will be needed for the required validator to work properly in this case
-                        if(!is_null($input->$checkboxID) && ($input->$checkboxID == '')){
+                        if (!is_null($input->$checkboxID) && ($input->$checkboxID == '')) {
                             $input->set($checkboxID, '1');
                         }
                         $this->captchafield->setRule('required')->setCustomMessage($this->_('Please verify that you are a human and not a bot.'));
@@ -2150,10 +2150,10 @@
 
                                     }
 
-                                    if($this->getCaptchaType() == 'SliderCaptcha'){
+                                    if ($this->getCaptchaType() == 'SliderCaptcha') {
 
                                         // add the servers side validation of the slider CAPTCHA
-                                        $this->captchafield->setRule('checkSliderCaptcha', $input[$this->getID().'-xPos'], $input[$this->getID().'-yPos'], $this->getID())->setCustomMessage($this->_('The Slider-Captcha was not solved correctly.'));
+                                        $this->captchafield->setRule('checkSliderCaptcha', $input[$this->getID() . '-xPos'], $input[$this->getID() . '-yPos'], $this->getID())->setCustomMessage($this->_('The Slider-Captcha was not solved correctly.'));
                                     }
 
                                     $formElements[] = $this->captchafield;
@@ -2187,7 +2187,7 @@
 
                                     // check if the field is inside the POST array
                                     // if not (e.g., field is disabled), then remove all validation rules, because no user input can be entered
-                                    if($element instanceof InputFile){
+                                    if ($element instanceof InputFile) {
                                         $fieldValue = $_FILES; // files are not inside the post array
                                     } else {
                                         $fieldValue = $this->wire('input')->post($this->getID() . '-' . $element->getID());
@@ -2551,7 +2551,7 @@
         public function setRedirectUrlAfterAjax(string|null $url = null): self
         {
             if (!is_null($url)) {
-                $this->ajaxRedirect = $url.$this->segments;
+                $this->ajaxRedirect = $url . $this->segments;
             }
             return $this;
         }
@@ -2587,7 +2587,7 @@
         {
 
             //$className = wireClassNamespace($className, true); // leads to problem with Phalcon framework
-            $className = '\\FrontendForms\\'.$className;
+            $className = '\\FrontendForms\\' . $className;
             $number = (count(array_filter($this->formElements, function ($entry) use ($className) {
                 return ($entry instanceof $className);
             })));
@@ -2628,7 +2628,7 @@
             $elements = [];
             if ($this->formContainsElementByClass($className)) {
                 //$className = wireClassNamespace($className, true); // leads to problem with Phalcon framework
-                $className = '\\FrontendForms\\'.$className;
+                $className = '\\FrontendForms\\' . $className;
                 $elements[] = array_filter($this->formElements, function ($entry) use ($className) {
                     return ($entry instanceof $className);
                 });
@@ -2656,13 +2656,13 @@
 
         protected function changeElementTag(object $element, string $tagProperty): void
         {
-                if ($element) {
-                    if($element->getCustomTag()){
-                        $element->setTag($element->getCustomTag());
-                    } else {
-                        $element->setTag($tagProperty);
-                    }
+            if ($element) {
+                if ($element->getCustomTag()) {
+                    $element->setTag($element->getCustomTag());
+                } else {
+                    $element->setTag($tagProperty);
                 }
+            }
         }
 
         /**
@@ -2679,7 +2679,7 @@
             }
 
             // check if slider Captcha has been selected and was not disabled on per form base
-            if($this->frontendforms['input_captchaType'] == 'SliderCaptcha'){
+            if ($this->frontendforms['input_captchaType'] == 'SliderCaptcha') {
                 $this->page->sliderCaptcha = true;
             }
 
@@ -2706,7 +2706,7 @@
             foreach ($this->formElements as $obj) {
 
                 // check if the field contains a field condition
-                if($obj->containsConditions()){
+                if ($obj->containsConditions()) {
                     $this->page->field_conditions = true;
                 }
 
@@ -2723,16 +2723,7 @@
                     $this->changeElementTag($obj->getNotes(), $this->notestag);
                     $this->changeElementTag($obj->getErrorMessage(), $this->msgtag);
                     $this->changeElementTag($obj->getSuccessMessage(), $this->msgtag);
-                    /*
-                    if ($obj->getLabel()) {
-                        $label = $obj->getLabel();
-                        if($label->getCustomTag()){
-                            $label->setTag($label->getCustomTag());
-                        } else {
-                            $label->setTag($this->labeltag);
-                        }
-                    }
-                    */
+
                 }
             }
 
@@ -2769,10 +2760,9 @@
             // get the first button
             if ($buttons) {
 
-                $refKey = key($buttons[0]);
+                $refKey = $firstButtonPos = key($buttons[0]);
 
                 // add captcha field as last element before the button element
-
                 if ($this->getCaptchaType() != 'none') {
 
                     // position in the form fields array to insert
@@ -2825,31 +2815,10 @@
                         $this->captchafield->setLabel('');
                     }
 
-                    // sort the privacy elements that checkbox is before text, if both are used
-                    $privacyElements = [];
-                    $privacyCheckbox = $this->getElementsbyClass('Privacy');
-                    if ($privacyCheckbox) {
-                        $privacyElements[] = key($privacyCheckbox[0]);
-                    }
-                    $privacyText = $this->getElementsbyClass('PrivacyText');
-                    if ($privacyText) {
-                        $privacyElements[] = key($privacyText[0]);
-                    }
-
                     // get the position of the first button element
                     if ($this->getElementsbyClass('Button')) {
+
                         $firstButtonPos = key($this->getElementsbyClass('Button')[0]);
-
-                        if ($privacyElements) {
-                            sort($privacyElements);
-                            $newPos = $firstButtonPos - 1;
-
-                            $this->repositionArrayElement($this->formElements, $privacyElements[0], $newPos);
-                            if (array_key_exists(1, $privacyElements)) {
-                                $newPos = array_key_last($this->formElements) - 1;
-                                $this->repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
-                            }
-                        }
 
                         // change the position of the CAPTCHA if position change was set via API
                         $customizeCaptchaPosition = $this->getCaptchaPosition();
@@ -2873,19 +2842,47 @@
                         }
                     }
 
+                } else {
+                    // no Captcha is used
+                    if ($this->getElementsbyClass('Button')) {
+                        $firstButtonPos = key($this->getElementsbyClass('Button')[0]);
+                    }
                 }
+                
+                // sort the privacy elements that checkbox is before text, if both are used
+                $privacyElements = [];
+                $privacyCheckbox = $this->getElementsbyClass('Privacy');
+                if ($privacyCheckbox) {
+                    $privacyElements[] = key($privacyCheckbox[0]);
+                }
+                $privacyText = $this->getElementsbyClass('PrivacyText');
+                if ($privacyText) {
+                    $privacyElements[] = key($privacyText[0]);
+                }
+
+                if ($privacyElements) {
+                    sort($privacyElements);
+                    $newPos = $firstButtonPos - 1;
+
+                    $this->repositionArrayElement($this->formElements, $privacyElements[0], $newPos);
+                    if (array_key_exists(1, $privacyElements)) {
+                        $newPos = array_key_last($this->formElements) - 1;
+                        $this->repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
+                    }
+                }
+
 
                 // create the new array of inputfields only to position the honeypot field in between
                 $inputfieldKeys = [];
 
                 // only for the slider captcha
-                if($this->getCaptchaType() == 'SliderCaptcha'){
+                if ($this->getCaptchaType() == 'SliderCaptcha') {
 
-                    $xPos = (float)rand()/(float)getrandmax();
-                    $yPos = (float)rand()/(float)getrandmax();
+                    $xPos = (float)rand() / (float)getrandmax();
+                    $yPos = (float)rand() / (float)getrandmax();
 
-                    $this->wire('session')->set($this->getID().'-captcha_x', $xPos);
-                    $this->wire('session')->set($this->getID().'-captcha_y', $yPos);
+                    $this->wire('session')->set($this->getID() . '-captcha_x', $xPos);
+                    $this->wire('session')->set($this->getID() . '-captcha_y', $yPos);
 
                     // add x and y positions as data attributes for JavaScript usage later on
                     $this->captchafield->setAttribute('data-x', $xPos);
@@ -2904,7 +2901,7 @@
                     // check if field conditions have been set
                     if (method_exists($element, 'getConditions') && (!is_null($element->getConditions()))) {
                         $conditions = $element->getConditions();
-                        
+
                         if (count($conditions['rules']) == count($conditions['rules'], COUNT_RECURSIVE)) {
                             $conditions['rules'] = [$conditions['rules']];
                         }
@@ -2931,9 +2928,9 @@
                 if (($this->frontendforms['input_useHoneypot']) && ($inputfieldKeys)) {
 
                     $honeypot = $this->createHoneypot();
-                    if($this->stopHoneypotRotation){
+                    if ($this->stopHoneypotRotation) {
                         // add honeypot field on the first position of the form
-                        array_unshift($this->formElements , $honeypot);
+                        array_unshift($this->formElements, $honeypot);
                     } else {
                         // add honeypot on the random number field position
                         shuffle($inputfieldKeys);
@@ -2953,7 +2950,7 @@
 
                 // only for the slider captcha -> add hidden fields for the x and y position
 
-                if($this->getCaptchaType() == 'SliderCaptcha'){
+                if ($this->getCaptchaType() == 'SliderCaptcha') {
 
                     $hiddenFieldX = new InputHidden('xPos');
                     $hiddenFieldX->setAttribute('name', 'xPos');
@@ -3210,7 +3207,7 @@
             if ((!is_subclass_of($field, 'FrontendForms\TextElements')) && (get_class($field) != 'FrontendForms\Markup')) {
 
                 // Add id of the form as prefix for the name attribute of the field
-                if($field->hasAttribute('name')){
+                if ($field->hasAttribute('name')) {
                     $fieldName = $field->getAttribute('name');
                 } else {
                     $fieldName = $field->getId();
