@@ -1494,11 +1494,11 @@ Russion language files added to the RockLanguage folder (Thanks to andy-scboy).
   
 [Issue #24 fixed - error for non-existing method containsConditions() inside Markup class](https://github.com/juergenweb/FrontendForms/issues/24)
 
-  The absence of the containsConditions() method inside the Markup class leads to an error, so this method has been added to this class and the containsConditions() method has been rewritten to output always false if form object is not of type inputfield.
+The absence of the containsConditions() method inside the Markup class leads to an error, so this method has been added to this class and the containsConditions() method has been rewritten to output always false if form object is not of type inputfield.
 
 - **Wrong privacy field position fixed**
 
-  Thanks to Frank Vèssia who posted a [problem with the wrong position of the privacy accept field](https://processwire.com/talk/topic/28352-frontendloginregister-a-configurable-module-for-fast-implementation-of-an-user-management-system-based-on-frontendforms/?do=findComment&comment=246594) inside the form if no CAPTCHA was used. The problem was the this field appears on the top instead of the bottom if no CAPTCHA was used - this issue has been fixed now.
+Thanks to Frank Vèssia who posted a [problem with the wrong position of the privacy accept field](https://processwire.com/talk/topic/28352-frontendloginregister-a-configurable-module-for-fast-implementation-of-an-user-management-system-based-on-frontendforms/?do=findComment&comment=246594) inside the form if no CAPTCHA was used. The problem was the this field appears on the top instead of the bottom if no CAPTCHA was used - this issue has been fixed now.
 
 - **New configuration fields for adding external URL for a privacy policy page added**
 
