@@ -50,7 +50,22 @@
 
             if ($this->frontendforms['input_privacypageselect'] === 'ext' && $this->frontendforms['input_privacypageurl']) {
                 $linkExists = true;
-                $this->privacyLink->setUrl($this->frontendforms['input_privacypageurl']);
+
+                // check for multi-language page
+                $languages = $this->wire('languages');
+                if ($languages) {
+
+                    $userLanguage = $this->wire('user')->language;
+
+                    if ($userLanguage->isDefault()) {
+                        $url = 'input_privacypageurl';
+                    } else {
+                        $url = 'input_privacypageurl__' . $userLanguage->id;
+                    }
+
+                }
+
+                $this->privacyLink->setUrl($this->frontendforms[$url]);
             }
 
             if ($linkExists) {
