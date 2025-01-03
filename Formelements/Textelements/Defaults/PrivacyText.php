@@ -39,7 +39,25 @@
 
             if ($this->frontendforms['input_privacypageselect'] === 'ext' && $this->frontendforms['input_privacypageurl']) {
                 $this->linkExists = true;
-                $this->policyLink->setUrl($this->frontendforms['input_privacypageurl']);
+
+                // check for multi-language page
+                $languages = $this->wire('languages');
+                if ($languages) {
+
+                    $userLanguage = $this->wire('user')->language;
+
+                    if ($userLanguage->isDefault()) {
+                        $url = 'input_privacypageurl';
+                    } else {
+                        $url = 'input_privacypageurl__' . $userLanguage->id;
+                        if(!$this->frontendforms[$url])
+                            $url = 'input_privacypageurl';
+                    }
+
+                }
+
+
+                $this->policyLink->setUrl($this->frontendforms[$url]);
             }
 
             $this->policyLink->setLinkText($this->privacy);
