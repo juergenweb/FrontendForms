@@ -61,10 +61,12 @@
                         $url = 'input_privacypageurl';
                     } else {
                         $url = 'input_privacypageurl__' . $userLanguage->id;
+                        if(!$this->frontendforms[$url])
+                            $url = 'input_privacypageurl';
                     }
 
                 }
-
+              
                 $this->privacyLink->setUrl($this->frontendforms[$url]);
             }
 
