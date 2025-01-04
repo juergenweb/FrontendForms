@@ -73,13 +73,16 @@
                 $url = 'input_privacypageurl';
                 // check for multi-language page
                 $languages = wire('languages');
+
                 if ($languages) {
 
                     $userLanguage = wire('user')->language;
 
                     if (!$userLanguage->isDefault()) {
-                        if($frontendformsConfig[$url])
-                            $url = 'input_privacypageurl__' . $userLanguage->id;
+                        $langUrl = 'input_privacypageurl__' . $userLanguage->id;
+                        if($frontendformsConfig[$langUrl] != ''){
+                            $url = $langUrl;
+                        }
                     }
 
                 }
