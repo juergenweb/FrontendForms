@@ -874,6 +874,24 @@
         },
         "5bfe6a369b802afdb9bb4909ac726c2d": {
             "text": "Von FrontendForms \u00fcbernehmen"
+        },
+        "8505305f66de73c3333016eca221de3d": {
+            "text": "W\u00e4hlen Sie den Seitentyp aus, der Ihre Datenschutzerkl\u00e4rung enth\u00e4lt"
+        },
+        "3b314feef3a760d84c30ae0cc3204c94": {
+            "text": "W\u00e4hlen Sie aus, ob Sie eine interne ProcessWire-Seite oder eine externe Website als Ihre Datenschutzrichtlinien-Seite verwenden m\u00f6chten."
+        },
+        "de3237e4be387dcdc969538f20f15f00": {
+            "text": "Interne ProcessWire-Seite"
+        },
+        "9e6c6de8da88dcf38c4fe9fd0f71e0b8": {
+            "text": "Seite einer externen Webseite"
+        },
+        "15508888087480ed9fc1f1e912defd00": {
+            "text": "URL zur externen Seite mit der Datenschutzerkl\u00e4rung"
+        },
+        "f0a25732b34fad9f41d2fc69772ed923": {
+            "text": "Geben Sie die URL der Seite ein, die Ihre Datenschutzerkl\u00e4rung enth\u00e4lt."
         }
     }
 }
