@@ -2174,10 +2174,10 @@
             // TODO
             $privacyPageSelect = $this->wire('modules')->get('InputfieldSelect');
             $privacyPageSelect->attr('name', 'input_privacypageselect');
-            $privacyPageSelect->label = $this->_('Select the page type which contains your privacy policy');
-            $privacyPageSelect->description = $this->_('Select if you want to use an internal ProcessWire page or an external webpage as your privacy policy page.');
+            $privacyPageSelect->label = $this->_('Select the type of page that contains your privacy policy');
+            $privacyPageSelect->description = $this->_('Choose whether you want to use an internal ProcessWire page or an external website as your privacy policy page.');
             $privacyPageSelect->addOption('int', $this->_('Internal ProcessWire page'));
-            $privacyPageSelect->addOption('ext', $this->_('External webpage'));
+            $privacyPageSelect->addOption('ext', $this->_('Page of an external website'));
             $privacyPageSelect->attr('value', $this->input_privacypageselect);
             $privacyPageSelect->defaultValue = 'int';
             $privacyPageSelect->required = 1;
@@ -2186,8 +2186,8 @@
 
             $privacyPageUrl = $this->wire('modules')->get('InputfieldUrl');
             $privacyPageUrl->attr('name', 'input_privacypageurl');
-            $privacyPageUrl->label = $this->_('URL to the external privacy policy page');
-            $privacyPageUrl->description = $this->_('Enter a valid external URL to a page, which contains your privacy policy.');
+            $privacyPageUrl->label = $this->_('URL to the external page with the privacy policy');
+            $privacyPageUrl->description = $this->_('Enter the URL of the page that contains your privacy policy.');
             $privacyPageUrl->attr('value', $this->input_privacypageurl);
             $privacyPageUrl->useLanguages=true;
             $privacyPageUrl->showIf = 'input_privacypageselect=ext';
