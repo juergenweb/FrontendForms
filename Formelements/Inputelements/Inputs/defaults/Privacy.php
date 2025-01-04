@@ -15,6 +15,7 @@
     use Exception;
     use ProcessWire\WireException;
     use ProcessWire\WirePermissionException;
+    use function ProcessWire\wire;
 
     class Privacy extends InputCheckbox
     {
@@ -40,36 +41,52 @@
             $this->privacyLink = new Link();
             $this->privacyLink->setLinkText($this->_('Privacy Policy'));
             $this->privacyLink->setAttribute('title', $this->_('To the Privacy Policy page'));
-            $linkExists = false;
 
-            if ($this->frontendforms['input_privacypageselect'] === 'int' && $this->frontendforms['input_privacy']) {
-                $linkExists = true;
-                $privacyPage = $this->wire('pages')->get($this->frontendforms['input_privacy']); // grab the privacy page
-                $this->privacyLink->setPageLink($privacyPage);
-            }
-
-            if ($this->frontendforms['input_privacypageselect'] === 'ext' && $this->frontendforms['input_privacypageurl']) {
-                $linkExists = true;
-                $url = 'input_privacypageurl';
-                // check for multi-language page
-                $languages = $this->wire('languages');
-                if ($languages) {
-
-                    $userLanguage = $this->wire('user')->language;
-
-                    if (!$userLanguage->isDefault()) {
-                        if(!$this->frontendforms[$url])
-                            $url = 'input_privacypageurl__' . $userLanguage->id;
-                    }
-
-                }
-              
-                $this->privacyLink->setUrl($this->frontendforms[$url]);
-            }
+            $linkExists = self::setPrivacyPageUrl($this->frontendforms, $this->privacyLink);
 
             if ($linkExists) {
                 $this->setLabel($this->getLabel()->getText() . ' (' . $this->privacyLink->___render() . ')');
             }
+        }
+
+
+        /**
+         * Static method to generate the link to the privacy page depending on configuration settings
+         * @param array $frontendformsConfig
+         * @param \FrontendForms\Link $link
+         * @return bool
+         */
+        public static function setPrivacyPageUrl(array $frontendformsConfig, Link $link): bool
+        {
+            $linkExists = false;
+
+            // internal privacy page
+            if ($frontendformsConfig['input_privacypageselect'] === 'int' && $frontendformsConfig['input_privacy']) {
+                $linkExists = true;
+                $privacyPage = wire('pages')->get($frontendformsConfig['input_privacy']); // grab the privacy page
+                $link->setPageLink($privacyPage);
+            }
+
+            // external privacy page
+            if ($frontendformsConfig['input_privacypageselect'] === 'ext' && $frontendformsConfig['input_privacypageurl']) {
+                $linkExists = true;
+                $url = 'input_privacypageurl';
+                // check for multi-language page
+                $languages = wire('languages');
+                if ($languages) {
+
+                    $userLanguage = wire('user')->language;
+
+                    if (!$userLanguage->isDefault()) {
+                        if(!$frontendformsConfig[$url])
+                            $url = 'input_privacypageurl__' . $userLanguage->id;
+                    }
+
+                }
+
+                $link->setUrl($frontendformsConfig[$url]);
+            }
+            return $linkExists;
         }
 
         /**
