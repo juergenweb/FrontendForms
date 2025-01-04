@@ -2706,7 +2706,7 @@
             foreach ($this->formElements as $obj) {
 
                 // check if the field contains a field condition
-                if ($obj->containsConditions()) {
+                if (($obj instanceof Element) && ($obj->containsConditions())) {
                     $this->page->field_conditions = true;
                 }
 
@@ -2848,7 +2848,7 @@
                         $firstButtonPos = key($this->getElementsbyClass('Button')[0]);
                     }
                 }
-                
+
                 // sort the privacy elements that checkbox is before text, if both are used
                 $privacyElements = [];
                 $privacyCheckbox = $this->getElementsbyClass('Privacy');
