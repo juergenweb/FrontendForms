@@ -29,38 +29,7 @@
                 $this->frontendforms['input_privacypageselect'] = 'int';
 
             $this->policyLink = new Link();
-
-            if ($this->frontendforms['input_privacypageselect'] === 'int' && $this->frontendforms['input_privacy']) {
-                $this->linkExists = true;
-                $privacyPage = $this->wire('pages')->get($this->frontendforms['input_privacy']); // grab the privacy page
-                //$this->setPolicyPageId((int)$this->frontendforms['input_privacy'][0]);
-                $this->policyLink->setPageLink($privacyPage);
-            }
-
-            if ($this->frontendforms['input_privacypageselect'] === 'ext' && $this->frontendforms['input_privacypageurl']) {
-
-                $this->linkExists = true;
-                $url = 'input_privacypageurl';
-
-                // check for multi-language page
-                $languages = $this->wire('languages');
-                if ($languages) {
-
-                    $userLanguage = $this->wire('user')->language;
-
-                    if ($userLanguage->isDefault()) {
-                        $url = 'input_privacypageurl';
-                    } else {
-                        $url = 'input_privacypageurl__' . $userLanguage->id;
-                        if(!$this->frontendforms[$url])
-                            $url = 'input_privacypageurl';
-                    }
-
-                }
-                
-                $this->policyLink->setUrl($this->frontendforms[$url]);
-            }
-
+            $this->linkExists = Privacy::setPrivacyPageUrl($this->frontendforms, $this->policyLink);
             $this->policyLink->setLinkText($this->privacy);
 
         }
@@ -76,8 +45,7 @@
 
         /**
          * Render the privacy policy link
-         * @throws \ProcessWire\WireException
-         * @throws \ProcessWire\WirePermissionException
+         * @return string
          */
         public function renderPolicyLink(): string
         {
@@ -102,8 +70,7 @@
 
         /**
          * Render the text string
-         * @throws \ProcessWire\WireException
-         * @throws \ProcessWire\WirePermissionException
+         * @return string
          */
         public function ___render(): string
         {
@@ -111,6 +78,5 @@
             $this->setText(sprintf($this->getText(), $privacy));
             return parent::___render();
         }
-
 
     }
