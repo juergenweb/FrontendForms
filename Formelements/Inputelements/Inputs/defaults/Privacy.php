@@ -78,7 +78,7 @@
                     $userLanguage = wire('user')->language;
 
                     if (!$userLanguage->isDefault()) {
-                        if(!$frontendformsConfig[$url])
+                        if($frontendformsConfig[$url])
                             $url = 'input_privacypageurl__' . $userLanguage->id;
                     }
 
