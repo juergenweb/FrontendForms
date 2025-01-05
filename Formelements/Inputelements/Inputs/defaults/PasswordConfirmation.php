@@ -36,6 +36,7 @@ class PasswordConfirmation extends InputPassword
         $this->setRule('equals', $passwordfieldName);
         $this->setRule('lengthMin', $this->minLength);
         $this->setRule('lengthMax', '128');
+        $this->showPasswordRequirements(false);
     }
 
     /**
