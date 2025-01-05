@@ -21,7 +21,7 @@
         protected $passwordField; // the password field object
         protected $passwordModule; // the password fieldtype module
         protected string $passwordFieldName = 'pass';
-        protected bool $showPasswordRequirements = false;
+        protected bool $showPasswordRequirements = true;
         protected int|string $minLength = '6'; // the min length of the password as set inside the input field configuration
         protected InputCheckbox $createPasswordToggle; // The password toggle checkbox object
         protected bool $showPasswordToggle = true; // show or hide the password toggle checkbox
@@ -40,7 +40,6 @@
             $this->passwordModule = $this->wire('modules')->get('InputfieldPassword');
             $this->minLength = $this->getMinLength();
             $this->setRule('meetsPasswordConditions');// add meetsPasswordConditions Validator by default
-            $this->setDescription($this->renderPasswordRequirements());
         }
 
         /**
@@ -61,11 +60,12 @@
 
         /**
          * Show the password requirements at the password field
+         * @param bool $show
          * @return \FrontendForms\InputPassword
          */
-        public function showPasswordRequirements(): self
+        public function showPasswordRequirements(bool $show = true): self
         {
-            $this->showPasswordRequirements = true;
+            $this->showPasswordRequirements = $show;
             return $this;
         }
 
@@ -109,12 +109,17 @@
             if ($this->showPasswordRequirements) {
                 if (($this->getDescription()->getText()) && ($this->getDescription()->getText() != $this->renderPasswordRequirements())) {
                     $this->setDescription($this->renderPasswordRequirements() . '<br>' . $this->getDescription()->getText());
+                } else {
+                    $this->setDescription($this->renderPasswordRequirements());
                 }
             }
+
+
 
             if ($this->showPasswordToggle) {
                 $this->append($this->createPasswordToggle()->___render());
             }
+
             return parent::___renderInputText();
         }
 
