@@ -2318,7 +2318,7 @@ inside the Examples folder.
 Hooking is not really necessary in most cases, because you have so much configuration options and public methods to achieve your desired
 result. Anyway, if there is a need for it, you can change the markup of the form globally by hooking Form::render.
 
-### Hook example 1: Change the asterisk markup via a Hook
+### Hook example: Change the asterisk markup via a Hook
 If you are not satisfied with the markup for the asterisk on required fields, you can use the following Hook inside
 your init.php to change the markup of the asterisk.
 
