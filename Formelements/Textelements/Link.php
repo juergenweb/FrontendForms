@@ -95,7 +95,7 @@ class Link extends TextElements
         if ($this->getAnchor()) {
             $this->setUrl($this->getUrl() . '#' . $this->getAnchor());
         }
-        return parent::___render();
+        return parent::render();
     }
 
     /**
