@@ -43,7 +43,7 @@ class Username extends InputText
      */
     public function ___renderUsername(): string
     {
-        return parent::___renderInputText();
+        return parent::renderInputText();
     }
 
 }
