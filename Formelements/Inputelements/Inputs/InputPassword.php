@@ -117,7 +117,7 @@
 
 
             if ($this->showPasswordToggle) {
-                $this->append($this->createPasswordToggle()->___render());
+                $this->append($this->createPasswordToggle()->render());
             }
 
             return parent::___renderInputText();
