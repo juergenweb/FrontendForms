@@ -34,7 +34,7 @@ class Subject extends InputText
      */
     public function ___renderSubject(): string
     {
-        return parent::___renderInputText();
+        return parent::renderInputText();
     }
 
 }
