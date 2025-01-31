@@ -56,12 +56,12 @@
                 if ($this->getRequired()) {
                     $this->setCSSClass('label_requiredClass');
                     if ($this->enableAsterisk) {
-                        $content .= ($this->frontendforms['input_showasterisk']) ? $this->___renderAsterisk() : '';
+                        $content .= ($this->frontendforms['input_showasterisk']) ? $this->renderAsterisk() : '';
                     }
 
                 }
                 $this->setContent($content);
-                return parent::___render();
+                return parent::render();
             }
             return '';
         }
