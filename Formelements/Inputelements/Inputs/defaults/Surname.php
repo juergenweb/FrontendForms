@@ -34,7 +34,7 @@ class Surname extends InputText
      */
     public function ___renderSurname(): string
     {
-        return parent::___renderInputText();
+        return parent::renderInputText();
     }
 
 }
