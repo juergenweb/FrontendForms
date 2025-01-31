@@ -33,7 +33,7 @@ class InputTel extends InputText
      */
     public function ___renderInputTel(): string
     {
-        return parent::___renderInputText();
+        return parent::renderInputText();
     }
 
 }
