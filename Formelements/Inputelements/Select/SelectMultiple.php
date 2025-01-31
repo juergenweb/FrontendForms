@@ -52,7 +52,7 @@ class SelectMultiple extends Select
     {
         // add brackets to the name for multiple values array
         $this->convertNameAttribute();
-        return $this->___renderSelect();
+        return $this->renderSelect();
     }
 
 }
