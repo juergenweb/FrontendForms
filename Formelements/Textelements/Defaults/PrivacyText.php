@@ -52,7 +52,7 @@
             $out = '';
 
             if ($this->linkExists) {
-                $out = $this->policyLink->___render();
+                $out = $this->policyLink->render();
             }
             return $out;
         }
@@ -76,7 +76,7 @@
         {
             $privacy = $this->renderPolicyLink() != '' ? $this->renderPolicyLink() : $this->privacy;
             $this->setText(sprintf($this->getText(), $privacy));
-            return parent::___render();
+            return parent::render();
         }
 
     }
