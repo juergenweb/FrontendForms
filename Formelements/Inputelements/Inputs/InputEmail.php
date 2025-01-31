@@ -36,7 +36,7 @@ class InputEmail extends InputText
      */
     public function ___renderInputEmail(): string
     {
-        return parent::___renderInputText();
+        return parent::renderInputText();
     }
 
 }
