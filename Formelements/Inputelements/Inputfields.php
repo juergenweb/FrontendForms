@@ -375,7 +375,7 @@
          */
         public function __toString(): string
         {
-            return $this->___render();
+            return $this->render();
         }
 
 
@@ -437,11 +437,11 @@
             }
 
             // generate the render method name out of the markup type
-            $methodName = '___render' . ucfirst(pathinfo($this->markupType, PATHINFO_FILENAME));
+            $methodName = 'render' . ucfirst(pathinfo($this->markupType, PATHINFO_FILENAME));
             if (method_exists($this, $methodName)) {
                 $content = $this->$methodName($className, $input);
             } else {
-                $content = $this->___renderDefault($className, $input);
+                $content = $this->renderDefault($className, $input);
             }
 
             // Add fieldwrapper if set
@@ -449,7 +449,7 @@
                 $out .= $content;
             } else {
                 $this->fieldWrapper->setContent($content);
-                $out .= $this->fieldWrapper->___render() . PHP_EOL;
+                $out .= $this->fieldWrapper->render() . PHP_EOL;
             }
 
             /*
@@ -458,7 +458,7 @@
                     $out .= $content;
                 } else {
                     $this->fieldWrapper->setContent($content);
-                    $out .= $this->fieldWrapper->___render() . PHP_EOL;
+                    $out .= $this->fieldWrapper->render() . PHP_EOL;
                 }
             } else {
                 $out .= $content;
@@ -467,7 +467,7 @@
             // check if custom wrapper was added an render it as the most outer container
             if ($this->useCustomWrapper) {
                 $this->customWrapper->setContent($out);
-                $out = $this->customWrapper->___render() . PHP_EOL;
+                $out = $this->customWrapper->render() . PHP_EOL;
             }
             return $out;
         }
@@ -484,9 +484,9 @@
         public function ___renderDefault(string $className, $input): string
         {
             $out = '';
-            $description = $this->description->___render() . PHP_EOL;
-            $successmsg = $this->getSuccessMessage()->___render() . PHP_EOL;
-            $errormsg = $this->getErrorMessage()->___render() . PHP_EOL;
+            $description = $this->description->render() . PHP_EOL;
+            $successmsg = $this->getSuccessMessage()->render() . PHP_EOL;
+            $errormsg = $this->getErrorMessage()->render() . PHP_EOL;
 
             switch ($className) {
                 case ('InputHidden'):
@@ -500,7 +500,7 @@
 
                     // add the description before the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
-                        $out .= $this->getDescription()->___render();
+                        $out .= $this->getDescription()->render();
                     }
 
                     /** Special treatment for label markup */
@@ -511,7 +511,7 @@
 
                     // add the description after the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
-                        $out .= $this->getDescription()->___render();
+                        $out .= $this->getDescription()->render();
                     }
                     $input_markup = $errormsg . $successmsg;
 
@@ -520,7 +520,7 @@
 
                     // add the description before the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
-                        $out .= $this->getDescription()->___render();
+                        $out .= $this->getDescription()->render();
                     }
                     if ($this->getLabel()->getText()) {
                         $out .= $this->getLabel()->render() . PHP_EOL;
@@ -528,7 +528,7 @@
                     // add the description after the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
 
-                        $out .= $this->getDescription()->___render();
+                        $out .= $this->getDescription()->render();
                     }
                     $input_markup = $input . $errormsg . $successmsg;
 
@@ -538,7 +538,7 @@
             if ($this->useInputWrapper) {
 
                 $this->inputWrapper->setContent($input_markup);
-                $out .= $this->inputWrapper->___render() . PHP_EOL;
+                $out .= $this->inputWrapper->render() . PHP_EOL;
             } else {
                 $out .= $input_markup;
             }
@@ -548,7 +548,7 @@
 
             // add description at the end if set
             if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterInput')) {
-                $out .= $this->getDescription()->___render();
+                $out .= $this->getDescription()->render();
             }
 
             return $out;
@@ -569,9 +569,9 @@
         {
 
             $out = $content = '';
-            $description = $this->description->___render() . PHP_EOL;
-            $successmsg = $this->getSuccessMessage()->___render() . PHP_EOL;
-            $errormsg = $this->getErrorMessage()->___render() . PHP_EOL;
+            $description = $this->description->render() . PHP_EOL;
+            $successmsg = $this->getSuccessMessage()->render() . PHP_EOL;
+            $errormsg = $this->getErrorMessage()->render() . PHP_EOL;
 
 
             // add is-valid or is-invalid class to the label tag
@@ -595,7 +595,7 @@
 
                     // add the description before the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
-                        $content .= $this->getDescription()->___render();
+                        $content .= $this->getDescription()->render();
                     }
 
                     /** Special treatment for label markup */
@@ -606,7 +606,7 @@
 
                     // add the description after the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
-                        $content .= $this->getDescription()->___render();
+                        $content .= $this->getDescription()->render();
                     }
 
                     $input_markup = $content . $errormsg . $successmsg;
@@ -616,7 +616,7 @@
 
                     // add the description before the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
-                        $content .= $this->getDescription()->___render();
+                        $content .= $this->getDescription()->render();
                     }
 
                     if ($this->getLabel()->getText()) {
@@ -635,7 +635,7 @@
                     $content .= $input;
                     // add the description after the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
-                        $content .= $this->getDescription()->___render();
+                        $content .= $this->getDescription()->render();
                     }
                     $input_markup = $content . $errormsg . $successmsg;
 
@@ -644,7 +644,7 @@
             // add input-wrapper if set
             if ($this->useInputWrapper) {
                 $this->inputWrapper->setContent($input_markup);
-                $out .= $this->inputWrapper->___render() . PHP_EOL;
+                $out .= $this->inputWrapper->render() . PHP_EOL;
             } else {
                 $out .= $input_markup;
             }
@@ -654,7 +654,7 @@
 
             // add description at the end if set
             if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterInput')) {
-                $out .= $this->getDescription()->___render();
+                $out .= $this->getDescription()->render();
             }
 
             return $out;
@@ -675,9 +675,9 @@
         {
 
             $out = '';
-            $description = $this->description->___render() . PHP_EOL;
-            $successmsg = $this->getSuccessMessage()->___render() . PHP_EOL;
-            $errormsg = $this->getErrorMessage()->___render() . PHP_EOL;
+            $description = $this->description->render() . PHP_EOL;
+            $successmsg = $this->getSuccessMessage()->render() . PHP_EOL;
+            $errormsg = $this->getErrorMessage()->render() . PHP_EOL;
 
             switch ($className) {
                 case ('InputHidden'):
@@ -691,7 +691,7 @@
 
                     // add the description before the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
-                        $out .= $this->getDescription()->___render();
+                        $out .= $this->getDescription()->render();
                     }
 
                     /** Special treatment for label markup */
@@ -699,7 +699,7 @@
                     // pico does not accept an asterisk inside a tag, so every tag must be removed from the asterisk first
                     $asterisk = '';
                     if ($this->getRules() && array_key_exists('required', $this->getRules())) {
-                        $asterisk = ($this->frontendforms['input_showasterisk']) ? strip_tags($this->getLabel()->___renderAsterisk()) : '';
+                        $asterisk = ($this->frontendforms['input_showasterisk']) ? strip_tags($this->getLabel()->renderAsterisk()) : '';
                     }
 
 
@@ -713,7 +713,7 @@
 
                     // add the description after the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
-                        $out .= $this->getDescription()->___render();
+                        $out .= $this->getDescription()->render();
                     }
                     $input_markup = '';
 
@@ -722,14 +722,14 @@
 
                     // add the description before the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
-                        $out .= $this->getDescription()->___render();
+                        $out .= $this->getDescription()->render();
                     }
                     if ($this->getLabel()->getText()) {
                         $out .= $this->getLabel()->render() . PHP_EOL;
                     }
                     // add the description after the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
-                        $out .= $this->getDescription()->___render();
+                        $out .= $this->getDescription()->render();
                     }
                     $input_markup = $input . $errormsg . $successmsg;
 
@@ -738,7 +738,7 @@
             // add input-wrapper if set
             if ($this->useInputWrapper) {
                 $this->inputWrapper->setContent($input_markup);
-                $out .= $this->inputWrapper->___render() . PHP_EOL;
+                $out .= $this->inputWrapper->render() . PHP_EOL;
             } else {
                 $out .= $input_markup;
             }
@@ -748,7 +748,7 @@
 
             // add description at the end if set
             if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterInput')) {
-                $out .= $this->getDescription()->___render();
+                $out .= $this->getDescription()->render();
             }
 
             return $out;
