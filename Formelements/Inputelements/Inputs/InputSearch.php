@@ -36,7 +36,7 @@ class InputSearch extends InputText
      */
     public function ___renderInputSearch(): string
     {
-        return parent::___renderInputText();
+        return parent::renderInputText();
     }
 
 }
