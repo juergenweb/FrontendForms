@@ -51,7 +51,7 @@ class TextElements extends Element
 
     public function __toString()
     {
-        return $this->___render();
+        return $this->render();
     }
 
     /**
@@ -62,7 +62,7 @@ class TextElements extends Element
     {
         if ($this->wrapper) {
             $this->wrapper->setContent($this->renderNonSelfclosingTag($this->getTag()));
-            return $this->wrapper->___render();
+            return $this->wrapper->render();
         }
         return $this->renderNonSelfclosingTag($this->getTag());
     }
