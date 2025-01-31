@@ -3012,9 +3012,7 @@
                 }
 
                 // Output the form markup
-                if($this->alert->render())
-                    $out .= $this->renderAlert($this->alert->render());
-
+                $out .= $this->alert->render();
                 // render the alert box on top for success or error message
 
                 // show form only if user is not blocked
