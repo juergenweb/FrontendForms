@@ -84,7 +84,7 @@
                     $this->charCounter->setContent(sprintf($this->_('You have %s characters left.'), '<span>' . $maxChars . '</span>'));
                     $this->charCounter->prepend('<div>');
                     $this->charCounter->append('</div>');
-                    $counter = $this->charCounter->___render();
+                    $counter = $this->charCounter->render();
                 }
             }
             $textarea = $this->renderNonSelfclosingTag($this->getTag(), true);
