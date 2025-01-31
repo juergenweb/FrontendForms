@@ -43,7 +43,7 @@ class Button extends Element
 
     public function __toString()
     {
-        return $this->___render();
+        return $this->render();
     }
 
     /**
