@@ -117,16 +117,16 @@ class InputFile extends Input
             case('uikit3.json'):
 
                 $out = $this->renderInput();
-                $out .= $this->button->___render();
+                $out .= $this->button->render();
                 $this->wrapper->setContent($out);
-                $out = $this->wrapper->___render();
+                $out = $this->wrapper->render();
                 break;
             default:
                 $out = $this->renderInput();
         }
         if ($this->showClearLink) {
             $this->clearlink->setAttribute('id', $this->getID() . '-clear'); // set new id including form id
-            $out .= '<div id="' . $this->getID() . '-clearlink-wrapper" class="clear-link-wrapper" style="display:none;">' . $this->clearlink->___render() . '</div>';
+            $out .= '<div id="' . $this->getID() . '-clearlink-wrapper" class="clear-link-wrapper" style="display:none;">' . $this->clearlink->render() . '</div>';
         }
         return $out;
     }
@@ -156,7 +156,7 @@ class InputFile extends Input
             $file_size = $this->notes_array['phpIniFilesize']['value'] ?? $this->notes_array['allowedFileSize']['value'];
             $this->setAttribute('max-size', (string)(Inputfields::convertToBytes($file_size)/1000)); // set max-size in kb
         }
-        return parent::___render();
+        return parent::render();
     }
 
 }
