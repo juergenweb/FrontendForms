@@ -45,7 +45,7 @@
             $linkExists = self::setPrivacyPageUrl($this->frontendforms, $this->privacyLink);
 
             if ($linkExists) {
-                $this->setLabel($this->getLabel()->getText() . ' (' . $this->privacyLink->___render() . ')');
+                $this->setLabel($this->getLabel()->getText() . ' (' . $this->privacyLink->render() . ')');
             }
         }
 
@@ -117,7 +117,7 @@
          */
         public function ___renderPrivacy(): string
         {
-            return parent::___renderInputCheckbox();
+            return parent::renderInputCheckbox();
         }
 
     }
