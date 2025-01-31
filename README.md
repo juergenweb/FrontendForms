@@ -2316,37 +2316,49 @@ inside the Examples folder.
 
 ## Hooking
 Hooking is not really necessary in most cases, because you have so much configuration options and public methods to achieve your desired
-result. Anyway, if there is a need for it, you can change the markup of the form globally by hooking Form::render.
+result. Anyway, if there is a need for it, every method with 3 underscores is hookable.
 
-### Hook example: Change the asterisk markup via a Hook
+### Hook example 1: Change the asterisk markup via a Hook
 If you are not satisfied with the markup for the asterisk on required fields, you can use the following Hook inside
-your init.php to change the markup of the asterisk.
+your init.php to create your own markup.
 
-First you have to look into the source code of your form to see how the markup of the asterisk should be. By default the asterisk markup will be the following:
-
+Before:
 ```html
-<span class="asterisk">*</span> // this is the default markup of the asterisk
+<span class="asterisk">*</span>
 ```
 Hook function
 
-Then you can use the Form::render hook in combination with a simple str_replace to change the markup of the asterisk a little bit.
-
 ```php
-wire()->addHookAfter('Form::render', function ($event) {
-        $return = $event->return;
-        $return = str_replace('<span class="asterisk">*</span>','<span class="myAsterisk">+</span>', $return);
-        $event->return = $return;
-    });
+$wire->addHookAfter('Label::renderAsterisk', function(HookEvent $event) {
+  $event->return = '<span class="myAsterisk">+</span>';
+});
 ```
-
-This is what the asterisk looks like after the hook:
-
+After:
 ```html
 <span class="myAsterisk">+</span>
 ```
 
-You can use this example for all other markup elements (fe adding font-awesome in front of notes, description, error message) of the form to customize the markup a little bit.
+### Hook example 2: Add Font Awesome exclamation sign in front of the error message
 
+Before:
+```html
+<p class="uk-text-error">This is the error message.</p>
+```
+Hook function
+
+```php
+$wire->addHookAfter('Errormessage::render', function(HookEvent $event) {
+  $alert = $event->object;
+  $fontAwesome = '<i class="fas fa-exclamation-triangle"></i>';
+  $alertText = $alert->getText();
+  $alert->setText($fontAwesome.$alertText);
+  $event->return = $alert->___render();
+});
+```
+After:
+```html
+<p class="uk-text-error"><i class="fas fa-exclamation-triangle"></i>This is the error message.</p>
+```
 ## Multi-language
 This module supports multi-language. All text strings are fully translatable in the backend.
 The default language is English.
