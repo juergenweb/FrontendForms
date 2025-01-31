@@ -253,11 +253,11 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
         $captchaInput->setLabel($this->_('Captcha field for security'));
         $captchaInput->prepend($this->createCaptchaImageTag($formID)
                 ->setAttribute('id', $formID . '-captcha-image')
-                ->___render() . // render captcha image
+                ->render() . // render captcha image
             $this->createReloadLink()
                 ->setAttribute('id', $formID . '-reload-link')
                 ->setAttribute('onclick', 'reloadCaptcha(\'' . $formID . '-captcha-image\', event)')
-                ->___render().'<div class="captcha-input-wrapper">'); // render the reload link
+                ->render().'<div class="captcha-input-wrapper">'); // render the reload link
         $captchaInput->append('</div>');
         return $captchaInput;
     }
