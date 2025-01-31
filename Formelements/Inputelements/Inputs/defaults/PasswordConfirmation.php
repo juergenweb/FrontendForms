@@ -47,7 +47,7 @@ class PasswordConfirmation extends InputPassword
      */
     public function ___renderPasswordConfirmation(): string
     {
-        return parent::___renderInputPassword();
+        return parent::renderInputPassword();
     }
 
 }
