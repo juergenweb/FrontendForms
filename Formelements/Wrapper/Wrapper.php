@@ -40,7 +40,7 @@ class Wrapper extends Tag
 
     public function __toString()
     {
-        return $this->___render();
+        return $this->render();
     }
 
 }
