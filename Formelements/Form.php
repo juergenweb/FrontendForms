@@ -2032,7 +2032,6 @@
             $input = $this->wire('input')->$formMethod; // get the GET or POST values after submission
             $formElements = $this->formElements; //grab all form elements as an array of objects
 
-
             // check for file upload fields inside the form
             $file_upload_fields = $this->getFileUploadFields();
             if ($file_upload_fields) {
@@ -2671,8 +2670,9 @@
          * @throws WireException
          * @throws \Exception
          */
-        public function ___render(): string
+        public function render(): string
         {
+
             // redirect after successful form validation if set
             if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
                 $this->wire('session')->redirect($this->getRedirectURL());
