@@ -31,7 +31,7 @@
          */
         public function ___renderPhone(): string
         {
-            return parent::___renderInputTel();
+            return parent::renderInputTel();
         }
 
     }
