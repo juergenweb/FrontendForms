@@ -36,7 +36,7 @@ class Message extends Textarea
      */
     public function renderMessage(): string
     {
-        return parent::___renderTextarea();
+        return parent::renderTextarea();
     }
 
 }
