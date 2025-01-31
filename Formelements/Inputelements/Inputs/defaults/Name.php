@@ -34,7 +34,7 @@ class Name extends InputText
      */
     public function ___renderName(): string
     {
-        return parent::___renderInputText();
+        return parent::renderInputText();
     }
 
 }
