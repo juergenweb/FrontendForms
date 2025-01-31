@@ -37,7 +37,7 @@ class FieldsetOpen extends Element
 
     public function __toString(): string
     {
-        return $this->___render();
+        return $this->render();
     }
 
     /**
@@ -46,7 +46,7 @@ class FieldsetOpen extends Element
      */
     public function ___render(): string
     {
-        $this->append($this->legend->___render());
+        $this->append($this->legend->render());
         return $this->renderSelfclosingTag($this->getTag());
     }
 }
