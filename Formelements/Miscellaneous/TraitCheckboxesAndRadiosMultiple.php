@@ -79,7 +79,7 @@ trait TraitCheckboxesAndRadiosMultiple
                 $wrapper->setCSSClass($class);
                 $wrapper->setContent($out);
 
-                return $wrapper->___render();
+                return $wrapper->render();
 
     }
 
