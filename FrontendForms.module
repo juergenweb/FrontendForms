@@ -12,26 +12,6 @@
      * Created: 03.07.2022
      */
 
-// Require the classloaders
-    wire('classLoader')->addNamespace('Valitron', __DIR__ . '/valitron/src');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Textelements');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Textelements/Defaults');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Miscellaneous');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Wrapper');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Captcha');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Captcha/variants');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Images');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Datalist');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Inputs');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Inputs/defaults');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Select');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Select/defaults');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Textarea');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Textarea/defaults');
-    wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/avatar');
-
     use Exception;
     use FrontendForms\Form;
     use stdClass;
@@ -681,7 +661,6 @@
         public function ready(): void
         {
 
-
             /**
              * Add a new method "sendAttachments($form)" to the WireMail class
              * This method is an extension of the WireMail attachment() method
@@ -824,6 +803,26 @@
          */
         public function init(): void
         {
+
+            // Require the classloaders
+            wire('classLoader')->addNamespace('Valitron', __DIR__ . '/valitron/src');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Textelements');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Textelements/Defaults');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Miscellaneous');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Wrapper');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Captcha');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Captcha/variants');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Images');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Datalist');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Inputs');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Inputs/defaults');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Select');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Select/defaults');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Textarea');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Textarea/defaults');
+            wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/avatar');
 
 
             //create instance of InputfieldPassword and set the requirement settings from field "pass" to it
@@ -2857,7 +2856,7 @@
                 // sort array by count descending
                 array_multisort(array_column($result, 'count'), SORT_DESC, SORT_NUMERIC, $result);
                 // output table
-                $value = $this->___executeTable($result);
+                $value = $this->executeTable($result);
             } else {
                 $value = $this->_('Nothing to show - logfile does not exist');
             }
