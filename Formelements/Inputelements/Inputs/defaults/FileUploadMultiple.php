@@ -34,7 +34,7 @@ class FileUploadMultiple extends InputFile
      */
     public function ___renderFileUploadMultiple(): string
     {
-        return parent::___renderInputFile();
+        return parent::renderInputFile();
     }
 
 }
