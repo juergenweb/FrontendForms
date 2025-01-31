@@ -2671,7 +2671,7 @@
          * @throws WireException
          * @throws \Exception
          */
-        public function render(): string
+        public function ___render(): string
         {
             // redirect after successful form validation if set
             if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
@@ -2694,7 +2694,7 @@
                 $warningAlert->prepend('<noscript>');
                 $warningAlert->append('</noscript>');
                 $warningAlert->setText($this->_('You do not have Javascript enabled. This could cause problems. Please enable Javascript to submit the form without any problems.'));
-                $out .= $warningAlert->___render();
+                $out .= $warningAlert->render();
 
                 $this->setAttribute('data-submitajax', $this->getID());
 
@@ -3012,7 +3012,9 @@
                 }
 
                 // Output the form markup
-                $out .= $this->alert->___render();
+                if($this->alert->render())
+                    $out .= $this->renderAlert($this->alert->render());
+
                 // render the alert box on top for success or error message
 
                 // show form only if user is not blocked
@@ -3088,7 +3090,7 @@
                                     $submitInfo = new Alert();
                                     $submitInfo->setCSSClass('alert_primaryClass');
                                     $submitInfo->setContent($this->createProgressbar() . $this->frontendforms['input_ajaxMsg']);
-                                    $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo->___render() . '</div>';
+                                    $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo->render() . '</div>';
                                 }
                             }
                         }
@@ -3133,7 +3135,7 @@
                     // add formElementsWrapper -> add the div container after the form tag
                     if ($this->frontendforms['input_wrapperFormElements']) {
                         $this->getformElementsWrapper()->setContent($formElements);
-                        $formElements = $this->formElementsWrapper->___render() . PHP_EOL;
+                        $formElements = $this->formElementsWrapper->render() . PHP_EOL;
                     }
 
                     // render the form with all its fields
@@ -3397,7 +3399,7 @@
         function renderRequiredText(string $position): string
         {
             if ($this->defaultRequiredTextPosition === $position) {
-                return $this->requiredHint->___render();
+                return $this->requiredHint->render();
             }
             return ''; // return empty string
         }
