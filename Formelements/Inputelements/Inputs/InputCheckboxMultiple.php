@@ -144,7 +144,7 @@ class InputCheckboxMultiple extends Input
 
                 // Render label after input tag or wrap input tag with label tag
                 if ($this->getAppendLabel()) {
-                    $out .= $checkbox->___renderInputCheckbox() . $checkbox->getLabel()->render();
+                    $out .= $checkbox->renderInputCheckbox() . $checkbox->getLabel()->render();
                 } else {
                     $out .= $checkbox->render();
                 }
