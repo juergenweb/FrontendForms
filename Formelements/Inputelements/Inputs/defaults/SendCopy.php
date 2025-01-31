@@ -32,7 +32,7 @@ class SendCopy extends InputCheckbox
      */
     public function ___renderSendCopy(): string
     {
-        return parent::___renderInputCheckbox();
+        return parent::renderInputCheckbox();
     }
 
 }
