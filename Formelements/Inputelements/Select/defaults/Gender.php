@@ -51,7 +51,7 @@ class Gender extends Select
      */
     public function renderGender(): string
     {
-        return parent::___renderSelect();
+        return parent::renderSelect();
     }
 
 }
