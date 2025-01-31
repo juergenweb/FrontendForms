@@ -34,7 +34,7 @@ class FileUploadSingle extends InputFile
      */
     public function ___renderFileUploadSingle(): string
     {
-        return parent::___renderInputFile();
+        return parent::renderInputFile();
     }
 
 }
