@@ -46,7 +46,7 @@ class InputFile extends Input
             $this->button->setAttribute('type', 'button');
             $this->button->setAttribute('value', $this->_('Select files'));
             $this->button->setAttribute('tabindex', '-1');
-            // instantiate wrapper for uikit3 framework
+            // instantiate wrapper for the uikit3 framework
             $this->wrapper = new Wrapper();
             $this->wrapper->setAttribute('class', 'js-upload');
             $this->wrapper->setAttribute('data-uk-form-custom');
@@ -138,7 +138,7 @@ class InputFile extends Input
     public function ___render(): string
     {
 
-        // check for simultaneously presence of 'phpIniFilesize' and 'allowedFileSize'
+        // check for simultaneous presence of 'phpIniFilesize' and 'allowedFileSize'
         if ((array_key_exists('phpIniFilesize', $this->notes_array)) && (array_key_exists('allowedFileSize',
                 $this->notes_array))) {
             $allowed = Inputfields::convertToBytes($this->notes_array['allowedFileSize']['value']);
@@ -156,7 +156,7 @@ class InputFile extends Input
             $file_size = $this->notes_array['phpIniFilesize']['value'] ?? $this->notes_array['allowedFileSize']['value'];
             $this->setAttribute('max-size', (string)(Inputfields::convertToBytes($file_size)/1000)); // set max-size in kb
         }
-        return parent::render();
+        return parent::___render();
     }
 
 }
