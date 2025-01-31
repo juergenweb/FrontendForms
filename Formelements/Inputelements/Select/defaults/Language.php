@@ -79,7 +79,7 @@ class Language extends Select
 
             $value = (is_null($this->fixed_lang_id)) ? $this->user_lang_id : $this->fixed_lang_id;
             $this->setDefaultValue($value);
-            return parent::___renderSelect();
+            return parent::renderSelect();
         }
         return '';
     }
