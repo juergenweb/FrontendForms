@@ -1515,3 +1515,9 @@ After a long time of searching and via the help of RobinS and Bernhard from the 
 The issue was caused by using the 3 underscores at function calls which was responsible to bypass the hook. I have corrected this on every file inside the module and it should work now without problems. 
 
 In addition I have added 2 more hook examples at the Hooking section in the docs, where you can add FontAwesome icons in front of the field description and field notes. 
+
+## 2025-02-01
+
+- **Validation rule for cyrillic name added**
+
+Thanks to Andy from the support forum, who wrote this validation rule and shared it with us. Now you can easily validate cyrillic names. You will find an example here in the docs.
