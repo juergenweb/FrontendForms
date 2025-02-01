@@ -2359,6 +2359,31 @@ After:
 ```html
 <p class="uk-text-error"><i class="fas fa-exclamation-triangle"></i>This is the error message.</p>
 ```
+
+### Hook example 3: Add Font Awesome exclamation sign in front of the input field description
+
+Before:
+```html
+This is my input Description.
+```
+Hook function
+
+```php
+$wire->addHookAfter('Description::render', function(HookEvent $event) {
+    $desc = $event->object;
+    $descText = $desc->getText();
+    if($descText){
+        $fontAwesome = '<i class="fa fa-warning"></i>';
+        $event->return = $fontAwesome.$descText;
+    }
+});
+```
+After:
+```html
+<i class="fas fa-exclamation-triangle"></i>This is my input Description.
+```
+
+
 ## Multi-language
 This module supports multi-language. All text strings are fully translatable in the backend.
 The default language is English.
