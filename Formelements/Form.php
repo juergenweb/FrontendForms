@@ -2799,8 +2799,8 @@
                     if (((wireClassName($this->captcha) === 'SimpleQuestionCaptcha') && (!$missing_msg)) || (wireClassName($this->captcha) !== 'SimpleQuestionCaptcha')) {
 
                         // insert the captcha input field after the last input field
-                            $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
-                                array($this->captchafield), array_slice($this->formElements, $captchaPosition));
+                        $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
+                            array($this->captchafield), array_slice($this->formElements, $captchaPosition));
 
                         // re-index the formElements array
                         $this->formElements = array_values($this->formElements);
