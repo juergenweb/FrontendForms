@@ -109,7 +109,7 @@ class Button extends Element
 
         if ($this->getWrapper()) {
             $this->getWrapper()->setContent($button);
-            return $this->getWrapper()->___render();
+            return $this->getWrapper()->render();
         }
         return $button;
     }
