@@ -2383,6 +2383,30 @@ After:
 <i class="fas fa-exclamation-triangle"></i>This is my input Description.
 ```
 
+### Hook example 4: Add Font Awesome info sign in front of the input field notes
+
+Before:
+```html
+This is my input notes text.
+```
+Hook function
+
+```php
+$wire->addHookAfter('Notes::render', function(HookEvent $event) {
+    $notes = $event->object;
+    $notesText = $notes->getText();
+    if($notesText){
+        $fontAwesome = '<i class="fa fa-info"></i>';
+        $event->return = $fontAwesome.$notesText;
+    }
+});
+```
+After:
+```html
+<i class="fa fa-info"></i>This is my input notes text.
+```
+
+I guess you get the idea how to customize your output a little bit by using hooks.
 
 ## Multi-language
 This module supports multi-language. All text strings are fully translatable in the backend.
