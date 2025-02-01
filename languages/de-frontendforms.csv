@@ -55,6 +55,7 @@ en,de,description,file,hash
 "contains not the correct answer.","enthält nicht die richtige Antwort.",,site/modules/FrontendForms/Formelements/CustomRules.php,344c4c52e2af19e1a0b9a78d95b46bd4
 "is not in the correct format.","hat nicht das richtige Format.",,site/modules/FrontendForms/Formelements/CustomRules.php,717bbd629cd6af3c2239e23329293280
 "has not been solved correctly.","wurde nicht richtig gelöst.",,site/modules/FrontendForms/Formelements/CustomRules.php,c4e23eb773320ea4b732526b763d3849
+"contains not allowed characters. Cyrillic name may contain lowercase and uppercase а-я and hyphen (no whitespaces).","enthält ungültige Zeichen. Kyrillische Namen dürfen nur Groß- und Kleinbuchstaben, а-я  und Bindestrichen enthalten (keine Leerzeichen).",,site/modules/FrontendForms/Formelements/CustomRules.php,8092f541b2a83fca68b110c6c91f66ba
 en,de,description,file,hash
 "Image captcha","Bild CAPTCHA",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,1e27db1c7a9a959ca4cd75964525fa2d
 "Assign the image to a category","Ordnen sie das Bild einer Kategorie zu",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,5972e22698d0e9faba6397ce1b6b6f74
