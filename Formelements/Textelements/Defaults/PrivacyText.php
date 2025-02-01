@@ -76,7 +76,7 @@
         {
             $privacy = $this->renderPolicyLink() != '' ? $this->renderPolicyLink() : $this->privacy;
             $this->setText(sprintf($this->getText(), $privacy));
-            return parent::render();
+            return parent::___render();
         }
 
     }
