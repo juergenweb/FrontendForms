@@ -523,7 +523,7 @@
 
 
             /**
-             * Check if IBAN is of the correct syntax
+             * 32) Check if IBAN is of the correct syntax
              * This validator is taken from cakephp 3.7 validation class.
              */
             V::addRule('checkIban', function ($field, $value) {
@@ -553,7 +553,7 @@
             }, $this->_('is not in the correct format.'));
 
             /**
-             * Check if BIC code is in the right format
+             * 33) Check if BIC code is in the right format
              */
             V::addRule('checkBic', function ($field, $value) {
                 $pattern = '/^[a-z]{6}[0-9a-z]{2}([0-9a-z]{3})?\z/i';
@@ -562,7 +562,7 @@
 
 
             /**
-             * Check if the x and y positions of the slider CAPTCHA are correct
+             * 34) Check if the x and y positions of the slider CAPTCHA are correct
              * This validator is only for internal usage on the slider CAPTCHA to provide
              * server-side validation too.
              */
@@ -581,6 +581,18 @@
                 return ($xPos !== false && $yPos !== false && $sessionXPos !== false && $sessionYPos !== false && $xError < 0.0001 && $yError < 0.0001);
 
             }, $this->_('has not been solved correctly.'));
+
+
+            /**
+             * 35) Check if the value entered is a correct cyrillic name
+             */
+            V::addRule('cyrillicName', function ($field, $value, $params) {
+                $regex = '/[^а-яё\-]/iu';
+                if (!preg_match($regex, $value)) {
+                    return true;
+                }
+                return false;
+            }, $this->_('contains not allowed characters. Cyrillic name may contain lowercase and uppercase а-я and hyphen (no whitespaces).'));
 
         }
 
