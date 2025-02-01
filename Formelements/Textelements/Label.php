@@ -61,7 +61,7 @@
 
                 }
                 $this->setContent($content);
-                return parent::render();
+                return parent::___render();
             }
             return '';
         }
