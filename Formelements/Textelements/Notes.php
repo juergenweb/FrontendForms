@@ -29,4 +29,5 @@ class Notes extends TextElements
         $this->setCSSClass('notesClass');
     }
 
+
 }
