@@ -211,28 +211,29 @@
          * @param bool $ini
          * @return int|null
          */
-        public static function convertToBytes(string|int $from, bool $ini = false): ?int {
+        public static function convertToBytes(string|int $from, bool $ini = false): ?int
+        {
 
-            if($ini) {
+            if ($ini) {
                 // php.ini only allows 1 letter for the unit
                 $units = ['B', 'K', 'M', 'G', 'T', 'P'];
             } else {
                 $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
             }
 
-            if(is_int($from)) $from = (string)$from;
+            if (is_int($from)) $from = (string)$from;
 
             $pos = ($ini) ? -1 : -2;
             $number = substr($from, 0, $pos);
-            $suffix = strtoupper(substr($from,$pos));
+            $suffix = strtoupper(substr($from, $pos));
 
             //B or no suffix
-            if(is_numeric(substr($suffix, 0, 1))) {
+            if (is_numeric(substr($suffix, 0, 1))) {
                 return (int)preg_replace('/[^\d]/', '', $from);
             }
 
             $exponent = array_flip($units)[$suffix] ?? null;
-            if($exponent === null) {
+            if ($exponent === null) {
                 return null;
             }
 
@@ -261,7 +262,7 @@
 
             // if only a integer has been added as allowed file size, convert it to kb, MB and so on on error messages
             if ($validator == 'allowedFileSize') {
-                if(is_int($variables[0])) {
+                if (is_int($variables[0])) {
                     $variables[0] = wireBytesStr($variables[0]);
                 }
             }
@@ -483,13 +484,16 @@
          */
         public function ___renderDefault(string $className, $input): string
         {
+
             $out = '';
+
             $description = $this->description->render() . PHP_EOL;
             $successmsg = $this->getSuccessMessage()->render() . PHP_EOL;
             $errormsg = $this->getErrorMessage()->render() . PHP_EOL;
 
             switch ($className) {
                 case ('InputHidden'):
+
                     $this->removeAttribute('class');// we need no class attribute for styling on hidden fields
                     $input_markup = $input;
                     break;
