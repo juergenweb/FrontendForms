@@ -103,6 +103,9 @@
         },
         "c4e23eb773320ea4b732526b763d3849": {
             "text": "wurde nicht richtig gel\u00f6st."
+        },
+        "8092f541b2a83fca68b110c6c91f66ba": {
+            "text": "enth\u00e4lt ung\u00fcltige Zeichen. Kyrillische Namen d\u00fcrfen nur Gro\u00df- und Kleinbuchstaben, \u0430-\u044f  und Bindestrichen enthalten (keine Leerzeichen)."
         }
     }
 }
