@@ -58,8 +58,9 @@ class TextElements extends Element
      * Render the text element
      * @return string
      */
-    public function render(): string
+    public function ___render(): string
     {
+
         if ($this->wrapper) {
             $this->wrapper->setContent($this->renderNonSelfclosingTag($this->getTag()));
             return $this->wrapper->render();
