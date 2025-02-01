@@ -2103,6 +2103,12 @@ This validator checks only if the syntax of a BIC entered is correct, but it doe
 ```php
 $field->setRule('checkBic');
 ```
+### cyrillicName
+This validator checks if a name entered has the correct syntax of a cyrillic name (validation rule provided by Andy from the support forum).
+
+```php
+$field->setRule('cyrillicName');
+```
 
 ## Customization of validation
 For each validator rule exists an error message as a translatable string. This is ok for most cases, but
