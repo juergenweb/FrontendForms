@@ -2347,12 +2347,14 @@ Before:
 Hook function
 
 ```php
-$wire->addHookAfter('Errormessage::render', function(HookEvent $event) {
-  $alert = $event->object;
-  $fontAwesome = '<i class="fas fa-exclamation-triangle"></i>';
-  $alertText = $alert->getText();
-  $alert->setText($fontAwesome.$alertText);
-  $event->return = $alert->___render();
+$wire->addHookAfter('Errormessage::render',
+function(HookEvent $event) {
+    $msg = $event->object;
+    $errorText = $msg->getText();
+    if($errorText){
+        $fontAwesome = '&#9888; ';
+        $event->return = $fontAwesome.$errorText;
+    }
 });
 ```
 After:
