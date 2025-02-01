@@ -1503,3 +1503,15 @@ Thanks to Frank Vèssia who posted a [problem with the wrong position of the pri
 - **New configuration fields for adding external URL for a privacy policy page added**
 
 This feature comes from a user request (Frank Vèssia), where a link to an external privacy page was needed. In the past, you had only the possibility to select an internal PW page as your privacy policy page. Now you have also the possibility to select an external URL as link to your privacy page. 
+
+## [2.2.28] 2025-02-01
+
+- **Hooks for creating custom output fixed**
+
+Thanks to PWaddict from the forum, who reported the issue, that the hooks described inside the [Hooking section](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#hooking) does not work at all. 
+
+After a long time of searching and via the help of RobinS and Bernhard from the support forum, the problem could be solved.
+
+The issue was caused by using the 3 underscores at function calls which was responsible to bypass the hook. I have corrected this on every file inside the module and it should work now without problems. 
+
+In addition I have added 2 more hook examples at the Hooking section in the docs, where you can add FontAwesome icons in front of the field description and field notes. 
