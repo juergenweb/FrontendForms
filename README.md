@@ -2109,6 +2109,53 @@ This validator checks if a name entered has the correct syntax of a cyrillic nam
 ```php
 $field->setRule('cyrillicName');
 ```
+## Create your own custom validation rules
+
+However, this module contains many built-in validation rules, but sometimes you need a special validation rule. Fortunately, the Valitron library supports the creation of custom rules in a simple way. Please take a look at the Valitron Library documentation, which explains how to create custom rules.
+
+In ProcessWire, you can add the code for the custom rules within the site/init.php or site/ready.php. If you don't need to use values from the ProcessWire API, you can add your custom validation rules to the init.php. If you need some values from ProcessWire for validation, you'll need to put your code in the ready.php.
+
+Here's an example that shows how to create and add a custom rule. I took the example of Valitron documentation. It should show you how to write such a custom rule.
+
+First, add this code to your site/init.php or site/ready.php:
+
+```php
+\Valitron\Validator::addRule('alwaysFail', function($field, $value, array $params, array $fields) {
+    // here you can write your validation code - this should return true or false
+    return false;
+}, 'is always wrong. Everything you enter is not correct. You fail.');
+```
+
+This validation rule doesn't make sense because it always returns false if you enter a value. It is for demonstration purposes only.
+
+Here's a form example with the new custom validation rule:
+
+```php
+$form = new \FrontendForms\Form('test');
+
+$inputText = new \FrontendForms\InputText('text');
+$inputText->setLabel('Input Text');
+$inputText->setRule('required');
+$inputText->setRule('alwaysFail'); // here is the new validation rule
+$form->add($inputText);
+
+$button = new \FrontendForms\Button('submit');
+$button->setAttribute('value', 'Send');
+$form->add($button);
+
+if ($form->isValid()) {
+
+}
+
+echo $form->render();
+```
+
+As you can see, you can add the new custom validation rule to any input field in the form in the same way as any other validation rule.
+
+*Please note:* 
+
+The validation rule must always return true or false, no other values. So please write the code of your custom validation rule so that it always returns a boolean.
+
 
 ## Customization of validation
 For each validator rule exists an error message as a translatable string. This is ok for most cases, but
