@@ -2113,7 +2113,7 @@ $field->setRule('cyrillicName');
 ```
 ## Create your own custom validation rules
 
-However, this module contains many built-in validation rules, but sometimes you need a special validation rule. Fortunately, the Valitron library supports the creation of custom rules in a simple way. Please take a look at the Valitron Library documentation, which explains how to create custom rules.
+However, this module contains many built-in validation rules, but sometimes you need a special validation rule. Fortunately, the Valitron library supports the creation of custom rules in a simple way. Please take a look at the [Valitron Library documentation](https://github.com/vlucas/valitron?tab=readme-ov-file#adding-custom-validation-rules), which explains how to create custom rules.
 
 In ProcessWire, you can add the code for the custom rules within the site/init.php or site/ready.php. If you don't need to use values from the ProcessWire API, you can add your custom validation rules to the init.php. If you need some values from ProcessWire for validation, you'll need to put your code in the ready.php.
 
