@@ -46,6 +46,7 @@ You can see FrontendForms in action on the following sites:
 * [Input fields and their methods](#input-field-methods)
 * [Additional Markup](#additional-markup)
 * [Form validation](#form-validation)
+* [Create your own custom validation rules](#create-your-own-custom-validation-rules)
 * [Customization of validation](#customization-of-validation)
 * [Other form elements](#other-form-elements)
 * [Default fields](#default-fields)
