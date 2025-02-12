@@ -40,7 +40,7 @@ window.onload = function () {
 // Ajax calls for FrontendForms Manager
 $( document ).ready(function() {
 
-    if ($("button.statistics").size() > 0) {
+    if ($("button.statistics").length > 0) {
 
         $("button.statistics").click(function(event){
             event.preventDefault();
