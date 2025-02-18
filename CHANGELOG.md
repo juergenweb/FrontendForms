@@ -1516,7 +1516,7 @@ The issue was caused by using the 3 underscores at function calls which was resp
 
 In addition I have added 2 more hook examples at the Hooking section in the docs, where you can add FontAwesome icons in front of the field description and field notes. 
 
-## 2025-02-01
+## [2.2.29] 2025-02-18
 
 - **Validation rule for cyrillic name added**
 
@@ -1525,3 +1525,7 @@ Thanks to Andy from the support forum, who wrote this validation rule and shared
 - **New section for adding custom validation rules added to the docs**
 
 You have the possibility to create and add your own custom validation rules to a form. The new [doc section](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#create-your-own-custom-validation-rules) explains exactly how to do this.
+
+- **Wrong path to custom CSS-frameworks fixed**
+
+Thanks to [dotnetic](https://processwire.com/talk/profile/1299-dotnetic/) from the forum who reported this [issue](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/14/#comment-247468). It has been fixed now.
