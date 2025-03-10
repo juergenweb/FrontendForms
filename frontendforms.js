@@ -396,6 +396,7 @@ let frontendformsmain = function () {
                                 jumpTo(anchor);
                             }
                         } else {
+                            // form is not valid
                             // load the validated form back into the target div
                             document.getElementById(formid + '-ajax-wrapper').innerHTML = content;
                             // jump to the start of the form
@@ -406,8 +407,15 @@ let frontendformsmain = function () {
                             ajaxSubmit();
                             // start counter
                             submitCounter();
+                            // load star rating again if it exists
+                            if (typeof stars !== 'undefined' || stars !== null) {
+                                // variable is not undefined or not null
+                                stars.rebuild();
+                            }
                             // load a new Slider CAPTCHA if this CAPTCHA type has been selected
-                            listenToSliderCaptchaCheckboxes();
+                            if (typeof listenToSliderCaptchaCheckboxes === "function") {
+                                listenToSliderCaptchaCheckboxes();
+                            }
                         }
 
                     }
