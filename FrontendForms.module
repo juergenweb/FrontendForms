@@ -1439,7 +1439,7 @@
                     $js = '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.min.js?v=' . $version . '"></script>' . PHP_EOL;
                 }
 
-                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version .'" defer></script>' . PHP_EOL;
+                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.min.js?v=' . $version .'" defer></script>' . PHP_EOL;
 
                 // load slidercaptcha.js only if this captcha type is selected
                 if ($this->input_captchaType == 'SliderCaptcha' && $page->sliderCaptcha) {
