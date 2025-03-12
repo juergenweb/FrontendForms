@@ -289,9 +289,9 @@
             $placeholderimage = $this->wire('config')->urls->$this . 'images/templatepreviews/emailtemplate-placeholder-image.png';
             $noneimage = $this->wire('config')->urls->$this . 'images/templatepreviews/none.png';
 
-            if($inherit) {
-                if($this->input_emailTemplate == 'none'){
-                   $inheritImage = $noneimage;
+            if ($inherit) {
+                if ($this->input_emailTemplate == 'none') {
+                    $inheritImage = $noneimage;
                 } else {
                     $inheritImage = $placeholderimage;
                 }
@@ -314,8 +314,8 @@
                     $path = $placeholderimage;
                 }
 
-                if($inherit) {
-                    if($this->input_emailTemplate == $template) {
+                if ($inherit) {
+                    if ($this->input_emailTemplate == $template) {
                         $inheritImage = $path;
                     }
                 }
@@ -324,8 +324,8 @@
                 $select->addOption($template, $template, ['data-img-src' => $path]);
             }
 
-            if($inherit) {
-                $select->addOption('inherit', $this->_('Inherit from FrontendForms').'<div class="ff-email-template-selected">('.$this->input_emailTemplate.')</div>', ['data-img-src' => $inheritImage]);
+            if ($inherit) {
+                $select->addOption('inherit', $this->_('Inherit from FrontendForms') . '<div class="ff-email-template-selected">(' . $this->input_emailTemplate . ')</div>', ['data-img-src' => $inheritImage]);
                 // re-order the array
                 $allOptions = $select->getOptions();
                 $newArray = array_merge(array_splice($allOptions, -1), $allOptions);
@@ -1439,7 +1439,7 @@
                     $js = '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.min.js?v=' . $version . '"></script>' . PHP_EOL;
                 }
 
-                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.min.js?v=' . $version . '" defer></script>' . PHP_EOL;
+                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version .'" defer></script>' . PHP_EOL;
 
                 // load slidercaptcha.js only if this captcha type is selected
                 if ($this->input_captchaType == 'SliderCaptcha' && $page->sliderCaptcha) {
@@ -1463,22 +1463,28 @@
             }
 
             $modules = $this->wire('modules');
+
             if ($modules->isInstalled('FieldtypeFrontendComments')) {
 
                 // get all comment fields
                 $fields = $this->wire('fields')->findByType('FieldtypeFrontendComments');
                 if (count($fields) == 0)
                     return;
-                $fieldNames = array_keys($fields);
 
-                // check if the given page has a comment field
-                $commentFields = [];
-                foreach ($fieldNames as $fieldName) {
-                    if ($page->hasField($fieldName))
-                        $commentFields[] = $fieldName;
+                // check if the given comment fields have JS and CSS not disabled
+                $commentFieldJS = [];
+                $commentFieldCSS = [];
+                $commentFieldStars = [];
+                foreach ($fields as $field) {
+                    if ($page->hasField($field->name)) {
+                        if (!array_key_exists('input_removeFrontendCommentsJS', $field->data))
+                            $commentFieldJS[] = $field->name;
+                        if (!array_key_exists('input_removeFrontendCommentsCSS', $field->data))
+                            $commentFieldCSS[] = $field->name;
+                        if ($field->data['input_fc_stars'])
+                            $commentFieldStars[] = $field->name;
+                    }
                 }
-                if (!$commentFields) // no comment fields at all on this page
-                    return;
 
                 // url to FrontendComments asset folder
                 $url = $this->wire('config')->urls->get('FieldtypeFrontendComments') . 'assets/';
@@ -1486,41 +1492,44 @@
                 // get module version
                 $moduleVersion = $this->wire('modules')->getModuleInfo('FieldtypeFrontendComments')['version'];
 
-                // add CSS files to the frontend
-                $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsmain.css?v=' . $moduleVersion .time(). '"/>' . PHP_EOL;
-                $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
+                // add CSS files to the frontend if at least one comment field has CSS enabled
+                if ($commentFieldCSS) {
 
-                // check which markup/framework is enabled
-                $framework = $this->moduleConfig['input_framework'];
+                    // add main CSS file
+                    $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsmain.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
 
-                if ($framework === 'none.json') {
-                    // add default CSS file
-                    $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsnone.css?v=' . $moduleVersion .time(). '"/>' . PHP_EOL;
-                    $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
-                }
+                    // check which markup/framework is enabled
+                    $framework = $this->moduleConfig['input_framework'];
 
-                // add default js to the frontend
-                $js = '<script src="' . $url . 'frontendcomments.js?v=' . $moduleVersion . '&time=' . time() . '"></script>' . PHP_EOL;
-                $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
-
-                // check if at least one comment field has star rating enabled and load it on demand
-                foreach ($commentFields as $field) {
-
-                    if ($this->wire('fields')->get($field)['input_fc_stars']) {
-
-                        // add star rating CSS to the frontend
-                        $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'star-rating.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
-                        $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
-
-                        // add star rating js to the frontend
-                        $js = '<script src="' . $url . 'star-rating.min.js?v=' . $moduleVersion . '&time=' . time() . '"></script>' . PHP_EOL;
-
-                        //comments-stars
-                        $js .= "<script>let stars = new StarRating('.star-rating');</script>" . PHP_EOL;
-                        $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
-                        break;
+                    if ($framework === 'none.json') {
+                        // add default CSS file
+                        $css .= '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsnone.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
                     }
+
+                    // add star rating CSS to the frontend if enabled
+                    if ($commentFieldStars) {
+                        $css .= '<link rel="stylesheet" type="text/css" href="' . $url . 'star-rating.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
+                    }
+
+                    $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
+
                 }
+
+                // add JS files to the frontend if at least one comment field has JS enabled
+                if ($commentFieldJS) {
+
+                    // add main JS file
+                    $js = '<script src="' . $url . 'frontendcomments.js?v=' . $moduleVersion . '"></script>' . PHP_EOL;
+
+                    // add star rating JS to the frontend if enabled
+                    if ($commentFieldStars) {
+                        $js .= '<script src="' . $url . 'star-rating.min.js?v=' . $moduleVersion . ' "></script>' . PHP_EOL;
+                        $js .= "<script>var stars = new StarRating('.star-rating');</script>" . PHP_EOL;
+                    }
+
+                    $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
+                }
+
             }
         }
 
@@ -2188,7 +2197,7 @@
             $privacyPageUrl->label = $this->_('URL to the external page with the privacy policy');
             $privacyPageUrl->description = $this->_('Enter the URL of the page that contains your privacy policy.');
             $privacyPageUrl->attr('value', $this->input_privacypageurl);
-            $privacyPageUrl->useLanguages=true;
+            $privacyPageUrl->useLanguages = true;
             $privacyPageUrl->showIf = 'input_privacypageselect=ext';
             $privacyPageUrl->requiredIf = 'input_privacypageselect=ext';
             $fieldset4->add($privacyPageUrl, $inputfields);
