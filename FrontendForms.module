@@ -1471,18 +1471,36 @@
                 if (count($fields) == 0)
                     return;
 
-                // check if the given comment fields have JS and CSS not disabled
+                // check if the given comment fields have JS and CSS enabled
                 $commentFieldJS = [];
                 $commentFieldCSS = [];
                 $commentFieldStars = [];
+
                 foreach ($fields as $field) {
+
+                    $cssPropName = 'useCommentCSS'.$field->name;
+                    $jsPropName = 'useCommentJS'.$field->name;
+                    $starsPropName = 'useCommentStars'.$field->name;
+
                     if ($page->hasField($field->name)) {
+
+                        // Remove all JS
                         if (!array_key_exists('input_removeFrontendCommentsJS', $field->data))
-                            $commentFieldJS[] = $field->name;
+                            $commentFieldJS[$field->name] = 1;
+                        if(!is_null($page->$jsPropName)) // overwrite it
+                            $commentFieldJS[$field->name] = $page->$jsPropName;
+
+                        // Remove all CSS
                         if (!array_key_exists('input_removeFrontendCommentsCSS', $field->data))
-                            $commentFieldCSS[] = $field->name;
+                            $commentFieldCSS[$field->name] = 1;
+                        if(!is_null($page->$cssPropName)) // overwrite it
+                            $commentFieldCSS[$field->name] = $page->$cssPropName;
+
+                        // Remove star rating CSS and JS
                         if ($field->data['input_fc_stars'])
-                            $commentFieldStars[] = $field->name;
+                            $commentFieldStars[$field->name] = 1;
+                        if(!is_null($page->$starsPropName)) // overwrite it
+                            $commentFieldStars[$field->name] = $page->$starsPropName;
                     }
                 }
 
@@ -1493,7 +1511,7 @@
                 $moduleVersion = $this->wire('modules')->getModuleInfo('FieldtypeFrontendComments')['version'];
 
                 // add CSS files to the frontend if at least one comment field has CSS enabled
-                if ($commentFieldCSS) {
+                if (in_array(1, $commentFieldCSS)) {
 
                     // add main CSS file
                     $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsmain.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
@@ -1507,7 +1525,7 @@
                     }
 
                     // add star rating CSS to the frontend if enabled
-                    if ($commentFieldStars) {
+                    if (in_array(1, $commentFieldStars)) {
                         $css .= '<link rel="stylesheet" type="text/css" href="' . $url . 'star-rating.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
                     }
 
@@ -1516,13 +1534,13 @@
                 }
 
                 // add JS files to the frontend if at least one comment field has JS enabled
-                if ($commentFieldJS) {
+                if (in_array(1, $commentFieldJS)) {
 
                     // add main JS file
                     $js = '<script src="' . $url . 'frontendcomments.js?v=' . $moduleVersion . '"></script>' . PHP_EOL;
 
                     // add star rating JS to the frontend if enabled
-                    if ($commentFieldStars) {
+                    if (in_array(1, $commentFieldStars)) {
                         $js .= '<script src="' . $url . 'star-rating.min.js?v=' . $moduleVersion . ' "></script>' . PHP_EOL;
                         $js .= "<script>var stars = new StarRating('.star-rating');</script>" . PHP_EOL;
                     }
