@@ -74,6 +74,27 @@ class InputRadioMultiple extends Input
     }
 
     /**
+     * Remove a specific option element by its value
+     * @param string|int $option -> option value can be a string or an integer
+     * @return $this
+     */
+    public function removeOptionByValue(string|int $option): self
+    {
+        // get the key of the option element by value
+        $key = null;
+        foreach($this->radios as $key => $optionElement ) {
+            if ($option == $optionElement->getAttribute('value')) {
+                $key = $key;
+                break;
+            }
+        }
+        if($key !== null) {
+            unset($this->radios[$key]);
+        }
+        return $this;
+    }
+
+    /**
      * Use a PW field of the type SelectOptions to create the radios;
      * @param string $fieldName
      * @return void
