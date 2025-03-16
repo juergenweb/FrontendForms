@@ -1529,3 +1529,15 @@ You have the possibility to create and add your own custom validation rules to a
 - **Wrong path to custom CSS-frameworks fixed**
 
 Thanks to [dotnetic](https://processwire.com/talk/profile/1299-dotnetic/) from the forum who reported this [issue](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/14/#comment-247468). It has been fixed now.
+
+## 2025-03-16
+
+- **New method removeOptionByValue() added**
+
+This new method can be used to remove a specific option element by its value from an element with options. This new method can be used by the following classes:
+
+* InputRadioMultiple
+
+- **New code segments for upcoming module FieldtypeFrontendComments added**
+
+I have planned to release a new module to output a comment section on a page. For this reason some new code lines have been added. They have no effect for the FrontendForms module itself.
