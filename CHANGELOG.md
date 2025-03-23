@@ -1541,3 +1541,7 @@ This new method can be used to remove a specific option element by its value fro
 - **New code segments for upcoming module FieldtypeFrontendComments added**
 
 I have planned to release a new module to output a comment section on a page. For this reason some new code lines have been added. They have no effect for the FrontendForms module itself.
+
+- **Position change issue on checkboxes and radio buttons fixed**
+
+According to [this issue](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=248044) in the forum, there was a problem by changing the position of the label tag on checkboxes and radios. The backend setting configuration were not taken into account. This issue is fixed now.
