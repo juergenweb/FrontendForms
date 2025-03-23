@@ -1545,3 +1545,7 @@ I have planned to release a new module to output a comment section on a page. Fo
 - **Position change issue on checkboxes and radio buttons fixed**
 
 According to [this issue](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=248044) reported by [PWaddict](https://processwire.com/talk/profile/3919-pwaddict/) in the forum, there was a problem by changing the position of the label tag on checkboxes and radios. The backend setting configuration were not taken into account. This issue is fixed now.
+
+- **Inputfield rendering for different CSS frameworks fixed**
+
+There was a bug in the function that checks for rendering of the form field markup according to different CSS frameworks. The check has always returned false, because of the missing 3 underscores of the functions name inside the check. So the markup has always been rendered with the default rendering function instead of using rendering functions for Bootstrap, Pico and so on. This has been fixed now. 
