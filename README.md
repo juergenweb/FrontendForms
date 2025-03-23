@@ -1554,6 +1554,13 @@ $select->addOption('Value 2', '2');
 By adding the addEmptyOption() method, the first option in line will not be selected by default. You do not need to add a text inside the parenthesis. By default, "-" will be shown.
 Just add it to your select to see how it works.
 
+#### removeOptionByValue() - remove an option element with a specific value
+
+```php
+$select->removeOptionByValue('1)';
+```
+By using this method on an element containing options (fe a select input), you can remove a previously added option element with a a specific value. In this example the option element with the value "1" will be removed from a given select input element.
+
 #### setOptionsFromField() - use options from a ProcessWire field for select multiple, radio multiple, checkbox multiple and datalist input fields
 
 ```php
