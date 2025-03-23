@@ -510,8 +510,17 @@
                     /** Special treatment for label markup */
                     // render label and input different on single checkbox and single radio
                     $this->label->removeAttributeValue('class', $this->getCSSClass('checklabel'));
-                    $this->label->setContent($input . $this->getLabel()->getText());
-                    $out .= $this->label->render() . PHP_EOL;
+
+                    // 1) Label will be appended after checkbox/radio
+                    if($this->appendLabel) {
+                        $out .= $input. PHP_EOL;
+                        $this->label->setContent($this->getLabel()->getText());
+                        $out .= $this->label->render() . PHP_EOL;
+                    } else {
+                        // 2) Input will be displayed within the label tag (default)
+                        $this->label->setContent($input . $this->getLabel()->getText());
+                        $out .= $this->label->render() . PHP_EOL;
+                    }
 
                     // add the description after the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
