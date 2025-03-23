@@ -1514,6 +1514,7 @@ These methods can only be used on certain input fields and not at all.
 | [alignVertical()](#alignvertical---set-the-alignment-for-checkboxes-and-radio-buttons)  | set the alignment for checkboxes and radio buttons  |
 | [addOption() ](#addoption---add-option-tags-for-checkboxes-radio-buttons-select-and-datalist)  | add option tags for checkboxes, radio buttons, select and datalist  |
 | [addEmptyOption()](#addemptyoption---add-an-empty-option-at-the-top-for-select-and-select-multiple)  | add an empty option at the top for select and select multiple  |
+| [removeOptionByValue()](#removeoptionbyvalue---remove-an-option-element-with-a-specific-value) | remove an option element with a specific value from an element containing options (fe a select input)
 | [setOptionsFromField()](#setoptionsfromfield---use-options-from-a-processwire-field-for-select-multiple-radio-multiple-checkbox-multiple-and-datalist-input-fields)  | use options from a ProcessWire field for select multiple, radio multiple, checkbox multiple and datalist input fields  |
 | [showPasswordRequirements()](#showpasswordrequirements---show-the-password-requirements-under-a-password-field)  | show the password requirements under a password field  |
 | [showPasswordToggle()](#showpasswordtoggle---show-a-checkbox-to-make-the-password-value-visible-next-to-a-password-field)  | show a checkbox to make the password value visible next to a password field  |
