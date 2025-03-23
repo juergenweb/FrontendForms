@@ -439,7 +439,7 @@
 
             // generate the render method name out of the markup type
             $methodName = 'render' . ucfirst(pathinfo($this->markupType, PATHINFO_FILENAME));
-            if (method_exists($this, $methodName)) {
+            if (method_exists($this, '___' . $methodName)) {
                 $content = $this->$methodName($className, $input);
             } else {
                 $content = $this->renderDefault($className, $input);
@@ -453,19 +453,7 @@
                 $out .= $this->fieldWrapper->render() . PHP_EOL;
             }
 
-            /*
-            if ($className != 'InputHidden') {
-                if (!$this->useFieldWrapper) {
-                    $out .= $content;
-                } else {
-                    $this->fieldWrapper->setContent($content);
-                    $out .= $this->fieldWrapper->render() . PHP_EOL;
-                }
-            } else {
-                $out .= $content;
-            }
-*/
-            // check if custom wrapper was added an render it as the most outer container
+            // check if custom wrapper was added and render it as the most outer container
             if ($this->useCustomWrapper) {
                 $this->customWrapper->setContent($out);
                 $out = $this->customWrapper->render() . PHP_EOL;
@@ -512,21 +500,21 @@
                     $this->label->removeAttributeValue('class', $this->getCSSClass('checklabel'));
 
                     // 1) Label will be appended after checkbox/radio
-                    if($this->appendLabel) {
-                        $out .= $input. PHP_EOL;
+                    if ($this->appendLabel) {
+                        $input = $input . PHP_EOL;
                         $this->label->setContent($this->getLabel()->getText());
-                        $out .= $this->label->render() . PHP_EOL;
+                        $input .= $this->label->render() . PHP_EOL;
                     } else {
                         // 2) Input will be displayed within the label tag (default)
                         $this->label->setContent($input . $this->getLabel()->getText());
-                        $out .= $this->label->render() . PHP_EOL;
+                        $input = $this->label->render() . PHP_EOL;
                     }
 
                     // add the description after the label
                     if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
                         $out .= $this->getDescription()->render();
                     }
-                    $input_markup = $errormsg . $successmsg;
+                    $input_markup = $input . $errormsg . $successmsg;
 
                     break;
                 default:
@@ -567,6 +555,29 @@
             return $out;
 
         }
+
+        /**
+         * Render the input field including wrappers, notes, description, prepend markup, append markup and error
+         * message
+         * Markup rendering for Uikit 3
+         * @param string $className
+         * @param $input
+         * @return string
+         */
+        public function ___renderUikit3(string $className, $input): string
+        {
+            // remove the input wrapper on all checkboxes and radio classes (excluding multiple redios and checkboxes)
+            switch ($className) {
+                case ('InputCheckbox'):
+                case ('InputRadio'):
+                case ('Privacy'):
+                case ('SendCopy'):
+                    $this->useInputWrapper = false;
+                    break;
+            }
+            return $this->renderDefault($className, $input);
+        }
+
 
         /**
          *  Render the input field including wrappers, notes, description, prepend markup, append markup and error
