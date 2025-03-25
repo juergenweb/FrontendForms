@@ -1530,7 +1530,7 @@ You have the possibility to create and add your own custom validation rules to a
 
 Thanks to [dotnetic](https://processwire.com/talk/profile/1299-dotnetic/) from the forum who reported this [issue](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/14/#comment-247468). It has been fixed now.
 
-## 2025-03-23
+## [2.2.30] 2025-03-25
 
 - **New method removeOptionByValue() added**
 
@@ -1552,4 +1552,6 @@ There was a bug in the function that checks for rendering of the form field mark
 
 - **New ResetButton class added**
 
-There is a new default form element type added to create a reset button. You will find the new class here: 
+A new predefined standard form element type has been added to create a reset button. The new class can be found here: [https://github.com/juergenweb/FrontendForms/blob/main/Formelements/Miscellaneous/defaults/ResetButton.php](https://github.com/juergenweb/FrontendForms/blob/main/Formelements/Miscellaneous/defaults/ResetButton.php).
+
+This button element can be added to the form to clear the entered form data. It is added in the same way as the Submit button.
