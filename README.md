@@ -2278,6 +2278,7 @@ These are:
 * Username (Input text to enter a username - class name: Username)
 * FileUploadSingle (Input file to upload a single files - class name: FileUploadSingle)
 * FileUploadMultiple (Input file to upload multiple files - class name: FileUploadMultiple)
+* ResetButton (Button to clear the form elements - class name: ResetButton)
 
 Instead of creating these types of input fields every time on your own, you can use the pre-defined input types listed above instead.
 Every input type has the validation rules and sanitizers included, the labels and error messages are defined set, so
@@ -2309,6 +2310,7 @@ BTW you will find the files of all pre-defined input types inside the "defaults"
 - [Formelements/Inputelements/Inputs/defaults/](https://github.com/juergenweb/FrontendForms/tree/main/Formelements/Inputelements/Inputs/defaults)
 - [Formelements/Inputelements/Select/defaults/](https://github.com/juergenweb/FrontendForms/tree/main/Formelements/Inputelements/Select/defaults)
 - [Formelements/Inputelements/Textarea/defaults/](https://github.com/juergenweb/FrontendForms/tree/main/Formelements/Inputelements/Textarea/defaults)
+- [Formelements/Inputelements/Miscellaneous/defaults/](https://github.com/juergenweb/FrontendForms/tree/main/Formelements/Miscellaneous/defaults)
 
 
 You can study the code to see, what validators and sanitizers are included by default. If you have an idea for another
