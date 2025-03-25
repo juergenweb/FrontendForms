@@ -558,3 +558,4 @@ en,de,description,file,hash
 "You have %s characters left.","Sie haben noch %s Zeichen übrig.",,site/modules/FrontendForms/Formelements/Inputelements/Textarea/Textarea.php,c265a6b5fe0229c56cdf89d9ff9d7754
 en,de,description,file,hash
 Username,Benutzername,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Username.php,f6039d44b29456b20f8f373155ae4973
+Reset,Zurücksetzen,,site/modules/FrontendForms/Formelements/Miscellaneous/defaults/ResetButton.php,526d688f37a86d3c3f27d0c5016eb71d
