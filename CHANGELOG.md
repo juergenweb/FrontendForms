@@ -1549,3 +1549,7 @@ According to [this issue](https://processwire.com/talk/topic/26015-frontendforms
 - **Inputfield rendering for different CSS frameworks fixed**
 
 There was a bug in the function that checks for rendering of the form field markup according to different CSS frameworks. The check has always returned false, because of the missing 3 underscores of the functions name inside the check. So the markup has always been rendered with the default rendering function instead of using rendering functions for Bootstrap, Pico and so on. This has been fixed now. 
+
+- **New ResetButton class added**
+
+There is a new default form element type added to create a reset button. You will find the new class here: 
