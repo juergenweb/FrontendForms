@@ -760,7 +760,7 @@
                 'domainlabel' => $this->_('Domain'),
                 'domainvalue' => $this->wire('config')->urls->httpRoot,
                 'currenturllabel' => $this->_('Visited page'),
-                'currenturlvalue' => $this->wire('input')->httpHostUrl(),
+                'currenturlvalue' => $this->wire('input')->httpUrl(),
                 'iplabel' => $this->_('IP'),
                 'ipvalue' => $this->wire('session')->getIP(),
                 'currentdatetimelabel' => $this->_('Date/time'),
