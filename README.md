@@ -1567,7 +1567,10 @@ By using this method on an element containing options (fe a select input), you c
 ```php
 $radios->getOptionByValue('1)';
 ```
-Get a specific option element of a radio multiple, checkbox multiple or select element.
+
+This method can be used for the following items that contain options: Datalist, Select, SelectMultiple, CheckboxMultiple, and RadioMultiple.
+
+This method allows you to retrieve a specific option item that contains a specific value. The method returns the Option object itself and can be used for further manipulation.
 
 #### setOptionsFromField() - use options from a ProcessWire field for select multiple, radio multiple, checkbox multiple and datalist input fields
 
