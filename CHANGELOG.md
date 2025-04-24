@@ -1555,3 +1555,11 @@ There was a bug in the function that checks for rendering of the form field mark
 A new predefined standard form element type has been added to create a reset button. The new class can be found here: [https://github.com/juergenweb/FrontendForms/blob/main/Formelements/Miscellaneous/defaults/ResetButton.php](https://github.com/juergenweb/FrontendForms/blob/main/Formelements/Miscellaneous/defaults/ResetButton.php).
 
 This button element can be added to the form to clear the entered form data. It is added in the same way as the Submit button.
+
+## 2025-04-24
+
+2 new methods for elements containing options added. These methods can be used on the following Elements: Datalist, Select, SelectMultiple, InputCheckboxMultiple and InputRadioMultiple.
+
+1) getOptionsByValue(): With this method you can grab an option element by its value. [Read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getoptionbyvalue---get-an-option-element-with-a-specific-value)
+2) removeOptionByValue: With this method you can remove a specific option element containing a specific value. [Read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#removeoptionbyvalue---remove-an-option-element-with-a-specific-value)
+
