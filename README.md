@@ -1562,6 +1562,13 @@ $select->removeOptionByValue('1)';
 ```
 By using this method on an element containing options (fe a select input), you can remove a previously added option element with a a specific value. In this example the option element with the value "1" will be removed from a given select input element.
 
+#### getOptionByValue() - get an option element with a specific value
+
+```php
+$radios->getOptionByValue('1)';
+```
+Get a specific option element of a radio multiple, checkbox multiple or select element.
+
 #### setOptionsFromField() - use options from a ProcessWire field for select multiple, radio multiple, checkbox multiple and datalist input fields
 
 ```php
