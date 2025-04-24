@@ -303,7 +303,7 @@ $form->add($php);
 $php2 = new \FrontendForms\Select('php2');
 $php2->setLabel('My preferred PHP version is');
 $php2->setDescription('Description php2');
-$php->setDefaultValue('PHP 8');
+$php2->setDefaultValue('PHP 8');
 $php2->addEmptyOption();
 $php2->addOption('PHP 6', 'PHP 6');
 $php2->addOption('PHP 7', 'PHP 7');
