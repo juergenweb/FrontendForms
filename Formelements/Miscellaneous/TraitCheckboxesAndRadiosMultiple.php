@@ -84,26 +84,4 @@ trait TraitCheckboxesAndRadiosMultiple
     }
 
 
-    /**
-     * Get a specific option element by value (for further manipulations)
-     * @param InputRadioMultiple|InputCheckboxMultiple $element
-     * @param string|int $value
-     * @return InputRadio|InputCheckbox|null
-     */
-    public function getOptionByValue(string|int $value): null|InputRadio|InputCheckbox
-    {
-        // get the key of the option element by value
-        $option = null;
-        $key = null;
-        $optionName = ( $this->className == 'InputRadioMultiple') ? 'radios' : 'checkboxes';
-        foreach($this->$optionName as $k => $optionElement ) {
-            if ($value == $optionElement->getAttribute('value')) {
-                $option = $optionElement;
-                break;
-            }
-        }
-        bd($option);
-        return $option;
-    }
-
 }
