@@ -1561,7 +1561,10 @@ Just add it to your select to see how it works.
 ```php
 $select->removeOptionByValue('1)';
 ```
-By using this method on an element containing options (fe a select input), you can remove a previously added option element with a a specific value. In this example the option element with the value "1" will be removed from a given select input element.
+
+This method can be used for the following items that contain options: Datalist, Select, SelectMultiple, CheckboxMultiple, and RadioMultiple.
+
+By using this method on an element containing options (fe a select input), you can remove an option element with a specific value. In this example the option element with the value "1" will be removed from a given select input element.
 
 #### getOptionByValue() - get an option element with a specific value
 
