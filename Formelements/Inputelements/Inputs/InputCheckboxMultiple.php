@@ -19,7 +19,7 @@ use ProcessWire\WirePermissionException;
 class InputCheckboxMultiple extends Input
 {
 
-    use TraitPWOptions, TraitCheckboxesAndRadios, TraitCheckboxesAndRadiosMultiple;
+    use TraitPWOptions, TraitCheckboxesAndRadios, TraitCheckboxesAndRadiosMultiple, TraitOptionElements;
 
     protected array $checkboxes = [];// array to hold all InputCheckbox objects
     protected bool $directionHorizontal = true;// default checkbox orientation
