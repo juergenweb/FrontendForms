@@ -18,7 +18,7 @@ use ProcessWire\WirePermissionException;
 
 class InputRadioMultiple extends Input
 {
-    use TraitPWOptions, TraitCheckboxesAndRadios, TraitCheckboxesAndRadiosMultiple;
+    use TraitPWOptions, TraitCheckboxesAndRadios, TraitCheckboxesAndRadiosMultiple, TraitOptionElements;
 
     protected array $radios = []; // array to hold all InputRadio objects
     protected bool $directionHorizontal = true; // default radio button orientation
