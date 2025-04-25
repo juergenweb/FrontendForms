@@ -32,7 +32,7 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
         $this->category = 'image';
         $this->imagePath = $this->wire('config')->paths->siteModules . 'FrontendForms/captchaimages/';
         $this->captchaInput = new InputRadioMultiple('captcha');
-        $this->captchaInput->topLabel->setText($this->_('Please select what you see in the image above.'));
+        $this->captchaInput->setDescription($this->_('Please select what you see in the image above.'));
     }
 
     /**
