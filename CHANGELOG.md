@@ -1565,3 +1565,8 @@ I needed these 2 methods for a new module, so I decided to add these methods to 
 1) getOptionsByValue(): With this method you can grab an option element by its value. [Read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getoptionbyvalue---get-an-option-element-with-a-specific-value)
 2) removeOptionByValue: With this method you can remove a specific option element containing a specific value. [Read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#removeoptionbyvalue---remove-an-option-element-with-a-specific-value)
 
+## [2.2.32] 2025-04-25
+
+**JavaScript namespace bug fixed**
+
+I've discovered that my approach to add a JavaScript namespace doesn't work properly. The main problem was that the image CAPTCHA stopped loading when the reload link was clicked. So I decided to remove the namespace again.
