@@ -105,7 +105,6 @@ function removeURLParameter(url, parameter) {
 function reloadCaptcha(id, event) {
     event.preventDefault();
     let captcha = document.getElementById(id);
-    console.log(captcha);
     if (captcha) {
         let src = captcha.src;
         src = removeURLParameter(src, "time");
