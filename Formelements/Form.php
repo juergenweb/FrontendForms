@@ -17,6 +17,7 @@
     use DOMException;
     use Exception;
     use ProcessWire\Field as Field;
+    use ProcessWire\FieldtypeFrontendComments;
     use ProcessWire\HookEvent;
     use ProcessWire\Language;
     use ProcessWire\Module;
@@ -2178,6 +2179,7 @@
                                             }
                                         } else {
                                             $sanitizedValues[$element->getAttribute('name')] = $validation->sanitizePostValue($element);
+
                                         }
                                     } else {
                                         // remove all validation rules from this element
@@ -2193,7 +2195,7 @@
                                         $fieldValue = $this->wire('input')->post($this->getID() . '-' . $element->getID());
                                     }
 
-                                    if (is_null($fieldValue) && (!$element instanceof InputCheckbox) && (!$element instanceof InputCheckboxMultiple)) { // exclude checkboxes because they are allowed to have no value
+                                    if (is_null($fieldValue) && (!$element instanceof InputCheckbox) && (!$element instanceof InputCheckboxMultiple) && (!$element instanceof InputRadioMultiple)) { // exclude checkboxes because they are allowed to have no value
                                         $element->removeAllRules();
                                     }
 
