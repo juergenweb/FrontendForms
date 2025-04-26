@@ -1570,3 +1570,9 @@ I needed these 2 methods for a new module, so I decided to add these methods to 
 **JavaScript namespace bug fixed**
 
 I've discovered that my approach to add a JavaScript namespace doesn't work properly. The main problem was that the image CAPTCHA stopped loading when the reload link was clicked. So I decided to remove the namespace again.
+
+## 2025-04-26
+
+**Validation bug for image CAPTCHA fixed**
+
+There was a wrong if condition inside the Form.php which leads to that all validation rules were removed by the image CAPTCHA if nothing was selected (empty CAPTCHA input field). This is fixed now
