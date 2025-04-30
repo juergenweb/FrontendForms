@@ -856,13 +856,18 @@
 
 
             // add CSS and JS to the backend
-            $version = $this->getModuleInfo()['version'] . '-' . time();
-            $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version . '&time=' . time());
-            $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version . '&time=' . time());
+            // load only in the backend
+            if(strpos($_SERVER['REQUEST_URI'], $this->wire('config')->urls->admin) === 0) {
 
-            // add image picker js and CSS files to the backend (used for the email template select)
-            $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.css?v=' . $version);
-            $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.min.js?v=' . $version);
+                $version = $this->getModuleInfo()['version'] . '-' . time();
+                $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version . '&time=' . time());
+                $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version . '&time=' . time());
+    
+                // add image picker js and CSS files to the backend (used for the email template select)
+                $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.css?v=' . $version);
+                $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.min.js?v=' . $version);
+
+            }
 
             // add CSS and JS links to the frontend template
             $this->addHookAfter('Page::render', $this, 'addAssets', ['priority' => 999]);
