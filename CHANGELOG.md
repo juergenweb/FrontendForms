@@ -1579,4 +1579,4 @@ There was a wrong if condition inside the Form.php which leads to that all valid
 
 **Selectively loading of JS and CSS files in the backend added**
 
-A post in the support forum by PWaddict  describes the loading of backend JS and CSS files everywhere on front- and backend. I have fixed this problem and now the backend FrontendForms JS and CSS files will only be loaded on necessary pages and not sitwide accross all pages.
+A [post in the support](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=248617) forum by PWaddict describes loading of backend JS and CSS files anywhere in the frontend and backend. I fixed this issue and now the backend FrontendForms JS and CSS files are only loaded on the necessary pages and not on all pages.
