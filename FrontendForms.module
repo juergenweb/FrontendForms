@@ -1344,8 +1344,10 @@
             if ($page->template->name !== 'admin') {
                 return;
             }
-            $initialize = '<script>$("select.ff-imagepicker").imagepicker({show_label  : true})</script>';
-            $event->return = str_replace('</body>', $initialize . '</body>', $event->return);
+            if ((self::isModuleEditPage(['FrontendForms', 'FrontendContact', 'FrontendLoginRegister'])) || (self::isFieldEditPage(['FieldtypeFrontendComments']))) {
+                $initialize = '<script>$("select.ff-imagepicker").imagepicker({show_label  : true})</script>';
+                $event->return = str_replace('</body>', $initialize . '</body>', $event->return);
+            }
         }
 
         /**
