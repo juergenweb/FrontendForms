@@ -867,6 +867,7 @@
             }
 
             // add image picker js and CSS files to the backend (used for the email template select)
+
             if ((self::isModuleEditPage(['FrontendForms', 'FrontendContact', 'FrontendLoginRegister'])) || (self::isFieldEditPage(['FieldtypeFrontendComments']))) {
                 $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.css?v=' . $version);
                 $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.min.js?v=' . $version);
@@ -921,6 +922,11 @@
         public static function isModuleEditPage(array $moduleNames): bool
         {
             $currentURL = wire('input')->url(['withQueryString' => true]);
+            $queryStrings = parse_url($currentURL, PHP_URL_QUERY);
+            $queryStringsArray = explode('&',$queryStrings);
+            $nameQueryString = $queryStringsArray[0];
+            $currentURL = str_replace($queryStrings, $nameQueryString, $currentURL);
+            
             foreach($moduleNames as $name){
                 $modulePageEditUrl = str_replace('edit/?name=', 'edit?name=', wire('modules')->getModuleEditUrl($name, false));
                 if($modulePageEditUrl === $currentURL){
