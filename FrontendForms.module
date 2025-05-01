@@ -855,22 +855,24 @@
             $this->addHookAfter('Page::render', $this, 'initializeImagePicker');
 
             // load only in the backend
-            if(strpos($_SERVER['REQUEST_URI'], $this->wire('config')->urls->admin) === 0) {
+            if (strpos($_SERVER['REQUEST_URI'], $this->wire('config')->urls->admin) === 0) {
 
-            }
-            // add CSS and JS to the backend but only on this module page
-            $version = $this->getModuleInfo()['version'] . '-' . time();
 
-            if (self::isModuleEditPage(['FrontendForms'])) {
-                $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version . '&time=' . time());
-                $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version . '&time=' . time());
-            }
+                // add CSS and JS to the backend but only on this module page
+                $version = $this->getModuleInfo()['version'] . '-' . time();
 
-            // add image picker js and CSS files to the backend (used for the email template select)
+                if (self::isModuleEditPage(['FrontendForms'])) {
+                    $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version . '&time=' . time());
+                    $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version . '&time=' . time());
+                }
 
-            if ((self::isModuleEditPage(['FrontendForms', 'FrontendContact', 'FrontendLoginRegister'])) || (self::isFieldEditPage(['FieldtypeFrontendComments']))) {
-                $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.css?v=' . $version);
-                $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.min.js?v=' . $version);
+                // add image picker js and CSS files to the backend (used for the email template select)
+
+                if ((self::isModuleEditPage(['FrontendForms', 'FrontendContact', 'FrontendLoginRegister'])) || (self::isFieldEditPage(['FieldtypeFrontendComments']))) {
+                    $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.css?v=' . $version);
+                    $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.min.js?v=' . $version);
+                }
+
             }
             // add CSS and JS links to the frontend template
             $this->addHookAfter('Page::render', $this, 'addAssets', ['priority' => 999]);
@@ -923,13 +925,15 @@
         {
             $currentURL = wire('input')->url(['withQueryString' => true]);
             $queryStrings = parse_url($currentURL, PHP_URL_QUERY);
-            $queryStringsArray = explode('&',$queryStrings);
-            $nameQueryString = $queryStringsArray[0];
-            $currentURL = str_replace($queryStrings, $nameQueryString, $currentURL);
-            
-            foreach($moduleNames as $name){
+            if($queryStrings){
+                $queryStringsArray = explode('&', $queryStrings);
+                $nameQueryString = $queryStringsArray[0];
+                $currentURL = str_replace($queryStrings, $nameQueryString, $currentURL);
+            }
+
+            foreach ($moduleNames as $name) {
                 $modulePageEditUrl = str_replace('edit/?name=', 'edit?name=', wire('modules')->getModuleEditUrl($name, false));
-                if($modulePageEditUrl === $currentURL){
+                if ($modulePageEditUrl === $currentURL) {
                     return true;
                     break;
                 }
@@ -946,17 +950,17 @@
         public static function isFieldEditPage(array $fieldTypes): bool
         {
             $currentURL = wire('input')->url(['withQueryString' => true]);
-            foreach($fieldTypes as $type){
-                    $fields = wire('fields')->findByType($type);
-                    foreach($fields as $field){
-                        $editURL = $field->editUrl();
-                        if($editURL === $currentURL){
-                            return true;
-                            break;
-                        }
+            foreach ($fieldTypes as $type) {
+                $fields = wire('fields')->findByType($type);
+                foreach ($fields as $field) {
+                    $editURL = $field->editUrl();
+                    if ($editURL === $currentURL) {
+                        return true;
+                        break;
                     }
                 }
-                return false;
+            }
+            return false;
         }
 
 
