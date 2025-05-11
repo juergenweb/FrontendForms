@@ -1581,9 +1581,12 @@
                     // check which markup/framework is enabled
                     $framework = $this->moduleConfig['input_framework'];
 
-                    if ($framework === 'none.json') {
-                        // add default CSS file
-                        $css .= '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsnone.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
+                    // check if CSS file exists for the given framework setting
+                    $frameworkName = pathinfo($framework, PATHINFO_FILENAME);
+                    $pathToCSSFile = $this->wire('config')->paths->siteModules.'FrontendComments/assets/';
+                    if(file_exists($pathToCSSFile.'frontendcomments' . $frameworkName . '.css')){
+                        // add CSS file
+                        $css .= '<link rel="stylesheet" type="text/css" href="' . $url.'frontendcomments' . $frameworkName . '.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
                     }
 
                     // add star rating CSS to the frontend if enabled
@@ -1595,6 +1598,7 @@
 
                 }
 
+
                 // add JS files to the frontend if at least one comment field has JS enabled
                 if (in_array(1, $commentFieldJS)) {
 
@@ -1604,6 +1608,7 @@
 
                     // add star rating JS to the frontend if enabled
                     if (in_array(1, $commentFieldStars)) {
+                        
                         $js .= '<script src="' . $url . 'star-rating.min.js?v=' . $moduleVersion . ' "></script>' . PHP_EOL;
                         $js .= "<script>var stars = new StarRating('.star-rating');</script>" . PHP_EOL;
                     }
