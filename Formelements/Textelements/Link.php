@@ -89,6 +89,9 @@ class Link extends TextElements
      */
     public function ___render(): string
     {
+        if (!$this->getLinkText() && $this->getUrl()) {
+            $this->setLinkText($this->getUrl());
+        }
         if ($this->getQueryString()) {
             $this->setUrl($this->getUrl() . '?' . $this->getQueryString());
         }
