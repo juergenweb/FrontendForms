@@ -1580,3 +1580,9 @@ There was a wrong if condition inside the Form.php which leads to that all valid
 **Selectively loading of JS and CSS files in the backend added**
 
 A [post in the support](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=248617) forum by PWaddict describes loading of backend JS and CSS files anywhere in the frontend and backend. I fixed this issue and now the backend FrontendForms JS and CSS files are only loaded on the necessary pages and not on all pages.
+
+## [2.2.34] 2025-05-18
+
+**Link to password list modified**
+
+Thanks to a [user report](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=248842) by dynweb in the PW forum, the link to the list which contains the most used passwords on Github has changed by the owner of this repository. I have fixed this now.
