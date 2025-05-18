@@ -21,9 +21,9 @@
     {
 
         // use an API path to the GitHub repository for the 100 most common passwords
-        const TOP_PASSWORDS = 'https://api.github.com/repos/danielmiessler/SecLists/contents/Passwords/Common-Credentials/10-million-password-list-top-100.txt';
+        const TOP_PASSWORDS = 'https://api.github.com/repos/danielmiessler/SecLists/contents/Passwords/Common-Credentials/2024-197_most_used_passwords.txt';
         // This url contains the commits for the passwords including the dates of the commits (used for last modification date)
-        const LAST_PASSWORDS_MODIFICATION_URL = 'https://api.github.com/repos/danielmiessler/SecLists/commits?path=/Passwords/Common-Credentials/10-million-password-list-top-100.txt';
+        const LAST_PASSWORDS_MODIFICATION_URL = 'https://api.github.com/repos/danielmiessler/SecLists/commits?path=/Passwords/Common-Credentials/2024-197_most_used_passwords.txt';
 
         const SUPPORTEDMAILMODULES = ['WireMailPostmark', 'WireMailPostmarkApp', 'WireMailSmtp', 'WireMailPHPMailer']; // Supported modules for sending emails in other modules based on FrontendForms
 
@@ -1279,6 +1279,7 @@
          */
         protected function downloadPasswordsFromGitHub(): bool
         {
+
             $filedata = $this->getDataFromGitHub(self::TOP_PASSWORDS); //load JSON data from the txt.file
             if ($filedata) {
                 //get content of the file from GitHub
@@ -1301,12 +1302,13 @@
         protected function downloadPasswords(): void
         {
             $data = $this->wire('modules')->getConfig($this);
+
             // let us check some conditions if it is necessary to update the passwords
             if ($this->wire('files')->exists($this->passwordPath)) {
 
                 // check if the last check was in the same month or not
-
                 $check = $this->wire('datetime')->date('Y-m', $this->last_check) != $this->wire('datetime')->date('Y-m');
+
                 if ($check) {
 
                     // save the check date to the database
@@ -1586,11 +1588,12 @@
                     $pathToCSSFile = $this->wire('config')->paths->siteModules.'FrontendComments/assets/';
                     if(file_exists($pathToCSSFile.'frontendcomments' . $frameworkName . '.css')){
                         // add CSS file
-                        $css .= '<link rel="stylesheet" type="text/css" href="' . $url.'frontendcomments' . $frameworkName . '.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
+                        $css .= '<link rel="stylesheet" type="text/css" href="' . $url.'frontendcomments' . $frameworkName . '.css?v=' . $moduleVersion . time().'"/>' . PHP_EOL;
                     }
 
                     // add star rating CSS to the frontend if enabled
                     if (in_array(1, $commentFieldStars)) {
+
                         $css .= '<link rel="stylesheet" type="text/css" href="' . $url . 'star-rating.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
                     }
 
@@ -2806,7 +2809,7 @@
             $osaplink = '<a href="https://owasp.org/" target="_blank">OSAP</a>';
             $content .= sprintf($this->_('All passwords were taken from %s (Open Web Application Security Project).'),
                     $osaplink) . '<br>';
-            $gitlink = '<a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-100.txt" target="_blank">https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-100.txt</a>';
+            $gitlink = '<a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/2024-197_most_used_passwords.txt" target="_blank">https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/2024-197_most_used_passwords.txt</a>';
             $content .= sprintf($this->_('Source of the passwords: %s'), $gitlink) . '</p><hr>';
             $hintText = '<h3>' . $this->_('Please note:') . '</h3>';
             $hintText .= '<p>' . $this->_('Only passwords that matches your password requirements will be added to the blacklist after pressing the update button or during the automatic update.') . '<br>';
