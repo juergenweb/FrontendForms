@@ -716,11 +716,24 @@ With this method you can overwrite the default error message which appears insid
 ```php
   $form->setErrorMsg('Sorry, but there are errors!');
 ```
+
+If you want to prevent the output of the error message completely, please add false as the functions parameter inside the parenthesis.
+
+```php
+  $form->setErrorsMsg(false);
+```
 ### setSuccessMsg() - overwrite the default success message after form submission
 With this method you can overwrite the default success message which appears inside the alert box after a successful form submission.
 ```php
   $form->setSuccessMsg('Congratulations, your message was submitted successfully!');
 ```
+
+If you want to prevent the output of the success message completely, please add false as the functions parameter inside the parenthesis.
+
+```php
+  $form->setSuccessMsg(false);
+```
+
 ### useFormElementsWrapper() - add/remove an additional div container (wrapper) over all form fields
 A user requested this functionality for usage with a specific framework (I cannot remember which one), so I have added this functionality.
 With this method you can wrap all form fields in an extra div, or remove the wrapper.
