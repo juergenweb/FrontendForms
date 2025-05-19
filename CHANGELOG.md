@@ -1594,3 +1594,5 @@ Thanks to a [user report](https://processwire.com/talk/topic/26015-frontendforms
 According to a [user request in the forum](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=248865) to prevent the output of the success message after successful form submission I have updated the setErrorMsg() and setSuccessMsg() methods to accept boolean values too.
 
 If you enter false as the function parameter in one of these methods, then the error or success message will not be displayed after form submission.
+
+Read more about this new feature here: [setErrorMsg()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#seterrormsg---overwrite-the-default-error-message-after-form-submission), [setSuccessMsg()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#setsuccessmsg---overwrite-the-default-success-message-after-form-submission)
