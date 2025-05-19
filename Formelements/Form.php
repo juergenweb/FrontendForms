@@ -1564,14 +1564,17 @@
 
         /**
          * Set the success message for successful form submission
-         * Can be used to overwrite the default success message
-         * @param string $successMsg
+         * Can be used to overwrite the default success message or to disable the output of a success message
+         * @param string|bool $successMsg: entering empty string or false will disable the output of the success message
          * @return void
          */
-        public function setSuccessMsg(string $successMsg): void
+        public function setSuccessMsg(string|bool $successMsg): void
         {
-            if ($successMsg === '') {
+
+            if ($successMsg === '' || $successMsg === true) {
                 $successMsg = $this->_('Thank you for your message.');
+            } else if ($successMsg === false){
+                $successMsg = '';
             }
             $this->frontendforms['input_alertSuccessText'] = trim($successMsg);
         }
@@ -1695,14 +1698,17 @@
 
         /**
          * Set the error message if errors occur after form submission
-         * Can be used to overwrite the default error message
-         * @param string $errorMsg
+         * Can be used to overwrite the default error message or to disable the output of a success message
+         * @param string|bool $errorMsg: Entering an empty string or false will disable the output of the error message
          * @return void
          */
-        public function setErrorMsg(string $errorMsg): void
+        public function setErrorMsg(string|bool $errorMsg): void
         {
-            if ($errorMsg === '') {
+            if ($errorMsg === '' || $errorMsg === true) {
+
                 $errorMsg = $this->_('Sorry, some errors occur. Please check your inputs once more.');
+            } else if ($errorMsg === false){
+                $errorMsg = '';
             }
             $this->frontendforms['input_alertErrorText'] = trim($errorMsg);
         }
