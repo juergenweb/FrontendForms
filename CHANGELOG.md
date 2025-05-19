@@ -1586,3 +1586,11 @@ A [post in the support](https://processwire.com/talk/topic/26015-frontendforms-a
 **Link to password list modified**
 
 Thanks to a [user report](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=248842) by dynweb in the PW forum, the link to the list which contains the most used passwords on Github has changed by the owner of this repository. I have fixed this now.
+
+## 2025-05-19
+
+**Methods setErrorMsg() and setSuccessMsg() updated to accept boolean values too**
+
+According to a [user request in the forum](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=248865) to prevent the output of the success message after successful form submission I have updated the setErrorMsg() and setSuccessMsg() methods to accept boolean values too.
+
+If you enter false as the function parameter in one of these methods, then the error or success message will not be displayed after form submission.
