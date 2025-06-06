@@ -3066,8 +3066,10 @@
                             $element->getFieldWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-fieldwrapper');
                             // add unique id to the input-wrapper if present
                             $element->getInputWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-inputwrapper');
-
-                            $element->getLabel()->setAttribute('for', $element->getAttribute('id'));
+                            // do not add the for attribute to InputRadioMultiple and InputCheckboxMultiple elements
+                            if((wireClassName($element) !== 'InputRadioMultiple') && (wireClassName($element) !== 'InputCheckboxMultiple')){
+                                $element->getLabel()->setAttribute('for', $element->getAttribute('id'));
+                            }
                         }
                         $name = $element->getAttribute('id');
 
