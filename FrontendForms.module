@@ -1503,7 +1503,7 @@
                     $js = '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.min.js?v=' . $version . '"></script>' . PHP_EOL;
                 }
 
-                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.min.js?v=' . $version . '" defer></script>' . PHP_EOL;
+                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version .time(). '" defer></script>' . PHP_EOL;
 
                 // load slidercaptcha.js only if this captcha type is selected
                 if ($this->input_captchaType == 'SliderCaptcha' && $page->sliderCaptcha) {
@@ -1578,7 +1578,7 @@
                 if (in_array(1, $commentFieldCSS)) {
 
                     // add main CSS file
-                    $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsmain.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
+                    $css = '<link rel="stylesheet" type="text/css" href="' . $url . 'frontendcommentsmain.css?v=' . $moduleVersion. '">' . PHP_EOL;
 
                     // check which markup/framework is enabled
                     $framework = $this->moduleConfig['input_framework'];
@@ -1588,13 +1588,13 @@
                     $pathToCSSFile = $this->wire('config')->paths->siteModules.'FrontendComments/assets/';
                     if(file_exists($pathToCSSFile.'frontendcomments' . $frameworkName . '.css')){
                         // add CSS file
-                        $css .= '<link rel="stylesheet" type="text/css" href="' . $url.'frontendcomments' . $frameworkName . '.css?v=' . $moduleVersion . time().'"/>' . PHP_EOL;
+                        $css .= '<link rel="stylesheet" type="text/css" href="' . $url.'frontendcomments' . $frameworkName . '.css?v=' . $moduleVersion.'">' . PHP_EOL;
                     }
 
                     // add star rating CSS to the frontend if enabled
                     if (in_array(1, $commentFieldStars)) {
 
-                        $css .= '<link rel="stylesheet" type="text/css" href="' . $url . 'star-rating.css?v=' . $moduleVersion . '"/>' . PHP_EOL;
+                        $css .= '<link rel="stylesheet" type="text/css" href="' . $url . 'star-rating.css?v=' . $moduleVersion . '">' . PHP_EOL;
                     }
 
                     $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
@@ -1607,7 +1607,7 @@
 
                     // add main JS file
                     $js = '<script>let loadingAlertText = "' . $this->_('The reply form could not be loaded due to an error.') . '"</script>' . PHP_EOL;
-                    $js .= '<script src="' . $url . 'frontendcomments.js?v=' . $moduleVersion . '"></script>' . PHP_EOL;
+                    $js .= '<script src="' . $url . 'frontendcomments.js?v=' . $moduleVersion . time().'"></script>' . PHP_EOL;
 
                     // add star rating JS to the frontend if enabled
                     if (in_array(1, $commentFieldStars)) {
