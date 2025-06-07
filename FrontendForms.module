@@ -1613,7 +1613,7 @@
                     if (in_array(1, $commentFieldStars)) {
                         
                         $js .= '<script src="' . $url . 'star-rating.min.js?v=' . $moduleVersion . ' "></script>' . PHP_EOL;
-                        $js .= "<script>var stars = new StarRating('.star-rating');</script>" . PHP_EOL;
+                        $js .= "<script>var stars = new StarRating('.fcm-star-rating');</script>" . PHP_EOL;
                     }
 
                     $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
