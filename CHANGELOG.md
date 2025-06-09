@@ -1596,3 +1596,9 @@ According to a [user request in the forum](https://processwire.com/talk/topic/26
 If you enter false as the function parameter in one of these methods, then the error or success message will not be displayed after form submission.
 
 Read more about this new feature here: [setErrorMsg()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#seterrormsg---overwrite-the-default-error-message-after-form-submission), [setSuccessMsg()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#setsuccessmsg---overwrite-the-default-success-message-after-form-submission)
+
+## [2.2.35] 2025-06-09
+
+**Minor HTML fixes and preparation for new module FrontendComments**
+
+This update contains some minor fixes for HTML validation errors and some additions for the newly created module *FrontendComments*, which is now ready for testing.
