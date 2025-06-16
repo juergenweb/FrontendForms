@@ -19,6 +19,7 @@ class FieldsetOpen extends Element
     public function __construct(?string $id = null)
     {
         parent::__construct($id);
+        $this->legend = new Legend(); // instantiate legend object
         $this->setTag('fieldset');
         $this->setCSSClass('fieldsetClass');
     }
@@ -30,7 +31,6 @@ class FieldsetOpen extends Element
      */
     public function setLegend(string $legendText): Legend
     {
-        $this->legend = new Legend(); // instantiate legend object
         $this->legend->setText($legendText);
         return $this->legend;
     }
