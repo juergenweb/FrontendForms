@@ -2214,27 +2214,30 @@
 
                                     if (count($element->getRules()) > 0) {
                                         // add required validation to be the first
-
                                         $rules = $this->putRequiredOnTop($element->getRules());
+
+                                        $cl = [];
                                         foreach ($rules as $validatorName => $parameters) {
 
                                             $v->rule($validatorName, $element->getAttribute('name'), ...$parameters['options']);
-
                                             // Add custom error message text if present
                                             if (isset($parameters['customMsg'])) {
                                                 $v->message($parameters['customMsg']);
                                             }
                                             if (isset($parameters['customFieldName'])) {
                                                 $v->label($parameters['customFieldName']);
+                                                $cl[] = $parameters['customFieldName'];
                                             } else {
                                                 if ($element->getLabel()->getText()) {
                                                     // use the label if present, otherwise use the name attribute
-                                                    $v->label($element->getLabel()->getText());
+                                                    if(!count($cl))
+                                                        $v->label($element->getLabel()->getText());
                                                 }
                                             }
+
                                         }
                                     }
-
+                                    
                                     // add honeypot validation if honeypot field is included
                                     if ($this->frontendforms['input_useHoneypot']) {
                                         if ($element->getAttribute('name') == $this->createElementName('seca')) {
@@ -2265,6 +2268,8 @@
                                     $this->setValues();
                                 }
 
+
+
                                 if ($v->validate()) {
                                     $this->validated = '1';
                                     $this->alert->setCSSClass('alert_successClass');
@@ -2291,7 +2296,6 @@
                                     // set error alert
                                     $this->wire('session')->set('errors', '1');
                                     $this->formErrors = $v->errors();
-
 
                                     // check if a CAPTCHA is enabled
                                     if ($this->getCaptchaType() != 'none') {
