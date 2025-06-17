@@ -1602,3 +1602,9 @@ Read more about this new feature here: [setErrorMsg()](https://github.com/juerge
 **Minor HTML fixes and preparation for new module FrontendComments**
 
 This update contains some minor fixes for HTML validation errors and some additions for the newly created module *FrontendComments*, which is now ready for testing.
+
+## [2.2.36] 2025-06-17
+
+**Wrong Byte calculation in phpiniFileSize validator fixed**
+The conversion from Units like (M = MegaByte, G = GigaByte and so on) was wront inside the phpIniFileSize validator. This is fixed now.
+
