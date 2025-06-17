@@ -332,16 +332,18 @@
              * 19) Check if the uploaded file is not larger than the allowed filesize as declared inside the php.ini
              */
             V::addRule('phpIniFilesize', function ($field, $value) {
+
+                $ini = Inputfields::convertToBytes(ini_get("upload_max_filesize"), true);
                 if (count($value) == 1) {
                     if ($value[0]['error'] == '0') {
                         $size = $value[0]['size'];
-                        return ($size <= ((int)ini_get("upload_max_filesize") * 1024));
+                        return ($size <= $ini);
                     }
                 } else {
                     foreach ($value as $file) {
                         if ($file['error'] == '0') {
                             $size = $file['size'];
-                            return ($size <= ((int)ini_get("upload_max_filesize") * 1024));
+                            return ($size <= $ini);
                         }
                         return true;
                     }
