@@ -1611,3 +1611,6 @@ The conversion from Units like (M = MegaByte, G = GigaByte and so on) was wront 
 **Overwriting of custom field label on validation messages fixed**
 The label of a form field, that will be used inside the error messages of validation rules can be overwritten with the setCustomFieldLabel() method.
 This has worked fine until you have added the custom label to the last validation rule. Otherwise it has been overwritten by the default label afterwards at the next validation rule. This issue is fixed now and you can add the custom label everywhere. [Read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#setcustomfieldname)
+
+**.gitattributes file added**
+This file prevents unnecessary files from being downloaded.
