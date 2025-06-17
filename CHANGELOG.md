@@ -1614,3 +1614,9 @@ This has worked fine until you have added the custom label to the last validatio
 
 **.gitattributes file added**
 This file prevents unnecessary files from being downloaded.
+
+**2 new methods for manipulation of notes added**
+
+* removeNotesByKey(): With this method you can remove a previously added notes text by its key.
+* getNotesArray(): This method is for dev purposes and outputs all notes that have been set as an array
+
