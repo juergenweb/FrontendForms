@@ -918,6 +918,28 @@
         }
 
         /**
+         * Get all notes set as an array
+         * @return array
+         */
+        public function getNotesArray(): array
+        {
+            return $this->notes_array;
+        }
+
+        /**
+         * Remove a specific notes text by its key
+         * @param int|string $key
+         * @return Notes
+         */
+        public function removeNotesByKey(int|string $key): Notes
+        {
+            $notes = $this->notes_array;
+            unset($notes[$key]);
+            $this->notes_array = $notes;
+            return $this->notes;
+        }
+
+        /**
          * Return the default value
          * @return string|array|null
          */
