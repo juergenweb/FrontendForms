@@ -2234,6 +2234,8 @@ If the validation fails, the error message will look like this:
 
 `This field is required` instead of `Privacy is required`.
 
+Please note: If you add a custom label, that label will be used for all validation rules for the field (not just the field where it was added). If you specify multiple custom labels for an input field, the last one will be used for all of them. It is not possible to use different custom labels for each validation rule.
+
 ### setCustomMessage()
 Use this method if you want to overwrite the default error message completely (not only the label text).
 
