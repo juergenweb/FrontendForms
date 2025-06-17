@@ -1315,6 +1315,22 @@ Method to add notes to the form field. Returns a notes object.
 $field->setNotes('You have to fill out this field');
 ```
 
+#### getNotesArray() - get all notes for the given field
+This method is primarly for dev purposes and outputs all notes for the given field as an array.
+
+```php
+$field->getNotesArray();
+```
+
+#### RemoveNotesByKey() - remove a specific notes text by its key value
+You can use this method to remove a specific notes text which has been set earlier completely. 
+
+```php
+$field->getNotesArray(2); // removes the notes text with the key 2
+```
+The key can be a string or an integer. You can use the previous method getNotesArray() to find out the key.
+
+
 #### setDescription() - add a description text to an input field
 Method to add a description to the form field. Returns a description object.
 
