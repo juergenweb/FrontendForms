@@ -1252,6 +1252,7 @@ These methods can be used on each input field independent of the input type.
 | [setLabel()](#setlabel---add-the-label-text)  |  add the label text  |
 | [setNotes()](#setnotes---add-text-for-notes-under-the-input-field)  |  add text for notes under the input field  |
 | [getNotesArray()](#getnotesarray---get-all-notes-for-the-given-field)  |  get all notes for the given field  |
+| [removeNotesByKey()](#removenotesbykey---remove-a-specific-notes-text-by-its-key-value)  |  remove by specific notes text by its key  |
 | [setDescription()](#setdescription---add-a-description-text-to-an-input-field)  |  add a description text to an input field  |
 | [setSanitizer()](#setsanitizer---set-a-processwire-sanitizer)  |   set a ProcessWire sanitizer  |
 | [hasSanitizer()](#hassanitizer---check-if-a-special-sanitizer-was-set-to-the-field)  |   check if a special sanitizer was set to the field  |
