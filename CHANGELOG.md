@@ -1617,6 +1617,6 @@ This file prevents unnecessary files from being downloaded.
 
 **2 new methods for manipulation of notes added**
 
-* removeNotesByKey(): With this method you can remove a previously added notes text by its key.
-* getNotesArray(): This method is for dev purposes and outputs all notes that have been set as an array
+* [removeNotesByKey()](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#removenotesbykey---remove-a-specific-notes-text-by-its-key-value): With this method you can remove a previously added notes text by its key.
+* [getNotesArray()](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#getnotesarray---get-all-notes-for-the-given-field): This method is for dev purposes and outputs all notes that have been set as an array
 
