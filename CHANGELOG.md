@@ -1620,3 +1620,14 @@ This file prevents unnecessary files from being downloaded.
 * [removeNotesByKey()](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#removenotesbykey---remove-a-specific-notes-text-by-its-key-value): With this method you can remove a previously added notes text by its key.
 * [getNotesArray()](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#getnotesarray---get-all-notes-for-the-given-field): This method is for dev purposes and outputs all notes that have been set as an array
 
+## [2.2.37] 2025-06-18
+
+**Support for required validator on file upload fields added**
+Until now, the required validator did not work on file upload fields. It has always returned true. 
+
+The problem was, that the Valitron library does not support the required validation on file upload fields. I have fixed this issue now by using a new validator called "fileRequired".
+
+This validator does not need to be added manually to a file upload field - it will be added by default if you are using the default required validator.
+
+So you can take the default required validator rule, add it to a file upload field and you are done. Required validation works now on file upload fields too.
+
