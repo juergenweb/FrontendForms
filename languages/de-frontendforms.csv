@@ -56,6 +56,7 @@ en,de,description,file,hash
 "is not in the correct format.","hat nicht das richtige Format.",,site/modules/FrontendForms/Formelements/CustomRules.php,717bbd629cd6af3c2239e23329293280
 "has not been solved correctly.","wurde nicht richtig gelöst.",,site/modules/FrontendForms/Formelements/CustomRules.php,c4e23eb773320ea4b732526b763d3849
 "contains not allowed characters. Cyrillic name may contain lowercase and uppercase а-я and hyphen (no whitespaces).","enthält ungültige Zeichen. Kyrillische Namen dürfen nur Groß- und Kleinbuchstaben, а-я  und Bindestrichen enthalten (keine Leerzeichen).",,site/modules/FrontendForms/Formelements/CustomRules.php,8092f541b2a83fca68b110c6c91f66ba
+"is required.","ist erforderlich.",,site/modules/FrontendForms/Formelements/CustomRules.php,ee66f9c9930cb33d2a5dde9b240d3f7e
 en,de,description,file,hash
 "Image captcha","Bild CAPTCHA",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,1e27db1c7a9a959ca4cd75964525fa2d
 "Assign the image to a category","Ordnen sie das Bild einer Kategorie zu",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,5972e22698d0e9faba6397ce1b6b6f74
@@ -179,7 +180,7 @@ hours,Stunden,,site/modules/FrontendForms/Formelements/FormValidation.php,73cddd
 minutes,Minuten,,site/modules/FrontendForms/Formelements/FormValidation.php,640fd0cc0ffa0316ae087652871f4486
 seconds,Sekunden,,site/modules/FrontendForms/Formelements/FormValidation.php,783e8e29e6a8c3e22baa58a19420eb4f
 and,und,,site/modules/FrontendForms/Formelements/FormValidation.php,be5d5d37542d75f93a87094459f76678
-en,de,description,file,hash
+en,default,description,file,hash
 "GD library is not installed/enabled. Please install/enable it to be able to use CAPTCHA images.","Die GD-Bibliothek ist nicht installiert/aktiviert. Bitte installieren/aktivieren Sie diese, um die CAPTCHA-Funktion verwenden zu können.",,site/modules/FrontendForms/FrontendForms.module,3f73c9dc2eed9de2758f0bf0c32893f4
 "no HTML template","kein HTML Template",,site/modules/FrontendForms/FrontendForms.module,7a646761a1d8fa416125a58d609c221d
 "Inherit from FrontendForms","Von FrontendForms übernehmen",,site/modules/FrontendForms/FrontendForms.module,5bfe6a369b802afdb9bb4909ac726c2d
@@ -202,6 +203,7 @@ Comments,Kommentare,"should be identical to the weird name/title above",site/mod
 "Slide right to fill","Nach rechts schieben",,site/modules/FrontendForms/FrontendForms.module,e76d67cace68112a07c87cd19864fc08
 Loading,Laden,,site/modules/FrontendForms/FrontendForms.module,16bfbf9c462762cf1cba4134ec53c504
 "Try again!","Nochmal versuchen!",,site/modules/FrontendForms/FrontendForms.module,0912f8f8b87c237b8415f1b4c0a50438
+"The reply form could not be loaded due to an error.","Das Antwortformula konnte aufgrund eines Fehlers nicht geladen werden.",,site/modules/FrontendForms/FrontendForms.module,7a91feaf15ea56c4f0247559f076a9ad
 Seconds,Sekunden,,site/modules/FrontendForms/FrontendForms.module,8f19a8c7566af54ea8981029730e5465
 Attempts,Versuche,,site/modules/FrontendForms/FrontendForms.module,7ba3b8236d48d4f4c5ec03c3fe6b75a9
 Colors,Farben,,site/modules/FrontendForms/FrontendForms.module,5d50889672f6f860d14f502de3de1957
