@@ -203,7 +203,7 @@ Comments,Kommentare,"should be identical to the weird name/title above",site/mod
 "Slide right to fill","Nach rechts schieben",,site/modules/FrontendForms/FrontendForms.module,e76d67cace68112a07c87cd19864fc08
 Loading,Laden,,site/modules/FrontendForms/FrontendForms.module,16bfbf9c462762cf1cba4134ec53c504
 "Try again!","Nochmal versuchen!",,site/modules/FrontendForms/FrontendForms.module,0912f8f8b87c237b8415f1b4c0a50438
-"The reply form could not be loaded due to an error.","Das Antwortformula konnte aufgrund eines Fehlers nicht geladen werden.",,site/modules/FrontendForms/FrontendForms.module,7a91feaf15ea56c4f0247559f076a9ad
+"The reply form could not be loaded due to an error.","Das Antwortformular konnte aufgrund eines Fehlers nicht geladen werden.",,site/modules/FrontendForms/FrontendForms.module,7a91feaf15ea56c4f0247559f076a9ad
 Seconds,Sekunden,,site/modules/FrontendForms/FrontendForms.module,8f19a8c7566af54ea8981029730e5465
 Attempts,Versuche,,site/modules/FrontendForms/FrontendForms.module,7ba3b8236d48d4f4c5ec03c3fe6b75a9
 Colors,Farben,,site/modules/FrontendForms/FrontendForms.module,5d50889672f6f860d14f502de3de1957
