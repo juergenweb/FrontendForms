@@ -2012,7 +2012,13 @@
         {
             if (count($rules) > 1) {
                 if (array_key_exists('required', $rules)) {
-                    $rules = ['required' => $rules['required']] + $rules;
+                    if (array_key_exists('fileRequired', $rules)) {
+                        $rules = ['fileRequired' => $rules['fileRequired']] + $rules;
+                    } else {
+                        $rules = ['required' => $rules['required']] + $rules;
+                    }
+                }  if (array_key_exists('fileRequired', $rules)) {
+                    $rules = ['fileRequired' => $rules['fileRequired']] + $rules;
                 }
             }
             return $rules;
@@ -2213,6 +2219,18 @@
                                     // run validation only if there is at least one validation rule set
 
                                     if (count($element->getRules()) > 0) {
+
+                                        $addRequiredFileValidation = false;
+                                        // check if field is file upload field and has required validator added
+                                        if($element instanceof InputFile){
+                                            if(array_key_exists('required',$element->getRules())){
+                                                // add fileRequired validator if it is not present
+                                                if(!array_key_exists('fileRequired',$element->getRules())) {
+                                                    $element->setRule('fileRequired');
+                                                    $addRequiredFileValidation = true;
+                                                }
+                                            }
+                                        }
                                         // add required validation to be the first
                                         $rules = $this->putRequiredOnTop($element->getRules());
 
@@ -2223,7 +2241,16 @@
                                             // Add custom error message text if present
                                             if (isset($parameters['customMsg'])) {
                                                 $v->message($parameters['customMsg']);
+                                            } else {
+                                                // check if field has fileRequired validation
+                                                if($addRequiredFileValidation && $validatorName == 'fileRequired') {
+                                                    // check if required validator has a custom error message added
+                                                    if(array_key_exists('customMsg',$rules['required'])) {
+                                                        $v->message($rules['required']['customMsg']);
+                                                    }
+                                                }
                                             }
+
                                             if (isset($parameters['customFieldName'])) {
                                                 $v->label($parameters['customFieldName']);
                                                 $cl[] = $parameters['customFieldName'];
