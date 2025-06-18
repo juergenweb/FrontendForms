@@ -596,6 +596,22 @@
                 return false;
             }, $this->_('contains not allowed characters. Cyrillic name may contain lowercase and uppercase а-я and hyphen (no whitespaces).'));
 
+
+            /**
+             * 36) Check if file upload field is not empty (required validation for upload field)
+             * This validator is necessary because the default validator for "required" does not work on upload fields
+             * This validator is more intended to be an internal validator that will be added automatically if a file upload field is required
+             * So you do not have to take care to add it manually to a file upload field
+             * BTW there are no negative side effects if you add this validator manually to a file upload field
+             */
+            V::addRule('fileRequired', function ($field, $value, array $params) {
+                if ($value[0]['size'] === 0) {
+                   return false;
+                }
+                return true;
+            }, $this->_('is required.'));
+
+
         }
 
 
