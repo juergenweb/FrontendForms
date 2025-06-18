@@ -1631,3 +1631,5 @@ This validator does not need to be added manually to a file upload field - it wi
 
 So you can take the default required validator rule, add it to a file upload field and you are done. Required validation works now on file upload fields too.
 
+**German translations added**
+Some new and missing German translations have been added to keep the language pack up-to-date.
