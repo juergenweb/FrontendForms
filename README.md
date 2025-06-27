@@ -34,7 +34,7 @@ You can see FrontendForms in action on the following sites:
 * [schulfreund.at](https://www.schulfreund.at/kontakt/)
 * [fugamo.de](https://fugamo.de/kontakt/)
 * [surfdacha.com](https://surfdacha.com/en/booking/)
-* [rehamed-reichenbach.de]([https://surfdacha.com/en/booking/](https://www.rehamed-reichenbach.de/terminvereinbarung/))
+* [rehamed-reichenbach.de](https://www.rehamed-reichenbach.de/terminvereinbarung/)
 
 ## Table of contents
 * [Installation and Quick-start guide](#installation-and-quick-start-guide)
