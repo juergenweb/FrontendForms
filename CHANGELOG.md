@@ -1633,3 +1633,8 @@ So you can take the default required validator rule, add it to a file upload fie
 
 **German translations added**
 Some new and missing German translations have been added to keep the language pack up-to-date.
+
+## 2025-08-17
+
+**Wrong path to placeholder image fixed**
+There was a wrong path for the email template preview for the usage of no email template. This has been fixed now and the preview image is displayed properly now.
