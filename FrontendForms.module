@@ -286,8 +286,8 @@
         {
 
             //  create options
-            $placeholderimage = $this->wire('config')->urls->$this . 'images/templatepreviews/emailtemplate-placeholder-image.png';
-            $noneimage = $this->wire('config')->urls->$this . 'images/templatepreviews/none.png';
+            $placeholderimage = $this->wire('config')->urls->$this . 'img/emailtemplate-placeholder-image.png';
+            $noneimage = $this->wire('config')->urls->$this . 'img/none.png';
 
             if ($inherit) {
                 if ($this->input_emailTemplate == 'none') {
