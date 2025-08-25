@@ -1809,19 +1809,22 @@
                         $filesArray = [];
                         foreach ($pathFileArray as $path) {
                             // output only the basename without the whole path
-                            $filesArray[] = pathinfo($path, PATHINFO_BASENAME);
+                            $value = $this->wire('sanitizer')->filename(pathinfo($path, PATHINFO_BASENAME), true);
+                            $filesArray[] = strtolower($value);
                         }
+
                         $values[$key] = $filesArray;
                     } else {
                         if (is_array($_FILES[$key]['name'])) {
                             // multiple upload field
                             foreach ($_FILES[$key]['name'] as $filename) {
-                                $files[] = strtolower($this->wire('sanitizer')->filename($filename));
+                                $files[] = strtolower($this->wire('sanitizer')->filename($filename, true));
                             }
                             $values[$key] = $files;
                         } else {
                             // single upload field
-                            $values[$key] = $_FILES[$key]['name'];
+                            $value = $this->wire('sanitizer')->filename($_FILES[$key]['name'], true);
+                            $values[$key] = strtolower($value);
                         }
 
                     }
@@ -1962,7 +1965,6 @@
                                     // sanitize file name and convert it to lowercase to prevent problems on certain servers
                                     $filename = $this->wire('sanitizer')->filename($file['name'], true);
                                     $target_file = $this->uploadPath . strtolower($filename);
-
                                     $uploaded_files[] = $target_file;
                                     move_uploaded_file($file['tmp_name'], $target_file);
                                 }
@@ -2063,7 +2065,6 @@
 
             // instantiate the Captcha field if set
             $useCaptcha = ($this->getCaptchaType() !== 'none');
-
 
             if ($useCaptcha) {
 
