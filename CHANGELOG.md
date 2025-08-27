@@ -1639,3 +1639,10 @@ Some new and missing German translations have been added to keep the language pa
 **Wrong path to placeholder image fixed**
 There was a wrong path for the email template preview for the usage of no email template. This has been fixed now and the preview image is displayed properly now.
 
+## [2.2.39] 2025-08-17
+
+**Different file names in asset folder getValues() method fixed**
+
+According to [this post](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=250132) in the support, there was a problem with the file name of uploaded files via a form. Sometimes the name of the file in the assets folder was different of the name that was returned by the getValues() method. 
+
+This problem should be fixed now with this update.
