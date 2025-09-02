@@ -1646,3 +1646,9 @@ There was a wrong path for the email template preview for the usage of no email 
 According to [this post](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=250132) in the support, there was a problem with the file name of uploaded files via a form. Sometimes the name of the file in the assets folder was different of the name that was returned by the getValues() method. 
 
 This problem should be fixed now with this update.
+
+## [2.2.40] 2025-09-02
+
+**Fix to prevent warning in bootstrapped file added**
+
+According to [this post](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/16/#comment-250204) to prevent a warning message if $_SERVER['REQUEST_URI'] is not loaded at that moment added.
