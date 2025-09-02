@@ -149,7 +149,7 @@
                 'summary' => 'Create forms and validate them using the Valitron library.',
                 'author' => "Jürgen Kern",
                 'href' => 'https://github.com/juergenweb/FrontendForms',
-                'version' => '2.2.39',
+                'version' => '2.2.40',
                 'singular' => true,
                 'autoload' => true,
                 'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
@@ -855,8 +855,8 @@
             $this->addHookAfter('Page::render', $this, 'initializeImagePicker');
 
             // load only in the backend
-            if (strpos($_SERVER['REQUEST_URI'], $this->wire('config')->urls->admin) === 0) {
-
+            if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], $this->wire('config')->urls->admin) === 0)
+            {
 
                 // add CSS and JS to the backend but only on this module page
                 $version = $this->getModuleInfo()['version'] . '-' . time();
@@ -3134,5 +3134,6 @@
         }
 
     }
+
 
 
