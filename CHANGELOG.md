@@ -1661,6 +1661,7 @@ According to [this post](https://processwire.com/talk/topic/26015-frontendforms-
 
 **Missing alias method setMethod for the form object added**
 
-With this method you can set the form method to "post" or "get"
+With this method you can set the form method to "post" or "get". This method has been deleted accidentally in the past, but has been added again in this update.
+
 
 
