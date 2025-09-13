@@ -269,7 +269,14 @@
                 if($method === 'post') {
                     return $this->wire('session')->CSRF->hasValidToken();
                 } else {
-                    return true;
+                    if($method === 'get') {
+                        $name = $this->wire('session')->CSRF->getTokenName();
+                        $value = $this->wire('session')->CSRF->getTokenValue();
+                        $getVal = $this->wire('input')->get($name);
+                        return ($getVal == $value);
+                    } else {
+                        return true;
+                    }
                 }
             }
         }
