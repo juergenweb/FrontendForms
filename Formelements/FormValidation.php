@@ -254,15 +254,23 @@
          * True: If CSRF-Protection is disabled or a valid CSRF-Token is present
          * False: If CSRF-Protection is enabled and the CSRF-Token is not valid
          * @param bool $useCSRFProtection
+         * @param string $method
          * @return bool
          * @throws \ProcessWire\WireException
          */
-        public function checkCSRFAttack(bool $useCSRFProtection): bool
+        public function checkCSRFAttack(bool $useCSRFProtection, string $method): bool
         {
+            // sanitize method name to be all lower
+            $method = strtolower($method);
+
             if (!$useCSRFProtection) {
                 return true;
             } else {
-                return $this->wire('session')->CSRF->hasValidToken();
+                if($method === 'post') {
+                    return $this->wire('session')->CSRF->hasValidToken();
+                } else {
+                    return true;
+                }
             }
         }
 
