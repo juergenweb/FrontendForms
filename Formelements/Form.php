@@ -2497,7 +2497,9 @@
          */
         private function setValues(): void
         {
-            $post_values = $this->wire('input')->post;
+            $method = strtolower($this->getAttribute('method'));
+
+            $post_values = $this->wire('input')->$method;
             // get buttons
             foreach ($this->getFormElementsByClass('Button') as $button) {
                 if ($button->hasAttribute('value')) {
