@@ -2111,7 +2111,6 @@
 
             // 1) check if this form was submitted and no other form on the same page
             if ($validation->thisFormSubmitted()) {
-
                 // add a validation class to the form after it was submitted
                 $this->setCSSClass('formClassValidated'); // add the CSS class
                 // 2) check if form was submitted in time range
@@ -2121,7 +2120,7 @@
                         // 4) check for double form submission
                         if ($validation->checkDoubleFormSubmission($this, $this->useDoubleFormSubmissionCheck)) {
                             // 5) Check for CSRF attack
-                            if ($validation->checkCSRFAttack($this->getCSRFProtection())) {
+                            if ($validation->checkCSRFAttack($this->getCSRFProtection(), $this->getAttribute('method'))) {
 
                                 /* START PROCESSING THE FORM */
 
@@ -2172,6 +2171,7 @@
 
                                     $formElements[] = $this->captchafield;
                                 }
+
 
                                 // Get only input field for user inputs (no fieldsets, buttons,..)
                                 $formElements = $validation->getRealInputFields($formElements);
