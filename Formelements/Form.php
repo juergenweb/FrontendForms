@@ -2027,6 +2027,21 @@
         }
 
         /**
+         * Method to set the form method (get or post)
+         * @param string $method
+         * @return $this
+         */
+        public function setMethod(string $method): self
+        {
+            $method = strtolower($method);
+            $allowedMethods = ['post','get'];
+            if(in_array($method, $allowedMethods)) {
+                $this->setAttribute('method', $method);
+            }
+            return $this;
+        }
+
+        /**
          * Process the form after form submission
          * Includes sanitization and validation
          * @return bool - true: form is valid, false: form has errors
