@@ -1653,3 +1653,9 @@ This problem should be fixed now with this update.
 
 According to [this post](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/16/#comment-250204) a fix to prevent a warning message if $_SERVER['REQUEST_URI'] is not loaded at that moment has been added.
 
+## 2025-09-13
+
+**Fix to get CSRF validation working with GET method**
+
+According to [this post](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=250300 ) a fix to prevent showing a white page after form submission by using method GET for the form has been added.
+
