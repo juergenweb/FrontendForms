@@ -222,8 +222,8 @@ In the table afterwards you will find information about the sanitizers and valid
 | InputRadioMultiple  | text  | -  |
 | InputCheckbox  | text  | -  |
 | InputCheckboxMultiple  | arrayVal  | -  |
-| InputSelect  | text  | -  |
-| InputSelectMultiple  | arrayVal  | -  |
+| Select  | text  | -  |
+| SelectMultiple  | arrayVal  | -  |
 | Textarea  | textarea  | -  |
 | Datalist  | text  | -  |
 
