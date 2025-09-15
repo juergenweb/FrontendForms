@@ -72,7 +72,7 @@ class InputRadioMultiple extends Input
         $this->radios = array_merge($this->radios, [$radio]);
         return $radio;
     }
-    
+
     /**
      * Use a PW field of the type SelectOptions to create the radios;
      * @param string $fieldName
@@ -105,7 +105,7 @@ class InputRadioMultiple extends Input
                 $radio->getLabel()->disableAsterisk();
 
                 // add for attribute to label tag if it is appended
-                if($this->getAppendLabel())
+                if ($this->getAppendLabel())
                     $radio->getLabel()->setAttribute('for', $this->getAttribute('id') . '-' . $key);
 
                 if (!$this->directionHorizontal) {
@@ -128,6 +128,13 @@ class InputRadioMultiple extends Input
                             break;
                         case ('pico2.json'):
                             $this->appendLabel(true);
+                            break;
+                        case('uikit3.json'):
+                            if (!$this->directionHorizontal) {
+                                $radio->getLabel()->append('<br>');
+                            } else {
+                                $radio->getLabel()->setAttribute('class', 'uk-margin-small-right');
+                            }
                             break;
                         default:
                     }
