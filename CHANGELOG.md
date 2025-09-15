@@ -1663,5 +1663,10 @@ According to [this post](https://processwire.com/talk/topic/26015-frontendforms-
 
 With this method you can set the form method to "post" or "get". This method has been deleted accidentally in the past, but has been added again in this update.
 
+## [2.2.42] 2025-09-16
+
+**Some markup bugs fixed**
+
+According to [this post](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=250325) some markup issues have been fixed. Thanks to Stefanowitsch for reporting these bugs.
 
 
