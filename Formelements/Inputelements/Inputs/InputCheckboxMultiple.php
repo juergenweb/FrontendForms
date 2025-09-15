@@ -32,6 +32,7 @@ class InputCheckboxMultiple extends Input
     public function __construct(string $id)
     {
         parent::__construct($id);
+      
         $this->setAttribute('type', 'checkbox');
         $this->removeAttribute('class');
         $this->setCSSClass('checkboxClass');
@@ -109,6 +110,10 @@ class InputCheckboxMultiple extends Input
             foreach ($this->checkboxes as $key => $checkbox) {
                 //Set unique ID for each radio button
                 $checkbox->setAttribute('id', $this->getAttribute('name') . '-' . $key);
+
+                // add for attribute to label tag if it is appended
+                if($this->getAppendLabel())
+                    $checkbox->getLabel()->setAttribute('for', $this->getAttribute('id') . '-' . $key);
 
                 switch ($this->markupType) {
                     case ('bootstrap5.json'):
