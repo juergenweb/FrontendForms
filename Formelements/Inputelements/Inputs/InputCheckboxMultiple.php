@@ -32,7 +32,7 @@ class InputCheckboxMultiple extends Input
     public function __construct(string $id)
     {
         parent::__construct($id);
-      
+
         $this->setAttribute('type', 'checkbox');
         $this->removeAttribute('class');
         $this->setCSSClass('checkboxClass');
@@ -112,23 +112,28 @@ class InputCheckboxMultiple extends Input
                 $checkbox->setAttribute('id', $this->getAttribute('name') . '-' . $key);
 
                 // add for attribute to label tag if it is appended
-                if($this->getAppendLabel())
+                if ($this->getAppendLabel())
                     $checkbox->getLabel()->setAttribute('for', $this->getAttribute('id') . '-' . $key);
 
                 switch ($this->markupType) {
+                    case ('uikit3.json'):
+                        if (!$this->directionHorizontal) {
+                            $checkbox->getLabel()->append('<br>');
+                        } else {
+                            $checkbox->getLabel()->setAttribute('class', 'uk-margin-small-right');
+                        }
+                        break;
                     case ('bootstrap5.json'):
                         $class = $this->getCSSClass('checkinputClass');
-                        if($this->directionHorizontal) $class = $this->getCSSClass('checkbox_horizontalClass');
+                        if ($this->directionHorizontal) $class = $this->getCSSClass('checkbox_horizontalClass');
                         $checkbox->prepend('<div class="' . $class . '">');
                         $checkbox->getLabel()->append('</div>');
                         break;
                     case ('pico2.json'):
-                        if($this->directionHorizontal){
+                        if ($this->directionHorizontal) {
                             // horizontal
                             $this->appendLabel(true);
-                            //$this->setAppendLabel(true);
                         } else {
-                            //$this->setAppendLabel(false);
                             $this->appendLabel(false);
                         }
                         break;
