@@ -103,6 +103,11 @@ class InputRadioMultiple extends Input
                 $radio->useInputWrapper(false);
                 $radio->useFieldWrapper(false);
                 $radio->getLabel()->disableAsterisk();
+
+                // add for attribute to label tag if it is appended
+                if($this->getAppendLabel())
+                    $radio->getLabel()->setAttribute('for', $this->getAttribute('id') . '-' . $key);
+
                 if (!$this->directionHorizontal) {
                     switch ($this->markupType) {
                         case ('bootstrap5.json'):
