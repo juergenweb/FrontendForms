@@ -110,17 +110,18 @@ class InputCheckboxMultiple extends Input
             foreach ($this->checkboxes as $key => $checkbox) {
                 //Set unique ID for each radio button
                 $checkbox->setAttribute('id', $this->getAttribute('name') . '-' . $key);
+                $checkbox->getLabel()->setAttribute('class', 'uk-form-label uk-display-inline-block');
 
                 // add for attribute to label tag if it is appended
                 if ($this->getAppendLabel())
-                    $checkbox->getLabel()->setAttribute('for', $this->getAttribute('id') . '-' . $key);
+                    $checkbox->getLabel()->setAttribute('for', $this->getAttribute('id') . '-' . $key)->setAttribute('class', 'uk-margin-small-right');
 
                 switch ($this->markupType) {
                     case ('uikit3.json'):
                         if (!$this->directionHorizontal) {
                             $checkbox->getLabel()->append('<br>');
                         } else {
-                            $checkbox->getLabel()->setAttribute('class', 'uk-margin-small-right');
+
                         }
                         break;
                     case ('bootstrap5.json'):
