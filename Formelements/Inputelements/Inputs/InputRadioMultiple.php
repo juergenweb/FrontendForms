@@ -109,6 +109,7 @@ class InputRadioMultiple extends Input
                     $radio->getLabel()->setAttribute('for', $this->getAttribute('id') . '-' . $key);
 
                 if (!$this->directionHorizontal) {
+                    // vertical align
                     switch ($this->markupType) {
                         case ('bootstrap5.json'):
                             $radio->prepend('<div class="' . $this->getCSSClass('checkinputClass') . '">');
@@ -117,10 +118,14 @@ class InputRadioMultiple extends Input
                         case ('pico2.json'):
                             $this->appendLabel(false);
                             break;
+                        case ('uikit3.json'):
+                            $radio->getLabel()->setAttribute('class', 'uk-form-label uk-display-inline-block')->append('<br>');
+                            break;
                         default:
                             $radio->getLabel()->append('<br>');
                     }
                 } else {
+                    // horizontal align
                     switch ($this->markupType) {
                         case ('bootstrap5.json'):
                             $radio->prepend('<div class="' . $this->getCSSClass('checkbox_horizontalClass') . '">');
@@ -130,11 +135,10 @@ class InputRadioMultiple extends Input
                             $this->appendLabel(true);
                             break;
                         case('uikit3.json'):
-                            if (!$this->directionHorizontal) {
-                                $radio->getLabel()->append('<br>');
-                            } else {
-                                $radio->getLabel()->setAttribute('class', 'uk-margin-small-right');
-                            }
+                            $radio->getLabel()->setAttribute('class', 'uk-form-label uk-display-inline-block');
+                            // add a small margin after the label tag
+
+                                $radio->getLabel()->setAttribute('class','uk-margin-small-right');
                             break;
                         default:
                     }
