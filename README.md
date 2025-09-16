@@ -1501,7 +1501,7 @@ Here is a complete real world example:
 
 ```
 $file1 = new \FrontendForms\InputFile('fileupload1');
-$file1->showClearLink(true); // show an link to empty the input field under the input field
+$file1->showClearLink(true); // show all files for upload under the input field
 $file1->setLabel('Multiple files upload');
 $file1->setDescription('Description fileupload1')->setPosition('afterInput'); // This is how you add the position directyl to the Description object
 $file1->setRule('allowedFileSize', '60000');
@@ -1554,7 +1554,7 @@ These methods can only be used on certain input fields and not at all.
 | [sendAttachment()](#sendattachment---send-files-via-the-wiremail-class)  | send files via the WireMail class  |
 | [allowMultiple()](#allowmultiple-for-file-input-fields)  | add support for multiple file uploads on input type file  |
 | [mailTemplate()](#mailtemplate---changedisable-the-usage-of-an-email-template-manually)  | change/disable the usage of an email template manually  |
-| [showClearLink()](#showclearlink---show-or-hide-a-link-to-clear-a-file-input-field)  | show/hide a link under the file input field to clear the input  |
+| [showClearLink()](#showclearlink---show-or-hide-a-link-to-clear-a-file-input-field)  | show/hide all files for upload under the file upload field  |
 | [getClearLink()](#getclearlink---get-the-link-object-described-in-the-previous-method-for-further-manipulations)  | get the link object for the clear input link for further manipulations  |
 | [useCharacterCounter()](#usecharactercounter---add-a-reverse-character-counter-below-a-textarea-if-maxlength-validator-is-set)  | add a character counter to a textarea if lengthMax validator is set  |
 | [getCharacterCounter()](#getcharactercounter---get-the-character-counter-object-described-in-the-previous-method-for-further-manipulations)  | get the character counter object for further manipulations  |
@@ -1685,19 +1685,12 @@ $m = wireMail();
 $m->mailTemplate('none'); // disable the usage of email templates for sending emails with this form
 ```
 
-#### showClearLink() - show or hide a link to clear a file input field
-By default, this feature is enabled. If you want to prevent the display of the link under a file input field, you only have to set false as parameter.
-The link will only be displayed if a file was selected and added to a file upload field, otherwise it is not visible.
+#### showClearLink() - show or hide all files for upload under the file upload input field
+By default, this feature is enabled. If you want to prevent the display of the files under a file input field, you only have to set false as parameter.
+If the file list will be displayed, you can remove each file for upload individually from the file upload field.
 
 ```php
-$field->showClearLink(false); // true: link will be displayed, false: link will be removed if present
-```
-
-#### getClearLink() - get the link object described in the previous method for further manipulations
-If you want to manipulate the clear link (fe adding an additional styling CSS class), you will get instance for the link with this method.
-
-```php
-$field->getClearLink(true); // returns the link object
+$field->showClearLink(false); // true: list of files will be displayed, false: all files which have been added to the file upload field will be displayed
 ```
 
 #### useCharacterCounter() - add a reverse character counter below a textarea if maxLength validator is set
