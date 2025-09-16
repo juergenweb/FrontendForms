@@ -29,6 +29,22 @@ function submitCounter() {
     }
 }
 
+// Function to delete a file block
+function deleteFileBlock(fileBlock, dt) {
+    let name = fileBlock.querySelector('.file-name').textContent;
+    fileBlock.remove();
+
+    for (let i = 0; i < dt.items.length; i++) {
+        if (name === dt.items[i].getAsFile().name) {
+            dt.items.remove(i);
+            break;
+        }
+    }
+
+    document.querySelector(".fileupload").files = dt.files;
+}
+
+
 window.addEventListener("load", function () {
 
     submitCounter();
@@ -36,19 +52,71 @@ window.addEventListener("load", function () {
     jumpToAnchor();
     maxCharsCounterReverse();
 
-
     // initialize all forms for the conditional form dependencies
     let frontendforms = document.getElementsByTagName('form');
 
     if (frontendforms.length > 0) {
-        for (let i = 0; i < frontendforms.length; i++) {
+            for (let i = 0; i < frontendforms.length; i++){
 
-            let formID = frontendforms[i].id;
+                 let formID = frontendforms[i].id;
             if (formID) {
                 if (typeof mfConditionalFields !== 'undefined') {
                     mfConditionalFields("#" + formID, {rules: "inline", dynamic: true, debug: true});
                 }
             }
+        }
+    }
+
+    // file list
+    const dt = new DataTransfer();
+
+    let fileuploadFields = document.querySelectorAll(".fileupload");
+    if (fileuploadFields.length > 0) {
+        for (let i = 0; i < fileuploadFields.length; i++) {
+
+            fileuploadFields[i].addEventListener('change', function (e) {
+
+                let fileuploadFieldID = fileuploadFields[i].id;
+                let fileList = document.getElementById(fileuploadFieldID + "-files");
+
+                // Loop through selected files and handle each one
+                for (let i = 0; i < this.files.length; i++) {
+                    let file = this.files[i];
+
+                    // Create file block
+                    let fileBlock = document.createElement('div');
+                    let framework = fileuploadFields[i].dataset.framework;
+                    fileBlock.className = 'file-block';
+
+                    switch(framework) {
+                        case "uikit3":
+                            fileBlock.innerHTML = '<span class="uk-badge uk-padding-small uk-margin-xsmall-top"><span class="file-delete"><span uk-icon="icon: close"></span></span>' +
+                                '<span class="file-name">' + file.name + '</span></span>';
+                            break;
+                        case "bootstrap5":
+                            fileBlock.innerHTML = '<span class="badge bg-primary mt-2"><span class="file-delete me-2"><span uk-icon="icon: close"></span></span>' +
+                                '<span class="file-name">' + file.name + '</span></span>';
+                            break;
+                        default:
+                            fileBlock.innerHTML = '<span class="file-delete"><span uk-icon="icon: close"></span></span>' +
+                                '<span class="file-name">' + file.name + '</span>';
+                    }
+
+                    // Add block to list
+                    fileList.appendChild(fileBlock);
+
+                    // Add event listener for delete
+                    fileBlock.querySelector('.file-delete').addEventListener('click', () => deleteFileBlock(fileBlock, dt));
+
+                    // Add file to DataTransfer object
+                    dt.items.add(file);
+                }
+
+                // Update the file input with the new DataTransfer file list
+                this.files = dt.files;
+
+            });
+
         }
     }
 
@@ -70,7 +138,6 @@ document.addEventListener('click', function (element) {
     }
 
 });
-
 
 /**
  * Remove a specific query string parameter from an url
@@ -111,42 +178,6 @@ function reloadCaptcha(id, event) {
         captcha.src = src + "&time=" + Date.now();
     }
 }
-
-/**
- * Clear a file upload field by clicking on the link below the input field
- * @param event
- */
-function clearInputfield(event) {
-    let id = event.id;
-    let uploadfield_id = id.replace("-clear", "");
-    let uploadfield = document.getElementById(uploadfield_id);
-    if (uploadfield.value) {
-        uploadfield.value = null;
-    }
-    // set display:none to clear link wrapper
-    let clear_link_id = id.replace("-clear", "-clearlink-wrapper");
-    let clear_link = document.getElementById(clear_link_id);
-    if (clear_link) {
-        clear_link.style.display = "none";
-    }
-}
-
-/**
- * Show the clear link only if a file was added to the input field
- * @param event
- */
-function showClearLink(event) {
-    let id = event.target.id + "-clearlink-wrapper";
-    let clear_link = document.getElementById(id);
-    if (clear_link) {
-        if (event.target.files.length > 0) {
-            clear_link.style.display = "block";
-        } else {
-            clear_link.style.display = "none";
-        }
-    }
-}
-
 
 /**
  * Change HTML 5 validation attributes depending on values of another field
