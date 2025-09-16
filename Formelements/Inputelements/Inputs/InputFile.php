@@ -21,7 +21,6 @@ class InputFile extends Input
     protected ?Wrapper $wrapper; // the wrapper object for uikit3
     protected bool $multiple = true; // allow multiple file upload or not
     protected bool $showClearLink = true; // set default to true to show the link under the input field
-    protected Link $clearlink; // the link object for the file input clear link
 
     /**
      * @param string $id
@@ -30,8 +29,13 @@ class InputFile extends Input
     public function __construct(string $id)
     {
         parent::__construct($id);
+
+        $pathInfo = pathinfo($this->markupType);
+        $framework = $pathInfo['filename'];
+        $this->setAttribute('data-framework', $framework);
         $this->setAttribute('type', 'file');
         $this->setCSSClass('input_fileClass');
+        $this->setAttribute('class', 'fileupload');
         $this->setMultiple(); // allow multiple file upload by default
         $this->setLabel($this->_('File upload'));
         $this->removeSanitizers('text'); // no need because $_FILES is always an array
@@ -39,7 +43,7 @@ class InputFile extends Input
         // set this validation rules as default on file upload field
         $this->setRule('noErrorOnUpload'); // check for upload errors on default
         $this->setRule('phpIniFilesize'); // add the max file size of php.ini as absolute limit of file size by default
-        $this->setAttribute('onchange', 'showClearLink(event)');
+
         if ($this->frontendforms['input_framework'] === 'uikit3.json') {
             // instantiate the button for the uikit3 framework
             $this->button = new Button();
@@ -51,12 +55,6 @@ class InputFile extends Input
             $this->wrapper->setAttribute('class', 'js-upload');
             $this->wrapper->setAttribute('data-uk-form-custom');
         }
-        // instantiate the clear link object
-        $this->clearlink = new Link($this->getID() . '-clear');
-        $this->clearlink->setUrl('#');
-        $this->clearlink->setAttribute('class', 'clear-link');
-        $this->clearlink->setAttribute('onclick', 'event.preventDefault();clearInputfield(this); return false;');
-        $this->clearlink->setLinkText($this->_('Clear the input field'));
 
     }
 
@@ -68,16 +66,6 @@ class InputFile extends Input
     public function showClearLink(bool $show = false): void
     {
         $this->showClearLink = $show;
-    }
-
-
-    /**
-     * Get the clear link object for further manipulations
-     * @return Link
-     */
-    public function getClearLink(): Link
-    {
-        return $this->clearlink;
     }
 
     /**
@@ -125,9 +113,12 @@ class InputFile extends Input
                 $out = $this->renderInput();
         }
         if ($this->showClearLink) {
-            $this->clearlink->setAttribute('id', $this->getID() . '-clear'); // set new id including form id
-            $out .= '<div id="' . $this->getID() . '-clearlink-wrapper" class="clear-link-wrapper" style="display:none;">' . $this->clearlink->render() . '</div>';
+            $out .= '<div class="files-area"><div id="' . $this->getID() . '-files" class="files-list"></div></div>';
         }
+
+        // show file list
+        //$out .= '<div class="files-area"><div id="'.$this->getID().'-files" class="files-list"></div></div>';
+
         return $out;
     }
 
@@ -154,7 +145,7 @@ class InputFile extends Input
         // create HTML5 max-size attribute depending on validator settings
         if ((array_key_exists('phpIniFilesize', $this->notes_array)) || (array_key_exists('allowedFileSize', $this->notes_array))) {
             $file_size = $this->notes_array['phpIniFilesize']['value'] ?? $this->notes_array['allowedFileSize']['value'];
-            $this->setAttribute('max-size', (string)(Inputfields::convertToBytes($file_size)/1000)); // set max-size in kb
+            $this->setAttribute('max-size', (string)(Inputfields::convertToBytes($file_size) / 1000)); // set max-size in kb
         }
         return parent::___render();
     }
