@@ -29,44 +29,9 @@ function submitCounter() {
     }
 }
 
-// Function to delete a file block
-function deleteFileBlock(fileBlock, dt) {
-    let name = fileBlock.querySelector('.file-name').textContent;
-    fileBlock.remove();
+// Handler for File Uploads
 
-    for (let i = 0; i < dt.items.length; i++) {
-        if (name === dt.items[i].getAsFile().name) {
-            dt.items.remove(i);
-            break;
-        }
-    }
-
-    document.querySelector(".fileupload").files = dt.files;
-}
-
-
-window.addEventListener("load", function () {
-
-    submitCounter();
-    ajaxSubmit();
-    jumpToAnchor();
-    maxCharsCounterReverse();
-
-    // initialize all forms for the conditional form dependencies
-    let frontendforms = document.getElementsByTagName('form');
-
-    if (frontendforms.length > 0) {
-            for (let i = 0; i < frontendforms.length; i++){
-
-                 let formID = frontendforms[i].id;
-            if (formID) {
-                if (typeof mfConditionalFields !== 'undefined') {
-                    mfConditionalFields("#" + formID, {rules: "inline", dynamic: true, debug: true});
-                }
-            }
-        }
-    }
-
+function handleFileUploads() {
     // file list
     const dt = new DataTransfer();
 
@@ -117,6 +82,47 @@ window.addEventListener("load", function () {
 
             });
 
+        }
+    }
+
+}
+
+// Function to delete a file block
+function deleteFileBlock(fileBlock, dt) {
+    let name = fileBlock.querySelector('.file-name').textContent;
+    fileBlock.remove();
+
+    for (let i = 0; i < dt.items.length; i++) {
+        if (name === dt.items[i].getAsFile().name) {
+            dt.items.remove(i);
+            break;
+        }
+    }
+
+    document.querySelector(".fileupload").files = dt.files;
+}
+
+
+window.addEventListener("load", function () {
+
+    submitCounter();
+    ajaxSubmit();
+    jumpToAnchor();
+    maxCharsCounterReverse();
+    handleFileUploads();
+
+    // initialize all forms for the conditional form dependencies
+    let frontendforms = document.getElementsByTagName('form');
+
+    if (frontendforms.length > 0) {
+        for (let i = 0; i < frontendforms.length; i++){
+
+            let formID = frontendforms[i].id;
+            if (formID) {
+                if (typeof mfConditionalFields !== 'undefined') {
+                    mfConditionalFields("#" + formID, {rules: "inline", dynamic: true, debug: true});
+                }
+            }
         }
     }
 
@@ -435,8 +441,10 @@ function subAjax(form) {
                         ajaxSubmit();
                         // start counter
                         submitCounter();
+                        // handle file uploads
+                        handleFileUploads();
                         // load star rating again if it exists
-                        if (typeof stars !== 'undefined' || stars !== null) {
+                        if (typeof stars !== 'undefined' && stars !== null) {
                             // variable is not undefined or not null
                             stars.rebuild();
                         }
