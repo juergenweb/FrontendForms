@@ -1669,4 +1669,11 @@ With this method you can set the form method to "post" or "get". This method has
 
 According to [this post](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/?do=findComment&comment=250325) some markup issues have been fixed. Thanks to Stefanowitsch for reporting these bugs.
 
+## [2.2.43] 2025-09-16
+
+**Show file list below the file upload field instead of the clear input field link**
+
+The "clear input field" for a file upload field has been now replaced by a file list. This filelist contains all files, which have been added to a file upload field and now you are able to remove each file individually instead of removing all at once.
+
+The old "clear input field" link has been replaced by this new feature, but you can enable/disable this feature as usual with the showClearLink() method, so there is no difference to the old version.
 
