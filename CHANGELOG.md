@@ -1677,3 +1677,9 @@ The "clear input field" for a file upload field has been now replaced by a file 
 
 The old "clear input field" link has been replaced by this new feature, but you can enable/disable this feature as usual with the showClearLink() method, so there is no difference to the old version.
 
+## [2.2.44] 2025-09-16
+
+**Fixing some JS bugs**
+
+A few JS bugs on using Ajax have been fixed (Thanks to Stefanowitsch for reporting these issues and providing a fix).
+
