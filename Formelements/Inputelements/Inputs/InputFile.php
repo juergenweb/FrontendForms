@@ -21,7 +21,7 @@ class InputFile extends Input
     protected ?Wrapper $wrapper; // the wrapper object for uikit3
     protected bool $multiple = true; // allow multiple file upload or not
     protected bool $showClearLink = true; // set default to true to show the link under the input field
-
+    protected bool $showTotalFileSize = false;
     /**
      * @param string $id
      * @throws Exception
@@ -33,6 +33,7 @@ class InputFile extends Input
         $pathInfo = pathinfo($this->markupType);
         $framework = $pathInfo['filename'];
         $this->setAttribute('data-framework', $framework);
+        $this->setAttribute('data-filesize', '0');
         $this->setAttribute('type', 'file');
         $this->setCSSClass('input_fileClass');
         $this->setAttribute('class', 'fileupload');
@@ -56,6 +57,27 @@ class InputFile extends Input
             $this->wrapper->setAttribute('data-uk-form-custom');
         }
 
+    }
+
+    /**
+     * Enable/disable the appearance of the total file size under file input fields multiple
+     * Has no effect if upload field allows only 1 file
+     * @param bool $show
+     * @return $this
+     */
+    public function showTotalFileSize(bool $show=true): self
+    {
+        $this->showTotalFileSize = $show;
+        return $this;
+    }
+
+    /**
+     * Get the setting if total file size of selected files should be displayed under the input field
+     * @return bool
+     */
+    public function getShowTotalFileSize(): bool
+    {
+        return $this->showTotalFileSize;
     }
 
     /**
@@ -116,8 +138,9 @@ class InputFile extends Input
             $out .= '<div class="files-area"><div id="' . $this->getID() . '-files" class="files-list"></div></div>';
         }
 
-        // show file list
-        //$out .= '<div class="files-area"><div id="'.$this->getID().'-files" class="files-list"></div></div>';
+        if($this->getMultiple() && $this->getShowTotalFileSize()){
+            $out .= '<div class="ff-total-file-size"><span class="ff-totallabel">'.$this->_('Total').':</span><span id="' . $this->getID() . '-total">0 kB</span></span></div>';
+        }
 
         return $out;
     }
