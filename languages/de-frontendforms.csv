@@ -510,7 +510,7 @@ en,de,description,file,hash
 en,de,description,file,hash
 "File upload","Datei Upload",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,c4265549c1f4d79aea1e279149a6a084
 "Select files","Wählen Sie die Dateien aus",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,1afe200fa26ba361f59b603b22ad6392
-"Clear the input field","Das Datei-Upload-Feld leeren",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,86a135398368af9fbb0a9d3f966e3706
+Total,Gesamt,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,96b0141273eabab320119c467cdcaf17
 en,de,description,file,hash
 "Show password","Passwort anzeigen",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,a1cc7ba89ca3016cf59d7c31506a9681
 "The password must be at least %s characters and must contain characters of the following categories: %s.","Das Passwort muss mindestes %s Zeichen lang sein und folgende Zeichen enthalten: %s.",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,8bc6641f570b88866300ca703223bf6b
