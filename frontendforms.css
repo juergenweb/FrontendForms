@@ -282,4 +282,6 @@ Created: 08.07.2022
   File upload field
 -------------------------------------------------------- */
 .file-delete:hover {cursor:pointer}
+.ff-file-size {margin-left: 5px;}
+.ff-totallabel {margin-right: 5px;}
 
