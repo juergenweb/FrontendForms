@@ -1691,3 +1691,7 @@ A few JS bugs on using Ajax have been fixed (Thanks to Stefanowitsch for reporti
 Now the file size of each file inside a file upload field will be displayed next to the file name. Optionally, you can show the total file size of all files below the file upload field.
 
 You will find more information [here](https://github.com/juergenweb/FrontendForms/blob/main/README.md#showtotalfilesize---show-the-total-filesize-of-all-selected-files-inside-a-file-upload-field).
+
+**Bug in form validation by sending form date with GET and AJAX fixed**
+
+If you have chosen to send the form with method GET and you use the AJAX submission, the form data has not been validated. This bug is fixed now and the validation works as expected.
