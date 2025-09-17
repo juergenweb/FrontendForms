@@ -1695,3 +1695,9 @@ You will find more information [here](https://github.com/juergenweb/FrontendForm
 **Bug in form validation by sending form date with GET and AJAX fixed**
 
 If you have chosen to send the form with method GET and you use the AJAX submission, the form data has not been validated. This bug is fixed now and the validation works as expected.
+
+## 2025-09-17
+
+**Bug in allowedFileSize validation rule fixed**
+
+The calculation of the total file size inside a multiple file upload field was wrong, so the validation often returns true instead of false. This is fixed now. 
