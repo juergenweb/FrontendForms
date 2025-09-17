@@ -29,6 +29,18 @@ function submitCounter() {
     }
 }
 
+function formatBytes(bytes, decimals = 2) {
+    if (!+bytes) return '0 B'
+
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
+
 // Handler for File Uploads
 
 function handleFileUploads() {
@@ -41,12 +53,18 @@ function handleFileUploads() {
 
             fileuploadFields[i].addEventListener('change', function (e) {
 
-                let fileuploadFieldID = fileuploadFields[i].id;
+                let fieluploadField = fileuploadFields[i];
+                let fileuploadFieldID = fieluploadField.id;
                 let fileList = document.getElementById(fileuploadFieldID + "-files");
+
+                let totalFileSize = parseInt(fileuploadFields[i].dataset.filesize);
+
 
                 // Loop through selected files and handle each one
                 for (let i = 0; i < this.files.length; i++) {
                     let file = this.files[i];
+                    let fileSize = formatBytes(file.size, 2);
+                    totalFileSize += file.size;
 
                     // Create file block
                     let fileBlock = document.createElement('div');
@@ -55,12 +73,12 @@ function handleFileUploads() {
 
                     switch(framework) {
                         case "uikit3":
-                            fileBlock.innerHTML = '<span class="uk-badge uk-padding-small uk-margin-xsmall-top"><span class="file-delete"><span uk-icon="icon: close"></span></span>' +
-                                '<span class="file-name">' + file.name + '</span></span>';
+                            fileBlock.innerHTML = '<span class="uk-badge uk-padding-small uk-margin-xsmall-top"><span class="file-delete" ><span uk-icon="icon: close"></span></span>' +
+                                '<span class="file-name">' + file.name + '</span><span class="ff-file-size">(' + fileSize + ')</span></span>';
                             break;
                         case "bootstrap5":
                             fileBlock.innerHTML = '<span class="badge bg-primary mt-2"><span class="file-delete me-2"><span uk-icon="icon: close"></span></span>' +
-                                '<span class="file-name">' + file.name + '</span></span>';
+                                '<span class="file-name">' + file.name + '</span><span class="ff-file-size">(' + fileSize + ')</span></span></span>';
                             break;
                         default:
                             fileBlock.innerHTML = '<span class="file-delete"><span uk-icon="icon: close"></span></span>' +
@@ -71,10 +89,17 @@ function handleFileUploads() {
                     fileList.appendChild(fileBlock);
 
                     // Add event listener for delete
-                    fileBlock.querySelector('.file-delete').addEventListener('click', () => deleteFileBlock(fileBlock, dt));
+                    fileBlock.querySelector('.file-delete').addEventListener('click', (e) => deleteFileBlock(e, fileBlock, dt, fieluploadField));
 
                     // Add file to DataTransfer object
                     dt.items.add(file);
+                }
+                fileuploadFields[i].dataset.filesize = totalFileSize;
+
+                let totalSizeDiv = document.getElementById(fileuploadFieldID + "-total");
+
+                if (totalSizeDiv) {
+                    totalSizeDiv.innerHTML = formatBytes(totalFileSize);
                 }
 
                 // Update the file input with the new DataTransfer file list
@@ -88,13 +113,26 @@ function handleFileUploads() {
 }
 
 // Function to delete a file block
-function deleteFileBlock(fileBlock, dt) {
+function deleteFileBlock(e, fileBlock, dt, inputfield) {
+
+    let totalFileSize = inputfield.dataset.filesize;
     let name = fileBlock.querySelector('.file-name').textContent;
+
     fileBlock.remove();
 
+    let files = dt.files;
+
     for (let i = 0; i < dt.items.length; i++) {
+
         if (name === dt.items[i].getAsFile().name) {
+            let fileSizeRemoved = dt.items[i].getAsFile().size;
             dt.items.remove(i);
+            let newTotalFileSize = totalFileSize - fileSizeRemoved;
+            inputfield.dataset.filesize = newTotalFileSize;
+            let totalSizeDiv = document.getElementById(inputfield.id + "-total");
+            if (totalSizeDiv) {
+                totalSizeDiv.innerHTML = formatBytes(newTotalFileSize);
+            }
             break;
         }
     }
