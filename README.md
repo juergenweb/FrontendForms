@@ -1559,6 +1559,7 @@ These methods can only be used on certain input fields and not at all.
 | [useCharacterCounter()](#usecharactercounter---add-a-reverse-character-counter-below-a-textarea-if-maxlength-validator-is-set)  | add a character counter to a textarea if lengthMax validator is set  |
 | [getCharacterCounter()](#getcharactercounter---get-the-character-counter-object-described-in-the-previous-method-for-further-manipulations)  | get the character counter object for further manipulations  |
 | [addHorizontalRule()](#addhorizontalrule---add-a-hr-tag-to-select-input-fields-to-help-visually-break-up-the-options-for-a-better-user-experience)  | add hr tag to input selects for visually break up the options for a better user experience  |
+| [showTotalFileSize()](#showtotalfilesize---show-the-total-filesize-of-all-selected-files-inside-a-file-upload-field)| show total filesize of all selected files inside a file upload field
 
 #### alignVertical() - set the alignment for checkboxes and radio buttons
 This is only a method for multiple checkboxes and radio buttons to align them vertical instead of horizontal (default).
