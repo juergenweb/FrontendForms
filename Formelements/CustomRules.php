@@ -267,6 +267,7 @@
              * 16) Check if the uploaded file is not larger than the allowed filesize
              */
             V::addRule('allowedFileSize', function ($field, $value, array $params) {
+
                 if (count($value) == 1) {
                     if ($value[0]['error'] == '0') {
                         $size = $value[0]['size'];
@@ -274,12 +275,12 @@
                     }
                 } else {
                     foreach ($value as $file) {
+                        $total = 0;
                         if ($file['error'] == '0') {
-                            $size = $file['size'];
-                            return ($size <= Inputfields::convertToBytes($params[0]));
+                            $total  += $file['size'];
                         }
-                        return true;
                     }
+                    return ($total <= Inputfields::convertToBytes($params[0]));
                 }
                 return true;
             }, $this->_('is larger than the allowed filesize.'));
