@@ -1683,3 +1683,11 @@ The old "clear input field" link has been replaced by this new feature, but you 
 
 A few JS bugs on using Ajax have been fixed (Thanks to Stefanowitsch for reporting these issues and providing a fix).
 
+
+## [2.2.45] 2025-09-17
+
+**Adding file sizes and total file size to the file upload input field**
+
+Now the file size of each file inside a file upload field will be displayed next to the file name. Optionally, you can show the total file size of all files below the file upload field.
+
+You will find more information [here](https://github.com/juergenweb/FrontendForms/blob/main/README.md#showtotalfilesize---show-the-total-filesize-of-all-selected-files-inside-a-file-upload-field).
