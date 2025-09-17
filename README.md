@@ -1738,6 +1738,18 @@ $selectfield->addOption($this->_('Poor'), '2');
 $selectfield->addOption($this->_('Terrible'), '1');
 ```
 
+#### showTotalFileSize() - Show the total filesize of all selected files inside a file upload field
+
+If you want to display the calculated file size of all files in a file upload field, add this method to the file upload field.
+
+The total value is displayed below the input field under the list of selected files. Note: This only has an effect if multiple files can be uploaded. It has no effect on fields where only a single file can be uploaded.
+
+This feature is not enabled by default, so you must enable it manually. Add this method to your file upload field:
+
+```php
+$uploadfield->showTotalFileSize(true); // true or false
+```
+
 ## Additional Markup
 
 If you want to add some markup between the form fields you can use the markup class to add some markup to the form.
