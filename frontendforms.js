@@ -71,7 +71,7 @@ function handleFileUploads() {
                     let framework = fileuploadFields[i].dataset.framework;
                     fileBlock.className = 'file-block';
 
-                    switch(framework) {
+                    switch (framework) {
                         case "uikit3":
                             fileBlock.innerHTML = '<span class="uk-badge uk-padding-small uk-margin-xsmall-top"><span class="file-delete" ><span uk-icon="icon: close"></span></span>' +
                                 '<span class="file-name">' + file.name + '</span><span class="ff-file-size">(' + fileSize + ')</span></span>';
@@ -153,7 +153,7 @@ window.addEventListener("load", function () {
     let frontendforms = document.getElementsByTagName('form');
 
     if (frontendforms.length > 0) {
-        for (let i = 0; i < frontendforms.length; i++){
+        for (let i = 0; i < frontendforms.length; i++) {
 
             let formID = frontendforms[i].id;
             if (formID) {
@@ -468,6 +468,7 @@ function subAjax(form) {
                             jumpTo(anchor);
                         }
                     } else {
+                       
                         // form is not valid
                         // load the validated form back into the target div
                         document.getElementById(formid + '-ajax-wrapper').innerHTML = content;
@@ -494,9 +495,29 @@ function subAjax(form) {
 
                 }
             }
-            xhr.open("POST", action);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            // get the method for sending the form data (get or post)
+            let method = form.method;
+
+            //sanitize method to be all uppercase
+            method = method.toUpperCase();
+
+            // convert all methods which are not GET or POST to POST
+            const allowedMethods = ['POST', 'GET'];
+            if (!allowedMethods.includes(method)) {
+                method = "POST";
+            }
+
             let formData = new FormData(form);
+
+            // convert formData to query string if GET method is chosen
+            if (method == 'GET') {
+                queryString = new URLSearchParams(formData).toString();
+                action = action + '?' + queryString;
+            }
+
+            xhr.open(method, action);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
             xhr.send(formData);
         });
 
