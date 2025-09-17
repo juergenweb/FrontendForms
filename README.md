@@ -1751,6 +1751,8 @@ This feature is not enabled by default, so you must enable it manually. Add this
 $uploadfield->showTotalFileSize(true); // true or false
 ```
 
+![Show total filesize](https://github.com/juergenweb/FrontendForms/blob/main/images/totalfilesize.png?raw=true)
+
 ## Additional Markup
 
 If you want to add some markup between the form fields you can use the markup class to add some markup to the form.
