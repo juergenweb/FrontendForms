@@ -54,6 +54,7 @@ function handleFileUploads() {
             fileuploadFields[i].addEventListener('change', function (e) {
 
                 let fieluploadField = fileuploadFields[i];
+                let framework = fieluploadField.dataset.framework;
                 let fileuploadFieldID = fieluploadField.id;
                 let fileList = document.getElementById(fileuploadFieldID + "-files");
 
@@ -68,7 +69,7 @@ function handleFileUploads() {
 
                     // Create file block
                     let fileBlock = document.createElement('div');
-                    let framework = fileuploadFields[i].dataset.framework;
+
                     fileBlock.className = 'file-block';
 
                     switch (framework) {
