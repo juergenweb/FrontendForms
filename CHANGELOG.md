@@ -1701,3 +1701,7 @@ If you have chosen to send the form with method GET and you use the AJAX submiss
 **Bug in allowedFileSize validation rule fixed**
 
 The calculation of the total file size inside a multiple file upload field was wrong, so the validation often returns true instead of false. This is fixed now. 
+
+**Change frontendforms.min.js back to frontendforms.js**
+
+The minified version does not work properly, especially at the new file list under file input fields, so I switched back to the unminified version.
