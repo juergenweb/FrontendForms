@@ -1784,6 +1784,7 @@ class Form extends CustomRules
 
         // add button elements to inputfields if set
         $elements = $this->getNamesOfInputFields();
+
         foreach ($this->getFormElementsByClass('Button') as $button) {
             if ($button->hasAttribute('value')) {
                 if ($button->hasAttribute('name')) {
@@ -1795,6 +1796,9 @@ class Form extends CustomRules
         }
 
         $values = [];
+
+        $method = strtolower($this->getAttribute('method'));
+
         foreach ($elements as $key) {
 
             // remove [] from name attribute if present
@@ -1803,7 +1807,8 @@ class Form extends CustomRules
             // check if inputfield is a file upload field
             $formElement = $this->getFormelementByName($key);
             if ($formElement && $formElement instanceof InputFile) {
-                $files = [];
+
+                $multiplefiles = [];
                 if ($this->storedFiles) {
                     $pathFileArray = $this->storedFiles;
                     $filesArray = [];
@@ -1815,27 +1820,39 @@ class Form extends CustomRules
 
                     $values[$key] = $filesArray;
                 } else {
-                    if (is_array($_FILES[$key]['name'])) {
-                        // multiple upload field
-                        foreach ($_FILES[$key]['name'] as $filename) {
-                            $files[] = strtolower($this->wire('sanitizer')->filename($filename, true));
+                    if($method == 'post'){
+                        $files = $_FILES[$key]['name'];
+                    } else {
+                        // get method used
+                        if($this->submitAjax) {
+                            // file upload, AJAX and GET does not work properly
+                            throw new Exception('GET request and AJAX does not work properly in combination with file uploads. Please use POST request instead if you want to use AJAX or disable AJAX and use GET request.');
+                        } else {
+                            $files = $_GET[$key];
                         }
-                        $values[$key] = $files;
+                    }
+
+                    if (is_array($files)) {
+                        // multiple upload field
+                        foreach ($files as $filename) {
+                            $multiplefiles[] = strtolower($this->wire('sanitizer')->filename($filename, true));
+                        }
+                        $values[$key] = $multiplefiles;
                     } else {
                         // single upload field
-                        $value = $this->wire('sanitizer')->filename($_FILES[$key]['name'], true);
+                        $value = $this->wire('sanitizer')->filename($files, true);
                         $values[$key] = strtolower($value);
                     }
 
                 }
 
             } else {
-
                 if (array_key_exists($key, $this->values)) {
                     $values[$key] = $this->values[$key];
                 }
             }
         }
+       
         return $values; // array
     }
 
