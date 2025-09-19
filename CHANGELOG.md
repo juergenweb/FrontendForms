@@ -1696,7 +1696,7 @@ You will find more information [here](https://github.com/juergenweb/FrontendForm
 
 If you have chosen to send the form with method GET and you use the AJAX submission, the form data has not been validated. This bug is fixed now and the validation works as expected.
 
-## [2.2.46] 2025-09-17
+## [2.2.47] 2025-09-19
 
 **Bug in allowedFileSize validation rule fixed**
 
@@ -1713,5 +1713,6 @@ If the file upload field didn't support the selection of multiple files, each se
 **Bug inside setMultiple() method of the InputFile class fixed**
 
 Independent if you have selected multiple file uploads, the attribute "multiple" inside the file upload field was always present. This has been fixed now and it will be only displayed if you set setMultiple() to true.
+
 
 
