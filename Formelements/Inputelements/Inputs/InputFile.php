@@ -100,6 +100,8 @@ class InputFile extends Input
         $this->multiple = $multiple;
         if ($multiple) {
             $this->setAttribute('multiple');
+        } else {
+            $this->removeAttribute('multiple');
         }
         return $this;
     }
