@@ -1696,7 +1696,7 @@ You will find more information [here](https://github.com/juergenweb/FrontendForm
 
 If you have chosen to send the form with method GET and you use the AJAX submission, the form data has not been validated. This bug is fixed now and the validation works as expected.
 
-## 2025-09-17
+## [2.2.46] 2025-09-17
 
 **Bug in allowedFileSize validation rule fixed**
 
@@ -1705,3 +1705,13 @@ The calculation of the total file size inside a multiple file upload field was w
 **Change frontendforms.min.js back to frontendforms.js**
 
 The minified version does not work properly, especially at the new file list under file input fields, so I switched back to the unminified version.
+
+**Bug Showing multiple files in file list on single upload field fixed**
+
+If the file upload field didn't support the selection of multiple files, each selected file has been displayed below the input field in the file list. This was a bug, as the file list should only display the most recently selected file, not all files. This has now been fixed.
+
+**Bug inside setMultiple() method of the InputFile class fixed**
+
+Independent if you have selected multiple file uploads, the attribute "multiple" inside the file upload field was always present. This has been fixed now and it will be only displayed if you set setMultiple() to true.
+
+
