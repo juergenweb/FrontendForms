@@ -54,12 +54,11 @@ function handleFileUploads() {
             fileuploadFields[i].addEventListener('change', function (e) {
 
                 let fieluploadField = fileuploadFields[i];
+                let multiple = fieluploadField.hasAttribute("multiple");
                 let framework = fieluploadField.dataset.framework;
                 let fileuploadFieldID = fieluploadField.id;
                 let fileList = document.getElementById(fileuploadFieldID + "-files");
-
                 let totalFileSize = parseInt(fileuploadFields[i].dataset.filesize);
-
 
                 // Loop through selected files and handle each one
                 for (let i = 0; i < this.files.length; i++) {
@@ -67,9 +66,14 @@ function handleFileUploads() {
                     let fileSize = formatBytes(file.size, 2);
                     totalFileSize += file.size;
 
+                    //remove previous file block if file upload does not allow multiple files
+                    if(!multiple) {
+                        fileList.innerHTML = "";
+                        totalFileSize = 0;
+                    }
+
                     // Create file block
                     let fileBlock = document.createElement('div');
-
                     fileBlock.className = 'file-block';
 
                     switch (framework) {
