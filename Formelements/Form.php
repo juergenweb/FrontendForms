@@ -810,7 +810,7 @@ class Form extends CustomRules
         return '
             <div class="cssProgress">
           <div class="progress1">
-            <div class="cssProgress-bar cssProgress-active cssProgress-success" data-percent="100" style="width: 100%; transition: none 0s ease 0s;">
+            <div id="'.$this->getID().'-progressbar" class="cssProgress-bar cssProgress-active cssProgress-success" data-percent="100" style="width: 100%; transition: none 0s ease 0s;">
             </div>
           </div>
         </div>
@@ -2976,7 +2976,6 @@ class Form extends CustomRules
                     $this->repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
                 }
             }
-
 
             // create the new array of inputfields only to position the honeypot field in between
             $inputfieldKeys = [];
