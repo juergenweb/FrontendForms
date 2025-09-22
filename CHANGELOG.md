@@ -1718,8 +1718,13 @@ Independent if you have selected multiple file uploads, the attribute "multiple"
 
 **Showing warning message if file upload is used in combination with GET request**
 
-Upload files via GET request is not possible, because the file data had to be included inside the GET string and there is a limit in length of 3000 letters. So uploading files is only possible with a POST request.
-If you have accidentally choosen GET for uploading files you will see now a warning message on the frontend that informs you to switch to POST.
-BTW you can disable the display of the warning message by using the method *setPreventGetFileUploadWarning(true)* which disables the display.
+Uploading files via GET requests is not possible because the file data must be included in the GET string, and the length is limited by the browser and server. Therefore, file uploads are only possible via POST requests.
+
+If you accidentally chose GET to upload files, a warning message will now be displayed in the frontend, prompting you to switch to POST.
+
+You can disable the warning message using the *setPreventGetFileUploadWarning(true)* method if you want.
+
+
+
 
 
