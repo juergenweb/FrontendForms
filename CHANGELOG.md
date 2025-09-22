@@ -1724,6 +1724,9 @@ If you accidentally chose GET to upload files, a warning message will now be dis
 
 You can disable the warning message using the *setPreventGetFileUploadWarning(true)* method if you want.
 
+**Copy and paste error fixed**
+
+During the update of files, I have accidentally copied the frontendforms.min.js to the frontendforms.min.css file. This is reverted now.
 
 
 
