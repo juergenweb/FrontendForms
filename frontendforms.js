@@ -59,9 +59,11 @@ function handleFileUploads() {
                 let fileuploadFieldID = fieluploadField.id;
                 let fileList = document.getElementById(fileuploadFieldID + "-files");
                 let totalFileSize = parseInt(fileuploadFields[i].dataset.filesize);
-                let textAlertClass = "";
+                let allowedFileSize = fieluploadField.getAttribute("max-size") * 1024;
+                let validFileSize = true;
 
-                // Loop through selected files and handle each one
+
+                    // Loop through selected files and handle each one
                 for (let i = 0; i < this.files.length; i++) {
                     let file = this.files[i];
                     let fileSize = formatBytes(file.size, 2);
@@ -77,22 +79,24 @@ function handleFileUploads() {
                     let fileBlock = document.createElement('div');
                     fileBlock.className = 'file-block';
 
+                    // compare allowed filesize and current file size
+                    if (file.size > allowedFileSize) {
+                        validFileSize = false;
+                    }
+                    console.log(validFileSize);
 
                     switch (framework) {
                         case "uikit3":
                             fileBlock.innerHTML = '<span class="uk-badge uk-padding-small uk-margin-xsmall-top"><span class="file-delete" ><span uk-icon="icon: close"></span></span>' +
                                 '<span class="file-name">' + file.name + '</span><span class="ff-file-size">(' + fileSize + ')</span></span>';
-                            textAlertClass = "uk-text-danger";
                             break;
                         case "bootstrap5":
                             fileBlock.innerHTML = '<span class="badge bg-primary mt-2"><span class="file-delete me-2"><span uk-icon="icon: close"></span></span>' +
                                 '<span class="file-name">' + file.name + '</span><span class="ff-file-size">(' + fileSize + ')</span></span></span>';
-                            textAlertClass = "text-danger";
                             break;
                         default:
                             fileBlock.innerHTML = '<span class="file-delete"><span uk-icon="icon: close"></span></span>' +
                                 '<span class="file-name">' + file.name + '</span>';
-                            textAlertClass = "text-danger";
                     }
 
                     // Add block to list
@@ -109,14 +113,6 @@ function handleFileUploads() {
                 let totalSizeDiv = document.getElementById(fileuploadFieldID + "-total");
 
                 if (totalSizeDiv) {
-
-                    // compare allowed file size with total size of selected files
-                    let allowedFileSize = fieluploadField.getAttribute("max-size");
-                    if(allowedFileSize) {
-                        if (totalFileSize > allowedFileSize * 1024) {
-                            totalSizeDiv.setAttribute("class", textAlertClass);
-                        }
-                    }
                     totalSizeDiv.innerHTML = formatBytes(totalFileSize);
                 }
 
@@ -135,10 +131,6 @@ function deleteFileBlock(e, fileBlock, dt, inputfield) {
 
     let totalFileSize = inputfield.dataset.filesize;
     let allowedFileSize = inputfield.getAttribute("max-size") * 1024;
-    let totalSizeDiv = document.getElementById(inputfield.id + "-total");
-
-
-
     let name = fileBlock.querySelector('.file-name').textContent;
 
     fileBlock.remove();
@@ -155,9 +147,6 @@ function deleteFileBlock(e, fileBlock, dt, inputfield) {
             inputfield.dataset.filesize = newTotalFileSize;
             let totalSizeDiv = document.getElementById(inputfield.id + "-total");
             if (totalSizeDiv) {
-                if (newTotalFileSize < allowedFileSize) {
-                    totalSizeDiv.removeAttribute("class");
-                }
                 totalSizeDiv.innerHTML = formatBytes(newTotalFileSize);
             }
             break;
