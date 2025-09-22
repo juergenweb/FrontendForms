@@ -1728,6 +1728,11 @@ You can disable the warning message using the *setPreventGetFileUploadWarning(tr
 
 During the update of files, I have accidentally copied the frontendforms.min.js to the frontendforms.min.css file. This is reverted now.
 
+**Eventlistener to AJAX form submission added**
+
+To update the progress bar with percents during the upload of form data, an event listener was added to check how much data has been uploaded. It starts with 0% and ends with 99%. The progress bar will be automatically updated with the value. So the progressbar shows the current status of how much data has been uploaded. In most cases it goes very fast so that the progressbar will jump dirctly to the 99%.
+
+
 
 
 
