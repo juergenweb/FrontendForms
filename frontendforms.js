@@ -67,9 +67,9 @@ function handleFileUploads() {
                     totalFileSize += file.size;
 
                     //remove previous file block if file upload does not allow multiple files
-                    if(!multiple) {
+                    if (!multiple) {
                         fileList.innerHTML = "";
-                        totalFileSize = 0;
+                        totalFileSize = file.size;
                     }
 
                     // Create file block
@@ -473,7 +473,7 @@ function subAjax(form) {
                             jumpTo(anchor);
                         }
                     } else {
-                       
+
                         // form is not valid
                         // load the validated form back into the target div
                         document.getElementById(formid + '-ajax-wrapper').innerHTML = content;
