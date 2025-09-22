@@ -435,6 +435,19 @@ function subAjax(form) {
             // make the Ajax request
             let xhr = new XMLHttpRequest();
 
+            xhr.upload.addEventListener('progress', function (event) {
+                if (event.lengthComputable) {
+                    let percent = Math.round((event.loaded / event.total) * 100);
+                    percent = percent - 1;
+
+                    let progressBar = document.getElementById(formid + '-progressbar');
+                    if (progressBar) {
+                        progressBar.dataset.percent = percent;
+                        progressBar.style.width = percent + '%';
+                    }
+                }
+            });
+
             xhr.onload = function () {
 
                 let result = this.responseText;
