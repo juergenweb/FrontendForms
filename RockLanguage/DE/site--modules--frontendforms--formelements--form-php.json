@@ -136,6 +136,9 @@
         },
         "274b68192b056e268f128ff63bfcd4a4": {
             "text": "k.A."
+        },
+        "a359e357b438643f4ecddfa685e3ab68": {
+            "text": "Das Hochladen von Dateien per GET-Anfrage ist nicht m\u00f6glich. Bitte verwenden Sie stattdessen POST."
         }
     }
 }
