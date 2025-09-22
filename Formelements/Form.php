@@ -62,6 +62,8 @@ class Form extends CustomRules
     protected string $general_desc_position = 'afterInput'; // The position of the input field description -> beforeLabel, afterLabel or afterInput
     protected string $captcha_value = '';
 
+    protected bool $preventGetFileUploadWarning = false;
+
     // properties for the simple question Captcha
     protected string|null $question = ''; // the question as string
     protected array|null $answers = []; // all acceptable answers as an array
@@ -301,6 +303,27 @@ class Form extends CustomRules
             $this->page->ff_forms = [$this->getID()];
         }
 
+    }
+
+    /**
+     * Disable/enable the display of a warning alert, if request methos GET is choosen by using a file upload field in the form
+     * By default, a warning message will be displayed
+     * @param bool $prevent
+     * @return $this
+     */
+    public function setPreventGetFileUploadWarning(bool $prevent): self
+    {
+        $this->preventGetFileUploadWarning = $prevent;
+        return $this;
+    }
+
+    /**
+     * Get the value of prevetGetFileUploadWarning
+     * @return bool
+     */
+    public function getPreventGetFileUploadWarning(): bool
+    {
+        return $this->preventGetFileUploadWarning;
     }
 
     /**
@@ -1820,18 +1843,12 @@ class Form extends CustomRules
 
                     $values[$key] = $filesArray;
                 } else {
-                    if($method == 'post'){
+                    if ($method == 'post') {
                         $files = $_FILES[$key]['name'];
                     } else {
-                        // get method used
-                        if($this->submitAjax) {
-                            // file upload, AJAX and GET does not work properly
-                            throw new Exception('GET request and AJAX does not work properly in combination with file uploads. Please use POST request instead if you want to use AJAX or disable AJAX and use GET request.');
-                        } else {
-                            $files = $_GET[$key];
-                        }
+                        $files = $_GET[$key];
+                        //throw new Exception('GET request and file uploads does not work. Please use POST request instead if you want to use upload files.');
                     }
-
                     if (is_array($files)) {
                         // multiple upload field
                         foreach ($files as $filename) {
@@ -1852,7 +1869,7 @@ class Form extends CustomRules
                 }
             }
         }
-       
+
         return $values; // array
     }
 
@@ -2764,7 +2781,7 @@ class Form extends CustomRules
 
         $out = '';
 
-        // if Ajax submit was selected, add an aditional data attribute to the form tag
+        // if Ajax submit was selected, add an additional data attribute to the form tag
         if ($this->getSubmitWithAjax()) {
 
             // check if a user has JavaScript enabled, otherwise show a warning message inside an alert box
@@ -2791,6 +2808,15 @@ class Form extends CustomRules
 
             if ($obj instanceof InputFile) {
                 $this->setAttribute('enctype', 'multipart/form-data');
+                // check if request method is set to get
+                $method = strtolower($this->getAttribute('method'));
+                if ($method === 'get' && !$this->getPreventGetFileUploadWarning()) {
+                    // create a warning alert to inform the dev
+                    $warningAlert = new Alert();
+                    $warningAlert->setCSSClass('alert_warningClass');
+                    $warningAlert->setText($this->_('Uploading files via GET request is not possible. Please use POST instead or remove the file upload field.'));
+                    $out .= $warningAlert->render();
+                }
                 break;
             }
 
