@@ -284,5 +284,12 @@ Created: 08.07.2022
 .file-delete:hover {cursor:pointer}
 .ff-file-size {margin-left: 5px;}
 .ff-totallabel, .ff-close {margin-right: 5px;}
-.uk-badge-danger {background-color: #990000;}
-
+.ff-close:after{
+    content: "\2715";
+    vertical-align: top;
+    position:relative;
+    display:inline-block;
+    padding: 0 5px;
+    }
+.ff-close:hover:after{opacity: 0.75;}
+.text-danger {color: #990000;}
