@@ -2173,6 +2173,14 @@ This validator checks if a name entered has the correct syntax of a cyrillic nam
 ```php
 $field->setRule('cyrillicName');
 ```
+### allowedFileNumber
+This validator checks if the number of files selected inside a file upload multiple field is not higher than the allowed number of files.
+
+Add the number of allowed files as the second parameter.
+
+```php
+$field->setRule('allowedFileNumber', 3); // in these case the user is allowed to upload max. 3 files
+```
 ## Create your own custom validation rules
 
 However, this module contains many built-in validation rules, but sometimes you need a special validation rule. Fortunately, the Valitron library supports the creation of custom rules in a simple way. Please take a look at the [Valitron Library documentation](https://github.com/vlucas/valitron?tab=readme-ov-file#adding-custom-validation-rules), which explains how to create custom rules.
