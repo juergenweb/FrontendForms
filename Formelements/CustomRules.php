@@ -619,12 +619,13 @@
              * 37) Check number of files inside file input multiple
              */
             V::addRule('allowedFileNumber', function ($field, $value, array $params) {
-
                 $numberOfFiles = count($value);
-                $allowedFileNumber = intval($params[0]) ?? 1;
-                return  $allowedFileNumber >= $numberOfFiles;
-
-            }, $this->_('is larger than the allowed number of files.'));
+                if(isset($params[0])){
+                    $allowedFileNumber = intval($params[0]);
+                    return  $allowedFileNumber >= $numberOfFiles;
+                }
+                return true;
+            }, $this->_('contains more files than the allowed number of files.'));
 
 
         }
