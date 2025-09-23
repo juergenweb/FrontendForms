@@ -489,6 +489,7 @@ Miss,Frau,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults
 Diverse,Divers,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,e67561dfc51195ce1ac515406291900e
 en,de,description,file,hash
 "Please do not upload files larger than %s","Bitte laden Sie keine Dateien hoch, die größer als %s sind",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,d8b0ef2b22e79194c0cb1e79340e6767
+"Please do not upload more than %s files","Bitte wählen Sie nicht mehr als %s Dateien aus",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,2e11a9d7108deb69fe82819f5905bfee
 "Allowed file types: %s","Erlaubte Dateitypen: %s",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,a0072ad6390e4bf1839ad0ede52c2e69
 "%s should only contain letters","%s darf nur Buchstaben enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,1200911cc09227463a876a1e56e34536
 "%s should only contain letters and numbers","%s darf nur Buchstaben und Zahlen enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,4083de02c277bb0425f3aa9bad2332d0
