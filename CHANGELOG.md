@@ -1748,9 +1748,12 @@ Some styles or the deletion sign has not been displayed properly in Bootstrap an
 
 A new validator, which checks if there are not more files selected than allowed has been added. The new validation rule is called "*allowedFileNumber*".
 
+Take a look [here](https://github.com/juergenweb/FrontendForms/blob/main/README.md#allowedfilenumber).
+
 **Bug in the markup creation of badges by selecting multiple files fixed**
 
 If you have selecte multiple files one by one, everything was OK, but if have selected them at once than there was a bug that shows each file multiple times. This is fixed now.
+
 
 
 
