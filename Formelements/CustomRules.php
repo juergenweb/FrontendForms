@@ -274,8 +274,8 @@
                         return ($size <= Inputfields::convertToBytes($params[0]));
                     }
                 } else {
+                    $total = 0;
                     foreach ($value as $file) {
-                        $total = 0;
                         if ($file['error'] == '0') {
                             $total  += $file['size'];
                         }
@@ -618,7 +618,7 @@
              * 37) Check number of files inside file input multiple
              */
             V::addRule('allowedFileNumber', function ($field, $value, array $params) {
-                
+
                 $numberOfFiles = count($value);
                 $allowedFileNumber = intval($params[0]) ?? 1;
                 return  $allowedFileNumber >= $numberOfFiles;
@@ -637,7 +637,7 @@
          * @param string $uploadPath
          * @param $param
          * @return bool
-         * @throws \ProcessWire\WireException
+         * @throws WireException
          */
         private function checkDuplicateFilename(array $value, string $uploadPath, $param): bool
         {
