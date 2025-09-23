@@ -293,3 +293,5 @@ Created: 08.07.2022
     }
 .ff-close:hover:after{opacity: 0.75;}
 .text-danger {color: #990000;}
+.ff-invalid-fs {font-weight:bold;}
+.ff-total-file-size {margin-bottom: 5px}
