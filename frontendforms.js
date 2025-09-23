@@ -6,8 +6,6 @@ contains no JQuery - pure JavaScript
 // check if DOM is loaded completely
 window.addEventListener("DOMContentLoaded", function () {
 
-    console.log("DOMContentLoaded");
-
     function formatBytes(bytes, decimals = 2) {
         if (!+bytes) return "0 B";
 
@@ -15,7 +13,7 @@ window.addEventListener("DOMContentLoaded", function () {
         const dm = decimals < 0 ? 0 : decimals;
         const sizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm))+ ' ' + sizes[i];
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm))+ " " + sizes[i];
     }
 
     /*
@@ -65,6 +63,8 @@ Outputs a timer in seconds depending on values set in data attributes
                     let allowedFileSize = fieluploadField.getAttribute("max-size") * 1024;
                     let validFileSize = true;
                     let invalidFileSizeClass = "";
+                    let invalidfilezSizeSpanClass = "";
+                    let badgeContent = "";
 
                     // Loop through selected files and handle each one
                     for (let i = 0; i < this.files.length; i++) {
@@ -91,25 +91,46 @@ Outputs a timer in seconds depending on values set in data attributes
                             case "uikit3":
                                 if (!validFileSize) {
                                     invalidFileSizeClass = " uk-badge-danger";
+                                    invalidfilezSizeSpanClass = " ff-invalid-fs";
                                 }
-                                fileBlock.innerHTML = '<span class="uk-badge uk-padding-small uk-margin-xsmall-top' + invalidFileSizeClass + '"><span class="file-delete"><span data-uk-icon="icon: close"></span></span>' +
-                                    '<span class="file-name">' + file.name + '</span><span class="ff-file-size">(' + fileSize + ')</span></span>';
+
+                                // create the badge markup
+                                badgeContent += "<span class='uk-badge uk-padding-small uk-margin-xsmall-top" +invalidFileSizeClass +"'>";
+                                badgeContent += "<span class='file-delete uk-margin-xsmall-right'><span data-uk-icon='icon: close'></span></span>";
+                                badgeContent += "<span class='file-name'>" + file.name + "</span>";
+                                badgeContent += "<span class='ff-file-size "+ invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
+                                fileBlock.innerHTML = badgeContent;
+
                                 break;
                             case "bootstrap5":
                                 if (!validFileSize) {
-                                    invalidFileSizeClass = " badge-danger";
+                                    invalidFileSizeClass = " bg-danger";
+                                    invalidfilezSizeSpanClass = " ff-invalid-fs";
                                 } else {
                                     invalidFileSizeClass = " bg-primary";
                                 }
-                                fileBlock.innerHTML = '<span class="badge mt-2 p-2 ' + invalidFileSizeClass + '"><span class="file-delete me-2"><span class="ff-close"></span></span>' +
-                                    '<span class="file-name">' + file.name + '</span><span class="ff-file-size">(' + fileSize + ')</span></span></span>';
+
+                                // create the badge markup
+                                badgeContent += "<span class='badge mt-2 p-2" +invalidFileSizeClass +"'>";
+                                badgeContent += "<span class='file-delete me-2'><span class='ff-close'></span></span>";
+                                badgeContent += "<span class='file-name'>" + file.name + "</span>";
+                                badgeContent += "<span class='ff-file-size "+ invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
+                                fileBlock.innerHTML = badgeContent;
+
                                 break;
                             default:
                                 if (!validFileSize) {
                                     invalidFileSizeClass = " text-danger";
+                                    invalidfilezSizeSpanClass = " ff-invalid-fs";
                                 }
-                                fileBlock.innerHTML = '<span class="ff-file-item' +invalidFileSizeClass+ '"><span class="file-delete"><span class="ff-close"></span></span>' +
-                                    '<span class="file-name">' + file.name + '</span><span class="ff-file-size">(' + fileSize + ')</span></span>';
+
+                                // create the badge markup
+                                badgeContent += "<span class='ff-file-item" +invalidFileSizeClass +"'>";
+                                badgeContent += "<span class='file-delete'><span class='ff-close'></span></span>";
+                                badgeContent += "<span class='file-name'>" + file.name + "</span>";
+                                badgeContent += "<span class='ff-file-size "+ invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
+                                fileBlock.innerHTML = badgeContent;
+
                         }
 
                         // Add block to list
