@@ -57,7 +57,7 @@ en,de,description,file,hash
 "has not been solved correctly.","wurde nicht richtig gelöst.",,site/modules/FrontendForms/Formelements/CustomRules.php,c4e23eb773320ea4b732526b763d3849
 "contains not allowed characters. Cyrillic name may contain lowercase and uppercase а-я and hyphen (no whitespaces).","enthält ungültige Zeichen. Kyrillische Namen dürfen nur Groß- und Kleinbuchstaben, а-я  und Bindestrichen enthalten (keine Leerzeichen).",,site/modules/FrontendForms/Formelements/CustomRules.php,8092f541b2a83fca68b110c6c91f66ba
 "is required.","ist erforderlich.",,site/modules/FrontendForms/Formelements/CustomRules.php,ee66f9c9930cb33d2a5dde9b240d3f7e
-"is larger than the allowed number of files.","enthält mehr als die zulässige Anzahl von Dateien.",,site/modules/FrontendForms/Formelements/CustomRules.php,ff62b7ee820b4af064a775d0b1e28c0f
+"contains more files than the allowed number of files.","enthält mehr Dateien als erlaubt.",,site/modules/FrontendForms/Formelements/CustomRules.php,39534a9014bda909eaa5fe53662d4305
 en,de,description,file,hash
 "Image captcha","Bild CAPTCHA",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,1e27db1c7a9a959ca4cd75964525fa2d
 "Assign the image to a category","Ordnen sie das Bild einer Kategorie zu",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,5972e22698d0e9faba6397ce1b6b6f74
