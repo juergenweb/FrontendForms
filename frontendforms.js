@@ -7,13 +7,14 @@ contains no JQuery - pure JavaScript
 window.addEventListener("DOMContentLoaded", function () {
 
     function formatBytes(bytes, decimals = 2) {
+
         if (!+bytes) return "0 B";
 
         const k = 1024;
         const dm = decimals < 0 ? 0 : decimals;
         const sizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm))+ " " + sizes[i];
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
     }
 
     /*
@@ -50,6 +51,7 @@ Outputs a timer in seconds depending on values set in data attributes
 
         let fileuploadFields = document.querySelectorAll(".fileupload");
         if (fileuploadFields.length > 0) {
+           
             for (let i = 0; i < fileuploadFields.length; i++) {
 
                 fileuploadFields[i].addEventListener("change", function () {
@@ -64,7 +66,6 @@ Outputs a timer in seconds depending on values set in data attributes
                     let validFileSize = true;
                     let invalidFileSizeClass = "";
                     let invalidfilezSizeSpanClass = "";
-                    let badgeContent = "";
 
                     // Loop through selected files and handle each one
                     for (let i = 0; i < this.files.length; i++) {
@@ -95,11 +96,11 @@ Outputs a timer in seconds depending on values set in data attributes
                                 }
 
                                 // create the badge markup
-                                badgeContent += "<span class='uk-badge uk-padding-small uk-margin-xsmall-top" +invalidFileSizeClass +"'>";
-                                badgeContent += "<span class='file-delete uk-margin-xsmall-right'><span data-uk-icon='icon: close'></span></span>";
-                                badgeContent += "<span class='file-name'>" + file.name + "</span>";
-                                badgeContent += "<span class='ff-file-size "+ invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
-                                fileBlock.innerHTML = badgeContent;
+                                let badgeContentUK = "<span class='uk-light uk-badge uk-padding-small uk-margin-xsmall-top" + invalidFileSizeClass + "'>";
+                                badgeContentUK += "<span class='file-delete uk-margin-xsmall-right'><span data-uk-icon='icon: close'></span></span>";
+                                badgeContentUK += "<span class='file-name'>" + file.name + "</span>";
+                                badgeContentUK += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
+                                fileBlock.innerHTML = badgeContentUK;
 
                                 break;
                             case "bootstrap5":
@@ -111,11 +112,11 @@ Outputs a timer in seconds depending on values set in data attributes
                                 }
 
                                 // create the badge markup
-                                badgeContent += "<span class='badge mt-2 p-2" +invalidFileSizeClass +"'>";
-                                badgeContent += "<span class='file-delete me-2'><span class='ff-close'></span></span>";
-                                badgeContent += "<span class='file-name'>" + file.name + "</span>";
-                                badgeContent += "<span class='ff-file-size "+ invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
-                                fileBlock.innerHTML = badgeContent;
+                                let badgeContentBS = "<span class='badge mt-2 p-2" + invalidFileSizeClass + "'>";
+                                badgeContentBS += "<span class='file-delete me-2'><span class='ff-close'></span></span>";
+                                badgeContentBS += "<span class='file-name'>" + file.name + "</span>";
+                                badgeContentBS += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
+                                fileBlock.innerHTML = badgeContentBS;
 
                                 break;
                             default:
@@ -125,11 +126,11 @@ Outputs a timer in seconds depending on values set in data attributes
                                 }
 
                                 // create the badge markup
-                                badgeContent += "<span class='ff-file-item" +invalidFileSizeClass +"'>";
-                                badgeContent += "<span class='file-delete'><span class='ff-close'></span></span>";
-                                badgeContent += "<span class='file-name'>" + file.name + "</span>";
-                                badgeContent += "<span class='ff-file-size "+ invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
-                                fileBlock.innerHTML = badgeContent;
+                                let badgeContentDef = "<span class='ff-file-item" + invalidFileSizeClass + "'>";
+                                badgeContentDef += "<span class='file-delete'><span class='ff-close'></span></span>";
+                                badgeContentDef += "<span class='file-name'>" + file.name + "</span>";
+                                badgeContentDef += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
+                                fileBlock.innerHTML = badgeContentDef;
 
                         }
 
