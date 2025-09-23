@@ -1818,6 +1818,7 @@ For more detailed explanation on each validation rule click the link at the vali
 | [checkIban](#checkiban)  | Checks if an IBAN entered in an inputfield is in the correct format.  |
 | [checkBic](#checkbic)  | Checks if a BIC entered in an inputfield is in the correct format.  |
 | [cyrillicname](#cyrillicname)  | Checks if a name entered in an inputfield is in the correct format of a cyrillic name.  |
+| [allowedFileNumber](#allowedfilenumber) | Limit the number of files inside a file upload multiple field
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
 
