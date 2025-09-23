@@ -51,7 +51,7 @@ Outputs a timer in seconds depending on values set in data attributes
 
         let fileuploadFields = document.querySelectorAll(".fileupload");
         if (fileuploadFields.length > 0) {
-           
+
             for (let i = 0; i < fileuploadFields.length; i++) {
 
                 fileuploadFields[i].addEventListener("change", function () {
@@ -94,6 +94,7 @@ Outputs a timer in seconds depending on values set in data attributes
                                     invalidFileSizeClass = " uk-badge-danger";
                                     invalidfilezSizeSpanClass = " ff-invalid-fs";
                                 }
+                                validFileSize = true;
 
                                 // create the badge markup
                                 let badgeContentUK = "<span class='uk-light uk-badge uk-padding-small uk-margin-xsmall-top" + invalidFileSizeClass + "'>";
@@ -101,6 +102,8 @@ Outputs a timer in seconds depending on values set in data attributes
                                 badgeContentUK += "<span class='file-name'>" + file.name + "</span>";
                                 badgeContentUK += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
                                 fileBlock.innerHTML = badgeContentUK;
+                                invalidFileSizeClass = "";
+                                invalidfilezSizeSpanClass = "";
 
                                 break;
                             case "bootstrap5":
@@ -110,6 +113,7 @@ Outputs a timer in seconds depending on values set in data attributes
                                 } else {
                                     invalidFileSizeClass = " bg-primary";
                                 }
+                                validFileSize = true;
 
                                 // create the badge markup
                                 let badgeContentBS = "<span class='badge mt-2 p-2" + invalidFileSizeClass + "'>";
@@ -117,6 +121,8 @@ Outputs a timer in seconds depending on values set in data attributes
                                 badgeContentBS += "<span class='file-name'>" + file.name + "</span>";
                                 badgeContentBS += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
                                 fileBlock.innerHTML = badgeContentBS;
+                                invalidFileSizeClass = "";
+                                invalidfilezSizeSpanClass = "";
 
                                 break;
                             default:
@@ -124,6 +130,7 @@ Outputs a timer in seconds depending on values set in data attributes
                                     invalidFileSizeClass = " text-danger";
                                     invalidfilezSizeSpanClass = " ff-invalid-fs";
                                 }
+                                validFileSize = true;
 
                                 // create the badge markup
                                 let badgeContentDef = "<span class='ff-file-item" + invalidFileSizeClass + "'>";
@@ -131,6 +138,8 @@ Outputs a timer in seconds depending on values set in data attributes
                                 badgeContentDef += "<span class='file-name'>" + file.name + "</span>";
                                 badgeContentDef += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
                                 fileBlock.innerHTML = badgeContentDef;
+                                invalidFileSizeClass = "";
+                                invalidfilezSizeSpanClass = "";
 
                         }
 
