@@ -64,6 +64,9 @@
         },
         "98be58eb3446f813bc644faac5e42264": {
             "text": "%s muss ein g\u00fcltiger Hexadecimal Code im Format #XXX oder #XXXXXX sein"
+        },
+        "2e11a9d7108deb69fe82819f5905bfee": {
+            "text": "Bitte w\u00e4hlen Sie nicht mehr als %s Dateien aus"
         }
     }
 }
