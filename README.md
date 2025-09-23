@@ -2378,7 +2378,7 @@ Contact form 2 inside the examples folder uses these pre-defined input types. [T
 Uploading files is sometimes needed, so this module supports uploading files for storing it inside the site/assets/files
 folder or to send it via email.
 
-Below the file upload input field all selected files will be displayed and can be removed manually. If there is a limit set for the file size, all files which are larger, will be shown differently (other badge or link color), so that the user can see that there is something wrong.
+Below the file upload input field all selected files will be displayed and can be removed manually. If there is a limit set for the file size, all files which are larger, will be shown differently (red badge or link color), so that the user can see that there is something wrong. Feel free to style the appearance with you own CSS colors if you want.
 
 The appearance will be a little bit different depending on your framework settings. Take a look at the next picture.
 
