@@ -274,8 +274,9 @@
                         return ($size <= Inputfields::convertToBytes($params[0]));
                     }
                 } else {
-                    $total = 0;
+
                     foreach ($value as $file) {
+                        $total = 0;
                         if ($file['error'] == '0') {
                             $total  += $file['size'];
                         }
