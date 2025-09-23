@@ -2180,7 +2180,7 @@ This validator checks if the number of files selected inside a file upload multi
 Add the number of allowed files as the second parameter.
 
 ```php
-$field->setRule('allowedFileNumber', 3); // in these case the user is allowed to upload max. 3 files
+$field->setRule('allowedFileNumber', 3); // in this case the user is allowed to upload max. 3 files
 ```
 ## Create your own custom validation rules
 
