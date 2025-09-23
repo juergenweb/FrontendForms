@@ -1714,7 +1714,7 @@ If the file upload field didn't support the selection of multiple files, each se
 
 Independent if you have selected multiple file uploads, the attribute "multiple" inside the file upload field was always present. This has been fixed now and it will be only displayed if you set setMultiple() to true.
 
-## [2.2.48] 2025-09-22
+## [2.2.49] 2025-09-22
 
 **Showing warning message if file upload is used in combination with GET request**
 
@@ -1741,6 +1741,7 @@ Just to mention: UIKIT has no colored badges, so you have to change the color by
 **Some CSS issues have been fixed**
 
 Some styles or the deletion sign has not been displayed properly in Bootstrap and Pico. This has been fixed now.
+
 
 
 
