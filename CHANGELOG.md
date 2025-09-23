@@ -1714,7 +1714,7 @@ If the file upload field didn't support the selection of multiple files, each se
 
 Independent if you have selected multiple file uploads, the attribute "multiple" inside the file upload field was always present. This has been fixed now and it will be only displayed if you set setMultiple() to true.
 
-## 2025-09-22
+## [2.2.48] 2025-09-22
 
 **Showing warning message if file upload is used in combination with GET request**
 
@@ -1732,7 +1732,15 @@ During the update of files, I have accidentally copied the frontendforms.min.js 
 
 To update the progress bar with percents during the upload of form data, an event listener was added to check how much data has been uploaded. It starts with 0% and ends with 99%. The progress bar will be automatically updated with the value. So the progressbar shows the current status of how much data has been uploaded. In most cases it goes very fast so that the progressbar will jump dirctly to the 99%.
 
+**Warning added if selected file is larger than allowed**
 
+Some improvements have been done to visually inform the user if the selected file is larger than allowed. The first one is that the badge or link text will turn into red and the second one is that the file size next to the file name will be displayed in bold. 
+
+Just to mention: UIKIT has no colored badges, so you have to change the color by yourself via CSS.
+
+**Some CSS issues have been fixed**
+
+Some styles or the deletion sign has not been displayed properly in Bootstrap and Pico. This has been fixed now.
 
 
 
