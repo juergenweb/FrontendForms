@@ -70,12 +70,14 @@ Outputs a timer in seconds depending on values set in data attributes
                     let validFileSize = true;
                     let invalidFileSizeClass = "";
                     let invalidfilezSizeSpanClass = "";
+                    let invalidNotesClass = "";
+                    let notesAllowedFileSizeElement = document.getElementById(fileuploadFieldID + "-allowedFileSize");
 
                     // Loop through selected files and handle each one
                     for (let i = 0; i < this.files.length; i++) {
                         let file = this.files[i];
                         let fileSize = formatBytes(file.size, 2);
-                 
+
                         totalFileSize += file.size;
 
                         //remove previous file block if file upload does not allow multiple files
@@ -98,8 +100,8 @@ Outputs a timer in seconds depending on values set in data attributes
                                 if (!validFileSize) {
                                     invalidFileSizeClass = " uk-badge-danger";
                                     invalidfilezSizeSpanClass = " ff-invalid-fs";
+                                    invalidNotesClass = "uk-text-danger";
                                 }
-                                validFileSize = true;
 
                                 // create the badge markup
                                 let badgeContentUK = "<span class='uk-light uk-badge uk-padding-small uk-margin-xsmall-top" + invalidFileSizeClass + "'>";
@@ -107,25 +109,37 @@ Outputs a timer in seconds depending on values set in data attributes
                                 badgeContentUK += "<span class='file-name'>" + file.name + "</span>";
                                 badgeContentUK += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
                                 fileBlock.innerHTML = badgeContentUK;
+
+                                if(notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
+                                    notesAllowedFileSizeElement.className += invalidNotesClass;
+                                }
+
+                                validFileSize = true;
                                 invalidFileSizeClass = "";
                                 invalidfilezSizeSpanClass = "";
+                                invalidNotesClass = "";
 
                                 break;
                             case "bootstrap5":
                                 if (!validFileSize) {
                                     invalidFileSizeClass = " bg-danger";
                                     invalidfilezSizeSpanClass = " ff-invalid-fs";
+                                    invalidNotesClass = "text-danger";
                                 } else {
                                     invalidFileSizeClass = " bg-primary";
                                 }
-                                validFileSize = true;
 
                                 // create the badge markup
                                 let badgeContentBS = "<span class='badge mt-2 p-2" + invalidFileSizeClass + "'>";
-                                badgeContentBS += "<span class='file-delete me-2'><span class='ff-close'></span></span>";
+                                badgeContentBS += "<span class='file-delete me-1'><span class='ff-close'></span></span>";
                                 badgeContentBS += "<span class='file-name'>" + file.name + "</span>";
                                 badgeContentBS += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
                                 fileBlock.innerHTML = badgeContentBS;
+
+                                if(notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
+                                    notesAllowedFileSizeElement.className += invalidNotesClass;
+                                }
+                                validFileSize = true;
                                 invalidFileSizeClass = "";
                                 invalidfilezSizeSpanClass = "";
 
@@ -134,8 +148,8 @@ Outputs a timer in seconds depending on values set in data attributes
                                 if (!validFileSize) {
                                     invalidFileSizeClass = " text-danger";
                                     invalidfilezSizeSpanClass = " ff-invalid-fs";
+                                    invalidNotesClass = "text-danger";
                                 }
-                                validFileSize = true;
 
                                 // create the badge markup
                                 let badgeContentDef = "<span class='ff-file-item" + invalidFileSizeClass + "'>";
@@ -143,8 +157,13 @@ Outputs a timer in seconds depending on values set in data attributes
                                 badgeContentDef += "<span class='file-name'>" + file.name + "</span>";
                                 badgeContentDef += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
                                 fileBlock.innerHTML = badgeContentDef;
+
+                                if(notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
+                                    notesAllowedFileSizeElement.className += invalidNotesClass;
+                                }
                                 invalidFileSizeClass = "";
                                 invalidfilezSizeSpanClass = "";
+                                validFileSize = true;
 
                         }
 
@@ -180,9 +199,11 @@ Outputs a timer in seconds depending on values set in data attributes
 
         let totalFileSize = inputfield.dataset.filesize;
         let name = fileBlock.querySelector(".file-name").textContent;
+        let notesAllowedFileSizeElement = document.getElementById(inputfield.id + "-allowedFileSize");
 
         fileBlock.remove();
 
+        let fileSizes = [];
         for (let i = 0; i < dt.items.length; i++) {
 
             if (name === dt.items[i].getAsFile().name) {
@@ -195,7 +216,15 @@ Outputs a timer in seconds depending on values set in data attributes
                     totalSizeDiv.innerHTML = formatBytes(newTotalFileSize);
                 }
                 break;
+            } else {
+                fileSizes.push(dt.items[i].getAsFile().size);
             }
+
+        }
+
+        // check if there is at least 1 file which is larger than allowed, otherwise remove the warning text class from the notes
+        if(fileSizes.every(value => { return value <= inputfield.dataset.maxfilesize })){
+            notesAllowedFileSizeElement.removeAttribute("class")
         }
 
         document.querySelector(".fileupload").files = dt.files;
