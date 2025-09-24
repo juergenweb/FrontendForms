@@ -408,9 +408,13 @@
 
             // merge all notes texts
             if ($this->notes_array) {
+
                 // grab all key with the name 'text'
-                $texts = array_column($this->notes_array, 'text');
-                $this->setNotes(implode('<br>', $texts));
+                $wrappedTexts = [];
+                foreach ($this->notes_array as $key => $array) {
+                    $wrappedTexts[$key] = '<span id="'.$this->getID().'-'.$key.'">'.$array['text'].'</span>';
+                }
+                $this->setNotes(implode('<br>', $wrappedTexts));
             }
 
             $className = $this->className();
