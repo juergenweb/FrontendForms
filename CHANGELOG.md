@@ -1752,7 +1752,8 @@ Take a look [here](https://github.com/juergenweb/FrontendForms/blob/main/README.
 
 **Bug in the markup creation of badges by selecting multiple files fixed**
 
-If you have selecte multiple files one by one, everything was OK, but if have selected them at once than there was a bug that shows each file multiple times. This is fixed now.
+If you selected multiple files one after the other, everything was fine, but if you selected them at once, there was an error in the markup that showed each file multiple times. This is now fixed.
+
 
 
 
