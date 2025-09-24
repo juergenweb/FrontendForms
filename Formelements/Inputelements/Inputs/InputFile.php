@@ -22,6 +22,7 @@ class InputFile extends Input
     protected bool $multiple = true; // allow multiple file upload or not
     protected bool $showClearLink = true; // set default to true to show the link under the input field
     protected bool $showTotalFileSize = false;
+
     /**
      * @param string $id
      * @throws Exception
@@ -167,6 +168,12 @@ class InputFile extends Input
             }
         }
 
+        // create dataset-maxfilesize attribute depending on validator settings
+        if ((array_key_exists('phpIniFilesize', $this->notes_array)) || (array_key_exists('allowedFileSize', $this->notes_array))) {
+            $file_size = $this->notes_array['phpIniFilesize']['value'] ?? $this->notes_array['allowedFileSize']['value'];
+            $this->setAttribute('data-maxfilesize', $file_size); // set max-size in kb
+        }
+
         // Add dataset attribute if the number of files to upload is limited by the validator "allowedFileNumber"
         if($this->getMultiple() && (array_key_exists('allowedFileNumber', $this->notes_array))){
             $this->setAttribute('data-uploadlimit', $this->notes_array['allowedFileNumber']['value']);
@@ -175,4 +182,3 @@ class InputFile extends Input
     }
 
 }
-
