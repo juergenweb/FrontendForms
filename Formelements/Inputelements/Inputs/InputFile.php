@@ -33,6 +33,7 @@ class InputFile extends Input
         $pathInfo = pathinfo($this->markupType);
         $framework = $pathInfo['filename'];
         $this->setAttribute('data-framework', $framework);
+        $this->setAttribute('data-filesize', '0');
         $this->setAttribute('type', 'file');
         $this->setCSSClass('input_fileClass');
         $this->setAttribute('class', 'fileupload');
