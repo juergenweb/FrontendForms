@@ -293,7 +293,7 @@
                 if(isset($variables[0])){
                     $this->notes_array['allowedFileNumber']['text'] = sprintf($this->_('Please do not upload more than %s files'),
                         $variables[0]);
-                    $this->notes_array['allowedFileSize']['value'] = $variables[0];
+                    $this->notes_array['allowedFileNumber']['value'] = $variables[0];
                 }
             }
 
