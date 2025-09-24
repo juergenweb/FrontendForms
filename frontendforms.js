@@ -62,7 +62,11 @@ Outputs a timer in seconds depending on values set in data attributes
                     let fileuploadFieldID = fieluploadField.id;
                     let fileList = document.getElementById(fileuploadFieldID + "-files");
                     let totalFileSize = parseInt(fileuploadFields[i].dataset.filesize);
-                    let allowedFileSize = fieluploadField.getAttribute("max-size") * 1024;
+                    let allowedFileSize = 0;
+                    // check if maxfilesize is present
+                    if(fieluploadField.dataset.maxfilesize){
+                        allowedFileSize = fieluploadField.dataset.maxfilesize;
+                    }
                     let validFileSize = true;
                     let invalidFileSizeClass = "";
                     let invalidfilezSizeSpanClass = "";
@@ -71,6 +75,7 @@ Outputs a timer in seconds depending on values set in data attributes
                     for (let i = 0; i < this.files.length; i++) {
                         let file = this.files[i];
                         let fileSize = formatBytes(file.size, 2);
+                 
                         totalFileSize += file.size;
 
                         //remove previous file block if file upload does not allow multiple files
@@ -84,7 +89,7 @@ Outputs a timer in seconds depending on values set in data attributes
                         fileBlock.className = "file-block";
 
                         // compare allowed filesize and current file size
-                        if (file.size > allowedFileSize) {
+                        if (allowedFileSize !== 0 && file.size > allowedFileSize) {
                             validFileSize = false;
                         }
 
