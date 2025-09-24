@@ -170,9 +170,9 @@ class InputFile extends Input
         // Add dataset attribute if the number of files to upload is limited by the validator "allowedFileNumber"
         if($this->getMultiple() && (array_key_exists('allowedFileNumber', $this->notes_array))){
             $this->setAttribute('data-uploadlimit', $this->notes_array['allowedFileNumber']['value']);
-            bd($this->notes_array);
         }
         return parent::___render();
     }
 
 }
+
