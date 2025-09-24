@@ -167,12 +167,6 @@ class InputFile extends Input
             }
         }
 
-        // create HTML5 max-size attribute depending on validator settings
-        if ((array_key_exists('phpIniFilesize', $this->notes_array)) || (array_key_exists('allowedFileSize', $this->notes_array))) {
-            $file_size = $this->notes_array['phpIniFilesize']['value'] ?? $this->notes_array['allowedFileSize']['value'];
-            $this->setAttribute('max-size', (string)(Inputfields::convertToBytes($file_size) / 1000)); // set max-size in kb
-        }
-
         // Add dataset attribute if the number of files to upload is limited by the validator "allowedFileNumber"
         if($this->getMultiple() && (array_key_exists('allowedFileNumber', $this->notes_array))){
             $this->setAttribute('data-uploadlimit', $this->notes_array['allowedFileNumber']['value']);
