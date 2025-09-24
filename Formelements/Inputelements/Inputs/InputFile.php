@@ -33,7 +33,6 @@ class InputFile extends Input
         $pathInfo = pathinfo($this->markupType);
         $framework = $pathInfo['filename'];
         $this->setAttribute('data-framework', $framework);
-        $this->setAttribute('data-filesize', '0');
         $this->setAttribute('type', 'file');
         $this->setCSSClass('input_fileClass');
         $this->setAttribute('class', 'fileupload');
@@ -171,6 +170,12 @@ class InputFile extends Input
         if ((array_key_exists('phpIniFilesize', $this->notes_array)) || (array_key_exists('allowedFileSize', $this->notes_array))) {
             $file_size = $this->notes_array['phpIniFilesize']['value'] ?? $this->notes_array['allowedFileSize']['value'];
             $this->setAttribute('max-size', (string)(Inputfields::convertToBytes($file_size) / 1000)); // set max-size in kb
+        }
+
+        // Add dataset attribute if the number of files to upload is limited by the validator "allowedFileNumber"
+        if($this->getMultiple() && (array_key_exists('allowedFileNumber', $this->notes_array))){
+            $this->setAttribute('data-uploadlimit', $this->notes_array['allowedFileNumber']['value']);
+            bd($this->notes_array);
         }
         return parent::___render();
     }
