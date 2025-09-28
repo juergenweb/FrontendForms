@@ -628,6 +628,22 @@
             }, $this->_('contains more files than the allowed number of files.'));
 
 
+            /**
+             * 38) Check total file size inside file input multiple
+             */
+            V::addRule('maxTotalFileSize', function ($field, $value, array $params) {
+                if(isset($params[0])){
+                    $allowedTotalFileSize = intval($params[0]);
+                    $totalFileSize = 0;
+                    foreach($value as $file){
+                       $totalFileSize += $file['size'];
+                    }
+                    return $totalFileSize <= Inputfields::convertToBytes($allowedTotalFileSize);
+                }
+                return true;
+            }, $this->_('contains files whose total size is larger than the total allowed size.'));
+
+
         }
 
 
