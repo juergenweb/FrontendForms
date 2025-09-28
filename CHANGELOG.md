@@ -1754,6 +1754,17 @@ Take a look [here](https://github.com/juergenweb/FrontendForms/blob/main/README.
 
 If you selected multiple files one after the other, everything was fine, but if you selected them at once, there was an error in the markup that showed each file multiple times. This is now fixed.
 
+## [2.2.51] 2025-09-29
+
+**New validation rule added**
+
+A new validator, which checks if the total file size of all selected files inside a file upload multiple field is not larger than allowed. The new validation rule is called "*allowedTotalFileSize*".
+
+Take a look [here](https://github.com/juergenweb/FrontendForms/blob/main/README.md#allowedtotalfilesize)
+
+
+
+
 
 
 
