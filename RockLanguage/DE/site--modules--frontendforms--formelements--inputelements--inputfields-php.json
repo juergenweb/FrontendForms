@@ -67,6 +67,9 @@
         },
         "2e11a9d7108deb69fe82819f5905bfee": {
             "text": "Bitte w\u00e4hlen Sie nicht mehr als %s Dateien aus"
+        },
+        "679c8947fd87698642698e9571b87b66": {
+            "text": "Die Gesamtgr\u00f6\u00dfe aller hochgeladenen Dateien darf %s nicht \u00fcberschreiten."
         }
     }
 }
