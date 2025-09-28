@@ -1819,6 +1819,7 @@ For more detailed explanation on each validation rule click the link at the vali
 | [checkBic](#checkbic)  | Checks if a BIC entered in an inputfield is in the correct format.  |
 | [cyrillicname](#cyrillicname)  | Checks if a name entered in an inputfield is in the correct format of a cyrillic name.  |
 | [allowedFileNumber](#allowedfilenumber) | Limit the number of files inside a file upload multiple field
+| [allowedTotalFileSize](#allowedtotalfilesize) | Set a total max file size limit for all files inside a file upload field
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
 
@@ -2182,6 +2183,16 @@ Add the number of allowed files as the second parameter.
 ```php
 $field->setRule('allowedFileNumber', 3); // in this case the user is allowed to upload max. 3 files
 ```
+
+### allowedTotalFileSize
+This validator checks if the total size of all selected files inside a file upload multiple field is not higher than the allowed total file size.
+
+Add the total file size as the second parameter.
+
+```php
+$field->setRule('allowedTotalFileSize', 30 KB); // in this case the user is not allowed to upload files with a total size than 30 KB
+```
+
 ## Create your own custom validation rules
 
 However, this module contains many built-in validation rules, but sometimes you need a special validation rule. Fortunately, the Valitron library supports the creation of custom rules in a simple way. Please take a look at the [Valitron Library documentation](https://github.com/vlucas/valitron?tab=readme-ov-file#adding-custom-validation-rules), which explains how to create custom rules.
