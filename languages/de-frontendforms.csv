@@ -58,6 +58,7 @@ en,de,description,file,hash
 "contains not allowed characters. Cyrillic name may contain lowercase and uppercase а-я and hyphen (no whitespaces).","enthält ungültige Zeichen. Kyrillische Namen dürfen nur Groß- und Kleinbuchstaben, а-я  und Bindestrichen enthalten (keine Leerzeichen).",,site/modules/FrontendForms/Formelements/CustomRules.php,8092f541b2a83fca68b110c6c91f66ba
 "is required.","ist erforderlich.",,site/modules/FrontendForms/Formelements/CustomRules.php,ee66f9c9930cb33d2a5dde9b240d3f7e
 "contains more files than the allowed number of files.","enthält mehr Dateien als erlaubt.",,site/modules/FrontendForms/Formelements/CustomRules.php,39534a9014bda909eaa5fe53662d4305
+"contains files whose total size is larger than the total allowed size.","enthält Dateien, deren Gesamtgröße größer ist als die zulässige Gesamtgröße.",,site/modules/FrontendForms/Formelements/CustomRules.php,ad54894db3694629a0ff11fd048f6aad
 en,de,description,file,hash
 "Image captcha","Bild CAPTCHA",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,1e27db1c7a9a959ca4cd75964525fa2d
 "Assign the image to a category","Ordnen sie das Bild einer Kategorie zu",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,5972e22698d0e9faba6397ce1b6b6f74
@@ -489,6 +490,7 @@ Miss,Frau,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults
 Diverse,Divers,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,e67561dfc51195ce1ac515406291900e
 en,de,description,file,hash
 "Please do not upload files larger than %s","Bitte laden Sie keine Dateien hoch, die größer als %s sind",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,d8b0ef2b22e79194c0cb1e79340e6767
+"The total size of all uploaded files must not exceed %s.","Die Gesamtgröße aller hochgeladenen Dateien darf %s nicht überschreiten.",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,679c8947fd87698642698e9571b87b66
 "Please do not upload more than %s files","Bitte wählen Sie nicht mehr als %s Dateien aus",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,2e11a9d7108deb69fe82819f5905bfee
 "Allowed file types: %s","Erlaubte Dateitypen: %s",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,a0072ad6390e4bf1839ad0ede52c2e69
 "%s should only contain letters","%s darf nur Buchstaben enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,1200911cc09227463a876a1e56e34536
