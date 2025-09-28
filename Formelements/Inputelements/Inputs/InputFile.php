@@ -178,6 +178,12 @@ class InputFile extends Input
         if($this->getMultiple() && (array_key_exists('allowedFileNumber', $this->notes_array))){
             $this->setAttribute('data-uploadlimit', $this->notes_array['allowedFileNumber']['value']);
         }
+
+        // Add dataset attribute if the total size of all uploaded files is limited by the validator "allowedTotalFileSize"
+        if($this->getMultiple() && (array_key_exists('maxTotalFileSize', $this->notes_array))){
+            $this->setAttribute('data-maxtotalfilesize', $this->notes_array['maxTotalFileSize']['value']);
+        }
+
         return parent::___render();
     }
 
