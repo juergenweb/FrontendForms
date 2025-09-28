@@ -63,15 +63,24 @@ Outputs a timer in seconds depending on values set in data attributes
                     let fileList = document.getElementById(fileuploadFieldID + "-files");
                     let totalFileSize = parseInt(fileuploadFields[i].dataset.filesize);
                     let allowedFileSize = 0;
+                    let allowedTotalFileSize = 0;
+
                     // check if maxfilesize is present
                     if(fieluploadField.dataset.maxfilesize){
                         allowedFileSize = fieluploadField.dataset.maxfilesize;
                     }
+
+                    // check if maxtotalfilesize is present
+                    if(fieluploadField.dataset.maxtotalfilesize){
+                        allowedTotalFileSize = fieluploadField.dataset.maxtotalfilesize;
+                    }
+
                     let validFileSize = true;
                     let invalidFileSizeClass = "";
                     let invalidfilezSizeSpanClass = "";
                     let invalidNotesClass = "";
                     let notesAllowedFileSizeElement = document.getElementById(fileuploadFieldID + "-allowedFileSize");
+                    let notesAllowedTotalFileSizeElement = document.getElementById(fileuploadFieldID + "-maxTotalFileSize");
 
                     // Loop through selected files and handle each one
                     for (let i = 0; i < this.files.length; i++) {
@@ -102,6 +111,7 @@ Outputs a timer in seconds depending on values set in data attributes
                                     invalidfilezSizeSpanClass = " ff-invalid-fs";
                                     invalidNotesClass = "uk-text-danger";
                                 }
+                                invalidTotalFileSizeNotesClass = " uk-text-danger";
 
                                 // create the badge markup
                                 let badgeContentUK = "<span class='uk-light uk-badge uk-padding-small uk-margin-xsmall-top" + invalidFileSizeClass + "'>";
@@ -129,6 +139,8 @@ Outputs a timer in seconds depending on values set in data attributes
                                     invalidFileSizeClass = " bg-primary";
                                 }
 
+                                invalidTotalFileSizeNotesClass = " text-danger";
+
                                 // create the badge markup
                                 let badgeContentBS = "<span class='badge mt-2 p-2" + invalidFileSizeClass + "'>";
                                 badgeContentBS += "<span class='file-delete me-1'><span class='ff-close'></span></span>";
@@ -150,6 +162,8 @@ Outputs a timer in seconds depending on values set in data attributes
                                     invalidfilezSizeSpanClass = " ff-invalid-fs";
                                     invalidNotesClass = "text-danger";
                                 }
+
+                                invalidTotalFileSizeNotesClass = " text-danger";
 
                                 // create the badge markup
                                 let badgeContentDef = "<span class='ff-file-item" + invalidFileSizeClass + "'>";
@@ -176,9 +190,20 @@ Outputs a timer in seconds depending on values set in data attributes
                         // Add file to DataTransfer object
                         dt.items.add(file);
                     }
-                    fileuploadFields[i].dataset.filesize = String(totalFileSize);
 
                     let totalSizeDiv = document.getElementById(fileuploadFieldID + "-total");
+
+                    // compare allowed total filesize and file sizes of all selected files
+                    if (allowedTotalFileSize !== 0 && totalFileSize > allowedTotalFileSize) {
+                        notesAllowedTotalFileSizeElement.className += invalidTotalFileSizeNotesClass;
+
+                        if (totalSizeDiv){
+                            totalSizeDiv.className += invalidTotalFileSizeNotesClass;
+                        }                                               8
+
+                    }
+
+                    fileuploadFields[i].dataset.filesize = String(totalFileSize);
 
                     if (totalSizeDiv) {
                         totalSizeDiv.innerHTML = formatBytes(totalFileSize);
@@ -200,6 +225,9 @@ Outputs a timer in seconds depending on values set in data attributes
         let totalFileSize = inputfield.dataset.filesize;
         let name = fileBlock.querySelector(".file-name").textContent;
         let notesAllowedFileSizeElement = document.getElementById(inputfield.id + "-allowedFileSize");
+        let notesAllowedTotalFileSizeElement = document.getElementById(inputfield.id + "-maxTotalFileSize");
+        let totalSizeDiv = document.getElementById(inputfield.id + "-total");
+        let newTotalFileSize = 0;
 
         fileBlock.remove();
 
@@ -209,9 +237,8 @@ Outputs a timer in seconds depending on values set in data attributes
             if (name === dt.items[i].getAsFile().name) {
                 let fileSizeRemoved = dt.items[i].getAsFile().size;
                 dt.items.remove(i);
-                let newTotalFileSize = totalFileSize - fileSizeRemoved;
+                newTotalFileSize = totalFileSize - fileSizeRemoved;
                 inputfield.dataset.filesize = String(newTotalFileSize);
-                let totalSizeDiv = document.getElementById(inputfield.id + "-total");
                 if (totalSizeDiv) {
                     totalSizeDiv.innerHTML = formatBytes(newTotalFileSize);
                 }
@@ -224,7 +251,22 @@ Outputs a timer in seconds depending on values set in data attributes
 
         // check if there is at least 1 file which is larger than allowed, otherwise remove the warning text class from the notes
         if(fileSizes.every(value => { return value <= inputfield.dataset.maxfilesize })){
-            notesAllowedFileSizeElement.removeAttribute("class")
+            if(totalSizeDiv){
+                totalSizeDiv.removeAttribute("class");
+            }
+            if(notesAllowedFileSizeElement){
+                notesAllowedFileSizeElement.removeAttribute("class");
+            }
+        }
+
+        // check if total files size is not larger than allowed
+        if(newTotalFileSize && inputfield.dataset.maxtotalfilesize && newTotalFileSize <= inputfield.dataset.maxtotalfilesize){
+            if(notesAllowedFileSizeElement){
+                //notesAllowedFileSizeElement.removeAttribute("class");
+            }
+            if(notesAllowedTotalFileSizeElement){
+                notesAllowedTotalFileSizeElement.removeAttribute("class");
+            }
         }
 
         document.querySelector(".fileupload").files = dt.files;
