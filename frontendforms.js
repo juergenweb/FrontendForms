@@ -192,7 +192,7 @@ Outputs a timer in seconds depending on values set in data attributes
                     }
 
                     let totalSizeDiv = document.getElementById(fileuploadFieldID + "-total");
-                    
+
                     // compare allowed total filesize and file sizes of all selected files
                     if (allowedTotalFileSize !== 0 && totalFileSize > allowedTotalFileSize) {
                         notesAllowedTotalFileSizeElement.className += invalidTotalFileSizeNotesClass;
@@ -260,10 +260,7 @@ Outputs a timer in seconds depending on values set in data attributes
         }
 
         // check if total files size is not larger than allowed
-        if(newTotalFileSize && inputfield.dataset.maxtotalfilesize && newTotalFileSize <= inputfield.dataset.maxtotalfilesize){
-            if(notesAllowedFileSizeElement){
-                //notesAllowedFileSizeElement.removeAttribute("class");
-            }
+        if(Number.isInteger(newTotalFileSize) && inputfield.dataset.maxtotalfilesize && newTotalFileSize <= inputfield.dataset.maxtotalfilesize){
             if(notesAllowedTotalFileSizeElement){
                 notesAllowedTotalFileSizeElement.removeAttribute("class");
             }
