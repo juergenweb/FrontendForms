@@ -103,7 +103,7 @@ class CustomRules extends Tag
 
 
         /**
-         * 4) User name may contain lowercase a-z, 0-9, hyphen or underscore
+         * 4) Username may contain lowercase a-z, 0-9, hyphen or underscore
          */
         V::addRule('usernameSyntax', function ($field, $value) {
             $regex = '/[a-z\d\-_]$/';
@@ -279,7 +279,7 @@ class CustomRules extends Tag
         }, $this->_('contains a file that is larger than the allowed filesize.'));
 
         /**
-         * 17) Check if an error occured during the upload of the file
+         * 17) Check if an error occurred during the upload of the file
          */
         V::addRule('noErrorOnUpload', function ($field, $value) {
             if (count($value) == 1) {
@@ -425,7 +425,7 @@ class CustomRules extends Tag
         }, $this->_('is not a valid hexadecimal color code.'));
 
         /**
-         * 25) Check if a date is before a date entered in another field
+         * 25) Check if a date is before a date which is entered in another field
          */
         V::addRule('dateBeforeField', function ($field, $value, array $params) {
             $reference_date_field = $params[0]; // name of the reference field
@@ -437,7 +437,7 @@ class CustomRules extends Tag
         }, $this->_('must be before %s.'));
 
         /**
-         * 26) Check if a date is after a date entered in another field
+         * 26) Check if a date is after a date entered inside another field
          */
         V::addRule('dateAfterField', function ($field, $value, array $params) {
             $reference_date_field = $params[0]; // name of the reference field
@@ -491,7 +491,6 @@ class CustomRules extends Tag
                 }
                 return true;
             }
-            return false;
         }, $this->_('contains a file that has the same file name as a file stored in the destination directory.'));
 
         /**
@@ -501,7 +500,7 @@ class CustomRules extends Tag
 
             // check if value is array first
             if (!is_array($params[0]))
-                throw new \Exception($this->_('Please add only an array as second parameter.'));
+                throw new Exception($this->_('Please add only an array as second parameter.'));
 
             if ($params[0]) {
 
@@ -581,7 +580,7 @@ class CustomRules extends Tag
         /**
          * 35) Check if the value entered is a correct cyrillic name
          */
-        V::addRule('cyrillicName', function ($field, $value, $params) {
+        V::addRule('cyrillicName', function ($field, $value) {
             $regex = '/[^а-яё\-]/iu';
             if (!preg_match($regex, $value)) {
                 return true;
@@ -597,7 +596,7 @@ class CustomRules extends Tag
          * So you do not have to take care to add it manually to a file upload field
          * BTW there are no negative side effects if you add this validator manually to a file upload field
          */
-        V::addRule('fileRequired', function ($field, $value, array $params) {
+        V::addRule('fileRequired', function ($field, $value) {
             if ($value[0]['size'] === 0) {
                 return false;
             }
@@ -621,7 +620,7 @@ class CustomRules extends Tag
         /**
          * 38) Check total file size inside file input multiple
          */
-        V::addRule('maxTotalFileSize', function ($field, $value, array $params) {
+        V::addRule('allowedTotalFileSize', function ($field, $value, array $params) {
             if (isset($params[0])) {
                 $totalFileSize = 0;
                 foreach ($value as $file) {
@@ -658,7 +657,6 @@ class CustomRules extends Tag
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
         $exist = $this->wire('files')->exists($uploadPath . $filename);
 
-        $storedFiles = $this->storedFiles;
         if ($exist && $param && $param[0] === true) {
             // overwrite the filename
             $newFileNamePath = $uploadPath . $basename . '-' . time() . '.' . $ext;
