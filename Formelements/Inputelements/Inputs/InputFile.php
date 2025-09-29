@@ -168,6 +168,12 @@ class InputFile extends Input
             }
         }
 
+        // disable total file size notes text on single upload fields
+        if(!$this->getAttribute('multiple')){
+            unset($this->notes_array['allowedTotalFileSize']); // remove allowedFileSize from the array
+        }
+
+
         // create dataset-maxfilesize attribute depending on validator settings
         if ((array_key_exists('phpIniFilesize', $this->notes_array)) || (array_key_exists('allowedFileSize', $this->notes_array))) {
             $file_size = $this->notes_array['phpIniFilesize']['value'] ?? $this->notes_array['allowedFileSize']['value'];
