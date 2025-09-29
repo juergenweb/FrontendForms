@@ -80,7 +80,7 @@ Outputs a timer in seconds depending on values set in data attributes
                     let invalidfilezSizeSpanClass = "";
                     let invalidNotesClass = "";
                     let notesAllowedFileSizeElement = document.getElementById(fileuploadFieldID + "-allowedFileSize");
-                    let notesAllowedTotalFileSizeElement = document.getElementById(fileuploadFieldID + "-maxTotalFileSize");
+                    let notesAllowedTotalFileSizeElement = document.getElementById(fileuploadFieldID + "-allowedTotalFileSize");
 
                     // Loop through selected files and handle each one
                     for (let i = 0; i < this.files.length; i++) {
