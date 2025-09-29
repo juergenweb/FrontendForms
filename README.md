@@ -2187,10 +2187,13 @@ $field->setRule('allowedFileNumber', 3); // in this case the user is allowed to 
 ### allowedTotalFileSize
 This validator checks if the total size of all selected files inside a file upload multiple field is not higher than the allowed total file size.
 
-Add the total file size as the second parameter as a string with the unit to the validator.
+Add the total file size as the second parameter.
 
 ```php
-$field->setRule('allowedTotalFileSize', '30 KB'); // in this case the user is not allowed to upload files with a total size than 30 KB
+$field->setRule('allowedTotalFileSize', 10000); // as an integer in Bytes OR
+$field->setRule('allowedTotalFileSize', '10000'); // as a string without an unit OR
+$field->setRule('allowedTotalFileSize', '10 MB'); // as a string with an unit OR
+$field->setRule('allowedTotalFileSize', 10*1024*1024); // as a calculation value
 ```
 
 ## Create your own custom validation rules
