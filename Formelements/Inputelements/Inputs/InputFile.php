@@ -171,7 +171,7 @@ class InputFile extends Input
         // create dataset-maxfilesize attribute depending on validator settings
         if ((array_key_exists('phpIniFilesize', $this->notes_array)) || (array_key_exists('allowedFileSize', $this->notes_array))) {
             $file_size = $this->notes_array['phpIniFilesize']['value'] ?? $this->notes_array['allowedFileSize']['value'];
-            $this->setAttribute('data-maxfilesize', $file_size); // set max-size in kb
+            $this->setAttribute('data-maxfilesize', Inputfields::convertToBytes($file_size)); // set max-size in kb
         }
 
         // Add dataset attribute if the number of files to upload is limited by the validator "allowedFileNumber"
@@ -180,8 +180,8 @@ class InputFile extends Input
         }
 
         // Add dataset attribute if the total size of all uploaded files is limited by the validator "allowedTotalFileSize"
-        if($this->getMultiple() && (array_key_exists('maxTotalFileSize', $this->notes_array))){
-            $this->setAttribute('data-maxtotalfilesize', Inputfields::convertToBytes($this->notes_array['maxTotalFileSize']['value']));
+        if($this->getMultiple() && (array_key_exists('allowedTotalFileSize', $this->notes_array))){
+            $this->setAttribute('data-maxtotalfilesize', Inputfields::convertToBytes($this->notes_array['allowedTotalFileSize']['value']));
         }
 
         return parent::___render();
