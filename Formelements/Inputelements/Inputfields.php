@@ -289,11 +289,11 @@
             }
 
             // inform about max total file size
-            if ($validator == 'maxTotalFileSize') {
+            if ($validator == 'allowedTotalFileSize') {
                 $max_file_size = self::convertToBytes($variables[0]);
-                $this->notes_array['maxTotalFileSize']['text'] = sprintf($this->_('The total size of all uploaded files must not exceed %s.'),
+                $this->notes_array['allowedTotalFileSize']['text'] = sprintf($this->_('The total size of all uploaded files must not exceed %s.'),
                     wireBytesStr($variables[0]));
-                $this->notes_array['maxTotalFileSize']['value'] = $variables[0];
+                $this->notes_array['allowedTotalFileSize']['value'] = $variables[0];
             }
 
             // inform about max number of files
