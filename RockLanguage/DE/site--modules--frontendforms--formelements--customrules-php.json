@@ -47,9 +47,6 @@
         "5da3ffa343c2825257dc7f7b35b1ff21": {
             "text": "ist in der Liste der beliebtesten Passw\u00f6rter und wird daher nicht gespeichert. Bitte w\u00e4hlen Sie ein anderes aus."
         },
-        "05e14bb8d5644c5393b8ba6b3047cd2c": {
-            "text": "ist gr\u00f6\u00dfer als die zul\u00e4ssige Dateigr\u00f6\u00dfe von %s."
-        },
         "e73de70795c028bc6fabdaf499a9e38f": {
             "text": "verursachte einen Fehler beim Hochladen."
         },
@@ -115,6 +112,9 @@
         },
         "ad54894db3694629a0ff11fd048f6aad": {
             "text": "enth\u00e4lt Dateien, deren Gesamtgr\u00f6\u00dfe gr\u00f6\u00dfer ist als die zul\u00e4ssige Gesamtgr\u00f6\u00dfe."
+        },
+        "bda00e898391b7e477936d79044230ff": {
+            "text": "enth\u00e4lt eine Datei, die gr\u00f6\u00dfer als die zul\u00e4ssige Dateigr\u00f6\u00dfe ist."
         }
     }
 }
