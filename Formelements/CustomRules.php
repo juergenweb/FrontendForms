@@ -274,7 +274,6 @@
                         return ($size <= Inputfields::convertToBytes($params[0]));
                     }
                 } else {
-
                     foreach ($value as $file) {
                         $total = 0;
                         if ($file['error'] == '0') {
@@ -633,12 +632,11 @@
              */
             V::addRule('maxTotalFileSize', function ($field, $value, array $params) {
                 if(isset($params[0])){
-                    $allowedTotalFileSize = intval($params[0]);
                     $totalFileSize = 0;
                     foreach($value as $file){
                        $totalFileSize += $file['size'];
                     }
-                    return $totalFileSize <= Inputfields::convertToBytes($allowedTotalFileSize);
+                    return $totalFileSize <= Inputfields::convertToBytes($params[0]);
                 }
                 return true;
             }, $this->_('contains files whose total size is larger than the total allowed size.'));
