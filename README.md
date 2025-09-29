@@ -1504,7 +1504,7 @@ $file1 = new \FrontendForms\InputFile('fileupload1');
 $file1->showClearLink(true); // show all files for upload under the input field
 $file1->setLabel('Multiple files upload');
 $file1->setDescription('Description fileupload1')->setPosition('afterInput'); // This is how you add the position directyl to the Description object
-$file1->setRule('allowedFileSize', '60000');
+$file1->setRule('allowedFileSize', '60 KB');
 $file1->setRule('allowedFileExt', ['jpg','pdf']);
 ...
 ...
