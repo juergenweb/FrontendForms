@@ -278,23 +278,6 @@ class CustomRules extends Tag
 
         }, $this->_('contains a file that is larger than the allowed filesize.'));
 
-
-        /**
-         * 16a) Check if the uploaded file is not larger than the allowed filesize
-         * This is the duplicate of allowedFileSize, but this name fits better
-         */
-        V::addRule('maxFileSize', function ($field, $value, array $params) {
-
-            if ($params[0]) {
-                foreach ($value as $file) {
-                    if ($file['size'] > Inputfields::convertToBytes($params[0]))
-                        return false;
-                }
-            }
-            return true;
-
-        }, $this->_('contains a file that is larger than the allowed filesize.'));
-
         /**
          * 17) Check if an error occured during the upload of the file
          */
