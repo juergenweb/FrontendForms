@@ -192,7 +192,7 @@ Outputs a timer in seconds depending on values set in data attributes
                     }
 
                     let totalSizeDiv = document.getElementById(fileuploadFieldID + "-total");
-
+                    
                     // compare allowed total filesize and file sizes of all selected files
                     if (allowedTotalFileSize !== 0 && totalFileSize > allowedTotalFileSize) {
                         notesAllowedTotalFileSizeElement.className += invalidTotalFileSizeNotesClass;
@@ -225,7 +225,7 @@ Outputs a timer in seconds depending on values set in data attributes
         let totalFileSize = inputfield.dataset.filesize;
         let name = fileBlock.querySelector(".file-name").textContent;
         let notesAllowedFileSizeElement = document.getElementById(inputfield.id + "-allowedFileSize");
-        let notesAllowedTotalFileSizeElement = document.getElementById(inputfield.id + "-maxTotalFileSize");
+        let notesAllowedTotalFileSizeElement = document.getElementById(inputfield.id + "-allowedTotalFileSize");
         let totalSizeDiv = document.getElementById(inputfield.id + "-total");
         let newTotalFileSize = 0;
 
