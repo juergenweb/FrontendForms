@@ -36,7 +36,7 @@ en,de,description,file,hash
 "entered must be different from the old password.","muss sich vom alten Passwort unterscheiden.",,site/modules/FrontendForms/Formelements/CustomRules.php,9dc911237765edb7f22808f0b2102b63
 "value entered is not correct.","Wert ist nicht korrekt.",,site/modules/FrontendForms/Formelements/CustomRules.php,4d9ecb529945a9c05dc622c41cb7ab08
 "value is in the list of the most popular passwords and therefore not save. Please select another one.","ist in der Liste der beliebtesten Passwörter und wird daher nicht gespeichert. Bitte wählen Sie ein anderes aus.",,site/modules/FrontendForms/Formelements/CustomRules.php,5da3ffa343c2825257dc7f7b35b1ff21
-"is larger than the allowed filesize.","ist größer als die zulässige Dateigröße von %s.",,site/modules/FrontendForms/Formelements/CustomRules.php,05e14bb8d5644c5393b8ba6b3047cd2c
+"contains a file that is larger than the allowed filesize.","enthält eine Datei, die größer als die zulässige Dateigröße ist.",,site/modules/FrontendForms/Formelements/CustomRules.php,bda00e898391b7e477936d79044230ff
 "caused an error during the upload.","verursachte einen Fehler beim Hochladen.",,site/modules/FrontendForms/Formelements/CustomRules.php,e73de70795c028bc6fabdaf499a9e38f
 "does not belong to the allowed file types: %s.","ist nicht vom Typ der  erlaubten Dateitypen: %s.",,site/modules/FrontendForms/Formelements/CustomRules.php,e9104007e1d2a05266de336a3d10a55b
 "is larger than the max. allowed filesize.","ist größer als die max. zulässige Dateigröße.",,site/modules/FrontendForms/Formelements/CustomRules.php,2588b342e65a171fe8e5433b310a9223
