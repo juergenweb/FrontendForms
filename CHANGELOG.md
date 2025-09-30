@@ -1763,6 +1763,13 @@ A new validator, which checks if the total file size of all selected files insid
 Take a look [here](https://github.com/juergenweb/FrontendForms/blob/main/README.md#allowedtotalfilesize)
 
 
+## [2.2.53] 2025-09-30
+
+**Js problems fixed**
+
+During the optimization of the frontendforms.js, some of the function have been positioned inside the load event listener, which leaded to problems and some functions did not work properly.
+
+Now the have been positioned outside as before and everything should work as expected.
 
 
 
