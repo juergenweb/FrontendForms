@@ -1,268 +1,263 @@
 /*
-JavaScript file for FrontendForms module
+JavaScript file for the FrontendForms module
 contains no JQuery - pure JavaScript
 */
 
-// check if DOM is loaded completely
-window.addEventListener("DOMContentLoaded", function () {
-
-
-
-
-    /*
+/*
 JavaScript counter in seconds
 Outputs a timer in seconds depending on values set in data attributes
 */
-    function submitCounter() {
-        let el = document.getElementById("timecounter");
-        if (el) {
-            let timeleft = parseInt(document.getElementById("minTime").getAttribute("data-time"));
-            let timetext = document.getElementById("minTime").getAttribute("data-unit");
-            timetext = timetext.split(";");
+function submitCounter() {
+    let el = document.getElementById("timecounter");
+    if (el) {
+        let timeleft = parseInt(document.getElementById("minTime").getAttribute("data-time"));
+        let timetext = document.getElementById("minTime").getAttribute("data-unit");
+        timetext = timetext.split(";");
 
-            let downloadTimer = setInterval(function () {
-                if (timeleft <= 0) {
-                    clearInterval(downloadTimer);
-                    el.remove();
-                }
-                let text = timetext[0];
-                if (timeleft <= 1) {
-                    text = timetext[1];
-                }
-                el.innerText = timeleft + " " + text;
-                timeleft -= 1;
-            }, 1000);
-        }
+        let downloadTimer = setInterval(function () {
+            if (timeleft <= 0) {
+                clearInterval(downloadTimer);
+                el.remove();
+            }
+            let text = timetext[0];
+            if (timeleft <= 1) {
+                text = timetext[1];
+            }
+            el.innerText = timeleft + " " + text;
+            timeleft -= 1;
+        }, 1000);
     }
+}
 
-    // Handler for File Uploads
+// Handler for File Uploads
+function handleFileUploads() {
+    // file list
+    const dt = new DataTransfer();
 
-    function handleFileUploads() {
-        // file list
-        const dt = new DataTransfer();
+    let fileuploadFields = document.querySelectorAll(".fileupload");
+    if (fileuploadFields.length > 0) {
 
-        let fileuploadFields = document.querySelectorAll(".fileupload");
-        if (fileuploadFields.length > 0) {
+        for (let i = 0; i < fileuploadFields.length; i++) {
 
-            for (let i = 0; i < fileuploadFields.length; i++) {
+            fileuploadFields[i].addEventListener("change", function () {
 
-                fileuploadFields[i].addEventListener("change", function () {
+                let fieluploadField = fileuploadFields[i];
+                let multiple = fieluploadField.hasAttribute("multiple");
+                let framework = fieluploadField.dataset.framework;
+                let fileuploadFieldID = fieluploadField.id;
+                let fileList = document.getElementById(fileuploadFieldID + "-files");
+                let totalFileSize = parseInt(fileuploadFields[i].dataset.filesize);
+                let allowedFileSize = 0;
+                let allowedTotalFileSize = 0;
 
-                    let fieluploadField = fileuploadFields[i];
-                    let multiple = fieluploadField.hasAttribute("multiple");
-                    let framework = fieluploadField.dataset.framework;
-                    let fileuploadFieldID = fieluploadField.id;
-                    let fileList = document.getElementById(fileuploadFieldID + "-files");
-                    let totalFileSize = parseInt(fileuploadFields[i].dataset.filesize);
-                    let allowedFileSize = 0;
-                    let allowedTotalFileSize = 0;
+                // check if maxfilesize is present
+                if (fieluploadField.dataset.maxfilesize) {
+                    allowedFileSize = fieluploadField.dataset.maxfilesize;
+                }
 
-                    // check if maxfilesize is present
-                    if (fieluploadField.dataset.maxfilesize) {
-                        allowedFileSize = fieluploadField.dataset.maxfilesize;
+                // check if maxtotalfilesize is present
+                if (fieluploadField.dataset.maxtotalfilesize) {
+                    allowedTotalFileSize = fieluploadField.dataset.maxtotalfilesize;
+                }
+
+                let validFileSize = true;
+                let invalidFileSizeClass = "";
+                let invalidfilezSizeSpanClass = "";
+                let invalidNotesClass = "";
+                let notesAllowedFileSizeElement = document.getElementById(fileuploadFieldID + "-allowedFileSize");
+                let notesAllowedTotalFileSizeElement = document.getElementById(fileuploadFieldID + "-allowedTotalFileSize");
+
+                // Loop through selected files and handle each one
+                for (let i = 0; i < this.files.length; i++) {
+                    let file = this.files[i];
+                    let fileSize = formatBytes(file.size, 2);
+
+                    totalFileSize += file.size;
+
+                    //remove previous file block if file upload does not allow multiple files
+                    if (!multiple) {
+                        fileList.innerHTML = "";
+                        totalFileSize = file.size;
                     }
 
-                    // check if maxtotalfilesize is present
-                    if (fieluploadField.dataset.maxtotalfilesize) {
-                        allowedTotalFileSize = fieluploadField.dataset.maxtotalfilesize;
+                    // Create file block
+                    let fileBlock = document.createElement("div");
+                    fileBlock.className = "file-block";
+
+                    // compare allowed filesize and current file size
+                    if (allowedFileSize !== 0 && file.size > allowedFileSize) {
+                        validFileSize = false;
                     }
 
-                    let validFileSize = true;
-                    let invalidFileSizeClass = "";
-                    let invalidfilezSizeSpanClass = "";
-                    let invalidNotesClass = "";
-                    let notesAllowedFileSizeElement = document.getElementById(fileuploadFieldID + "-allowedFileSize");
-                    let notesAllowedTotalFileSizeElement = document.getElementById(fileuploadFieldID + "-allowedTotalFileSize");
+                    switch (framework) {
+                        case "uikit3":
+                            if (!validFileSize) {
+                                invalidFileSizeClass = " uk-badge-danger";
+                                invalidfilezSizeSpanClass = " ff-invalid-fs";
+                                invalidNotesClass = "uk-text-danger";
+                            }
+                            invalidTotalFileSizeNotesClass = " uk-text-danger";
 
-                    // Loop through selected files and handle each one
-                    for (let i = 0; i < this.files.length; i++) {
-                        let file = this.files[i];
-                        let fileSize = formatBytes(file.size, 2);
+                            // create the badge markup
+                            let badgeContentUK = "<span class='uk-light uk-badge uk-padding-small uk-margin-xsmall-top" + invalidFileSizeClass + "'>";
+                            badgeContentUK += "<span class='file-delete uk-margin-xsmall-right'><span data-uk-icon='icon: close'></span></span>";
+                            badgeContentUK += "<span class='file-name'>" + file.name + "</span>";
+                            badgeContentUK += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
+                            fileBlock.innerHTML = badgeContentUK;
 
-                        totalFileSize += file.size;
+                            if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
+                                notesAllowedFileSizeElement.className += invalidNotesClass;
+                            }
 
-                        //remove previous file block if file upload does not allow multiple files
-                        if (!multiple) {
-                            fileList.innerHTML = "";
-                            totalFileSize = file.size;
-                        }
+                            validFileSize = true;
+                            invalidFileSizeClass = "";
+                            invalidfilezSizeSpanClass = "";
+                            invalidNotesClass = "";
 
-                        // Create file block
-                        let fileBlock = document.createElement("div");
-                        fileBlock.className = "file-block";
+                            break;
+                        case "bootstrap5":
+                            if (!validFileSize) {
+                                invalidFileSizeClass = " bg-danger";
+                                invalidfilezSizeSpanClass = " ff-invalid-fs";
+                                invalidNotesClass = "text-danger";
+                            } else {
+                                invalidFileSizeClass = " bg-primary";
+                            }
 
-                        // compare allowed filesize and current file size
-                        if (allowedFileSize !== 0 && file.size > allowedFileSize) {
-                            validFileSize = false;
-                        }
+                            invalidTotalFileSizeNotesClass = " text-danger";
 
-                        switch (framework) {
-                            case "uikit3":
-                                if (!validFileSize) {
-                                    invalidFileSizeClass = " uk-badge-danger";
-                                    invalidfilezSizeSpanClass = " ff-invalid-fs";
-                                    invalidNotesClass = "uk-text-danger";
-                                }
-                                invalidTotalFileSizeNotesClass = " uk-text-danger";
+                            // create the badge markup
+                            let badgeContentBS = "<span class='badge mt-2 p-2" + invalidFileSizeClass + "'>";
+                            badgeContentBS += "<span class='file-delete me-1'><span class='ff-close'></span></span>";
+                            badgeContentBS += "<span class='file-name'>" + file.name + "</span>";
+                            badgeContentBS += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
+                            fileBlock.innerHTML = badgeContentBS;
 
-                                // create the badge markup
-                                let badgeContentUK = "<span class='uk-light uk-badge uk-padding-small uk-margin-xsmall-top" + invalidFileSizeClass + "'>";
-                                badgeContentUK += "<span class='file-delete uk-margin-xsmall-right'><span data-uk-icon='icon: close'></span></span>";
-                                badgeContentUK += "<span class='file-name'>" + file.name + "</span>";
-                                badgeContentUK += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
-                                fileBlock.innerHTML = badgeContentUK;
+                            if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
+                                notesAllowedFileSizeElement.className += invalidNotesClass;
+                            }
+                            validFileSize = true;
+                            invalidFileSizeClass = "";
+                            invalidfilezSizeSpanClass = "";
 
-                                if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
-                                    notesAllowedFileSizeElement.className += invalidNotesClass;
-                                }
+                            break;
+                        default:
+                            if (!validFileSize) {
+                                invalidFileSizeClass = " text-danger";
+                                invalidfilezSizeSpanClass = " ff-invalid-fs";
+                                invalidNotesClass = "text-danger";
+                            }
 
-                                validFileSize = true;
-                                invalidFileSizeClass = "";
-                                invalidfilezSizeSpanClass = "";
-                                invalidNotesClass = "";
+                            invalidTotalFileSizeNotesClass = " text-danger";
 
-                                break;
-                            case "bootstrap5":
-                                if (!validFileSize) {
-                                    invalidFileSizeClass = " bg-danger";
-                                    invalidfilezSizeSpanClass = " ff-invalid-fs";
-                                    invalidNotesClass = "text-danger";
-                                } else {
-                                    invalidFileSizeClass = " bg-primary";
-                                }
+                            // create the badge markup
+                            let badgeContentDef = "<span class='ff-file-item" + invalidFileSizeClass + "'>";
+                            badgeContentDef += "<span class='file-delete'><span class='ff-close'></span></span>";
+                            badgeContentDef += "<span class='file-name'>" + file.name + "</span>";
+                            badgeContentDef += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
+                            fileBlock.innerHTML = badgeContentDef;
 
-                                invalidTotalFileSizeNotesClass = " text-danger";
-
-                                // create the badge markup
-                                let badgeContentBS = "<span class='badge mt-2 p-2" + invalidFileSizeClass + "'>";
-                                badgeContentBS += "<span class='file-delete me-1'><span class='ff-close'></span></span>";
-                                badgeContentBS += "<span class='file-name'>" + file.name + "</span>";
-                                badgeContentBS += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
-                                fileBlock.innerHTML = badgeContentBS;
-
-                                if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
-                                    notesAllowedFileSizeElement.className += invalidNotesClass;
-                                }
-                                validFileSize = true;
-                                invalidFileSizeClass = "";
-                                invalidfilezSizeSpanClass = "";
-
-                                break;
-                            default:
-                                if (!validFileSize) {
-                                    invalidFileSizeClass = " text-danger";
-                                    invalidfilezSizeSpanClass = " ff-invalid-fs";
-                                    invalidNotesClass = "text-danger";
-                                }
-
-                                invalidTotalFileSizeNotesClass = " text-danger";
-
-                                // create the badge markup
-                                let badgeContentDef = "<span class='ff-file-item" + invalidFileSizeClass + "'>";
-                                badgeContentDef += "<span class='file-delete'><span class='ff-close'></span></span>";
-                                badgeContentDef += "<span class='file-name'>" + file.name + "</span>";
-                                badgeContentDef += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
-                                fileBlock.innerHTML = badgeContentDef;
-
-                                if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
-                                    notesAllowedFileSizeElement.className += invalidNotesClass;
-                                }
-                                invalidFileSizeClass = "";
-                                invalidfilezSizeSpanClass = "";
-                                validFileSize = true;
-
-                        }
-
-                        // Add block to list
-                        fileList.appendChild(fileBlock);
-
-                        // Add event listener for delete
-                        fileBlock.querySelector(".file-delete").addEventListener("click", (e) => deleteFileBlock(e, fileBlock, dt, fieluploadField));
-
-                        // Add file to DataTransfer object
-                        dt.items.add(file);
-                    }
-
-                    let totalSizeDiv = document.getElementById(fileuploadFieldID + "-total");
-
-                    // compare allowed total filesize and file sizes of all selected files
-                    if (allowedTotalFileSize !== 0 && totalFileSize > allowedTotalFileSize) {
-                        notesAllowedTotalFileSizeElement.className += invalidTotalFileSizeNotesClass;
-
-                        if (totalSizeDiv) {
-                            totalSizeDiv.className += invalidTotalFileSizeNotesClass;
-                        }
-                        8
+                            if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
+                                notesAllowedFileSizeElement.className += invalidNotesClass;
+                            }
+                            invalidFileSizeClass = "";
+                            invalidfilezSizeSpanClass = "";
+                            validFileSize = true;
 
                     }
 
-                    fileuploadFields[i].dataset.filesize = String(totalFileSize);
+                    // Add block to list
+                    fileList.appendChild(fileBlock);
+
+                    // Add event listener for delete
+                    fileBlock.querySelector(".file-delete").addEventListener("click", (e) => deleteFileBlock(e, fileBlock, dt, fieluploadField));
+
+                    // Add file to DataTransfer object
+                    dt.items.add(file);
+                }
+
+                let totalSizeDiv = document.getElementById(fileuploadFieldID + "-total");
+
+                // compare allowed total filesize and file sizes of all selected files
+                if (allowedTotalFileSize !== 0 && totalFileSize > allowedTotalFileSize) {
+                    notesAllowedTotalFileSizeElement.className += invalidTotalFileSizeNotesClass;
 
                     if (totalSizeDiv) {
-                        totalSizeDiv.innerHTML = formatBytes(totalFileSize);
+                        totalSizeDiv.className += invalidTotalFileSizeNotesClass;
                     }
 
-                    // Update the file input with the new DataTransfer file list
-                    this.files = dt.files;
+                }
 
-                });
+                fileuploadFields[i].dataset.filesize = String(totalFileSize);
 
-            }
+                if (totalSizeDiv) {
+                    totalSizeDiv.innerHTML = formatBytes(totalFileSize);
+                }
+
+                // Update the file input with the new DataTransfer file list
+                this.files = dt.files;
+
+            });
+
         }
-
     }
+
+}
 
 // Function to delete a file block
-    function deleteFileBlock(e, fileBlock, dt, inputfield) {
+function deleteFileBlock(e, fileBlock, dt, inputfield) {
 
-        let totalFileSize = inputfield.dataset.filesize;
-        let name = fileBlock.querySelector(".file-name").textContent;
-        let notesAllowedFileSizeElement = document.getElementById(inputfield.id + "-allowedFileSize");
-        let notesAllowedTotalFileSizeElement = document.getElementById(inputfield.id + "-allowedTotalFileSize");
-        let totalSizeDiv = document.getElementById(inputfield.id + "-total");
-        let newTotalFileSize = 0;
+    let totalFileSize = inputfield.dataset.filesize;
+    let name = fileBlock.querySelector(".file-name").textContent;
+    let notesAllowedFileSizeElement = document.getElementById(inputfield.id + "-allowedFileSize");
+    let notesAllowedTotalFileSizeElement = document.getElementById(inputfield.id + "-allowedTotalFileSize");
+    let totalSizeDiv = document.getElementById(inputfield.id + "-total");
+    let newTotalFileSize = 0;
 
-        fileBlock.remove();
+    fileBlock.remove();
 
-        let fileSizes = [];
-        for (let i = 0; i < dt.items.length; i++) {
+    let fileSizes = [];
+    for (let i = 0; i < dt.items.length; i++) {
 
-            if (name === dt.items[i].getAsFile().name) {
-                let fileSizeRemoved = dt.items[i].getAsFile().size;
-                dt.items.remove(i);
-                newTotalFileSize = totalFileSize - fileSizeRemoved;
-                inputfield.dataset.filesize = String(newTotalFileSize);
-                if (totalSizeDiv) {
-                    totalSizeDiv.innerHTML = formatBytes(newTotalFileSize);
-                }
-                break;
-            } else {
-                fileSizes.push(dt.items[i].getAsFile().size);
-            }
-
-        }
-
-        // check if there is at least 1 file which is larger than allowed, otherwise remove the warning text class from the notes
-        if (fileSizes.every(value => {
-            return value <= inputfield.dataset.maxfilesize
-        })) {
+        if (name === dt.items[i].getAsFile().name) {
+            let fileSizeRemoved = dt.items[i].getAsFile().size;
+            dt.items.remove(i);
+            newTotalFileSize = totalFileSize - fileSizeRemoved;
+            inputfield.dataset.filesize = String(newTotalFileSize);
             if (totalSizeDiv) {
-                totalSizeDiv.removeAttribute("class");
+                totalSizeDiv.innerHTML = formatBytes(newTotalFileSize);
             }
-            if (notesAllowedFileSizeElement) {
-                notesAllowedFileSizeElement.removeAttribute("class");
-            }
+            break;
+        } else {
+            fileSizes.push(dt.items[i].getAsFile().size);
         }
 
-        // check if total files size is not larger than allowed
-        if (Number.isInteger(newTotalFileSize) && inputfield.dataset.maxtotalfilesize && newTotalFileSize <= inputfield.dataset.maxtotalfilesize) {
-            if (notesAllowedTotalFileSizeElement) {
-                notesAllowedTotalFileSizeElement.removeAttribute("class");
-            }
-        }
-
-        document.querySelector(".fileupload").files = dt.files;
     }
+
+    // check if there is at least 1 file which is larger than allowed, otherwise remove the warning text class from the notes
+    if (fileSizes.every(value => {
+        return value <= inputfield.dataset.maxfilesize
+    })) {
+        if (totalSizeDiv) {
+            totalSizeDiv.removeAttribute("class");
+        }
+        if (notesAllowedFileSizeElement) {
+            notesAllowedFileSizeElement.removeAttribute("class");
+        }
+    }
+
+    // check if total files size is not larger than allowed
+    if (Number.isInteger(newTotalFileSize) && inputfield.dataset.maxtotalfilesize && newTotalFileSize <= inputfield.dataset.maxtotalfilesize) {
+        if (notesAllowedTotalFileSizeElement) {
+            notesAllowedTotalFileSizeElement.removeAttribute("class");
+        }
+    }
+
+    document.querySelector(".fileupload").files = dt.files;
+}
+
+// check if DOM is loaded completely
+window.addEventListener("DOMContentLoaded", function () {
 
     submitCounter();
     ajaxSubmit();
@@ -287,7 +282,6 @@ Outputs a timer in seconds depending on values set in data attributes
 
 });
 
-
 function formatBytes(bytes, decimals = 2) {
 
     if (!+bytes) return "0 B";
@@ -298,7 +292,6 @@ function formatBytes(bytes, decimals = 2) {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
 }
-
 
 // Reload the captcha image
 function reloadCaptcha(id, event) {
@@ -355,7 +348,6 @@ function removeURLParameter(url, parameter) {
         return url;
     }
 }
-
 
 /**
  * Change HTML 5 validation attributes depending on values of another field
