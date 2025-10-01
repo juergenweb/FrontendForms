@@ -8,6 +8,7 @@ JavaScript counter in seconds
 Outputs a timer in seconds depending on values set in data attributes
 */
 function submitCounter() {
+    let timeAlert = document.getElementById("ff-time-alert");
     let el = document.getElementById("timecounter");
     if (el) {
         let timeleft = parseInt(document.getElementById("minTime").getAttribute("data-time"));
@@ -18,6 +19,18 @@ function submitCounter() {
             if (timeleft <= 0) {
                 clearInterval(downloadTimer);
                 el.remove();
+
+                let fadeEffect = setInterval(function () {
+                    if (!timeAlert.style.opacity) {
+                        timeAlert.style.opacity = 1;
+                    }
+                    if (timeAlert.style.opacity > 0) {
+                        timeAlert.style.opacity -= 0.1;
+                    } else {
+                        clearInterval(fadeEffect);
+                        timeAlert.remove();
+                    }
+                }, 200);
             }
             let text = timetext[0];
             if (timeleft <= 1) {
