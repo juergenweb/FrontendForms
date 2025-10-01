@@ -1771,6 +1771,11 @@ During the optimization of the frontendforms.js, some of the function have been 
 
 Now the have been positioned outside as before and everything should work as expected.
 
+## 2025-10-01
+
+**Fade out effect on time alert box added**
+
+If you have set a time limit for submitting a form and you will hit the submit button before this time limit, a alert box warns you that you have submitted the form to quickly. Then a counter will show you how long you have to wait. Now, after the counter has finished, the alert box will be faded out - this is I guess a better user experience.
 
 
 
