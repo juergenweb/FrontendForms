@@ -17,7 +17,6 @@ use DOMDocument;
 use DOMException;
 use Exception;
 use ProcessWire\Field as Field;
-use ProcessWire\FieldtypeFrontendComments;
 use ProcessWire\HookEvent;
 use ProcessWire\Language;
 use ProcessWire\Module;
@@ -28,12 +27,12 @@ use ProcessWire\WireArray;
 use ProcessWire\WireData;
 use ProcessWire\WireException;
 use ProcessWire\WireMail;
+use ProcessWire\WirePermissionException;
 use Valitron\Validator;
 
 use function ProcessWire\wire as wire;
 use function ProcessWire\wirePopulateStringTags;
 use function ProcessWire\_n;
-use function ProcessWire\wireClassNamespace;
 use function ProcessWire\wireMail;
 use function ProcessWire\wireClassName;
 
@@ -356,7 +355,7 @@ class Form extends CustomRules
     /**
      * Set a custom info message, that will be displayed during an AJAX call to inform the user
      * @param string $ajaxmsg
-     * @return $this
+     * @return void
      */
     public function setAjaxMessage(string $ajaxmsg): void
     {
@@ -570,11 +569,11 @@ class Form extends CustomRules
      * Otherwise a new WireMail object will be instantiated
      * This method is only for other modules based on FrontendForms
      * @param string|null $class
-     * @return \ProcessWire\WireMail|\FrontendForms\WireMailPostmark|\FrontendForms\WireMailPostmarkApp
-     * @throws \ProcessWire\WireException
+     * @return WireMail|WireMailPostmark|WireMailPostmarkApp
+     * @throws WireException
      */
     //protected function newMailInstance(string|null $class = null): WireMail|WireMailPostmark|WireMailPostmarkApp|WireMailSmtp|WireMailPHPMailer
-    protected function newMailInstance(string|null $class = null)
+    protected function newMailInstance(string|null $class = null): WireMailPostmarkApp|WireMail|WireMailPostmark
     {
 
         // if $class is null, set WireMail() object by default
@@ -733,7 +732,7 @@ class Form extends CustomRules
     /**
      * Method to disable some methods if form is used inside an iframe on a different domain (crossdomain)
      * @return void
-     * @throws \ProcessWire\WireException
+     * @throws WireException
      */
     public function useFormInCrossDomainIframe(): void
     {
@@ -986,11 +985,11 @@ class Form extends CustomRules
 
     /**
      * Render the mail template: replace placeholders and use HTML email template if set
-     * @param \ProcessWire\HookEvent $event
-     * @return \ProcessWire\Module|\ProcessWire\Wire|\ProcessWire\WireArray|\ProcessWire\WireData
-     * @throws \DOMException
-     * @throws \ProcessWire\WireException
-     * @throws \ProcessWire\WirePermissionException
+     * @param HookEvent $event
+     * @return Module|wire|WireArray|WireData
+     * @throws DOMException
+     * @throws WireException
+     * @throws WirePermissionException
      */
 
     public function renderTemplate(HookEvent $event): Module|Wire|WireArray|WireData
@@ -1064,7 +1063,7 @@ class Form extends CustomRules
     /**
      * This method prevents the multiple embedding of the email template if there are multiple forms on one page.
      * @return void
-     * @throws \ProcessWire\WireException
+     * @throws WireException
      */
     public function removeTemplateSession(): void
     {
@@ -1277,7 +1276,7 @@ class Form extends CustomRules
      */
     protected function getLangValueOfConfigField(
         string   $fieldName,
-        array    $modulConfig = null,
+        array|null    $modulConfig = null,
         int|null $lang_id = null
     ): string
     {
@@ -1445,7 +1444,7 @@ class Form extends CustomRules
      * @param string|null $textarea - the value of the textarea field
      * @return array
      */
-    protected function newLineToArray(string $textarea = null): array
+    protected function newLineToArray(string|null $textarea = null): array
     {
         $final_array = [];
         if (!is_null($textarea)) {
@@ -1473,6 +1472,7 @@ class Form extends CustomRules
      * Convert post-values to a string
      * @param bool $showButtonValues
      * @return string
+     * @throws WireException
      */
     public function getValuesAsString(bool $showButtonValues = false): string
     {
@@ -1675,7 +1675,7 @@ class Form extends CustomRules
      * Take a random question for the CAPTCHA out of an array of several questions
      * @param array $questions
      * @return void
-     * @throws \ProcessWire\WireException
+     * @throws WireException
      */
     protected function getRandomQuestion(array $questions): void
     {
@@ -1760,7 +1760,7 @@ class Form extends CustomRules
      * You can enter pure name or name attribute including form prefix
      * @param string $name - the name attribute of the input field
      * @return string|array|null
-     * @throws \ProcessWire\WireException
+     * @throws WireException
      */
     public function getValue(string $name): string|array|null
     {
@@ -1801,7 +1801,7 @@ class Form extends CustomRules
      * If there are sanitizers set for the form values, they will be applied
      * @param bool $buttonValue : If there are buttons set the value of the buttons will be applied too
      * @return array|null
-     * @throws \ProcessWire\WireException
+     * @throws WireException
      */
     public function getValues(bool $buttonValue = false): array|null
     {
@@ -1830,7 +1830,7 @@ class Form extends CustomRules
 
             // check if inputfield is a file upload field
             $formElement = $this->getFormelementByName($key);
-            if ($formElement && $formElement instanceof InputFile) {
+            if ($formElement instanceof InputFile) {
 
                 $multiplefiles = [];
                 if ($this->storedFiles) {
@@ -2532,7 +2532,7 @@ class Form extends CustomRules
      * Internal method to add all form values to the values' array
      * All sanitizers applied to an input element will be used before they will be added to the array
      * @return void
-     * @throws \ProcessWire\WireException
+     * @throws WireException
      */
     private function setValues(): void
     {
@@ -2738,7 +2738,7 @@ class Form extends CustomRules
      * @param $key
      * @param int $order
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     protected function repositionArrayElement(array &$array, $key, int $order): void
     {
@@ -2765,7 +2765,7 @@ class Form extends CustomRules
      * Render the form markup (including alerts if present) on the frontend
      * @return string
      * @throws WireException
-     * @throws \Exception
+     * @throws Exception
      */
     public function render(): string
     {
@@ -3270,14 +3270,14 @@ class Form extends CustomRules
      * The 2 optional parameters are only for the creation of 2 new methods: addBefore() and addAfter()
      * These 2 methods can be used to add new form elements (inputs, text elements, fieldsets,…) to a formElements
      * array at a certain position These 2 methods are especially designed for the future usage in module dev - no
-     * need to use it if you are creting the form by your own
-     * @param \FrontendForms\Inputfields|\FrontendForms\Textelements|\FrontendForms\Button|\FrontendForms\FieldsetOpen|\FrontendForms\FieldsetClose $field -
+     * need to use it if you are creating the form by your own
+     * @param Markup|Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field -
      *     the current form field which should be appended to the form
-     * @param \FrontendForms\Inputfields|\FrontendForms\Textelements|\FrontendForms\Button|\FrontendForms\FieldsetOpen|\FrontendForms\FieldsetClose|bool|null $otherfield -
+     * @param Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose|bool|null $otherfield -
      *     optional: another form field
      * @param bool $add_before - optional: current should be inserted before or after this (another) form field
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function add(
         Markup|Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose    $field,
@@ -3362,12 +3362,12 @@ class Form extends CustomRules
      * Insert a form field before another form field
      * Can be used if you have not created the form by your own, but you need to add a new field to a created
      * formElements array at a certain position
-     * @param \FrontendForms\Inputfields|\FrontendForms\Textelements|\FrontendForms\Button|\FrontendForms\FieldsetOpen|\FrontendForms\FieldsetClose $field -
+     * @param Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field -
      *     the current form field
-     * @param \FrontendForms\Inputfields|\FrontendForms\Textelements|\FrontendForms\FieldsetOpen|\FrontendForms\FieldsetClose|\FrontendForms\Button|bool $before_field -
+     * @param Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $before_field -
      *     the form field object before which the current form field object should be inserted
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public
     function addBefore(
@@ -3387,12 +3387,12 @@ class Form extends CustomRules
      * Can be used if you have not created the form by your own, but you need to add a new field to a created
      * formElements array at a certain position
      *                    *
-     * @param \FrontendForms\Inputfields|\FrontendForms\Textelements|\FrontendForms\Button|\FrontendForms\FieldsetOpen|\FrontendForms\FieldsetClose $field -
+     * @param Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field -
      *     the current form field
-     * @param \FrontendForms\Inputfields|\FrontendForms\Textelements|\FrontendForms\FieldsetOpen|\FrontendForms\FieldsetClose|\FrontendForms\Button|bool $after_field -
+     * @param Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $after_field -
      *     the form field object after which the current form field object should be inserted
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public
     function addAfter(
@@ -3630,7 +3630,7 @@ class Form extends CustomRules
 
     /**
      * Generate an invisible pre-header text after the subject for an email
-     * @param \ProcessWire\WireMail $mail
+     * @param WireMail $mail
      * @return string
      */
     protected
@@ -3645,8 +3645,8 @@ class Form extends CustomRules
 
     /**
      * Get all Captcha questions as a PageArray
-     * @return \ProcessWire\PageArray|null
-     * @throws \ProcessWire\WireException
+     * @return array
+     * @throws WireException
      */
     protected function getCaptchaQuestions(): array
     {
