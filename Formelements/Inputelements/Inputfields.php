@@ -76,7 +76,7 @@
          * Create a custom wrapper as the most outer container of a form field
          * This wrapper can be added on per input field base and can be used fe for JavaScript manipulations
          * @param bool $use
-         * @return \FrontendForms\Wrapper
+         * @return Wrapper
          */
         public function useCustomWrapper(bool $use = true): Wrapper
         {
@@ -86,7 +86,7 @@
 
         /**
          * Get the custom wrapper object for further manipulations if needed
-         * @return \FrontendForms\Wrapper
+         * @return Wrapper
          */
         public function getCustomWrapper(): Wrapper
         {
@@ -180,7 +180,7 @@
          * array: $sanitizers - fe ['text', 'number'] - can be one or multiple sanitizers
          * @return void
          */
-        public function removeSanitizers(array|string $sanitizer = null): void
+        public function removeSanitizers(array|string|null $sanitizer = null): void
         {
             $sanitizers = $this->sanitizer;
             switch ($sanitizer) {
@@ -487,8 +487,6 @@
          *  message
          * @param string $className
          * @param $input
-         * @param string $errormsg
-         * @param string $successmsg
          * @return string
          */
         public function ___renderDefault(string $className, $input): string
@@ -606,11 +604,9 @@
          * Markup rendering for Bootstrap 5
          * @param string $className
          * @param $input
-         * @param string $errormsg
-         * @param string $successmsg
          * @return string
          */
-        public function ___renderBootstrap5(string $className, $input)
+        public function ___renderBootstrap5(string $className, $input): string
         {
 
             $out = $content = '';
@@ -712,11 +708,9 @@
          * Markup rendering for Pico 2
          * @param string $className
          * @param $input
-         * @param string $errormsg
-         * @param string $successmsg
          * @return string
          */
-        public function ___renderPico2(string $className, $input)
+        public function ___renderPico2(string $className, $input): string
         {
 
             $out = '';
