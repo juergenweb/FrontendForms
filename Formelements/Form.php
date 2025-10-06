@@ -184,7 +184,8 @@ class Form extends CustomRules
         $this->showForm = $this->allowFormViewByIP(); // show or hide the form depending on the IP ban
         $this->setAttribute('method', 'post'); // default is post
         // take care about url segments if enabled
-        $this->segments = ($this->wire('input')->urlSegmentStr()) ?? '';
+        $this->segments = ($this->wire('input')->urlSegmentStr(true)) ?? '';
+
         $this->setAttribute('action', $this->page->url . $this->segments); // stay on the same page - needs to run after the API is ready
         $this->setAttribute('id', $id); // set the id
         $this->setAttribute('name', $this->getID() . '-' . time());
