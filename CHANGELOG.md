@@ -1771,13 +1771,22 @@ During the optimization of the frontendforms.js, some of the function have been 
 
 Now the have been positioned outside as before and everything should work as expected.
 
-## 2025-10-01
+## [2.2.54] 2025-10-06
 
 **Fade out effect on time alert box added**
 
 If you have set a time limit for submitting a form and you will hit the submit button before this time limit, a alert box warns you that you have submitted the form to quickly. Then a counter will show you how long you have to wait. Now, after the counter has finished, the alert box will be faded out - this is I guess a better user experience.
 
+**Validation bug by using URL segments fixed**
 
+According to [this issue report](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/17/#findComment-250486), the problems by using URL segments should be fixed with this update.
+
+
+**Validation bug by using URL segments fixed**
+
+According to [this issue report](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/17/#findComment-250485), the selection of multiple files on a single upload field should be fixed.
+
+BTW: It was not possible to upload multiple files in a single upload field, but there was an incorrect message next to the upload button indicating that more than one file had been selected, but that was just a wrong display
 
 
 
