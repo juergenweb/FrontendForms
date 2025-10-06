@@ -122,7 +122,8 @@ class InputFile extends Input
      */
     public function ___renderInputFile(): string
     {
-
+        // add additional suffix to ID attribute to display always the current file name next to the upload button on single upload fields
+        $this->setAttribute('id', $this->getAttribute('id').'-fileupload');
         // add brackets to name attribute if multiple attribute is present
         if ($this->getMultiple())
             $this->setAttribute('name', $this->getAttribute('name') . '[]');
