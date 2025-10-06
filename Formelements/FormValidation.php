@@ -242,7 +242,8 @@
                     return true;
                 }
                 // redirect to the same page
-                $this->wire('session')->redirect($this->wire('page')->url);
+                $segments = ($this->wire('input')->urlSegmentStr(true)) ?? '';
+                $this->wire('session')->redirect($this->wire('page')->url.$segments);
                 return false;
             } else {
                 throw new Exception("Token value to prevent double form submission is missing", 1);
