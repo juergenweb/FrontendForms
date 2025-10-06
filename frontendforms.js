@@ -48,6 +48,7 @@ function handleFileUploads() {
     const dt = new DataTransfer();
 
     let fileuploadFields = document.querySelectorAll(".fileupload");
+
     if (fileuploadFields.length > 0) {
 
         for (let i = 0; i < fileuploadFields.length; i++) {
@@ -83,6 +84,7 @@ function handleFileUploads() {
                 // Loop through selected files and handle each one
                 for (let i = 0; i < this.files.length; i++) {
                     let file = this.files[i];
+
                     let fileSize = formatBytes(file.size, 2);
 
                     totalFileSize += file.size;
@@ -100,6 +102,7 @@ function handleFileUploads() {
                     // compare allowed filesize and current file size
                     if (allowedFileSize !== 0 && file.size > allowedFileSize) {
                         validFileSize = false;
+
                     }
 
                     switch (framework) {
@@ -120,6 +123,10 @@ function handleFileUploads() {
 
                             if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
                                 notesAllowedFileSizeElement.className += invalidNotesClass;
+                            } else {
+                                if(!multiple) {
+                                    notesAllowedFileSizeElement.removeAttribute("class");
+                                }
                             }
 
                             validFileSize = true;
@@ -148,6 +155,10 @@ function handleFileUploads() {
 
                             if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
                                 notesAllowedFileSizeElement.className += invalidNotesClass;
+                            } else {
+                                if(!multiple) {
+                                    notesAllowedFileSizeElement.removeAttribute("class");
+                                }
                             }
                             validFileSize = true;
                             invalidFileSizeClass = "";
@@ -172,6 +183,10 @@ function handleFileUploads() {
 
                             if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
                                 notesAllowedFileSizeElement.className += invalidNotesClass;
+                            } else {
+                                if(!multiple) {
+                                    notesAllowedFileSizeElement.removeAttribute("class");
+                                }
                             }
                             invalidFileSizeClass = "";
                             invalidfilezSizeSpanClass = "";
@@ -190,7 +205,7 @@ function handleFileUploads() {
                 }
 
                 let totalSizeDiv = document.getElementById(fileuploadFieldID + "-total");
-
+          
                 // compare allowed total filesize and file sizes of all selected files
                 if (allowedTotalFileSize !== 0 && totalFileSize > allowedTotalFileSize) {
                     notesAllowedTotalFileSizeElement.className += invalidTotalFileSizeNotesClass;
@@ -277,6 +292,7 @@ window.addEventListener("DOMContentLoaded", function () {
     jumpToAnchor();
     maxCharsCounterReverse();
     handleFileUploads();
+
 
     // initialize all forms for the conditional form dependencies
     let frontendforms = document.getElementsByTagName("form");
