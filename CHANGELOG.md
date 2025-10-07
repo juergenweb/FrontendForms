@@ -1788,5 +1788,10 @@ According to [this issue report](https://processwire.com/talk/topic/26015-fronte
 
 BTW: It was not possible to upload multiple files in a single upload field, but there was an incorrect message next to the upload button indicating that more than one file had been selected, but that was just a wrong display
 
+## [2.2.55] 2025-10-07
+
+**Code optimizations for PHP 8.4**
+
+According to [this issue report](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/17/#findComment-250530), PHP 8.4. is more strictly and complains about some deprecated code parts. So I have adapted the code to work with PHP 8.4.
 
 
