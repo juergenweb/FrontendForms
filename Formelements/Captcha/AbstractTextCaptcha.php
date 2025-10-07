@@ -52,7 +52,7 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
             return $this->frontendforms['input_bgcolorchooser'];
         } else {
             // return default value from module configuration instead
-            return $this->wire('modules')->getModuleConfigData('FrontendForms')['input_bgcolorchooser'];
+            return $this->wire('modules')->getConfig('FrontendForms')['input_bgcolorchooser'];
         }
     }
 
