@@ -43,6 +43,7 @@
             // instantiate link an image object
             $this->reloadLink = new Link(); // instantiate reload link object
             $this->captchaImageTag = new Image(); // instantiate the image tag object
+            
         }
 
         /**
@@ -117,7 +118,7 @@
                 return $this->frontendforms['input_colorchooser'];
             } else {
                 // return default value from module configuration instead
-                return $this->wire('modules')->getModuleConfigData('FrontendForms')['input_colorchooser'];
+                return $this->wire('modules')->getConfig('FrontendForms')['input_colorchooser'];
             }
         }
 
