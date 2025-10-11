@@ -519,7 +519,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setMinTime(), setMaxTime()](#setmintime-setmaxtime---change-minmax-time-for-submitting-a-form)  | change min/max time for submitting a form  |
 | [setMaxAttempts()](#setmaxattempts---change-max-number-of-invalid-submission-attempts)  | change max number of invalid submission attempts  |
 | [getValues()](#getvalues---get-all-_post-values-after-successfull-form-submission-as-array)  | get all $_POST values after successfull form submission as array  |
-| [getValuesWithLabels()](#getvalues---get-all-_post-values-after-successfull-form-submission-as-array-including-the-label)  | get all $_POST values after successfull form submission as array including the labels too  |
+| [getValuesWithLabels()](#getvalueswithlabels---get-all-_post-values-after-successfull-form-submission-as-array-including-the-label)  | get all $_POST values after successfull form submission as array including the labels too  |
 | [getValuesAsString()](#getvaluesasstring---get-all-_post-values-after-successfull-form-submission-as-a-string)  | get all $_POST values after successfull form submission as a string  |
 | [getValue()](#getvalue---get-a-single-_post-value-by-its-name)  | get a single $_POST value by its name  |
 | [add()](#add---add-a-field-to-the-form-object)  | add a field to the form object  |
