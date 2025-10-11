@@ -1875,6 +1875,24 @@ class Form extends CustomRules
     }
 
     /**
+     * Same as getValues() but outputs the labels too
+     * @param bool $buttonValue
+     * @return array
+     * @throws WireException
+     */
+    public function getValuesWithLabels(bool $buttonValue = false): array
+    {
+        $values = [];
+        $elements = $this->getValues($buttonValue);
+        foreach ($elements as $name => $value) {
+            $formElement = $this->getFormelementByName($name);
+            $label = $formElement->getLabel()->getContent();
+            $values[$name] = ['label' => $label, 'value' => $value];
+        }
+        return $values;
+    }
+
+    /**
      * Get all Elements (inputs, buttons, ...) that are added to the form object
      * @return array - returns an array of all form element objects
      */
