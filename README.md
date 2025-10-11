@@ -517,8 +517,8 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setRequiredTextPosition()](#setrequiredtextposition---change-required-text-position)  | change required text position  |
 | [setMethod()](#setmethod---change-the-form-sending-method)  | change the form sending method (GET or POST)  |
 | [setMinTime(), setMaxTime()](#setmintime-setmaxtime---change-minmax-time-for-submitting-a-form)  | change min/max time for submitting a form  |
-| [setMaxAttempts(), setMaxTime()](#setmaxattempts---change-max-number-of-invalid-submission-attempts)  | change max number of invalid submission attempts  |
-| [getValues(), setMaxTime()](#getvalues---get-all-_post-values-after-successfull-form-submission-as-array)  | get all $_POST values after successfull form submission as array  |
+| [setMaxAttempts()](#setmaxattempts---change-max-number-of-invalid-submission-attempts)  | change max number of invalid submission attempts  |
+| [getValues()](#getvalues---get-all-_post-values-after-successfull-form-submission-as-array)  | get all $_POST values after successfull form submission as array  |
 | [getValuesAsString()](#getvaluesasstring---get-all-_post-values-after-successfull-form-submission-as-a-string)  | get all $_POST values after successfull form submission as a string  |
 | [getValue()](#getvalue---get-a-single-_post-value-by-its-name)  | get a single $_POST value by its name  |
 | [add()](#add---add-a-field-to-the-form-object)  | add a field to the form object  |
