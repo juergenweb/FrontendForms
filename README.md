@@ -519,6 +519,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setMinTime(), setMaxTime()](#setmintime-setmaxtime---change-minmax-time-for-submitting-a-form)  | change min/max time for submitting a form  |
 | [setMaxAttempts()](#setmaxattempts---change-max-number-of-invalid-submission-attempts)  | change max number of invalid submission attempts  |
 | [getValues()](#getvalues---get-all-_post-values-after-successfull-form-submission-as-array)  | get all $_POST values after successfull form submission as array  |
+| [getValuesWithLabels()](#getvalues---get-all-_post-values-after-successfull-form-submission-as-array-including-the-label)  | get all $_POST values after successfull form submission as array including the labels too  |
 | [getValuesAsString()](#getvaluesasstring---get-all-_post-values-after-successfull-form-submission-as-a-string)  | get all $_POST values after successfull form submission as a string  |
 | [getValue()](#getvalue---get-a-single-_post-value-by-its-name)  | get a single $_POST value by its name  |
 | [add()](#add---add-a-field-to-the-form-object)  | add a field to the form object  |
@@ -661,8 +662,15 @@ By default, this method only returns values from inputfields. If you need values
   $form->getValues();
 ```
 
+### getValuesWithLabels() - get all $_POST values after successfull form submission as array including the label
+This is the same method as the previous getValues() method, but in addition it contains the label value of each form field too.
+
 ```php
-  $form->getValues(true); // this also outputs the value of a button (fe send) if needed
+  $form->getValuesWithLabels();
+```
+
+```php
+  $form->getValuesWithLabels(true); // this also outputs the value of a button (fe send) if needed
 ```
 ### getValuesAsString() - get all $_POST values after successfull form submission as a string
 This method is the same as the getValues() method, but it returns all post values as a string instead of an array.
