@@ -53,8 +53,6 @@ class Datalist extends InputText
     public function ___renderDatalist(): string
     {
         $out = '';
-        //set post value as value if present
-        $this->setAttribute('value', $this->getPostValue());
 
         if ($this->options) {
             $options = '';
@@ -76,3 +74,4 @@ class Datalist extends InputText
     }
 
 }
+
