@@ -45,6 +45,15 @@ class Select extends Inputfields
     }
 
     /**
+     * Returns an array of all option objects
+     * @return array
+     */
+    protected function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    /**
      * Render the select input
      * @return string
      */
