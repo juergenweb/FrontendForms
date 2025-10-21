@@ -39,5 +39,7 @@
 	"captchaClass": "captcha",
 	"verticalWrapperClass": "vertical-align-wrapper",
 	"horizontalWrapperClass": "horizontal-align-wrapper",
-    "progressbarClass": "uk-progress"
+    "progressbarClass": "uk-progress",
+    "responsiveTableClass": "uk-overflow-auto",
+    "tableClass": "uk-table"
 }
