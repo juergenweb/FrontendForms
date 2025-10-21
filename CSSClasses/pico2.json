@@ -39,5 +39,7 @@
   "captchaClass": "captcha",
   "verticalWrapperClass": "vertical-align-wrapper",
   "horizontalWrapperClass": "horizontal-align-wrapper",
-  "progressbarClass": "pico-progress-bar"
+  "progressbarClass": "pico-progress-bar",
+  "responsiveTableClass": "table-resp",
+  "tableClass": "ff-table"
 }
