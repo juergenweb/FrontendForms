@@ -91,7 +91,9 @@ function handleFileUploads() {
 
                     //remove previous file block if file upload does not allow multiple files
                     if (!multiple) {
-                        fileList.innerHTML = "";
+                        if(fileList){
+                            fileList.innerHTML = "";
+                        }
                         totalFileSize = file.size;
                     }
 
@@ -125,7 +127,9 @@ function handleFileUploads() {
                                 notesAllowedFileSizeElement.className += invalidNotesClass;
                             } else {
                                 if(!multiple) {
-                                    notesAllowedFileSizeElement.removeAttribute("class");
+                                    if(notesAllowedFileSizeElement){
+                                        notesAllowedFileSizeElement.removeAttribute("class");
+                                    }
                                 }
                             }
 
@@ -195,7 +199,9 @@ function handleFileUploads() {
                     }
 
                     // Add block to list
-                    fileList.appendChild(fileBlock);
+                    if(fileList){
+                        fileList.appendChild(fileBlock);
+                    }
 
                     // Add event listener for delete
                     fileBlock.querySelector(".file-delete").addEventListener("click", (e) => deleteFileBlock(e, fileBlock, dt, fieluploadField));
@@ -740,5 +746,6 @@ function maxCharsCounterReverse() {
         }
     });
 }
+
 
 
