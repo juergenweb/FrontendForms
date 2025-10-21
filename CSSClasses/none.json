@@ -38,5 +38,6 @@
 	"reloadLinkClass": "reload",
 	"captchaClass": "captcha",
 	"verticalWrapperClass": "vertical-align-wrapper",
-	"horizontalWrapperClass": "horizontal-align-wrapper"
+	"horizontalWrapperClass": "horizontal-align-wrapper",
+    "progressbarClass": "progressbar"
 }
