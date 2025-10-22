@@ -23,7 +23,6 @@ class FieldsetOpen extends Element
             $this->useID = true;
        }
         parent::__construct($id);
-       $this->removeAttribute('id');
         $this->legend = new Legend(); // instantiate legend object
         $this->setTag('fieldset');
         $this->setCSSClass('fieldsetClass');
