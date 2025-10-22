@@ -15,10 +15,15 @@ namespace FrontendForms;
 class FieldsetOpen extends Element
 {
     protected Legend $legend;
+    protected bool $useID = false;
 
     public function __construct(?string $id = null)
     {
+       if(!is_null($id)){
+            $this->useID = true;
+       }
         parent::__construct($id);
+       $this->removeAttribute('id');
         $this->legend = new Legend(); // instantiate legend object
         $this->setTag('fieldset');
         $this->setCSSClass('fieldsetClass');
@@ -47,6 +52,10 @@ class FieldsetOpen extends Element
     public function ___render(): string
     {
         $this->append($this->legend->render());
+        $this->removeAttribute('name');
+        if(!$this->useID){
+            $this->removeAttribute('id');
+        }
         return $this->renderSelfclosingTag($this->getTag());
     }
 }
