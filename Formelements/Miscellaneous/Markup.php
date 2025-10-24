@@ -14,7 +14,9 @@
      * Created: 29.06.2024
      */
 
-    class Markup
+    use ProcessWire\Wire;
+
+    class Markup extends Wire
     {
 
         protected string $markup = '';
