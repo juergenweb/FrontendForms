@@ -1794,4 +1794,9 @@ BTW: It was not possible to upload multiple files in a single upload field, but 
 
 According to [this issue report](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/17/#findComment-250530), PHP 8.4. is more strictly and complains about some deprecated code parts. So I have adapted the code to work with PHP 8.4.
 
+## 2025-10-25
+
+**Jump directly to the alert box if form is not valid**
+
+If the form contains errors, then a JS redirect will be forced to jump to directly to the alert box of the form. So this is more user friendly.
 
