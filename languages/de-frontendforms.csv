@@ -157,7 +157,7 @@ attempt,Versuch,,site/modules/FrontendForms/Formelements/Form.php,1db222fece0e74
 "Step %s of %s","Schritt %s von %s",,site/modules/FrontendForms/Formelements/Form.php,cc8c4c54107b291b093ffed9bf40f2f5
 "Please check your inputs once more before you submit the form.","Bitte überprüfen Sie Ihre Eingaben noch einmal, bevor Sie das Formular absenden.",,site/modules/FrontendForms/Formelements/Form.php,7d8e3a14e47bc00d8c518da497df3941
 close,schließen,,site/modules/FrontendForms/Formelements/Form.php,716f6b30598ba30945d84485e61c1027
-edit,Edit,,site/modules/FrontendForms/Formelements/Form.php,de95b43bceeb4b998aed4aed5cef1ae7
+edit,bearbeiten,,site/modules/FrontendForms/Formelements/Form.php,de95b43bceeb4b998aed4aed5cef1ae7
 year,Jahr,,site/modules/FrontendForms/Formelements/Form.php,84cdc76cabf41bd7c961f6ab12f117d8
 years,Jahre,,site/modules/FrontendForms/Formelements/Form.php,75aeb98e5241592ad6a6c2c4c78a16ef
 month,Monat,,site/modules/FrontendForms/Formelements/Form.php,7436f942d5ea836cb84f1bb2527d8286
