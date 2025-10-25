@@ -135,4 +135,5 @@ if ($form->isValid()) {
 
 
 $content .= $form->render();
-echo $Content;
+echo $content;
+
