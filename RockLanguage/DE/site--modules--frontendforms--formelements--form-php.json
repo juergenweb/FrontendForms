@@ -139,6 +139,24 @@
         },
         "a359e357b438643f4ecddfa685e3ab68": {
             "text": "Das Hochladen von Dateien per GET-Anfrage ist nicht m\u00f6glich. Bitte verwenden Sie stattdessen POST."
+        },
+        "de95b43bceeb4b998aed4aed5cef1ae7": {
+            "text": "bearbeiten"
+        },
+        "dd1f775e443ff3b9a89270713580a51b": {
+            "text": "zur\u00fcck"
+        },
+        "10ac3d04253ef7e1ddc73e6091c0cd55": {
+            "text": "weiter"
+        },
+        "cc8c4c54107b291b093ffed9bf40f2f5": {
+            "text": "Schritt %s von %s"
+        },
+        "7d8e3a14e47bc00d8c518da497df3941": {
+            "text": "Bitte \u00fcberpr\u00fcfen Sie Ihre Eingaben noch einmal, bevor Sie das Formular absenden."
+        },
+        "716f6b30598ba30945d84485e61c1027": {
+            "text": "schlie\u00dfen"
         }
     }
 }
