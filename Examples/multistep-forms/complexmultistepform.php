@@ -110,6 +110,7 @@ $uploadheadline = new \FrontendForms\Markup();
 $uploadheadline->setMarkup('<h3>Upload some files if you want</h3>');
 $form->add($uploadheadline);
 
+// IMPORTANT!! File upload fields must always be after the last step!!! Otherwise they wont work
 $file1 = new \FrontendForms\InputFile('fileupload1');
 $file1->setLabel('Add some files');
 $file1->setMultiple(true);
@@ -124,6 +125,7 @@ $privacy->setLabel("I accept the privacy policy");
 //$privacy->setRule("required")->setCustomMessage("You have to accept our privacy policy");
 $form->add($privacy);
 
+// IMPORTANT!! Submit button must always be the last element in the form
 $button = new \FrontendForms\Button('submit');
 $button->setAttribute('value', 'Save');
 $form->add($button);
@@ -136,4 +138,5 @@ if ($form->isValid()) {
 
 $content .= $form->render();
 echo $content;
+
 
