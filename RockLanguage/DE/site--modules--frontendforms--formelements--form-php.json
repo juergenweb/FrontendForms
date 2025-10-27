@@ -143,9 +143,6 @@
         "de95b43bceeb4b998aed4aed5cef1ae7": {
             "text": "bearbeiten"
         },
-        "dd1f775e443ff3b9a89270713580a51b": {
-            "text": "zur\u00fcck"
-        },
         "10ac3d04253ef7e1ddc73e6091c0cd55": {
             "text": "weiter"
         },
@@ -157,6 +154,9 @@
         },
         "716f6b30598ba30945d84485e61c1027": {
             "text": "schlie\u00dfen"
+        },
+        "0557fa923dcee4d0f86b1409f5c2167f": {
+            "text": "zur\u00fcck"
         }
     }
 }
