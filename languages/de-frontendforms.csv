@@ -135,7 +135,7 @@ Browser,=,,site/modules/FrontendForms/Formelements/Form.php,ef15fd2f45e6bb5ce575
 "All fields marked with (*) are mandatory and must be completed.","Alle Felder, welche mit (*) markiert sind, stellen Pflichtfelder dar und müssen in jeden Fall ausgefüllt werden.",,site/modules/FrontendForms/Formelements/Form.php,feaed8b52507d421a9953e0a9ec9a687
 "Thank you for your message.","Vielen Dank für Ihre Nachricht.",,site/modules/FrontendForms/Formelements/Form.php,a0e0f33630289d49200c61cac7900200
 "Sorry, some errors occur. Please check your inputs once more.","Es sind leider Fehler aufgetreten. Bitte überprüfen Sie Ihre Eingaben noch einmal.",,site/modules/FrontendForms/Formelements/Form.php,552663e8ba6eb0a7c5c16727f8d19bcc
-Back,zurück,,site/modules/FrontendForms/Formelements/Form.php,0557fa923dcee4d0f86b1409f5c2167f
+Previous,zurück,,site/modules/FrontendForms/Formelements/Form.php,dd1f775e443ff3b9a89270713580a51b
 Next,weiter,,site/modules/FrontendForms/Formelements/Form.php,10ac3d04253ef7e1ddc73e6091c0cd55
 "Please verify that you are a human and not a bot.","Bitte bestätigen Sie, dass Sie eine Mensch und keine Roboter sind.",,site/modules/FrontendForms/Formelements/Form.php,4242b7d19729028c08f56fae785702c7
 "Please fill out the security question.","Bitte füllen Sie die Sicherheitsabfrage aus.",,site/modules/FrontendForms/Formelements/Form.php,d0c2b717657a0924062bd7c85fb01bea
