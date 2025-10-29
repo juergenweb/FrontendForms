@@ -3136,11 +3136,11 @@ There are some other methods beside the addStep() method which can be used in co
 
 | Method name  | Use case | 
 | ------------- | ------------- |
-| [showStepOf()](#setattribute---add-a-single-attribute-to-a-tag)  | show or hide the "Step x of y" text  |
-| [showStepsProgressbar()](#setattributes---add-multiple-attributes-to-a-tag)  | show or hide the progress bar at the top  |
-| [setCustomProgressbar()()](#removeattribute---remove-a-single-attribute)  | add the markup for a custom progress bar if you are not satisfied with the default one  |
-| [getCurrentStepNumber()](#removeattributevalue---remove-specific-value-of-an-attribute)  | outputs the number of the current step  |
-| [getTotalSteps()](#prepend-append---prepend-or-append-a-string-to-an-object-field-form-button)  | outputs the total amount of steps  |
+| [showStepOf()](#showstepof)  | show or hide the "Step x of y" text  |
+| [showStepsProgressbar()](#showstepsprogressbar)  | show or hide the progress bar at the top  |
+| [setCustomProgressbar()()](#setcustomprogressbar)  | add the markup for a custom progress bar if you are not satisfied with the default one  |
+| [getCurrentStepNumber()](#getcurrentstepnumber)  | outputs the number of the current step  |
+| [getTotalSteps()](#gettotalsteps)  | outputs the total amount of steps  |
 | [getStepsProgressbar()](#prepend-append---prepend-or-append-a-string-to-an-object-field-form-button)  | get the progress bar object for further manipulations  |
 
 ### showStepOf()
