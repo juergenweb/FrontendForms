@@ -19,6 +19,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 11. Support for inputfield dependencies (show/hide fields depending on values of other fields)
 12. Support for using forms inside CKEditor fields via placeholders
 13. Support for [RockLanguage](https://processwire.com/modules/rock-language/)
+14. Support for [multi-step forms](#multi-step-forms)
 
 ## Requirements
 * PHP>=8.0.0
