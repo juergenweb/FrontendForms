@@ -3106,3 +3106,79 @@ to view this form on another page with another template (e.g. About us page usin
 displayed on the contact page in this case.
 
 Placeholders can only be used in CKEditor fields, not in other fields like Textarea.
+
+## Multi-step forms
+
+Multi-step forms are forms that are divided into different steps. This is useful if you're using a very large form or want to create a survey with a lot of questions.
+
+FrontendForms supports this feature with ease because you can turn any form into a multi-step form using just one method called addStep(). This method can be compared to the line break in paragraphs. You can add this method at any position within the form where you want to add a break. Any form field after this break will appear in the next step.
+
+The method must be added to the form object in the position where you want to move to the next step.
+
+```php
+$form->addStep();
+``` 
+You will find examples of creating a multi-step form [here](https://github.com/juergenweb/FrontendForms/tree/main/Examples/multistep-forms). Take them as a starting point to create your own multi-step forms.
+
+Multi-step forms include a "Previous" button and a "Next" button where you can go back and forth between the different steps, but you must fill out a form correctly before you can move on to the next step. 
+
+At the end (in the last step) you will be shown a summary of your entered data and you have the option to change certain values again if necessary before you finally submit the form.
+
+There are 2 things you have to keep in mind:
+
+* File upload fields must only be positioned in the last step (otherwise they will not work)
+* The "Submit" button must also be in the last step
+
+These are the only restrictions you need to follow, everything else is like in normal forms.
+
+
+There are some other methods beside the addStep() method which can be used in combination with multi-step forms:
+
+| Method name  | Use case | 
+| ------------- | ------------- |
+| [showStepOf()](#setattribute---add-a-single-attribute-to-a-tag)  | show or hide the "Step x of y" text  |
+| [showStepsProgressbar()](#setattributes---add-multiple-attributes-to-a-tag)  | show or hide the progress bar at the top  |
+| [setCustomProgressbar()()](#removeattribute---remove-a-single-attribute)  | add the markup for a custom progress bar if you are not satisfied with the default one  |
+| [getCurrentStepNumber()](#removeattributevalue---remove-specific-value-of-an-attribute)  | outputs the number of the current step  |
+| [getTotalSteps()](#prepend-append---prepend-or-append-a-string-to-an-object-field-form-button)  | outputs the total amount of steps  |
+| [getStepsProgressbar()](#prepend-append---prepend-or-append-a-string-to-an-object-field-form-button)  | get the progress bar object for further manipulations  |
+
+### showStepOf()
+
+By default, a "Step x of y" text will be displayed on each step. You can enable/disable the displaying of this text by using this method.
+
+```php
+$form->showStepOf(false); // false or true
+```
+
+### showStepsProgressbar()
+
+By default, a progress bar, which displays the progress will be displayed. You can enable/disable the displaying of the bar by using this method.
+
+```php
+$form->showStepsProgressbar(false); // false or true
+```
+
+### setCustomProgressbar()
+
+If you are not satisfied with the markup of the progress bar and you want to display your own progressbar, you can enter the markup for your custom progressbar with this method. Enter only simple HTML as the parameter.
+
+```php
+$form->setCustomProgressbar('<div>Markup of my custom progress bar</div>'); 
+```
+
+### getCurrentStepNumber()
+
+This methods outputs the number of the current step as an integer, but keep in mind: This method must run after the isValid() method.
+
+```php
+$form->getCurrentStepNumber(); 
+```
+
+### getTotalSteps()
+
+This methods outputs the total number of all steps, but keep in mind: This method must run after the isValid() method.
+
+```php
+$form->getTotalSteps(); 
+```
