@@ -3182,3 +3182,11 @@ This methods outputs the total number of all steps, but keep in mind: This metho
 ```php
 $form->getTotalSteps(); 
 ```
+
+### getStepsProgressbar()
+
+This methods returns the progress bar object for further manipulations. You can add for example custom classes or change the tag.
+
+```php
+$form->getStepsProgressbar(); 
+```
