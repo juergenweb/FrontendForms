@@ -3127,7 +3127,7 @@ At the end (in the last step) you will be shown a summary of your entered data a
 
 There are 2 things you have to keep in mind:
 
-* File upload fields must only be positioned in the last step (otherwise they will not work)
+* File upload fields must only be positioned in the last step, which means after the last *addStep()* method (otherwise they will not work)
 * The "Submit" button must also be in the last step
 
 These are the only restrictions you need to follow, everything else is like in normal forms.
