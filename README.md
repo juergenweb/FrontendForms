@@ -3170,7 +3170,7 @@ $form->setCustomProgressbar('<div>Markup of my custom progress bar</div>');
 
 ### getCurrentStepNumber()
 
-This methods outputs the number of the current step as an integer, but keep in mind: This method must run after the isValid() method.
+This methods outputs the number of the current step as an integer, but keep in mind: This method must run after the isValid() method. This method can be used if you are creating your own custom progress bar.
 
 ```php
 $form->getCurrentStepNumber(); 
@@ -3178,7 +3178,7 @@ $form->getCurrentStepNumber();
 
 ### getTotalSteps()
 
-This methods outputs the total number of all steps, but keep in mind: This method must run after the isValid() method.
+This methods outputs the total number of all steps, but keep in mind: This method must run after the isValid() method. This method can be used if you are creating your own custom progress bar.
 
 ```php
 $form->getTotalSteps(); 
@@ -3186,7 +3186,7 @@ $form->getTotalSteps();
 
 ### getStepsProgressbar()
 
-This methods returns the progress bar object for further manipulations. You can add for example custom classes or change the tag.
+This methods returns the default progress bar object for further manipulations. You can add for example custom classes or change the tag. This method is there to offer you the possibility to make changes to the default progress bar if needed.
 
 ```php
 $form->getStepsProgressbar(); 
