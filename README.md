@@ -3113,6 +3113,8 @@ Placeholders can only be used in CKEditor fields, not in other fields like Texta
 
 Multi-step forms are forms that are divided into different steps. This is useful if you're using a very large form or want to create a survey with a lot of questions.
 
+![Template select](https://github.com/juergenweb/FrontendForms/blob/main/images/multi-step-form.png?raw=true)
+
 FrontendForms supports this feature with ease because you can turn any form into a multi-step form using just one method called addStep(). This method can be compared to the line break in paragraphs. You can add this method at any position within the form where you want to add a break. Any form field after this break will appear in the next step.
 
 ```php
