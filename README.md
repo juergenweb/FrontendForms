@@ -19,7 +19,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 11. Support for inputfield dependencies (show/hide fields depending on values of other fields)
 12. Support for using forms inside CKEditor fields via placeholders
 13. Support for [RockLanguage](https://processwire.com/modules/rock-language/)
-14. Support for [multi-step forms](#multi-step-forms)
+14. Support for multi-step forms
 
 ## Requirements
 * PHP>=8.0.0
@@ -60,6 +60,7 @@ You can see FrontendForms in action on the following sites:
 * [Extra module: FrontendForms Manager](#custom-module-frontendformsmanager)
 * [Inputfield dependencies](#inputfield-dependencies)
 * [Adding forms via placeholders to CKEditor fields](#adding-forms-via-placeholders-to-ckeditor-fields)
+* [Creating multi-step forms](#multi-step-forms)
 
 ## Installation and Quick-start guide
 The most simple way is to install it via the ProcessWire module manager in the administration area, but you can also install it manually following the steps afterwards:
