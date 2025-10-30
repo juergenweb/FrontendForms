@@ -3114,14 +3114,15 @@ Multi-step forms are forms that are divided into different steps. This is useful
 
 FrontendForms supports this feature with ease because you can turn any form into a multi-step form using just one method called addStep(). This method can be compared to the line break in paragraphs. You can add this method at any position within the form where you want to add a break. Any form field after this break will appear in the next step.
 
-The method must be added to the form object in the position where you want to move to the next step.
+The method to divide the form into several steps is called addStep() and must be added to the form object in the position where you want to move to the next step.
 
 ```php
 $form->addStep();
 ``` 
+
 You will find examples of creating a multi-step form [here](https://github.com/juergenweb/FrontendForms/tree/main/Examples/multistep-forms). Take them as a starting point to create your own multi-step forms.
 
-Multi-step forms include a "Previous" button and a "Next" button where you can go back and forth between the different steps, but you must fill out a form correctly before you can move on to the next step. 
+Multi-step forms include a "Previous" button and a "Next" button where you can go back and forth between the different steps, but you must fill out a form correctly before you can move on to the next step. So clicking on the "Next" button validates the form. If the form is valid, you will be redirected to the next step, if not you will get an error message.
 
 At the end (in the last step) you will be shown a summary of your entered data and you have the option to change certain values again if necessary before you finally submit the form.
 
