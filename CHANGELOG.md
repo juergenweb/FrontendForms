@@ -1798,5 +1798,8 @@ According to [this issue report](https://processwire.com/talk/topic/26015-fronte
 
 **Jump directly to the alert box if form is not valid**
 
-If the form contains errors, then a JS redirect will be forced to jump to directly to the alert box of the form. So this is more user friendly.
+If the form contains errors, then a JS redirect will be forced to jump directly to the alert box of the form. So this is more user friendly.
 
+**Multi-step form**
+
+Now, every form can be divided into several parts to create a multi-step form. Read more about it [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#multi-step-forms).
