@@ -3139,7 +3139,7 @@ There are some other methods beside the addStep() method which can be used in co
 | ------------- | ------------- |
 | [showStepOf()](#showstepof)  | show or hide the "Step x of y" text  |
 | [showStepsProgressbar()](#showstepsprogressbar)  | show or hide the progress bar at the top  |
-| [setCustomProgressbar()()](#setcustomprogressbar)  | add the markup for a custom progress bar if you are not satisfied with the default one  |
+| [setCustomProgressbar()](#setcustomprogressbar)  | add the markup for a custom progress bar if you are not satisfied with the default one  |
 | [getCurrentStepNumber()](#getcurrentstepnumber)  | outputs the number of the current step  |
 | [getTotalSteps()](#gettotalsteps)  | outputs the total amount of steps  |
 | [getStepsProgressbar()](#getstepsprogressbar)  | get the progress bar object for further manipulations  |
