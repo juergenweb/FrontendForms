@@ -3142,7 +3142,7 @@ There are some other methods beside the addStep() method which can be used in co
 | [setCustomProgressbar()()](#setcustomprogressbar)  | add the markup for a custom progress bar if you are not satisfied with the default one  |
 | [getCurrentStepNumber()](#getcurrentstepnumber)  | outputs the number of the current step  |
 | [getTotalSteps()](#gettotalsteps)  | outputs the total amount of steps  |
-| [getStepsProgressbar()](#prepend-append---prepend-or-append-a-string-to-an-object-field-form-button)  | get the progress bar object for further manipulations  |
+| [getStepsProgressbar()](#getstepsprogressbar)  | get the progress bar object for further manipulations  |
 
 ### showStepOf()
 
