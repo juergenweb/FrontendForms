@@ -3169,7 +3169,8 @@ If you are not satisfied with the markup of the progress bar and you want to dis
 ```php
 $form->setCustomProgressbar('<div>Markup of my custom progress bar</div>'); 
 ```
-
+ Using this method disables the display of the default progress bar automatically.
+ 
 ### getCurrentStepNumber()
 
 This methods outputs the number of the current step as an integer, but keep in mind: This method must run after the isValid() method. This method can be used if you are creating your own custom progress bar.
