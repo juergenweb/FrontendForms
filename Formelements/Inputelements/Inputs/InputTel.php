@@ -25,6 +25,7 @@ class InputTel extends InputText
     {
         parent::__construct($id);
         $this->setAttribute('type', 'tel');
+        $this->setRule('regex', '/^[A-Za-z]*/'); // phone numbers cannot contain letters
     }
 
     /**
