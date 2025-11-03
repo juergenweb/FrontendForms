@@ -70,6 +70,12 @@
         },
         "679c8947fd87698642698e9571b87b66": {
             "text": "Die Gesamtgr\u00f6\u00dfe aller hochgeladenen Dateien darf %s nicht \u00fcberschreiten."
+        },
+        "0dbf6eced8bc871d39cec4d5a145f8a2": {
+            "text": "Dieses Feld"
+        },
+        "bf6ac479841bb45d2ee40e1cced66241": {
+            "text": "%s enth\u00e4lt Buchstaben welche aber nicht erlaubt sind"
         }
     }
 }
