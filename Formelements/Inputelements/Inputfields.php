@@ -2014,11 +2014,14 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5noLetters(): void
     {
-        $this->setAttribute('pattern', '^[a-zA-ZäöüÖÄÜ]');
+        /*
+         * does not work at all
+        $this->setAttribute('pattern', '^(?![a-zA-ZäöüÖÄÜ]$)');
         $label = $this->getLabel()->getText();
         if(!$label) $label = $this->_('This field');
         $this->setAttribute('title',
             sprintf($this->_('%s contains letters, but they are not allowed'), $label));
+        */
     }
 
     /**
@@ -2028,7 +2031,7 @@ abstract class Inputfields extends Element
      */
     protected function removenoLetters(): void
     {
-        $this->removeAttribute('pattern');
+        //$this->removeAttribute('pattern');
     }
 
     /**
