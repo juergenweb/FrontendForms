@@ -2390,8 +2390,8 @@ class Form extends CustomRules
 
             } else { // last step
 
-                // remove HTML5 validation on the last step if enabled
-                $this->setHtml5Validation(false);
+                // add a special data attribute, which is required for HTML 5 validation
+                $this->setAttribute('data-step', 'last');
 
                 // make all form elements visible with a special markup
                 foreach ($this->formElements as $key => $field) {
@@ -3777,7 +3777,8 @@ class Form extends CustomRules
 
                                 // create edit link element
                                 $editLink = '<td class="ff-final-list-edit">';
-                                $editLink .= '<a class="ff-edit-link" href="#" rel="nofollow" data-element="' . $element->getAttribute('id') . '-hidden-wrapper"';
+                                bd($this->getID().'-'.$element->getAttribute('id').'-edit');
+                                $editLink .= '<a id="'.$this->getID().'-'.$element->getAttribute('id').'-edit" class="ff-edit-link" href="#" rel="nofollow" data-element="' . $element->getAttribute('id') . '-hidden-wrapper"';
                                 $editLink .= ' data-close="' . $this->_('close') . '"';
                                 $editLink .= ' data-edit="' . $this->_('edit') . '"';
                                 $editLink .= '>' . $this->_('edit') . '</a>';
