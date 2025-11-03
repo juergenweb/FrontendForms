@@ -82,7 +82,7 @@ function handleFileUploads() {
                 let invalidNotesClass = "";
                 let notesAllowedFileSizeElement = document.getElementById(fileuploadFieldID + "-allowedFileSize");
                 // special treatment for single upload fields
-                if(!notesAllowedFileSizeElement) {
+                if (!notesAllowedFileSizeElement) {
                     let str = fileuploadFieldID;
                     str = str.replace("-fileupload", "");
                     notesAllowedFileSizeElement = document.getElementById(str + "-allowedFileSize");
@@ -100,7 +100,7 @@ function handleFileUploads() {
 
                     //remove previous file block if file upload does not allow multiple files
                     if (!multiple) {
-                        if(fileList){
+                        if (fileList) {
                             fileList.innerHTML = "";
                         }
                         totalFileSize = file.size;
@@ -135,8 +135,8 @@ function handleFileUploads() {
                             if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
                                 notesAllowedFileSizeElement.className += invalidNotesClass;
                             } else {
-                                if(!multiple) {
-                                    if(notesAllowedFileSizeElement){
+                                if (!multiple) {
+                                    if (notesAllowedFileSizeElement) {
                                         notesAllowedFileSizeElement.removeAttribute("class");
                                     }
                                 }
@@ -169,7 +169,7 @@ function handleFileUploads() {
                             if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
                                 notesAllowedFileSizeElement.className += invalidNotesClass;
                             } else {
-                                if(!multiple) {
+                                if (!multiple) {
                                     notesAllowedFileSizeElement.removeAttribute("class");
                                 }
                             }
@@ -197,7 +197,7 @@ function handleFileUploads() {
                             if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
                                 notesAllowedFileSizeElement.className += invalidNotesClass;
                             } else {
-                                if(!multiple) {
+                                if (!multiple) {
                                     notesAllowedFileSizeElement.removeAttribute("class");
                                 }
                             }
@@ -208,7 +208,7 @@ function handleFileUploads() {
                     }
 
                     // Add block to list
-                    if(fileList){
+                    if (fileList) {
                         fileList.appendChild(fileBlock);
                     }
 
@@ -309,13 +309,23 @@ window.addEventListener("DOMContentLoaded", function () {
     editLinks();
     prevLinks();
 
+    // listen to click on submit button of the last step form
+    let submitButtons = document.getElementsByTagName("button");
+    for (let i = 0; i < submitButtons.length; i++) {
+        if (submitButtons[i].type === "submit") {
+            submitButtons[i].addEventListener("click", function (e) {
+                // this next function runs only if HTML5 validation is enabled
+                openHiddenWrapper(e);
+            });
+        }
+    }
 
     // check if there is a success alert box
     let successAlerts = document.querySelectorAll('[data-ffsuccess]');
 
     if (successAlerts.length > 0) {
         for (let i = 0; i < successAlerts.length; i++) {
-            if(i === 0){
+            if (i === 0) {
                 let alertID = successAlerts[i].id;
                 jumpTo(alertID);
             }
@@ -346,18 +356,18 @@ window.addEventListener("DOMContentLoaded", function () {
 /**
  * Check if an edit link in the final step of a multi-step form has been clicked
  */
-function editLinks(){
+function editLinks() {
     let editLinks = document.getElementsByClassName("ff-edit-link");
-    if(editLinks && editLinks.length > 0) {
+    if (editLinks && editLinks.length > 0) {
         for (let i = 0; i < editLinks.length; i++) {
 
             editLinks[i].addEventListener("click", function (e) {
                 e.preventDefault();
                 let id = editLinks[i].dataset.element;
                 let wrapper = document.getElementById(id);
-                if(wrapper){
+                if (wrapper) {
                     // get link text
-                    if((editLinks[i]).textContent === editLinks[i].dataset.edit){
+                    if ((editLinks[i]).textContent === editLinks[i].dataset.edit) {
                         wrapper.classList.remove("ff-final-list-hidden");
                         editLinks[i].textContent = editLinks[i].dataset.close;
                     } else {
@@ -365,10 +375,8 @@ function editLinks(){
                         editLinks[i].textContent = editLinks[i].dataset.edit;
 
                         // add the changed value back to ff-final-list-value element
-                        console.log(wrapper.getElementsByClassName("inputwrapper")[0]);
                         let inputwrapper = wrapper.getElementsByClassName("inputwrapper")[0];
-                        let value = inputwrapper.children[0].value;
-                        editLinks[i].parentElement.previousSibling.innerHTML = value;
+                        editLinks[i].parentElement.previousSibling.innerHTML = inputwrapper.children[0].value;
                     }
                 }
             });
@@ -379,10 +387,10 @@ function editLinks(){
 /**
  * Redirect to the previous step if the prev button is clicked
  */
-function prevLinks(){
+function prevLinks() {
     let prevLinks = document.getElementsByClassName("ff-prev-button");
 
-    if(prevLinks && prevLinks.length > 0) {
+    if (prevLinks && prevLinks.length > 0) {
         for (let i = 0; i < prevLinks.length; i++) {
             prevLinks[i].addEventListener("click", function (e) {
                 e.preventDefault();
@@ -813,4 +821,66 @@ function maxCharsCounterReverse() {
     });
 }
 
+/**
+ * Function to open the hidden field wrapper on the last step if there is an error on the field and
+ * HTML 5 browser validation is enabled.
+ * @param event
+ */
+function openHiddenWrapper(event) {
+
+    let form = event.target.form;
+
+    // run only on the last step form if browser validation is enabled
+    if (!form.hasAttribute("novalidate") && form.hasAttribute("data-step") && form.dataset.step === "last") {
+
+        let formID = form.id;
+
+        // loop all fields inside the table
+        for (let f = 0; f < form.elements.length; f++) {
+
+            // get field
+            let field = form.elements[f];
+
+            // ignore buttons, fieldsets, etc.
+            if (field.nodeName !== "INPUT" && field.nodeName !== "TEXTAREA" && field.nodeName !== "SELECT") continue;
+
+            // is native browser validation available?
+            if (typeof field.willValidate !== "undefined") {
+
+                // native validation available
+
+                if (field.nodeName === "INPUT" && field.type !== field.getAttribute("type")) {
+
+                    // input type not supported! Use legacy JavaScript validation
+                    field.setCustomValidity(LegacyValidation(field) ? "" : "error");
+
+                }
+
+                // native browser check
+                field.checkValidity();
+
+            }
+
+            // check if field is not valid
+            if (!field.validity.valid) {
+
+                // remove the hidden class from the hidden wrapper element
+                let fieldID = field.id;
+                let fieldName = fieldID.replace(formID + "-", "");
+                let hiddenWrapper = document.getElementById(fieldName + "-hidden-wrapper");
+                if(hiddenWrapper) {
+                    hiddenWrapper.classList.remove("ff-final-list-hidden");
+                    // change the text from the edit link back to "close"
+                    let toggleLink = document.getElementById(fieldID + "-edit");
+                    let closeText = toggleLink.dataset.close;
+                    toggleLink.innerHTML = closeText;
+                }
+
+
+            }
+
+        }
+
+    }
+}
 
