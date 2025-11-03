@@ -1830,6 +1830,8 @@ For more detailed explanation on each validation rule click the link at the vali
 | [cyrillicname](#cyrillicname)  | Checks if a name entered in an inputfield is in the correct format of a cyrillic name.  |
 | [allowedFileNumber](#allowedfilenumber) | Limit the number of files inside a file upload multiple field
 | [allowedTotalFileSize](#allowedtotalfilesize) | Set a total max file size limit for all files inside a file upload field
+| [noLetters](#noletters) | Check if a string does not contain any letters and German Umlauts
+
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
 
