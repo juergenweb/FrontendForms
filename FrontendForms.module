@@ -1500,7 +1500,7 @@
                 $js = '';
                 // check if at field conditions are used inside this form, if so add the JavaScript file to the page
                 if ($page->field_conditions) {
-                    $js = '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.js?v=' . $version .time(). '"></script>' . PHP_EOL;
+                    $js .= '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.js?v=' . $version .time(). '"></script>' . PHP_EOL;
                 }
 
                 $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.js?v=' . $version.time(). '" defer></script>' . PHP_EOL;
@@ -1510,7 +1510,7 @@
                     $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms-slidercaptcha.min.js?v=' . $version . '" defer></script>' . PHP_EOL;
                 }
 
-                if (array_filter($page->useJS)) {
+                if ($page->useJS) {
                     $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
                 }
 
