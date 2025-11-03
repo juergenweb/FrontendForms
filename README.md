@@ -2206,6 +2206,15 @@ $field->setRule('allowedTotalFileSize', '10 MB'); // as a string with an unit OR
 $field->setRule('allowedTotalFileSize', 10*1024*1024); // as a calculation value
 ```
 
+### noLetters
+This validator checks if a string does not contain letters (a-z, A-Z and German Umlauts).
+If a string contains at least one of the characters mentioned before, the validator returns false.
+This validation rule is added to the class *InputTel* by default, because no telephone number should contain a letter.
+
+```php
+$field->setRule('noLetters');
+```
+
 ## Create your own custom validation rules
 
 However, this module contains many built-in validation rules, but sometimes you need a special validation rule. Fortunately, the Valitron library supports the creation of custom rules in a simple way. Please take a look at the [Valitron Library documentation](https://github.com/vlucas/valitron?tab=readme-ov-file#adding-custom-validation-rules), which explains how to create custom rules.
