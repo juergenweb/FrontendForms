@@ -2389,6 +2389,10 @@ class Form extends CustomRules
 
 
             } else { // last step
+
+                // remove HTML5 validation on the last step if enabled
+                $this->setHtml5Validation(false);
+
                 // make all form elements visible with a special markup
                 foreach ($this->formElements as $key => $field) {
                     if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
