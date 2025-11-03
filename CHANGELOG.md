@@ -1803,3 +1803,8 @@ If the form contains errors, then a JS redirect will be forced to jump directly 
 **Multi-step form**
 
 Now, every form can be divided into several parts to create a multi-step form. Read more about it [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#multi-step-forms).
+
+**New validation rule "noLetters" added**
+
+The new validation rule checks if a string does not contain letters. Read more about it [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#noletters).
+
