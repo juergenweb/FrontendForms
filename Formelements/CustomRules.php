@@ -631,6 +631,14 @@ class CustomRules extends Tag
             return true;
         }, $this->_('contains files whose total size is larger than the total allowed size.'));
 
+        /**
+         * 39) Check if a string does not contain a letter (including German Umlauts)
+         */
+        V::addRule('noLetters', function ($field, $value) {
+            if(preg_match('/[a-zA-ZäöüÖÄÜ]/', $value)) return false;
+            return true;
+        }, $this->_('contains letters which are not allowed.'));
+
 
     }
 
