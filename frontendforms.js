@@ -42,7 +42,9 @@ function submitCounter() {
     }
 }
 
-// Handler for File Uploads
+/*
+Handler for File Uploads
+ */
 function handleFileUploads() {
     // file list
     const dt = new DataTransfer();
@@ -79,6 +81,13 @@ function handleFileUploads() {
                 let invalidfilezSizeSpanClass = "";
                 let invalidNotesClass = "";
                 let notesAllowedFileSizeElement = document.getElementById(fileuploadFieldID + "-allowedFileSize");
+                // special treatment for single upload fields
+                if(!notesAllowedFileSizeElement) {
+                    let str = fileuploadFieldID;
+                    str = str.replace("-fileupload", "");
+                    notesAllowedFileSizeElement = document.getElementById(str + "-allowedFileSize");
+                }
+
                 let notesAllowedTotalFileSizeElement = document.getElementById(fileuploadFieldID + "-allowedTotalFileSize");
 
                 // Loop through selected files and handle each one
@@ -211,7 +220,7 @@ function handleFileUploads() {
                 }
 
                 let totalSizeDiv = document.getElementById(fileuploadFieldID + "-total");
-          
+
                 // compare allowed total filesize and file sizes of all selected files
                 if (allowedTotalFileSize !== 0 && totalFileSize > allowedTotalFileSize) {
                     notesAllowedTotalFileSizeElement.className += invalidTotalFileSizeNotesClass;
@@ -295,10 +304,23 @@ window.addEventListener("DOMContentLoaded", function () {
 
     submitCounter();
     ajaxSubmit();
-    jumpToAnchor();
     maxCharsCounterReverse();
     handleFileUploads();
+    editLinks();
+    prevLinks();
 
+
+    // check if there is a success alert box
+    let successAlerts = document.querySelectorAll('[data-ffsuccess]');
+
+    if (successAlerts.length > 0) {
+        for (let i = 0; i < successAlerts.length; i++) {
+            if(i === 0){
+                let alertID = successAlerts[i].id;
+                jumpTo(alertID);
+            }
+        }
+    }
 
     // initialize all forms for the conditional form dependencies
     let frontendforms = document.getElementsByTagName("form");
@@ -311,12 +333,71 @@ window.addEventListener("DOMContentLoaded", function () {
                 if (typeof mfConditionalFields !== "undefined") {
                     mfConditionalFields("#" + formID, {rules: "inline", dynamic: true, debug: true});
                 }
+                if (frontendforms[i].getAttribute("data-valid")) {
+                    // jump to error alert box
+                    jumpTo(formID + "-alert");
+                }
             }
         }
     }
 
 });
 
+/**
+ * Check if an edit link in the final step of a multi-step form has been clicked
+ */
+function editLinks(){
+    let editLinks = document.getElementsByClassName("ff-edit-link");
+    if(editLinks && editLinks.length > 0) {
+        for (let i = 0; i < editLinks.length; i++) {
+
+            editLinks[i].addEventListener("click", function (e) {
+                e.preventDefault();
+                let id = editLinks[i].dataset.element;
+                let wrapper = document.getElementById(id);
+                if(wrapper){
+                    // get link text
+                    if((editLinks[i]).textContent === editLinks[i].dataset.edit){
+                        wrapper.classList.remove("ff-final-list-hidden");
+                        editLinks[i].textContent = editLinks[i].dataset.close;
+                    } else {
+                        wrapper.classList.add("ff-final-list-hidden");
+                        editLinks[i].textContent = editLinks[i].dataset.edit;
+
+                        // add the changed value back to ff-final-list-value element
+                        console.log(wrapper.getElementsByClassName("inputwrapper")[0]);
+                        let inputwrapper = wrapper.getElementsByClassName("inputwrapper")[0];
+                        let value = inputwrapper.children[0].value;
+                        editLinks[i].parentElement.previousSibling.innerHTML = value;
+                    }
+                }
+            });
+        }
+    }
+}
+
+/**
+ * Redirect to the previous step if the prev button is clicked
+ */
+function prevLinks(){
+    let prevLinks = document.getElementsByClassName("ff-prev-button");
+
+    if(prevLinks && prevLinks.length > 0) {
+        for (let i = 0; i < prevLinks.length; i++) {
+            prevLinks[i].addEventListener("click", function (e) {
+                e.preventDefault();
+                window.location.href = prevLinks[i].dataset.prev;
+            });
+        }
+    }
+}
+
+/**
+ * Output bytes in different Units depending on the bytes size
+ * @param bytes
+ * @param decimals
+ * @returns {string}
+ */
 function formatBytes(bytes, decimals = 2) {
 
     if (!+bytes) return "0 B";
@@ -561,6 +642,7 @@ function ajaxSubmit(formid = null) {
  */
 function subAjax(form) {
 
+
     if (typeof (form) == "string") {
         form = document.getElementById(form);
     }
@@ -582,7 +664,7 @@ function subAjax(form) {
 
             // check if anchor is present in the action attribute
             let anchor = action.split(/#(.*)/)[1];
-            if (anchor !== "undefined") {
+            if (anchor === "undefined") {
                 // no anchor, add the anchor of the ajax-wrapper div
             }
 
@@ -612,6 +694,7 @@ function subAjax(form) {
                 let wrapper = doc.getElementById(formid + "-ajax-wrapper");
                 let content = wrapper.innerHTML;
 
+
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     let redirectFieldName = formid + "-ajax_redirect";
                     let redirectUrl = formData.get(redirectFieldName);
@@ -625,19 +708,17 @@ function subAjax(form) {
                             let urlParts = redirectUrl.split("#");
                             // check if an internal anchor is set
                             if (urlParts.length > 1) {
-
                                 // an internal anchor is set
                                 redirectUrl = urlParts[0];
                                 let anchor = urlParts[1];
-                                // instead of the anchor, use a query string which does not make problems
-                                anchorQueryString = "?fc-anchor=" + anchor;
+                                anchorQueryString = "#" + anchor;
                             }
                             window.location = redirectUrl + anchorQueryString;
                         } else {
                             // load the validated form back into the target div
                             document.getElementById(formid + "-ajax-wrapper").innerHTML = content;
                             // jump to the start of the form
-                            jumpTo(anchor);
+                            jumpTo(formid + "-ajax-wrapper");
                         }
                     } else {
 
@@ -645,7 +726,7 @@ function subAjax(form) {
                         // load the validated form back into the target div
                         document.getElementById(formid + "-ajax-wrapper").innerHTML = content;
                         // jump to the start of the form
-                        jumpTo(anchor);
+                        jumpTo(formid + "-ajax-wrapper");
                         // load a new CAPTCHA if CAPTCHA is used
                         reloadCaptcha(formid + "-captcha-image", e);
                         // start as the first page load
@@ -654,6 +735,9 @@ function subAjax(form) {
                         submitCounter();
                         // handle file uploads
                         handleFileUploads();
+                        // handle edit links in multi-step forms
+                        editLinks();
+                        prevLinks();
                         // load star rating again if it exists
                         if (typeof stars !== "undefined" && stars !== null) {
                             // variable is not undefined or not null
@@ -698,24 +782,6 @@ function subAjax(form) {
 }
 
 /**
- * Jump to an anchor if a query string with the name "fc-anchor" is present
- * The name of the anchor is the value of that querystring
- * This is necessary if a form has been submitted via Ajax and a redirect containing an anchor has been set
- * An usual anchor like #newtarget inside the redirect url will lead to stop loading the validated form correctly after a valid submission
- * So this is a JavaScript based work-around to be able to use internal anchors without problems inside redirects
- *
- */
-function jumpToAnchor() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const anchor = urlParams.get("fc-anchor");
-    if (anchor) {
-
-        urlParams.delete("fc-anchor");
-        location.hash = "#" + anchor;
-    }
-}
-
-/**
  * Count the letters inside a textarea and output the characters left
  */
 function maxCharsCounterReverse() {
@@ -746,6 +812,5 @@ function maxCharsCounterReverse() {
         }
     });
 }
-
 
 
