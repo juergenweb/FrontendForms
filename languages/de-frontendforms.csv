@@ -519,6 +519,8 @@ en,de,description,file,hash
 "%s should only contain a valid week in the format YYYY-Www","%s muss eine gültige Woche im Format YYYY-Www enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,b5636cc5ae7dc2e4495ac2dd2adada93
 "%s should only contain a valid month in the format YYYY-MM","muss ein gültiges Monat im Format YYYY-MM enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,e1c152c6ff80439f69e2db72bb3ade3b
 "%s should be a valid HEX code in the format #XXX or #XXXXXX","%s muss ein gültiger Hexadecimal Code im Format #XXX oder #XXXXXX sein",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,98be58eb3446f813bc644faac5e42264
+"This field","Dieses Feld",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,0dbf6eced8bc871d39cec4d5a145f8a2
+"%s contains letters, but they are not allowed","%s enthält Buchstaben welche aber nicht erlaubt sind",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,bf6ac479841bb45d2ee40e1cced66241
 en,de,description,file,hash
 "File upload","Datei Upload",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,c4265549c1f4d79aea1e279149a6a084
 "Select files","Wählen Sie die Dateien aus",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,1afe200fa26ba361f59b603b22ad6392
