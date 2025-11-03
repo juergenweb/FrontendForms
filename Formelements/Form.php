@@ -20,8 +20,8 @@ use ProcessWire\Field as Field;
 use ProcessWire\HookEvent;
 use ProcessWire\Language;
 use ProcessWire\Module;
-use ProcessWire\User;
 use ProcessWire\Page;
+use ProcessWire\User;
 use ProcessWire\Wire;
 use ProcessWire\WireArray;
 use ProcessWire\WireData;
@@ -29,12 +29,11 @@ use ProcessWire\WireException;
 use ProcessWire\WireMail;
 use ProcessWire\WirePermissionException;
 use Valitron\Validator;
-
-use function ProcessWire\wire as wire;
-use function ProcessWire\wirePopulateStringTags;
 use function ProcessWire\_n;
-use function ProcessWire\wireMail;
+use function ProcessWire\wire as wire;
 use function ProcessWire\wireClassName;
+use function ProcessWire\wireMail;
+use function ProcessWire\wirePopulateStringTags;
 
 class Form extends CustomRules
 {
@@ -60,7 +59,6 @@ class Form extends CustomRules
     protected string|int|bool $useCSRFProtection = 1; // Enable/disable CSRF-Protection
     protected string $general_desc_position = 'afterInput'; // The position of the input field description -> beforeLabel, afterLabel or afterInput
     protected string $captcha_value = '';
-
     protected bool $preventGetFileUploadWarning = false;
 
     // properties for the simple question Captcha
@@ -108,6 +106,20 @@ class Form extends CustomRules
     protected string $msgtag = 'p'; // set the default global tag for the message elements (success and error message)
     protected string|null $segments = null;
     protected string|null|bool|int $stopHoneypotRotation = false; // Honeypotfield will be positioned randomly (false) or stays at the top of the form (true)
+    protected array $steps = []; // array containing the steps of a multi-step form
+
+    /**
+     * Multi-step form
+     */
+    protected bool $showStepsOf = true; // show step x of y text on each step or not
+    protected bool $showStepsProgressbar = true; // show the progressbar on top of the multi-step form
+    protected int|string $totalStepsNumber = 0; // the amount of total steps
+    protected bool $firstStep = false;
+    protected bool $lastStep = false;
+    protected object|null $firstElement = null;
+    protected object|null $lastElement = null;
+    protected int $currentStepNumber = 1;
+    protected string $customProgressbar = '';
 
     /* objects */
     protected Page $page; // the current page object, where the form is integrated
@@ -118,6 +130,7 @@ class Form extends CustomRules
     protected Language $userLang; // the language object of the user/visitor
 
     protected object $captcha; // the captcha object
+    protected Progressbar $stepsProgressbar; // the progressbar for multi-steps forms
 
     /**
      * Every form must have an id. You can set it custom via the constructor - otherwise a random ID will be
@@ -177,6 +190,8 @@ class Form extends CustomRules
         $this->alert = new Alert();
         $this->requiredHint = new RequiredTextHint();
         $this->formElementsWrapper = new Wrapper();
+        $this->stepsProgressbar = new Progressbar($id . '-steps-progress');
+
 
         // set default properties
         $this->visitorIP = $this->wire('session')->getIP();
@@ -240,6 +255,14 @@ class Form extends CustomRules
         $messagesTag = (!empty($this->frontendforms['input_global_msg_tag'])) ? $this->frontendforms['input_global_msg_tag'] : $defaultMsgTag;
         $this->setMessageTag($messagesTag);
 
+        // 5) Progressbar
+        $this->stepsProgressbar->setCSSClass('progressbarClass');
+        if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
+            $this->stepsProgressbar->setTag('div');
+            $this->stepsProgressbar->setAttribute('role', 'progressbar');
+            $this->stepsProgressbar->prepend('<div class="progress mb-4">')->append('</div>');
+        }
+
         // Global text for auto-generated emails
         $this->doNotReply = $this->_('This email was generated automatically. So please do not reply to this email.');
 
@@ -261,7 +284,6 @@ class Form extends CustomRules
 
         // create the questions array for the simple text CAPTCHA
         $this->question_array = $this->getCaptchaQuestions();
-
 
         // set default values for loading JS from the module config
         $useJS = $useCSS = '1';
@@ -304,6 +326,67 @@ class Form extends CustomRules
         }
 
     }
+
+    /**
+     * Add the markup for a custom progress bar
+     * This disables the default progressbar
+     * @param string $customProgressbar
+     * @return $this
+     */
+    public function setCustomProgressbar(string $customProgressbar): self
+    {
+        $this->customProgressbar = trim($customProgressbar);
+        return $this;
+    }
+
+    /**
+     * Get the current step number
+     * @return int
+     */
+    public function getCurrentStepNumber(): int
+    {
+        return $this->currentStepNumber;
+    }
+
+    /**
+     * Get the number of total steps inside this form
+     * @return int
+     */
+    public function getTotalSteps(): int
+    {
+        return $this->totalStepsNumber;
+    }
+    /**
+     * Get the progress bar object for the multi-step form
+     * @return Progressbar
+     */
+    public function getStepsProgressbar(): Progressbar
+    {
+        return $this->stepsProgressbar;
+    }
+
+    /**
+     * Show or hide the "Step x of y" text on multi-step form steps
+     * @param bool $showStep
+     * @return $this
+     */
+    public function showStepOf(bool $showStep = true): self
+    {
+        $this->showStepsOf = $showStep;
+        return $this;
+    }
+
+    /**
+     * Show or hide the progressbar on multi-step form steps
+     * @param bool $showStepProgressbar
+     * @return $this
+     */
+    public function showStepsProgressbar(bool $showStepProgressbar = true): self
+    {
+        $this->showStepsProgressbar = $showStepProgressbar;
+        return $this;
+    }
+
 
     /**
      * Disable/enable the display of a warning alert, if request methos GET is choosen by using a file upload field in the form
@@ -404,7 +487,6 @@ class Form extends CustomRules
     {
         $this->msgtag = $msgtag;
     }
-
 
     /**
      *  Add a single question to the simple question captcha on per form base
@@ -535,7 +617,6 @@ class Form extends CustomRules
         return $this;
     }
 
-
     /**
      * Enable or disable the usage of ARIA attributes on form elements
      * Can be true/empty or false
@@ -549,7 +630,6 @@ class Form extends CustomRules
         return $this;
     }
 
-
     /**
      * Set the description position on per form base
      * @param string $pos
@@ -562,7 +642,6 @@ class Form extends CustomRules
         }
         return $this;
     }
-
 
     /**
      * Create a new mail instance of a given custom mail module if set
@@ -810,7 +889,7 @@ class Form extends CustomRules
         return '
             <div class="cssProgress">
           <div class="progress1">
-            <div id="'.$this->getID().'-progressbar" class="cssProgress-bar cssProgress-active cssProgress-success" data-percent="100" style="width: 100%; transition: none 0s ease 0s;">
+            <div id="' . $this->getID() . '-progressbar" class="cssProgress-bar cssProgress-active cssProgress-success" data-percent="100" style="width: 100%; transition: none 0s ease 0s;">
             </div>
           </div>
         </div>
@@ -906,7 +985,6 @@ class Form extends CustomRules
                         $body = $doc->saveHTML();
                     }
                 }
-
 
                 // if bodyHTML is set, set a body placeholder by default out of the content
                 switch ($mail->className()) {
@@ -1275,9 +1353,9 @@ class Form extends CustomRules
      * @return string
      */
     protected function getLangValueOfConfigField(
-        string   $fieldName,
-        array|null    $modulConfig = null,
-        int|null $lang_id = null
+        string     $fieldName,
+        array|null $modulConfig = null,
+        int|null   $lang_id = null
     ): string
     {
         $modulConfig = (is_null($modulConfig)) ? $this->frontendforms : $modulConfig;
@@ -1920,6 +1998,23 @@ class Form extends CustomRules
     }
 
     /**
+     * Get the position of a certain form element inside the form elements array
+     * This returns the number of the key
+     * @param $element
+     * @return int|string|void
+     */
+    public function getFormElementsPosition($element)
+    {
+        $name = $element->getAttribute('name');
+        $formFields = $this->getFormelements();
+        foreach ($formFields as $key => $formField) {
+            if ($formField->getAttribute('name') == $name) {
+                return $key;
+            }
+        }
+    }
+
+    /**
      * Get all elements of the form that are an object of a specific class
      * Returns an array containing all objects of the given class (e.g., all Button elements)
      * @param string $class
@@ -2098,6 +2193,49 @@ class Form extends CustomRules
     }
 
     /**
+     * Get all slices which contain the form elements of each step
+     * @param bool $submitButton
+     * @param bool $resetButton
+     * @return array
+     */
+    protected function getSlices(Button|RestButton|null $submitButton = null, Button|RestButton|null $resetButton = null): array
+    {
+
+        // add step on first position (= position 0) if not present
+        if ($this->steps && $this->steps[0]['position'] !== 0) {
+            array_unshift($this->steps, ['position' => 0]);
+        }
+        $stepsPositions = [];
+
+        foreach ($this->steps as $key => $step) {
+            $stepsPositions[$key] = $step['position'];
+        }
+
+        $slices = [];
+
+        foreach ($stepsPositions as $key => $stepPosition) {
+            $start = $stepPosition;
+            if ($key < array_key_last($stepsPositions)) {
+                $end = $stepsPositions[$key + 1] - 1;
+            } else {
+                // last step
+                $start = 0;
+
+                // number of buttons
+                $subtract = 1;
+                if ($submitButton) $subtract = $subtract + 1;
+                if ($resetButton) $subtract = $subtract + 1;
+
+                $end = count($this->getFormElements()) - $subtract;
+            }
+            $slices[$key + 1] = ['start' => $start, 'end' => $end];
+        }
+
+        return $slices;
+    }
+
+
+    /**
      * Process the form after form submission
      * Includes sanitization and validation
      * @return bool - true: form is valid, false: form has errors
@@ -2106,9 +2244,254 @@ class Form extends CustomRules
      */
     public function ___isValid(): bool
     {
+        // if it is a multi-step form -> remove all not used form elements from each step
+        if ($this->steps) {
+
+            // add a special data-set attribute to mulit-step forms
+            $this->setAttribute('dataset-multistep', 'true');
+
+            // get the submit button (and reset button if present) element
+            $submitButton = null;
+            $resetButton = null;
+
+            // grab the submit and reset button from all buttons
+            $buttons = $this->getFormelementsByClass('Button');
+            $resetButtons = $this->getFormelementsByClass('ResetButton');
+            $allButtons = array_merge($buttons, $resetButtons);
+
+            $buttonsNumber = 0;
+            $submitButtonArray = [];
+            $resetButtonArray = [];
+
+            if ($allButtons) {
+                foreach ($allButtons as $button) {
+
+                    //extract the submit button
+                    if ($button->getAttribute('type') === 'submit') {
+                        $buttonsNumber = $buttonsNumber + 1;
+                        $submitButton = $button;
+                        $submitButtonArray[] = $button;
+                    }
+
+                    // extract the reset button if present
+                    if ($button->getAttribute('type') === 'reset') {
+                        $buttonsNumber = $buttonsNumber + 1;
+                        $resetButton = $button;
+                        $resetButtonArray[] = $button;
+                    }
+                }
+            }
+
+            // only allow 1 submit button and remove all others
+            if (count($submitButtonArray) > 1) {
+                // remove all submit buttons except the last
+                foreach ($submitButtonArray as $key => $button) {
+                    if ($key !== array_key_last($submitButtonArray)) {
+                        $this->remove($button);
+                    }
+                }
+            }
+
+            // only allow 1 reset button and remove all others
+            if (count($resetButtonArray) > 1) {
+                // remove all submit buttons except the last
+                foreach ($resetButtonArray as $key => $button) {
+                    if ($key !== array_key_last($resetButtonArray)) {
+                        $this->remove($button);
+                    }
+                }
+            }
+
+            // get all slices for all steps
+            $slices = $this->getSlices($submitButton, $resetButton);
+
+            // get total number of steps
+            $this->totalStepsNumber = count($slices);
+
+            // cut the array after the last step
+            $fields = array_slice($this->formElements, 0, ($slices[$this->totalStepsNumber - 1]['end']) + 1);
+
+            // get the first and last input field and ignore all others (fieldset, markup,..)
+            $inputFields = [];
+            foreach ($fields as $key => $field) {
+                if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
+                    $inputFields[$key] = $field;
+                }
+            }
+            $this->firstElement = reset($inputFields);
+            $this->lastElement = end($inputFields);
+
+            // check if URL contains a query string
+            $action = $this->wire('input')->queryStringClean(['validNames' => [$this->getID() . '-step'], 'sanitizeName' => 'string', 'sanitizeValue' => 'string']);
+            if ($action) {
+
+                $stepNumber = explode('=', $action)[1];
+                $stepNumber = $this->wire('sanitizer')->int($stepNumber, ['min' => 0, 'max' => count($slices) + 1]);
+                $this->currentStepNumber = $stepNumber;
+
+                if (count($slices) == $stepNumber) {
+                    $this->lastStep = true;
+                }
+                if ($stepNumber == 1) {
+                    $this->firstStep = true;
+                }
+
+                // set form action with query string
+                $this->setAttribute('action', $this->wire('input')->url(['withQueryString' => true]));
+
+            } else {
+                $this->firstStep = true;
+            }
+
+            // slice the array
+            $slice = $slices[$this->currentStepNumber];
+            $offSet = $slice['start'];
+            $length = $slice['end'] - $slice['start'];
+            $formElements = array_slice($this->getFormElements(), $offSet, $length + 1);
+
+            // add the previous button on all steps except the first one
+            if (!$this->firstStep) {
+                $prevButton = new Button('prev');
+                $prevButton->setAttribute('value', $this->_('Previous'));
+                $prevButton->setAttribute('type', 'button');
+                $prevButton->setAttribute('class', 'ff-prev-button');
+                $location = $this->page->url.'?' . $this->getID() . '-step=' . ($this->currentStepNumber - 1) . '#' . $this->getID() . '-allwrapper';
+                $prevButton->setAttribute('data-prev', $location);
+                $prevButton->setAttribute('data-formid', $this->getID());
+                $formElements[] = $prevButton;
+            }
+
+            if (!is_null($submitButton)) {
+                $formElements[] = $submitButton;
+            }
+            if (!is_null($resetButton)) {
+                $formElements[] = $resetButton;
+            }
+
+            // set the form elements array new
+            $this->formElements = $formElements;
+
+            if (!$this->lastStep) { // all steps except the last
+
+                // remove CAPTCHA on all steps (except the last)
+                $this->disableCaptcha();
+
+                // set redirect URL to the next step
+                $redirectUrl = $this->page->url . '?' . $this->getID() . '-step=' . ($this->currentStepNumber + 1) . '#' . $this->getID() . '-allwrapper';
+                $this->setRedirectURL($redirectUrl);
+
+                // set the submit button text to "next" (except on the last step)
+                if ($submitButton){
+                    $submitButton->setAttribute('value', $this->_('Next'));
+                    $submitButton->setAttribute('data-next', $this->getRedirectURL());
+                    $submitButton->setAttribute('data-formid', $this->getID());
+                }
+
+
+            } else { // last step
+                // make all form elements visible with a special markup
+                foreach ($this->formElements as $key => $field) {
+                    if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
+                        if ($key <= $this->lastStep) {
+                            $field->useFieldWrapper(true);
+                            $field->useInputWrapper(true);
+                        }
+                    }
+                }
+            }
+
+            /*****
+             * Values
+             */
+            $stepValues = []; // default field values
+
+            // get all form values that have been set for this step
+            $formValues = $this->wire('session')->get($this->getID() . '-values');
+
+            // loop through all session values from this step and add the values to the appropriate form fields
+            if ($formValues) {
+
+                if ($this->lastStep) {
+
+                    if ($_POST) {
+                        $values = $_POST;
+                    } else {
+                        $values = [];
+                        foreach ($formValues as $key => $array) {
+                            foreach ($array as $name => $value) {
+                                $values[$name] = $value;
+                            }
+                        }
+                    }
+                    $stepValues = $values;
+                } else {
+                    if (array_key_exists($this->currentStepNumber, $formValues)) {
+                        $stepValues = $formValues[$this->currentStepNumber];
+                    }
+                }
+            }
+
+            if ($stepValues) {
+
+                foreach ($stepValues as $name => $value) {
+
+                    $field = $this->getFormelementByName($name);
+                    if ($field) {
+
+                        switch ($field->className()) {
+                            case 'InputCheckboxMultiple':
+                            case 'InputRadioMultiple':
+                            case 'SelectMultiple':
+
+                                foreach ($field->getOptions() as $option) {
+                                    if (is_array($value)) {
+                                        if (in_array($option->getAttribute('value'), $value)) {
+                                            if ($field->className() === 'SelectMultiple') {
+                                                $option->setAttribute('selected', 'selected');
+                                            } else {
+                                                $option->setAttribute('checked', 'checked');
+                                            }
+                                        }
+                                    } else {
+                                        if ($option->getAttribute('value') == $value) {
+                                            if ($field->className() === 'SelectMultiple') {
+                                                $option->setAttribute('selected', 'selected');
+                                            } else {
+                                                $option->setAttribute('checked', 'checked');
+                                            }
+                                        }
+                                    }
+                                };
+                                break;
+                            case 'InputCheckbox':
+                            case 'InputRadio':
+                            case 'Select':
+                                if ($field->className() === 'Select') {
+                                    if (array_key_exists($field->getAttribute('name'), $stepValues)) {
+                                        foreach ($field->getOptions() as $option) {
+                                            if ($option->getAttribute('value') == $stepValues[$field->getAttribute('name')]) {
+                                                $option->setAttribute('selected', 'selected');
+                                            }
+                                        };
+                                    }
+                                } else {
+                                    if (array_key_exists($field->getAttribute('name'), $stepValues)) {
+                                        $field->setAttribute('checked', 'checked');
+                                    }
+                                }
+                                break;
+                            default:
+                                if (is_array($value)) {
+                                    $value = implode(',', $value);
+                                }
+                                $field->setAttribute('value', $value);
+                        }
+                    }
+                }
+            }
+        }
 
         // Add the multi-question array for the simple question CAPTCHA
-
         if ($this->question_array)
             $this->getRandomQuestion($this->question_array);
 
@@ -2177,9 +2560,7 @@ class Form extends CustomRules
         }
 
         // instantiates the FormValidation object
-
         $validation = new FormValidation($input, $this, $this->alert);
-
         // 1) check if this form was submitted and no other form on the same page
         if ($validation->thisFormSubmitted()) {
             // add a validation class to the form after it was submitted
@@ -2192,7 +2573,6 @@ class Form extends CustomRules
                     if ($validation->checkDoubleFormSubmission($this, $this->useDoubleFormSubmissionCheck)) {
                         // 5) Check for CSRF attack
                         if ($validation->checkCSRFAttack($this->getCSRFProtection(), $this->getAttribute('method'))) {
-
                             /* START PROCESSING THE FORM */
 
                             //add honeypotfield to the array because it will be rendered afterwards
@@ -2272,7 +2652,6 @@ class Form extends CustomRules
                                     $element->removeAllRules();
                                 }
 
-
                                 // check if the field is inside the POST array
                                 // if not (e.g., field is disabled), then remove all validation rules, because no user input can be entered
                                 if ($element instanceof InputFile) {
@@ -2291,7 +2670,6 @@ class Form extends CustomRules
 
                             foreach ($formElements as $element) {
                                 // run validation only if there is at least one validation rule set
-
                                 if (count($element->getRules()) > 0) {
 
                                     $addRequiredFileValidation = false;
@@ -2346,8 +2724,8 @@ class Form extends CustomRules
                                             0)->message($this->_('Please do not fill out this field'));
                                     }
                                 }
-                                // add captcha validation if captcha field is included
 
+                                // add captcha validation if captcha field is included
                                 if ($useCaptcha) {
 
                                     if ($element->getAttribute('name') == $this->createElementName('captcha')) {
@@ -2369,9 +2747,12 @@ class Form extends CustomRules
                                 $this->setValues();
                             }
 
-
                             if ($v->validate()) {
+
                                 $this->validated = '1';
+
+                                $this->alert->setAttribute('data-ffsuccess', 'true');
+                                $this->alert->setAttribute('id', $this->getID() . '-alert');
                                 $this->alert->setCSSClass('alert_successClass');
                                 $this->alert->setText($this->getSuccessMsg());
                                 $this->wire('session')->remove('attempts');
@@ -2391,11 +2772,41 @@ class Form extends CustomRules
                                     $this->uploaded_files = $this->storedFiles;
                                 }
 
+                                /***********************************
+                                 * check if it is a multi-step form
+                                 * ********************************/
+
+                                if ($this->steps && !$this->lastStep) { // run if it is not the final step
+
+                                    // 1) save all values inside a session
+
+                                    if ($this->wire('session')->get($this->getID() . '-values')) {
+                                        // remove the old values from the array
+                                        unset($formValues[$this->currentStepNumber]);
+                                        $newValues = [$this->currentStepNumber => $this->getValues()];
+                                        // add new values to the array
+                                        $values = array_replace($formValues, $newValues);
+                                        $this->wire('session')->set($this->getID() . '-values', $values);
+                                    } else {
+                                        // session does not exist -> set session for the first time
+                                        $this->wire('session')->set($this->getID() . '-values', [$this->currentStepNumber => $this->getValues()]);
+                                    }
+
+                                } else {
+                                    // last step: remove the session
+                                    $this->wire('session')->remove($this->getID() . '-values');
+                                }
+
+                                /*** Multi-step form end */
+
                                 return true;
                             } else {
                                 // set error alert
                                 $this->wire('session')->set('errors', '1');
                                 $this->formErrors = $v->errors();
+
+                                // set data-attribute for validation status for later usage with JS
+                                $this->setAttribute('data-valid', 'false');
 
                                 // check if a CAPTCHA is enabled
                                 if ($this->getCaptchaType() != 'none') {
@@ -2450,6 +2861,7 @@ class Form extends CustomRules
                                     }
                                 }
 
+                                $this->alert->setAttribute('id', $this->getID() . '-alert');
                                 $this->alert->setCSSClass('alert_dangerClass');
                                 $this->alert->setText($this->getErrorMsg());
 
@@ -2627,7 +3039,6 @@ class Form extends CustomRules
         return $this->frontendforms['input_maxAttempts'];
     }
 
-
     /**
      * Set the max attempts
      * @param int $maxAttempts
@@ -2691,7 +3102,6 @@ class Form extends CustomRules
         return $this->redirectURL;
     }
 
-
     /**
      * Check if the form contains an element from the given class
      * @param string $className
@@ -2699,7 +3109,6 @@ class Form extends CustomRules
      */
     public function formContainsElementByClass(string $className): int
     {
-
         //$className = wireClassNamespace($className, true); // leads to problem with Phalcon framework
         $className = '\\FrontendForms\\' . $className;
         $number = (count(array_filter($this->formElements, function ($entry) use ($className) {
@@ -2768,6 +3177,12 @@ class Form extends CustomRules
         $array = array_merge($p2, $p1, $array);
     }
 
+    /**
+     * Change the tag of an given element
+     * @param object $element
+     * @param string $tagProperty
+     * @return void
+     */
     protected function changeElementTag(object $element, string $tagProperty): void
     {
         if ($element) {
@@ -2777,6 +3192,23 @@ class Form extends CustomRules
                 $element->setTag($tagProperty);
             }
         }
+    }
+
+    /**
+     * Get the position of a certain element inside the formElements array by its name
+     * @param string $nameAttribute
+     * @return int|string
+     */
+    public function getElementPositionByName(string $nameAttribute)
+    {
+        // find the object inside the array by its name
+        $positon = 0;
+        foreach ($this->formElements as $pos => $element) {
+            if ($element->getAttribute('name') === $nameAttribute) {
+                return $pos;
+            }
+        }
+        return $positon;
     }
 
     /**
@@ -2798,7 +3230,7 @@ class Form extends CustomRules
             $this->page->sliderCaptcha = true;
         }
 
-        $out = '';
+        $out = '<div id="' . $this->getID() . '-allwrapper">';
 
         // if Ajax submit was selected, add an additional data attribute to the form tag
         if ($this->getSubmitWithAjax()) {
@@ -2839,7 +3271,6 @@ class Form extends CustomRules
                 break;
             }
 
-            //$class = __NAMESPACE__.'\Label';
             if (is_subclass_of($obj, 'FrontendForms\Inputfields')) {
                 // Label
                 $this->changeElementTag($obj->getLabel(), $this->labeltag);
@@ -3052,6 +3483,15 @@ class Form extends CustomRules
             if (($this->frontendforms['input_useHoneypot']) && ($inputfieldKeys)) {
 
                 $honeypot = $this->createHoneypot();
+
+                // if it is multistep form - add additional markup to seca field for displaying the list table properly
+                if ($this->steps && $this->lastStep) {
+                    if (!$honeypot->getFieldWrapper()) {
+                        $honeypot->useFieldWrapper(true);
+                    }
+                    $honeypot->getFieldWrapper()->prepend('<tr>')->append('</tr>');
+                }
+
                 if ($this->stopHoneypotRotation) {
                     // add honeypot field on the first position of the form
                     array_unshift($this->formElements, $honeypot);
@@ -3150,7 +3590,230 @@ class Form extends CustomRules
                 $elementsClassNames = (array_map("get_class", $this->formElements));
                 $position = array_search('FrontendForms\Button', $elementsClassNames);
 
+                if ($this->steps) {
+
+                    if (!$this->firstStep) {
+
+                        // first check if user is allowed to enter this step
+                        // A user can only enter the next step if the previous step is valid
+
+                        $formValues = $this->wire('session')->get($this->getID() . '-values');
+
+                        $key = $this->wire('input')->url(['withQueryString' => true]);
+                        if ($this->currentStepNumber == 2) {
+                            $key = '/';
+                            // special treatment because first step can be reached with or without querystring
+                            $keys = [
+                                $this->wire('input')->url(['withQueryString' => true]),
+                                $this->wire('page')->url,
+                                '/?' . $this->getID() . '-step=1'
+                            ];
+
+                            foreach ($keys as $k) {
+                                if (array_key_exists($k, $formValues)) {
+                                    $key = $k;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if ($formValues) {
+
+                            // check if the previous step number exists inside the formValues array -> otherwise redirect
+                            $prevStep = $this->currentStepNumber - 1;
+                            if (!array_key_exists($prevStep, $formValues)) {
+
+                                // make redirect to the next step which should be filled out
+                                $nextStepToFillOut = array_key_last($formValues) + 1;
+                                $redirectURL = ($nextStepToFillOut === 1) ? $this->page->url : $this->page->url . '?' . $this->getID() . '-step=' . $nextStepToFillOut;
+                                //$this->wire('session')->redirect($redirectURL);
+                            }
+                        } else {
+                            // no form values exist -> so redirect to the first step
+                            $this->wire('session')->redirect($this->page->url);
+                        }
+                    }
+
+                    if ($this->showStepsOf) {
+                        $out .= '<p class="ff-steps-of">' . sprintf($this->_('Step %s of %s'), $this->currentStepNumber, (int)$this->totalStepsNumber) . '</p>';
+                    }
+
+                    if ($this->customProgressbar === '') {
+
+                        if ($this->showStepsProgressbar) {
+
+                            $this->stepsProgressbar->setAttribute('max', count($this->getSlices()));
+                            $this->stepsProgressbar->setAttribute('value', $this->currentStepNumber);
+                            if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
+                                $percent = round($this->currentStepNumber * 100 / count($this->getSlices()));
+                                $this->stepsProgressbar->setAttribute('style', 'width:' . $percent . '%');
+                            }
+                            $out .= $this->stepsProgressbar->render();
+
+                        }
+                    } else {
+                        $out .= $this->customProgressbar;
+                    }
+
+                    if ($this->lastStep) {
+
+                        $out .= '<p class="ff-check-inputs">' . $this->_('Please check your inputs once more before you submit the form.') . '</p>';
+
+                        // remove all non inputfields from the form fields array inside the final list
+
+                        // get key number of the last element of the previous step
+                        $lastListKey = $this->getSlices()[count($this->getSlices()) - 1]['end'];
+                        $cleanedFormElements = [];
+
+                        $nonAllowed = [
+                            'FieldsetClose',
+                            'FieldsetOpen',
+                            'Markup'
+                        ];
+                        foreach ($this->formElements as $key => $element) {
+
+                            // non allowed objects in final list
+                            if ($key < $lastListKey) {
+                                if (!in_array($element->className(), $nonAllowed)) {
+                                    $cleanedFormElements[] = $element;
+                                }
+                            } else {
+                                $cleanedFormElements[] = $element;
+                            }
+                        }
+
+                        foreach ($cleanedFormElements as $key => $element) {
+                            if ($element->getAttribute('name') === $this->firstElement->getAttribute('name')) {
+                                $firstStep = $key;
+                            }
+                            if ($element->getAttribute('name') === $this->lastElement->getAttribute('name')) {
+                                $lastStep = $key;
+                            }
+                        }
+
+                        $this->formElements = $cleanedFormElements;
+
+                    }
+                }
+
+
                 foreach ($this->formElements as $key => $element) {
+
+                    // check if it multi-step form
+                    if ($this->steps && $this->lastStep) {
+
+                        $name = $element->getAttribute('name');
+
+                        $values = [];
+
+                        if (!$_POST) {
+
+                            // set final values from session
+                            $finalValues = $this->wire('session')->get($this->getID() . '-values');
+
+                            foreach ($finalValues as $fv) {
+
+                                foreach ($fv as $name => $v) {
+                                    if (is_array($v)) {
+                                        $values[$name] = implode(', ', $fv[$name]);
+                                    } else {
+                                        $values[$name] = $v;
+                                    }
+                                }
+                            };
+
+                        } else {
+                            foreach ($_POST as $name => $v) {
+                                if (is_array($v)) {
+                                    $values[$name] = implode(', ', $_POST[$name]);
+                                } else {
+                                    $values[$name] = $v;
+                                }
+                            }
+                        }
+
+                        if ($element->className() !== 'InputHidden' && $element->getAttribute('name') != $this->getID() . '-seca') {
+
+                            // show/hide inputfield depending on, if there is an error or not
+                            if (array_key_exists($element->getAttribute('name'), $this->formErrors)) {
+                                $hideClass = '';
+                            } else {
+                                $hideClass = 'ff-final-list-hidden ';
+                            }
+
+                            /*
+                             * Create the list
+                             */
+                            if ($key <= $lastStep) {
+
+                                // table start
+                                $markup = '';
+                                if ($key === $firstStep) {
+
+                                    $markup .= '<div class="' . $this->getCSSClass('responsiveTableClass') . '">';
+
+                                    $tableStyling = [
+                                        'none.json' => 'ff-table',
+                                        'pico2.json' => 'ff-table',
+                                        'uikit3.json' => 'uk-table-small uk-table-divider',
+                                        'bootstrap5.json' => 'table-sm'
+                                    ];
+
+                                    $markup .= '<table id="' . $this->getID() . '-final-step-table" class="' . $this->getCSSClass('tableClass') . ' ' . $tableStyling[$this->frontendforms['input_framework']] . ' final-list-table">';
+
+                                }
+
+                                $hideWrapperOpen = '<tr id="' . $element->getAttribute('id') . '-hidden-wrapper" class="ff-hidden-wrapper ' . $hideClass . '"><td colspan="3">';
+                                $hideWrapperClose = '</td></tr>';
+
+                                // if field wrapper is disabled -> enable it for making the form element invisible
+                                if (!$element->getFieldWrapper()) {
+                                    $element->useFieldWrapper(true);
+                                }
+
+                                // create edit link element
+                                $editLink = '<td class="ff-final-list-edit">';
+                                $editLink .= '<a class="ff-edit-link" href="#" rel="nofollow" data-element="' . $element->getAttribute('id') . '-hidden-wrapper"';
+                                $editLink .= ' data-close="' . $this->_('close') . '"';
+                                $editLink .= ' data-edit="' . $this->_('edit') . '"';
+                                $editLink .= '>' . $this->_('edit') . '</a>';
+                                $editLink .= '</td>';
+
+                                $markup .= '<tr id="' . $this->getID() . '-' . $this->getFormElementsPosition($element) . '">';
+                                $label = $element->getLabel();
+                                $markup .= '<td class="ff-final-list-label">' . $label->getText() . '</td>';
+                                if (array_key_exists($element->getAttribute('name'), $values)) {
+                                    $valText = $values[$element->getAttribute('name')];
+                                } else {
+                                    $valText = '';
+                                }
+
+                                // special treatment for password fields - do not display passwords in plain text
+                                if ($element->className() == 'InputPassword' || $element->getAttribute('type') == 'password') {
+                                    if (array_key_exists($element->getAttribute('name'), $values)) {
+                                        $valText = '';
+                                        for ($i = 1; $i <= strlen($values[$element->getAttribute('name')]); $i++) {
+                                            $valText .= '*';
+                                        }
+                                    } else {
+                                        $valText = '';
+                                    }
+                                }
+
+                                $markup .= '<td class="ff-final-list-value">' . $valText . '</td>';
+                                $markup .= $editLink;
+
+                                $markup .= '</tr>' . $hideWrapperOpen;
+
+                                if ($key === $lastStep) {
+                                    $hideWrapperClose .= '</table></div>';
+                                }
+
+                                $element->getFieldWrapper()->prepend($markup)->append($hideWrapperClose);
+                            }
+
+                        }
+                    }
 
                     //create input ID as a combination of form id and input name
                     $oldId = $element->getAttribute('id');
@@ -3253,7 +3916,9 @@ class Form extends CustomRules
                         }
 
                     }
+
                     $formElements .= $element->render() . PHP_EOL;
+
                 }
 
                 // add formElementsWrapper -> add the div container after the form tag
@@ -3271,6 +3936,9 @@ class Form extends CustomRules
             if ($this->getSubmitWithAjax()) {
                 $out .= '</div>';
             }
+
+            // closing wrapper over all elements
+            $out .= '</div>';
 
         }
 
@@ -3329,8 +3997,21 @@ class Form extends CustomRules
             $this->setMailPlaceholder($fieldname . 'label', $field->getLabel()->getText());
             $this->setMailPlaceholder($fieldname . 'value', $field->getAttribute('value'));
         }
+
+
         // if the field is not a text element and not a markup, set the name attribute if not set before
-        if ((!is_subclass_of($field, 'FrontendForms\TextElements')) && (get_class($field) != 'FrontendForms\Markup')) {
+        $elementsWithNoName = [
+            'Markup',
+            'FieldsetOpen',
+            'FieldsetClose',
+            'Markup',
+            'Progressbar'
+        ];
+
+        $className = $field->className($field);
+
+
+        if ((!is_subclass_of($field, 'FrontendForms\TextElements')) && !in_array($className, $elementsWithNoName)) {
 
             // Add id of the form as prefix for the name attribute of the field
             if ($field->hasAttribute('name')) {
@@ -3640,7 +4321,10 @@ class Form extends CustomRules
         return '&#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279;';
     }
 
-
+    /**
+     * Method for internal usage only
+     * @return string
+     */
     protected function getPreheaderStyle(): string
     {
         return 'display:none;font-size:1px; color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;';
@@ -3730,6 +4414,20 @@ class Form extends CustomRules
         }
         return array_filter($questionArray);
 
+    }
+
+    /**
+     * Add a step marker for multi-step forms to the form on a given position
+     * @return $this
+     *
+     */
+    public function addStep(): self
+    {
+        $steps = $this->steps;
+        $total = count($this->formElements);
+        $steps[] = ['position' => $total];
+        $this->steps = $steps;
+        return $this;
     }
 
 }
