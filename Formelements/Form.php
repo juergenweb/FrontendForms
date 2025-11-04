@@ -3777,7 +3777,6 @@ class Form extends CustomRules
 
                                 // create edit link element
                                 $editLink = '<td class="ff-final-list-edit">';
-                                bd($this->getID().'-'.$element->getAttribute('id').'-edit');
                                 $editLink .= '<a id="'.$this->getID().'-'.$element->getAttribute('id').'-edit" class="ff-edit-link" href="#" rel="nofollow" data-element="' . $element->getAttribute('id') . '-hidden-wrapper"';
                                 $editLink .= ' data-close="' . $this->_('close') . '"';
                                 $editLink .= ' data-edit="' . $this->_('edit') . '"';
