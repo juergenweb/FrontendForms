@@ -875,7 +875,7 @@ function openHiddenWrapper(event) {
                     let closeText = toggleLink.dataset.close;
                     toggleLink.innerHTML = closeText;
                 }
-
+                break;
 
             }
 
