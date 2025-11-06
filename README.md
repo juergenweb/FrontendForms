@@ -3229,5 +3229,5 @@ $form->getStepValues(2); // returns only the values of step 2 in this case
 This method returns the value of a given form field. You only have to enter the name of the form field as the parameter.
 
 ```php
-$form->getStepValueByName('firstname); // returns the values of the form field "firstname" if present, otherwise null.
+$form->getStepValueByName('firstname); // returns the value of the form field "firstname" if present, otherwise null.
 ```
