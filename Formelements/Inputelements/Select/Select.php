@@ -18,7 +18,7 @@ use ProcessWire\WirePermissionException;
 class Select extends Inputfields
 {
 
-    use TraitOption, TraitPWOptions, TraitOptionElements;
+    use TraitOption, TraitPWOptions, TraitOptionElements, TraitInputfields;
 
     /**
      * @param string $id
