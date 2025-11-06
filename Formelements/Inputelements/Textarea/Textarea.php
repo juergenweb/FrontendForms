@@ -19,6 +19,8 @@
     class Textarea extends Inputfields
     {
 
+        use TraitInputfields;
+        
         protected string|int|bool $useCharacterCounter = false; // show or hide char counter below the textarea if max length is set
         protected TextElements $charCounter; // the character counter text object
 
