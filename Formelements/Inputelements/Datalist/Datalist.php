@@ -19,7 +19,7 @@ use ProcessWire\WirePermissionException;
 class Datalist extends InputText
 {
 
-    use TraitOption, TraitPWOptions, TraitOptionElements;
+    use TraitOption, TraitPWOptions, TraitOptionElements, TraitInputfields;
 
     protected string $listID = '';
 
