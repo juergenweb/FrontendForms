@@ -3158,6 +3158,8 @@ There are some other methods beside the addStep() method which can be used in co
 | [getStepsProgressbar()](#getstepsprogressbar)  | get the progress bar object for further manipulations  |
 | [getStepValues()](#getstepvalues)  | get all previously entered values of all steps as an array  |
 | [getStepValueByName()](#getstepvaluebyname)  | get the value of a certain form field by its name |
+| [setLastStepListText()](#setlaststeplisttext)  | add a text above the list at the final step if you want |
+
 
 ### showStepOf()
 
@@ -3229,5 +3231,15 @@ $form->getStepValues(2); // returns only the values of step 2 in this case
 This method returns the value of a given form field. You only have to enter the name of the form field as the parameter.
 
 ```php
-$form->getStepValueByName('firstname); // returns the value of the form field "firstname" if present, otherwise null.
+$form->getStepValueByName('firstname'); // returns the value of the form field "firstname" if present, otherwise null.
+```
+
+### setLastStepListText()
+
+This method allows you to display a custom text above the list at the last step. You can show fe a text like "Please check your entered data once more before you submit the form" or something else. This is optionally and has to be added to the form object.
+
+You can add HTML tags too and not only plain text.
+
+```php
+$form->setLastStepListText('<p>Please check your entered data once more before you submit the form</p>');
 ```
