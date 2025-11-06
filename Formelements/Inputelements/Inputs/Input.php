@@ -17,7 +17,9 @@ use Exception;
 class Input extends Inputfields
 {
 
-    /**
+    use TraitInputfields;
+
+        /**
      * @param string $id
      * @throws Exception
      */
