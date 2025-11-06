@@ -3159,6 +3159,7 @@ There are some other methods beside the addStep() method which can be used in co
 | [getStepValues()](#getstepvalues)  | get all previously entered values of all steps as an array  |
 | [getStepValueByName()](#getstepvaluebyname)  | get the value of a certain form field by its name |
 | [setLastStepListText()](#setlaststeplisttext)  | add a text above the list at the final step if you want |
+| [setCustomListLabel()](#setcustomlistlabel)  | change the default label of an inputfield inside the list table at the last step |
 
 
 ### showStepOf()
@@ -3243,3 +3244,14 @@ You can add HTML tags too and not only plain text.
 ```php
 $form->setLastStepListText('<p>Please check your entered data once more before you submit the form</p>');
 ```
+
+### setCustomListLabel()
+
+By default, the label of the input field will be displayed as the list label text inside the table list at the last page.
+
+If you want to overwrite it with a custom text, you can use this method, which has to be added to the field object.
+
+```php
+$field->setCustomListLabel('My custom text');
+```
+This is especially useful, if you have a very long label set, but you want to show a shorter one inside the final list at the last step.
