@@ -3156,6 +3156,8 @@ There are some other methods beside the addStep() method which can be used in co
 | [getCurrentStepNumber()](#getcurrentstepnumber)  | outputs the number of the current step  |
 | [getTotalSteps()](#gettotalsteps)  | outputs the total amount of steps  |
 | [getStepsProgressbar()](#getstepsprogressbar)  | get the progress bar object for further manipulations  |
+| [getStepValues()](#getstepvalues)  | get all previously entered values of all steps as an array  |
+| [getStepValueByName()](#getstepvaluebyname)  | get the value of a certain form field by its name |
 
 ### showStepOf()
 
@@ -3204,4 +3206,28 @@ This methods returns the default progress bar object for further manipulations. 
 
 ```php
 $form->getStepsProgressbar(); 
+```
+
+### getStepValues()
+
+This method returns a multi-dimensional array containing all previous entered values inside a multi-step form. Optionally you can output only the values of a certain step as an array.
+
+The values will be taken from a session array.
+
+```php
+$form->getStepValues(); // returns the values of ALL previous entered steps
+```
+
+To get only the value of a certain step, you need to enter the number of the step as the function parameter.
+
+```php
+$form->getStepValues(2); // returns only the values of step 2 in this case
+```
+
+### getStepValueByName()
+
+This method returns the value of a given form field. You only have to enter the name of the form field as the parameter.
+
+```php
+$form->getStepValueByName('firstname); // returns the values of the form field "firstname" if present, otherwise null.
 ```
