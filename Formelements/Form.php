@@ -328,6 +328,53 @@ class Form extends CustomRules
     }
 
     /**
+     * Get all values of all steps or of a certain step
+     * @param int|null $stepNumber
+     * @return array
+     */
+    public function getStepValues(int|null $stepNumber = null): array
+    {
+        $result = [];
+        $values =  $this->wire('session')->get($this->getID() . '-values');
+        if($values){
+            if ($stepNumber === null) {
+                $result = $values;
+            } else {
+                if(array_key_exists($stepNumber, $values)){
+                    $result = $values[$stepNumber];
+                }
+            }
+        }
+       return $result;
+    }
+    
+    /**
+     * Get the value of a specific form field of a multi-step form as stored inside the session of a multi-step form
+     * Enter the form field name attribute as parameter to get the value of the field
+     * @param string $name
+     * @return string|null
+     */
+    public function getStepValueByName(string $name): ?string
+    {
+
+        // check first if $name contains the form id
+        if(!str_starts_with($name, $this->getID())){
+            // add the id to the beginning first
+            $name = str_replace($name, $this->getID().'-'.$name, $name);
+        }
+
+        // find the given array key $name inside the session array
+        foreach ($this->getStepValues() as $step => $values) {
+            foreach ($values as $value) {
+                if(array_key_exists($name, $values)){
+                    return $values[$name];
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Add the markup for a custom progress bar
      * This disables the default progressbar
      * @param string $customProgressbar
