@@ -376,7 +376,32 @@ function editLinks() {
 
                         // add the changed value back to ff-final-list-value element
                         let inputwrapper = wrapper.getElementsByClassName("inputwrapper")[0];
-                        editLinks[i].parentElement.previousSibling.innerHTML = inputwrapper.children[0].value;
+                        let newValue = inputwrapper.children[0].value; // get the value of a single value field
+
+                        // do not show undefined as new value
+                        console.log(newValue);
+                        if(newValue === undefined) {
+                            let values = [];;
+                            // get all inputfields inside the wrapper
+                            let inputs = inputwrapper.getElementsByTagName('input');
+                            // works for checkboxes and radios multiple
+                            if (inputs.length > 0) {
+                                for (let i = 0; i < inputs.length; i++) {
+                                    let input = inputs[i];
+                                    if (input.checked){
+                                        values.push(input.value);
+                                    }
+                                }
+                            }
+
+                            if (values.length > 0){
+                                newValue = values.toString();
+                            } else {
+                                newValue = '';
+                            }
+
+                        }
+                        editLinks[i].parentElement.previousSibling.innerHTML = newValue;
                     }
                 }
             });
