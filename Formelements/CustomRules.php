@@ -640,6 +640,29 @@ class CustomRules extends Tag
         }, $this->_('contains letters which are not allowed.'));
 
 
+        /**
+         * 40) Check if the field is not empty if another field contains a certain value
+         * This validator is not ready to use at the moment
+         */
+        V::addRule('requiredIf', function ($field, $value, $params, $fields) {
+
+            $conditions = $params[0];
+            foreach( $conditions as $condition_field => $condition_value) {
+                $condition_field = $this->getID().'-'.$condition_field;
+                bd($condition_field);
+                bd($condition_value);
+                bd($value);
+                bd($fields[$condition_field]);
+                bd($fields);
+                bd($this);
+                if( $fields[$condition_field] == $condition_value
+                    && empty($value) ) {
+                    return false;
+                }
+            }
+            return true;
+
+        }, $this->_('is required.'));
     }
 
 
