@@ -2863,7 +2863,7 @@ class Form extends CustomRules
                                         // session does not exist -> set session for the first time
                                         $this->wire('session')->set($this->getID() . '-values', [$this->currentStepNumber => $this->getValues()]);
                                     }
-
+                                    return false; // set to false to prevent the execution of the code inside the isValid() method
                                 } else {
                                     // last step: remove the session
                                     $this->wire('session')->remove($this->getID() . '-values');
@@ -2872,6 +2872,8 @@ class Form extends CustomRules
                                 /*** Multi-step form end */
 
                                 return true;
+
+
                             } else {
                                 // set error alert
                                 $this->wire('session')->set('errors', '1');
