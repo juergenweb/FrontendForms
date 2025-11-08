@@ -25,7 +25,7 @@ class Surname extends InputText
     {
         parent::__construct($id);
         $this->setLabel($this->_('Surname'));
-        $this->setRule('required');
+        $this->setRule('firstAndLastname');
     }
 
     /**
@@ -38,3 +38,4 @@ class Surname extends InputText
     }
 
 }
+
