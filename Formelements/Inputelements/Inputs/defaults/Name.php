@@ -25,7 +25,6 @@ class Name extends InputText
     {
         parent::__construct($id);
         $this->setLabel($this->_('Name'));
-        $this->setRule('required');
     }
 
     /**
@@ -38,3 +37,4 @@ class Name extends InputText
     }
 
 }
+
