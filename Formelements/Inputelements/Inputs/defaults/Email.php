@@ -25,7 +25,7 @@ class Email extends InputEmail
     {
         parent::__construct($id);
         $this->setLabel($this->_('Email'));
-        $this->setRule('required');
+        $this->setRule('email');
     }
 
 
@@ -39,3 +39,4 @@ class Email extends InputEmail
     }
 
 }
+
