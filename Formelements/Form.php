@@ -3567,7 +3567,6 @@ class Form extends CustomRules
             }
 
             // only for the slider captcha -> add hidden fields for the x and y position
-
             if ($this->getCaptchaType() == 'SliderCaptcha') {
 
                 $hiddenFieldX = new InputHidden('xPos');
@@ -3855,13 +3854,9 @@ class Form extends CustomRules
                                 $editLink .= '</td>';
 
                                 if($this->formFieldConditions && array_key_exists($element->getAttribute('name'), $this->formFieldConditions)) {
-
-                                    $fieldCondition = $this->formFieldConditions[$element->getAttribute('name')];
-                                    $hiddenAttribute = ($fieldCondition['action'] === 'show') ? ' hidden' : '';
-                                    $markup .= '<tbody id="'.$element->getAttribute('id').'-tablebody" class="tbodywrapper"'.$hiddenAttribute.'>';
+                                    $markup .= '<tbody id="'.$element->getAttribute('id').'-tablebody" class="tbodywrapper">';
                                     // replace the default container class with the tbodywrapper class
                                     $element->setConditionContainerClass('tbodywrapper');
-                                    $element->getFieldwrapper()->removeAttribute('hidden');
                                 }
 
                                 $markup .= '<tr id="' . $this->getID() . '-' . $this->getFormElementsPosition($element) . '">';
