@@ -378,7 +378,8 @@ function editLinks() {
                         editLinks[i].textContent = editLinks[i].dataset.edit;
 
                         // add the changed value back to ff-final-list-value element
-                        let inputwrapper = wrapper.getElementsByClassName("inputwrapper")[0];
+
+                        let inputwrapper = wrapper.getElementsByClassName("inputwrap")[0];
                         let newValue = inputwrapper.children[0].value; // get the value of a single value field
 
                         // do not show undefined as new value
