@@ -41,5 +41,7 @@
   "horizontalWrapperClass": "horizontal-align-wrapper",
   "progressbarClass": "pico-progress-bar",
   "responsiveTableClass": "table-resp",
-  "tableClass": "ff-table"
+  "tableClass": "ff-table",
+  "finaltableLabelClass": "labelwidth",
+  "finaltableEditClass": "editwidth"
 }
