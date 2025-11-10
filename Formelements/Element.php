@@ -49,7 +49,7 @@ abstract class Element extends Tag
      */
     public function removeConditions(): void
     {
-        $this->conditions = [];
+        $this->conditions = null;
     }
 
     /**
@@ -185,4 +185,5 @@ abstract class Element extends Tag
     {
         return $this->wrapper;
     }
+
 }
