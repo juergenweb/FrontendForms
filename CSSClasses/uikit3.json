@@ -41,5 +41,7 @@
 	"horizontalWrapperClass": "horizontal-align-wrapper",
     "progressbarClass": "uk-progress",
     "responsiveTableClass": "uk-overflow-auto",
-    "tableClass": "uk-table"
+    "tableClass": "uk-table",
+    "finaltableLabelClass": "uk-width-expand",
+    "finaltableEditClass": "uk-width-shrink"
 }
