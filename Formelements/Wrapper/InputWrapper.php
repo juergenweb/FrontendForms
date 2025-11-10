@@ -26,6 +26,8 @@ class InputWrapper extends Wrapper
     {
         parent::__construct();
         $this->setCSSClass('input_wrapperClass');
+        $this->setAttribute('class', 'inputwrap');
     }
 
 }
+
