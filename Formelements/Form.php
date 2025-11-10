@@ -108,6 +108,8 @@ class Form extends CustomRules
     protected string|null|bool|int $stopHoneypotRotation = false; // Honeypotfield will be positioned randomly (false) or stays at the top of the form (true)
     protected array $steps = []; // array containing the steps of a multi-step form
 
+    protected array $formFieldConditions = [];
+
     /**
      * Multi-step form
      */
@@ -3329,6 +3331,8 @@ class Form extends CustomRules
             // check if the field contains a field condition
             if (($obj instanceof Element) && ($obj->containsConditions())) {
                 $this->page->field_conditions = true;
+                // add the condition to the formFieldsCondition rray
+                $this->formFieldConditions[$obj->getAttribute('name')] = $obj->getConditions();
             }
 
             if ($obj instanceof InputFile) {
@@ -3527,31 +3531,7 @@ class Form extends CustomRules
                     }
 
                 }
-                // check if field conditions have been set
-                if (method_exists($element, 'getConditions') && (!is_null($element->getConditions()))) {
-                    $conditions = $element->getConditions();
 
-                    if (count($conditions['rules']) == count($conditions['rules'], COUNT_RECURSIVE)) {
-                        $conditions['rules'] = [$conditions['rules']];
-                    }
-
-                    // get all name attributes
-                    $modified_rules = [];
-
-                    foreach ($conditions['rules'] as $rule) {
-
-                        if (!str_starts_with($rule['name'], $this->getID() . '-')) {
-                            $rule['name'] = $this->getID() . '-' . $rule['name'];
-                        }
-
-                        $modified_rules[] = $rule;
-
-                    }
-                    $conditions['rules'] = $modified_rules;
-                    $conditions = json_encode($conditions);
-                    $element->setAttribute('data-conditional-rules', htmlspecialchars($conditions));
-
-                }
             }
 
             if (($this->frontendforms['input_useHoneypot']) && ($inputfieldKeys)) {
@@ -3650,26 +3630,26 @@ class Form extends CustomRules
             }
 
             if($this->steps){
-            if ($this->showStepsOf) {
-                $out .= '<p class="ff-steps-of">' . sprintf($this->_('Step %s of %s'), $this->currentStepNumber, (int)$this->totalStepsNumber) . '</p>';
-            }
-
-            if ($this->customProgressbar === '') {
-
-                if ($this->showStepsProgressbar) {
-
-                    $this->stepsProgressbar->setAttribute('max', count($this->getSlices()));
-                    $this->stepsProgressbar->setAttribute('value', $this->currentStepNumber);
-                    if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
-                        $percent = round($this->currentStepNumber * 100 / count($this->getSlices()));
-                        $this->stepsProgressbar->setAttribute('style', 'width:' . $percent . '%');
-                    }
-                    $out .= $this->stepsProgressbar->render();
-
+                if ($this->showStepsOf) {
+                    $out .= '<p class="ff-steps-of">' . sprintf($this->_('Step %s of %s'), $this->currentStepNumber, (int)$this->totalStepsNumber) . '</p>';
                 }
-            } else {
-                $out .= $this->customProgressbar;
-            }
+
+                if ($this->customProgressbar === '') {
+
+                    if ($this->showStepsProgressbar) {
+
+                        $this->stepsProgressbar->setAttribute('max', count($this->getSlices()));
+                        $this->stepsProgressbar->setAttribute('value', $this->currentStepNumber);
+                        if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
+                            $percent = round($this->currentStepNumber * 100 / count($this->getSlices()));
+                            $this->stepsProgressbar->setAttribute('style', 'width:' . $percent . '%');
+                        }
+                        $out .= $this->stepsProgressbar->render();
+
+                    }
+                } else {
+                    $out .= $this->customProgressbar;
+                }
             }
 
             // Output the form markup
@@ -3731,8 +3711,6 @@ class Form extends CustomRules
                         }
                     }
 
-
-
                     if ($this->lastStep) {
 
                         if ($this->lastStepListText) {
@@ -3752,7 +3730,6 @@ class Form extends CustomRules
                         ];
 
                         foreach ($this->formElements as $key => $element) {
-
 
                             // non allowed objects in final list
                             if ($key < $lastListKey) {
@@ -3790,779 +3767,824 @@ class Form extends CustomRules
                     $lastButton = $buttons[count($buttons) - 1];
                 }
 
-            foreach ($this->formElements as $key => $element) {
+                foreach ($this->formElements as $key => $element) {
 
-                // check if it multi-step form
-                if ($this->steps && $this->lastStep) {
+                    // check if it multi-step form
+                    if ($this->steps && $this->lastStep) {
 
-                    $name = $element->getAttribute('name');
+                        $name = $element->getAttribute('name');
 
-                    $values = [];
+                        $values = [];
 
-                    if (!$_POST) {
+                        if (!$_POST) {
 
-                        // set final values from session
-                        $finalValues = $this->wire('session')->get($this->getID() . '-values');
+                            // set final values from session
+                            $finalValues = $this->wire('session')->get($this->getID() . '-values');
 
-                        foreach ($finalValues as $fv) {
+                            foreach ($finalValues as $fv) {
 
-                            foreach ($fv as $name => $v) {
+                                foreach ($fv as $name => $v) {
+                                    if (is_array($v)) {
+                                        $values[$name] = implode(', ', $fv[$name]);
+                                    } else {
+                                        $values[$name] = $v;
+                                    }
+                                }
+                            };
+
+                        } else {
+                            foreach ($_POST as $name => $v) {
                                 if (is_array($v)) {
-                                    $values[$name] = implode(', ', $fv[$name]);
+                                    $values[$name] = implode(', ', $_POST[$name]);
                                 } else {
                                     $values[$name] = $v;
                                 }
                             }
-                        };
-
-                    } else {
-                        foreach ($_POST as $name => $v) {
-                            if (is_array($v)) {
-                                $values[$name] = implode(', ', $_POST[$name]);
-                            } else {
-                                $values[$name] = $v;
-                            }
-                        }
-                    }
-
-                    if ($element->className() !== 'InputHidden' && $element->getAttribute('name') != $this->getID() . '-seca') {
-
-                        // show/hide inputfield depending on, if there is an error or not
-                        if (array_key_exists($element->getAttribute('name'), $this->formErrors)) {
-                            $hideClass = '';
-                        } else {
-                            $hideClass = 'ff-final-list-hidden ';
                         }
 
-                        /*
-                         * Create the list
-                         */
-                        if ($key <= $lastStep) {
+                        if ($element->className() !== 'InputHidden' && $element->getAttribute('name') != $this->getID() . '-seca') {
 
-                            // table start
-                            $markup = '';
-
-                            if ($key === $firstStep) {
-
-                                $markup .= '<div class="' . $this->getCSSClass('responsiveTableClass') . '">';
-
-                                $tableStyling = [
-                                    'none.json' => 'ff-table',
-                                    'pico2.json' => 'ff-table',
-                                    'uikit3.json' => 'uk-table-small uk-table-divider',
-                                    'bootstrap5.json' => 'table-sm'
-                                ];
-
-                                $markup .= '<table id="' . $this->getID() . '-final-step-table" class="' . $this->getCSSClass('tableClass') . ' ' . $tableStyling[$this->frontendforms['input_framework']] . ' final-list-table">';
-
-                            }
-
-                            $hideWrapperOpen = '<tr id="' . $element->getAttribute('id') . '-hidden-wrapper" class="ff-hidden-wrapper ' . $hideClass . '"><td colspan="3">';
-                            $hideWrapperClose = '</td></tr>';
-
-                            // if field wrapper is disabled -> enable it for making the form element invisible
-                            if (!$element->getFieldWrapper()) {
-                                $element->useFieldWrapper(true);
-                            }
-
-                            // create edit link element
-                            $editLink = '<td class="ff-final-list-edit">';
-                            $editLink .= '<a id="' . $this->getID() . '-' . $element->getAttribute('id') . '-edit" class="ff-edit-link" href="#" rel="nofollow" data-element="' . $element->getAttribute('id') . '-hidden-wrapper"';
-                            $editLink .= ' data-close="' . $this->_('close') . '"';
-                            $editLink .= ' data-edit="' . $this->_('edit') . '"';
-                            $editLink .= '>' . $this->_('edit') . '</a>';
-                            $editLink .= '</td>';
-
-                            $markup .= '<tr id="' . $this->getID() . '-' . $this->getFormElementsPosition($element) . '">';
-                            if ($element->getCustomListLabel()) {
-                                $labelText = $element->getCustomListLabel();
+                            // show/hide inputfield depending on, if there is an error or not
+                            if (array_key_exists($element->getAttribute('name'), $this->formErrors)) {
+                                $hideClass = '';
                             } else {
-                                $label = $element->getLabel();
-                                $labelText = $label->getText();
-                            }
-                            $markup .= '<td class="ff-final-list-label">' . $labelText . '</td>';
-                            if (array_key_exists($element->getAttribute('name'), $values)) {
-                                $valText = $values[$element->getAttribute('name')];
-                            } else {
-                                $valText = '';
+                                $hideClass = 'ff-final-list-hidden ';
                             }
 
-                            // special treatment for password fields - do not display passwords in plain text
-                            if ($element->className() == 'InputPassword' || $element->getAttribute('type') == 'password') {
+                            /*
+                             * Create the list
+                             */
+                            if ($key <= $lastStep) {
+
+                                // table start
+                                $markup = '';
+
+                                if ($key === $firstStep) {
+
+                                    $markup .= '<div class="' . $this->getCSSClass('responsiveTableClass') . '">';
+
+                                    $tableStyling = [
+                                        'none.json' => 'ff-table',
+                                        'pico2.json' => 'ff-table',
+                                        'uikit3.json' => 'uk-table-small uk-table-divider',
+                                        'bootstrap5.json' => 'table-sm'
+                                    ];
+
+                                    $markup .= '<table id="' . $this->getID() . '-final-step-table" class="' . $this->getCSSClass('tableClass') . ' ' . $tableStyling[$this->frontendforms['input_framework']] . ' final-list-table">';
+
+                                }
+
+                                $hideWrapperOpen = '<tr id="' . $element->getAttribute('id') . '-hidden-wrapper" class="ff-hidden-wrapper ' . $hideClass . '"><td colspan="3">';
+
+                                $hideWrapperClose = '</td></tr>';
+                                if($this->formFieldConditions && array_key_exists($element->getAttribute('name'), $this->formFieldConditions)) {
+                                    $hideWrapperClose = '</td></tr></tbody>';
+                                }
+
+                                // if field wrapper is disabled -> enable it for making the form element invisible
+                                if (!$element->getFieldWrapper()) {
+                                    $element->useFieldWrapper(true);
+                                }
+
+                                // create edit link element
+                                $editLink = '<td class="ff-final-list-edit">';
+                                $editLink .= '<a id="' . $this->getID() . '-' . $element->getAttribute('id') . '-edit" class="ff-edit-link" href="#" rel="nofollow" data-element="' . $element->getAttribute('id') . '-hidden-wrapper"';
+                                $editLink .= ' data-close="' . $this->_('close') . '"';
+                                $editLink .= ' data-edit="' . $this->_('edit') . '"';
+                                $editLink .= '>' . $this->_('edit') . '</a>';
+                                $editLink .= '</td>';
+
+                                if($this->formFieldConditions && array_key_exists($element->getAttribute('name'), $this->formFieldConditions)) {
+
+                                    $fieldCondition = $this->formFieldConditions[$element->getAttribute('name')];
+                                    $hiddenAttribute = ($fieldCondition['action'] === 'show') ? ' hidden' : '';
+                                    $markup .= '<tbody id="'.$element->getAttribute('id').'-tablebody" class="tbodywrapper"'.$hiddenAttribute.'>';
+                                    // replace the default container class with the tbodywrapper class
+                                    $element->setConditionContainerClass('tbodywrapper');
+                                    $element->getFieldwrapper()->removeAttribute('hidden');
+                                }
+
+                                $markup .= '<tr id="' . $this->getID() . '-' . $this->getFormElementsPosition($element) . '">';
+                                if ($element->getCustomListLabel()) {
+                                    $labelText = $element->getCustomListLabel();
+                                } else {
+                                    $label = $element->getLabel();
+                                    $labelText = $label->getText();
+                                }
+                                $markup .= '<td class="ff-final-list-label">' . $labelText . '</td>';
                                 if (array_key_exists($element->getAttribute('name'), $values)) {
-                                    $valText = '';
-                                    for ($i = 1; $i <= strlen($values[$element->getAttribute('name')]); $i++) {
-                                        $valText .= '*';
-                                    }
+                                    $valText = $values[$element->getAttribute('name')];
                                 } else {
                                     $valText = '';
                                 }
+
+                                // special treatment for password fields - do not display passwords in plain text
+                                if ($element->className() == 'InputPassword' || $element->getAttribute('type') == 'password') {
+                                    if (array_key_exists($element->getAttribute('name'), $values)) {
+                                        $valText = '';
+                                        for ($i = 1; $i <= strlen($values[$element->getAttribute('name')]); $i++) {
+                                            $valText .= '*';
+                                        }
+                                    } else {
+                                        $valText = '';
+                                    }
+                                }
+
+                                $markup .= '<td class="ff-final-list-value">' . $valText . '</td>';
+                                $markup .= $editLink;
+
+                                $markup .= '</tr>' . $hideWrapperOpen;
+
+                                if ($key === $lastStep) {
+                                    $hideWrapperClose .= '</table></div>';
+                                }
+
+                                $element->getFieldWrapper()->prepend($markup)->append($hideWrapperClose);
                             }
 
-                            $markup .= '<td class="ff-final-list-value">' . $valText . '</td>';
-                            $markup .= $editLink;
+                        }
+                    }
 
-                            $markup .= '</tr>' . $hideWrapperOpen;
+                    // check if field conditions have been set
+                    if (method_exists($element, 'getConditions') && (!is_null($element->getConditions()))) {
+                        $conditions = $element->getConditions();
 
-                            if ($key === $lastStep) {
-                                $hideWrapperClose .= '</table></div>';
+                        if (count($conditions['rules']) == count($conditions['rules'], COUNT_RECURSIVE)) {
+                            $conditions['rules'] = [$conditions['rules']];
+                        }
+
+                        // get all name attributes
+                        $modified_rules = [];
+
+                        foreach ($conditions['rules'] as $rule) {
+
+                            if (!str_starts_with($rule['name'], $this->getID() . '-')) {
+                                $rule['name'] = $this->getID() . '-' . $rule['name'];
                             }
 
-                            $element->getFieldWrapper()->prepend($markup)->append($hideWrapperClose);
+                            $modified_rules[] = $rule;
+
+                        }
+                        $conditions['rules'] = $modified_rules;
+
+                        // check if the container has been overwritten
+                        if(!is_null($element->getConditionContainerClass())){
+                            $conditions['container'] = $element->getConditionContainerClass();
                         }
 
-                    }
-                }
+                        $conditions = json_encode($conditions);
+                        $element->setAttribute('data-conditional-rules', htmlspecialchars($conditions));
 
-                //create input ID as a combination of form id and input name
-                $oldId = $element->getAttribute('id');
-                $element->setAttribute('id', $this->getID() . '-' . $oldId);
-
-                // change the name attribute of the CSRF field
-                if ($element->getID() == $this->getID() . '-post_token') {
-                    $element->setAttribute('name', $tokenName);
-                }
-
-                // enable/disable usage of Aria attributes
-                if (method_exists($element, 'useAttributes'))
-                    $element->useAriaAttributes($this->useAriaAttributes);
-
-                // Label and description (Only on input fields)
-                if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
-
-                    // set the description position on per form base if the description text is present
-                    if ($element->getDescription()->getText()) {
-                        // set position from form setting if no individual position has been set
-                        if (is_null($element->getDescription()->getPosition())) {
-                            $element->getDescription()->setPosition($this->general_desc_position);
-                        }
                     }
 
-                    // add unique id to the field-wrapper if present
-                    $element->getFieldWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-fieldwrapper');
-                    // add unique id to the input-wrapper if present
-                    $element->getInputWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-inputwrapper');
-                    // do not add the for attribute to InputRadioMultiple and InputCheckboxMultiple elements
-                    if ((wireClassName($element) !== 'InputRadioMultiple') && (wireClassName($element) !== 'InputCheckboxMultiple')) {
-                        $element->getLabel()->setAttribute('for', $element->getAttribute('id'));
-                    }
-                }
-                $name = $element->getAttribute('id');
+                    //create input ID as a combination of form id and input name
+                    $oldId = $element->getAttribute('id');
+                    $element->setAttribute('id', $this->getID() . '-' . $oldId);
 
-                //Enable/disable wrap of the checkboxes by its label tag by appending the label after the input tag
-                // by using the appendLabel() method
-                if (($element instanceof InputCheckbox) || ($element instanceof InputCheckboxMultiple)) {
-                    $element->appendLabel($this->getAppendLabelOnCheckboxes());
-                }
-
-                if (($element instanceof InputRadio) || ($element instanceof InputRadioMultiple)) {
-                    $element->appendLabel($this->getAppendLabelOnRadios());
-                }
-
-                //add the form id as prefix to name attributes of multiple radios and checkboxes
-                if (($element instanceof InputCheckboxMultiple) || ($element instanceof InputRadioMultiple)) {
-                    foreach ($element->getOptions() as $cb) {
-                        $brackets = ($element instanceof InputCheckboxMultiple) ? '[]' : '';
-                        $cb->setAttribute('name', $name . $brackets);
-                    }
-                }
-
-                // add an element (progressbar, text,...) before the first button element for Ajax submit
-                if ($this->getSubmitWithAjax()) {
-
-                    // create progressbar and info text for form submission
-                    $submitInfo = '<div class="ajax-progressbar-wrapper">'.$this->createProgressbar() . $this->frontendforms['input_ajaxMsg'].'</div>';
-
-                    if($this->steps && $this->lastStep){
-                        if($element->getAttribute('name') == $firstButton){
-                            $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo . '</div>';
-                        }
-                    } else {
-                        if ($key === $position) { // add it only before the first button inside the form
-                            if ($this->showProgressbar) {
-                                $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo . '</div>';
-                            }
-                        }
+                    // change the name attribute of the CSRF field
+                    if ($element->getID() == $this->getID() . '-post_token') {
+                        $element->setAttribute('name', $tokenName);
                     }
 
+                    // enable/disable usage of Aria attributes
+                    if (method_exists($element, 'useAttributes'))
+                        $element->useAriaAttributes($this->useAriaAttributes);
 
-                }
-
-                if (array_key_exists($name, $this->formErrors)) {
-                    $element->setCSSClass('input_errorClass');
-                    // add Aria attributes
-                    if (($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json')) {
-                        $element->setAttribute('aria-invalid', 'true');
-                        $element->setAttribute('aria-errormessage', $element->getID() . '-errormsg');
-                    }
-
-                    // set error class for input element
-                    $element->setErrorMessage($this->formErrors[$name][0])->setAttribute('id', $element->getID() . '-errormsg');
-
-                    //get a first error message
-                } else {
+                    // Label and description (Only on input fields)
                     if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
 
-                        // ids to description, notes, successmessage for Aria attributes
-                        $element->getSuccessMessage()->setAttribute('id', $element->getID() . '-successmsg');
-                        $element->getDescription()->setAttribute('id', $element->getID() . '-desc');
-                        $element->getNotes()->setAttribute('id', $element->getID() . '-notes');
+                        // set the description position on per form base if the description text is present
+                        if ($element->getDescription()->getText()) {
+                            // set position from form setting if no individual position has been set
+                            if (is_null($element->getDescription()->getPosition())) {
+                                $element->getDescription()->setPosition($this->general_desc_position);
+                            }
+                        }
 
-                        if ($this->isSubmitted()) {
-                            if (($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json') && $this->isSubmitted()) {
-                                // add only on input elements with values
-                                if (!empty($element->getAttribute('value'))) {
-                                    $element->setAttribute('aria-invalid', 'false');
-                                    $element->setAttribute('aria-describedby', $element->getID() . '-successmsg');
+                        // add unique id to the field-wrapper if present
+                        $element->getFieldWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-fieldwrapper');
+                        // add unique id to the input-wrapper if present
+                        $element->getInputWrapper()->setAttribute('id', $this->getID() . '-' . $oldId . '-inputwrapper');
+                        // do not add the for attribute to InputRadioMultiple and InputCheckboxMultiple elements
+                        if ((wireClassName($element) !== 'InputRadioMultiple') && (wireClassName($element) !== 'InputCheckboxMultiple')) {
+                            $element->getLabel()->setAttribute('for', $element->getAttribute('id'));
+                        }
+                    }
+                    $name = $element->getAttribute('id');
 
+                    //Enable/disable wrap of the checkboxes by its label tag by appending the label after the input tag
+                    // by using the appendLabel() method
+                    if (($element instanceof InputCheckbox) || ($element instanceof InputCheckboxMultiple)) {
+                        $element->appendLabel($this->getAppendLabelOnCheckboxes());
+                    }
+
+                    if (($element instanceof InputRadio) || ($element instanceof InputRadioMultiple)) {
+                        $element->appendLabel($this->getAppendLabelOnRadios());
+                    }
+
+                    //add the form id as prefix to name attributes of multiple radios and checkboxes
+                    if (($element instanceof InputCheckboxMultiple) || ($element instanceof InputRadioMultiple)) {
+                        foreach ($element->getOptions() as $cb) {
+                            $brackets = ($element instanceof InputCheckboxMultiple) ? '[]' : '';
+                            $cb->setAttribute('name', $name . $brackets);
+                        }
+                    }
+
+                    // add an element (progressbar, text,...) before the first button element for Ajax submit
+                    if ($this->getSubmitWithAjax()) {
+
+                        // create progressbar and info text for form submission
+                        $submitInfo = '<div class="ajax-progressbar-wrapper">'.$this->createProgressbar() . $this->frontendforms['input_ajaxMsg'].'</div>';
+
+                        if($this->steps && $this->lastStep){
+                            if($element->getAttribute('name') == $firstButton){
+                                $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo . '</div>';
+                            }
+                        } else {
+                            if ($key === $position) { // add it only before the first button inside the form
+                                if ($this->showProgressbar) {
+                                    $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo . '</div>';
                                 }
                             }
                         }
 
                     }
 
-                }
+                    if (array_key_exists($name, $this->formErrors)) {
+                        $element->setCSSClass('input_errorClass');
+                        // add Aria attributes
+                        if (($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json')) {
+                            $element->setAttribute('aria-invalid', 'true');
+                            $element->setAttribute('aria-errormessage', $element->getID() . '-errormsg');
+                        }
 
-                // add a button wrapper on multi-step form
-                if($this->steps && $element->getAttribute('name') === $firstButton){
-                    $formElements .= '<div id="'.$this->getID().'-button-wrapper" class="button-wrapper">';
-                    // add additional class to submit button on last step
-                    if($element->hasAttribute('type') && $element->getAttribute('type') === 'submit'){
-                        $element->setAttribute('class', 'ff-finalstep-submit');
+                        // set error class for input element
+                        $element->setErrorMessage($this->formErrors[$name][0])->setAttribute('id', $element->getID() . '-errormsg');
+
+                    } else {
+                        if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
+
+                            // ids to description, notes, successmessage for Aria attributes
+                            $element->getSuccessMessage()->setAttribute('id', $element->getID() . '-successmsg');
+                            $element->getDescription()->setAttribute('id', $element->getID() . '-desc');
+                            $element->getNotes()->setAttribute('id', $element->getID() . '-notes');
+
+                            if ($this->isSubmitted()) {
+                                if (($this->useAriaAttributes) || ($this->frontendforms['input_framework'] === 'pico2.json') && $this->isSubmitted()) {
+                                    // add only on input elements with values
+                                    if (!empty($element->getAttribute('value'))) {
+                                        $element->setAttribute('aria-invalid', 'false');
+                                        $element->setAttribute('aria-describedby', $element->getID() . '-successmsg');
+
+                                    }
+                                }
+                            }
+
+                        }
+
                     }
+
+                    // add a button wrapper on multi-step form
+                    if($this->steps && $element->getAttribute('name') === $firstButton){
+                        $formElements .= '<div id="'.$this->getID().'-button-wrapper" class="button-wrapper">';
+                        // add additional class to submit button on last step
+                        if($element->hasAttribute('type') && $element->getAttribute('type') === 'submit'){
+                            $element->setAttribute('class', 'ff-finalstep-submit');
+                        }
+                    }
+
+                    $formElements .= $element->render() . PHP_EOL;
+
+                    if($this->steps && $element->getAttribute('name') === $lastButton){
+                        $formElements .= '<div>';
+                    }
+
                 }
 
-                $formElements .= $element->render() . PHP_EOL;
-
-                if($this->steps && $element->getAttribute('name') === $lastButton){
-                    $formElements .= '<div>';
+                // add formElementsWrapper -> add the div container after the form tag
+                if ($this->frontendforms['input_wrapperFormElements']) {
+                    $this->getformElementsWrapper()->setContent($formElements);
+                    $formElements = $this->formElementsWrapper->render() . PHP_EOL;
                 }
+
+                // render the form with all its fields
+                $this->setContent($formElements);
+                $out .= $this->renderNonSelfclosingTag($this->getTag());
 
             }
 
-            // add formElementsWrapper -> add the div container after the form tag
-            if ($this->frontendforms['input_wrapperFormElements']) {
-                $this->getformElementsWrapper()->setContent($formElements);
-                $formElements = $this->formElementsWrapper->render() . PHP_EOL;
+            if ($this->getSubmitWithAjax()) {
+                $out .= '</div>';
             }
 
-            // render the form with all its fields
-            $this->setContent($formElements);
-            $out .= $this->renderNonSelfclosingTag($this->getTag());
-
-        }
-
-        if ($this->getSubmitWithAjax()) {
+            // closing wrapper over all elements
             $out .= '</div>';
+
         }
 
-        // closing wrapper over all elements
-        $out .= '</div>';
-
+        return $out;
     }
 
-return $out;
-}
+    /**
+     * Append a field object to the form
+     * @param object $field - object of inputfield, fieldset, button, ...
+     * @return void
+     */
 
-/**
- * Append a field object to the form
- * @param object $field - object of inputfield, fieldset, button, ...
- * @return void
- */
+    /**
+     * Append a field object to the form
+     * The 2 optional parameters are only for the creation of 2 new methods: addBefore() and addAfter()
+     * These 2 methods can be used to add new form elements (inputs, text elements, fieldsets,…) to a formElements
+     * array at a certain position These 2 methods are especially designed for the future usage in module dev - no
+     * need to use it if you are creating the form by your own
+     * @param Markup|Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field -
+     *     the current form field which should be appended to the form
+     * @param Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose|bool|null $otherfield -
+     *     optional: another form field
+     * @param bool $add_before - optional: current should be inserted before or after this (another) form field
+     * @return void
+     * @throws Exception
+     */
+    public
+    function add(
+        Markup|Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose    $field,
+        Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose|null|bool $otherfield = null,
+        bool                                                                 $add_before = false
+    ): void
+    {
 
-/**
- * Append a field object to the form
- * The 2 optional parameters are only for the creation of 2 new methods: addBefore() and addAfter()
- * These 2 methods can be used to add new form elements (inputs, text elements, fieldsets,…) to a formElements
- * array at a certain position These 2 methods are especially designed for the future usage in module dev - no
- * need to use it if you are creating the form by your own
- * @param Markup|Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field -
- *     the current form field which should be appended to the form
- * @param Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose|bool|null $otherfield -
- *     optional: another form field
- * @param bool $add_before - optional: current should be inserted before or after this (another) form field
- * @return void
- * @throws Exception
- */
-public
-function add(
-    Markup|Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose    $field,
-    Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose|null|bool $otherfield = null,
-    bool                                                                 $add_before = false
-): void
-{
+        // add or remove wrapper divs on each form element
+        if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
 
-    // add or remove wrapper divs on each form element
-    if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
+            // check if the usage of inputwrapper is set on per field base
+            if (is_null($field->getUsageOfInputWrapper())) {
+                $useinputwrapper = $this->useInputWrapper;
+            } else {
+                $useinputwrapper = $field->getUsageOfInputWrapper();
+            }
 
-        // check if the usage of inputwrapper is set on per field base
-        if (is_null($field->getUsageOfInputWrapper())) {
-            $useinputwrapper = $this->useInputWrapper;
-        } else {
-            $useinputwrapper = $field->getUsageOfInputWrapper();
+            $field->useInputWrapper($useinputwrapper);
+
+            // check if the usage of fieldwrapper is set on per field base
+            if (is_null($field->getUsageOfFieldWrapper())) {
+                $usefieldwrapper = $this->useFieldWrapper;
+            } else {
+                $usefieldwrapper = $field->getUsageOfFieldWrapper();
+            }
+            $field->useFieldWrapper($usefieldwrapper);
+
+            // create a placeholder for the label of this field
+            $fieldname = $field->getAttribute('name');
+            $this->setMailPlaceholder($fieldname . 'label', $field->getLabel()->getText());
+            $this->setMailPlaceholder($fieldname . 'value', $field->getAttribute('value'));
         }
 
-        $field->useInputWrapper($useinputwrapper);
 
-        // check if the usage of fieldwrapper is set on per field base
-        if (is_null($field->getUsageOfFieldWrapper())) {
-            $usefieldwrapper = $this->useFieldWrapper;
-        } else {
-            $usefieldwrapper = $field->getUsageOfFieldWrapper();
+        // if the field is not a text element and not a markup, set the name attribute if not set before
+        $elementsWithNoName = [
+            'Markup',
+            'FieldsetOpen',
+            'FieldsetClose',
+            'Markup',
+            'Progressbar'
+        ];
+
+        $className = $field->className($field);
+
+
+        if ((!is_subclass_of($field, 'FrontendForms\TextElements')) && !in_array($className, $elementsWithNoName)) {
+
+            // Add id of the form as prefix for the name attribute of the field
+            if ($field->hasAttribute('name')) {
+                $fieldName = $field->getAttribute('name');
+            } else {
+                $fieldName = $field->getId();
+            }
+            $field->setAttribute('name', $this->getID() . '-' . $fieldName);
         }
-        $field->useFieldWrapper($usefieldwrapper);
 
-        // create a placeholder for the label of this field
-        $fieldname = $field->getAttribute('name');
-        $this->setMailPlaceholder($fieldname . 'label', $field->getLabel()->getText());
-        $this->setMailPlaceholder($fieldname . 'value', $field->getAttribute('value'));
-    }
+        if (!is_null($otherfield)) {
+            // check if another field exists
+            if (is_bool($otherfield)) {
+                throw new Exception("The reference field (argument 2) where you want to add this field before or after does not exist. Please check if you have written the name attribute correctly.",
+                    1);
+            } else {
+                // check if the field with this id exists inside the formElements array
+                if ($this->getFormelementByName($otherfield->getAttribute('name'))) {
+                    $ref_position = null;
+                    // get the key of this field inside the formElements array
+                    $this->formElements = array_values($this->formElements);
+                    foreach ($this->formElements as $key => $element) {
+                        if ($element == $otherfield) {
+                            $ref_position = $key;
+                        }
+                    }
 
-
-    // if the field is not a text element and not a markup, set the name attribute if not set before
-    $elementsWithNoName = [
-        'Markup',
-        'FieldsetOpen',
-        'FieldsetClose',
-        'Markup',
-        'Progressbar'
-    ];
-
-    $className = $field->className($field);
-
-
-    if ((!is_subclass_of($field, 'FrontendForms\TextElements')) && !in_array($className, $elementsWithNoName)) {
-
-        // Add id of the form as prefix for the name attribute of the field
-        if ($field->hasAttribute('name')) {
-            $fieldName = $field->getAttribute('name');
-        } else {
-            $fieldName = $field->getId();
-        }
-        $field->setAttribute('name', $this->getID() . '-' . $fieldName);
-    }
-
-    if (!is_null($otherfield)) {
-        // check if another field exists
-        if (is_bool($otherfield)) {
-            throw new Exception("The reference field (argument 2) where you want to add this field before or after does not exist. Please check if you have written the name attribute correctly.",
-                1);
-        } else {
-            // check if the field with this id exists inside the formElements array
-            if ($this->getFormelementByName($otherfield->getAttribute('name'))) {
-                $ref_position = null;
-                // get the key of this field inside the formElements array
-                $this->formElements = array_values($this->formElements);
-                foreach ($this->formElements as $key => $element) {
-                    if ($element == $otherfield) {
-                        $ref_position = $key;
+                    // insert field to the new position
+                    if (is_int($ref_position)) {
+                        if (!$add_before) { // add after
+                            $ref_position = $ref_position + 1;
+                        }
+                        $this->formElements = array_merge(array_slice($this->formElements, 0, $ref_position), [$field],
+                            array_slice($this->formElements, $ref_position));
                     }
                 }
+            }
+        } else {
+            // no other element is present -> so add it to formElements array as next element
+            $this->formElements = array_merge($this->formElements,
+                [$field]); // array must be numeric for honeypot field
+        }
 
-                // insert field to the new position
-                if (is_int($ref_position)) {
-                    if (!$add_before) { // add after
-                        $ref_position = $ref_position + 1;
-                    }
-                    $this->formElements = array_merge(array_slice($this->formElements, 0, $ref_position), [$field],
-                        array_slice($this->formElements, $ref_position));
+    }
+
+    /**
+     * Insert a form field before another form field
+     * Can be used if you have not created the form by your own, but you need to add a new field to a created
+     * formElements array at a certain position
+     * @param Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field -
+     *     the current form field
+     * @param Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $before_field -
+     *     the form field object before which the current form field object should be inserted
+     * @return void
+     * @throws Exception
+     */
+    public
+    function addBefore(
+        Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose      $field,
+        Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $before_field
+    ): void
+    {
+        // if a field is present inside the formelements array, remove it first
+        if (($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))) {
+            $this->remove($field);
+        }
+        $this->add($field, $before_field, true);
+    }
+
+    /**
+     * Insert a form field after another form field
+     * Can be used if you have not created the form by your own, but you need to add a new field to a created
+     * formElements array at a certain position
+     *                    *
+     * @param Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field -
+     *     the current form field
+     * @param Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $after_field -
+     *     the form field object after which the current form field object should be inserted
+     * @return void
+     * @throws Exception
+     */
+    public
+    function addAfter(
+        Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose      $field,
+        Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $after_field
+    ): void
+    {
+        // if a field is present inside the formelements array, remove it first
+        if (($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))) {
+            $this->remove($field);
+        }
+        $this->add($field, $after_field);
+    }
+
+    /**
+     * Remove a form field from the fields array
+     * @param object $field
+     * @return void
+     */
+    public
+    function remove(object $field): void
+    {
+        if (($key = array_search($field, $this->formElements)) !== false) {
+            unset($this->formElements[$key]);
+            // remove the placeholders too if they are present
+            $fieldname = $field->getAttribute('name');
+            $this->removePlaceholder(strtoupper($fieldname . 'label'));
+            $this->removePlaceholder(strtoupper($fieldname . 'value'));
+        }
+    }
+
+    /**
+     * Get the min time value
+     * @return int
+     */
+    public
+    function getMinTime(): int
+    {
+        return $this->frontendforms['input_minTime'];
+    }
+
+    /**
+     * Set the min time in seconds before the form should be submitted
+     * @param int $minTime
+     * @return $this
+     */
+    public
+    function setMinTime(int $minTime): self
+    {
+        $this->frontendforms['input_minTime'] = $minTime;
+        return $this;
+    }
+
+    /**
+     * Get the max time value
+     * @return int
+     */
+    protected
+    function getMaxTime(): int
+    {
+        return $this->frontendforms['input_maxTime'];
+    }
+
+    /**
+     * Set the max time in seconds until the form should be submitted
+     * @param int $maxTime
+     * @return $this
+     */
+    public
+    function setMaxTime(int $maxTime): self
+    {
+        $this->frontendforms['input_maxTime'] = $maxTime;
+        return $this;
+    }
+
+    /** Static method to encrypt/decrypt a string according to the encryption settings
+     * @param string $string
+     * @param string $method
+     * @return string
+     */
+    public
+    static function encryptDecrypt(string $string, string $method = 'encrypt'): string
+    {
+        // encryption settings
+        $encrypt_method = 'AES-256-CBC';
+        $secret_key = 'd0a7e7997b6d5fcd55f4b5c32611b87cd923e88837b63bf2941ef819dc8ca282';
+        $secret_iv = '5fgf5HJ5g27';
+        $algo = 'sha256';
+        // user define secret key
+        $key = hash($algo, $secret_key);
+        $iv = substr(hash($algo, $secret_iv), 0, 16);
+        $methods = ['encrypt', 'decrypt'];
+        if (in_array($method, $methods)) {
+            if ($method === 'encrypt') {
+                $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+                return base64_encode($output);
+            } else {
+                return openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+            }
+        }
+        return $string;
+    }
+
+    /**
+     * Create a required hint text element if showTextHint is set to true
+     * @param string $position - has to be 'top' or 'bottom'
+     * @return string
+     */
+    private
+    function renderRequiredText(string $position): string
+    {
+        if ($this->defaultRequiredTextPosition === $position) {
+            return $this->requiredHint->render();
+        }
+        return ''; // return empty string
+    }
+
+    /**
+     * Create a random string with a certain length for usage in URL query strings
+     * @param int $charLength - the length of the random string - default is 100
+     * @return string - returns a slug version of the generated random string that can be used inside an url
+     */
+    protected
+    function createQueryCode(int $charLength = 100): string
+    {
+        $pass = new \ProcessWire\Password();
+        if ($charLength <= 0) {
+            $charLength = 10;
+        }
+        // instantiate a password object to use the methods
+        $string = $pass->randomBase64String($charLength);
+        return $this->generateSlug($string);
+    }
+
+    /**
+     * Generate a slug out of a string for usage in urls (fe query strings)
+     * This is only a helper function
+     * @param $string - the string
+     * @return string
+     */
+    protected
+    function generateSlug(string $string): string
+    {
+        return preg_replace('/[^A-Za-z\d-]+/', '-', $string);
+    }
+
+    /**
+     * Make a readable string from a number of seconds
+     * @param int $seconds - a number of seconds which should be converted to a readable string
+     * @return string|null - a readable string of the time (fe 1 day instead of 86400 seconds)
+     * @throws Exception
+     */
+    protected
+    function readableTimestringFromSeconds(int $seconds = 0): ?string
+    {
+        $then = new DateTime(date('Y-m-d H:i:s', 0));
+        $now = new DateTime(date('Y-m-d H:i:s', $seconds));
+        $interval = $then->diff($now);
+
+        if ($interval->y >= 1) {
+            $thetime[] = $interval->y . ' ' . _n($this->_('year'),
+                    $this->_('years'), $interval->y);
+        }
+        if ($interval->m >= 1) {
+            $thetime[] = $interval->m . ' ' . _n($this->_('month'),
+                    $this->_('months'), $interval->m);
+        }
+        if ($interval->d >= 1) {
+            $thetime[] = $interval->d . ' ' . _n($this->_('day'),
+                    $this->_('days'), $interval->d);
+        }
+        if ($interval->h >= 1) {
+            $thetime[] = $interval->h . ' ' . _n($this->_('hour'),
+                    $this->_('hours'), $interval->h);
+        }
+        if ($interval->i >= 1) {
+            $thetime[] = $interval->i . ' ' . _n($this->_('minute'),
+                    $this->_('minutes'), $interval->i);
+        }
+        if ($interval->s >= 1) {
+            $thetime[] = $interval->s . ' ' . _n($this->_('second'),
+                    $this->_('seconds'), $interval->s);
+        }
+
+        return isset($thetime) ? implode(' ', $thetime) : null;
+    }
+
+    /**
+     * Return the names of all input fields inside a form as an array
+     * @return array
+     */
+    public
+    function getNamesOfInputFields(): array
+    {
+        $elements = [];
+        if ($this->formElements) {
+            foreach ($this->formElements as $element) {
+                if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
+                    $elements[] = $element->getAttribute('name');
                 }
             }
         }
-    } else {
-        // no other element is present -> so add it to formElements array as next element
-        $this->formElements = array_merge($this->formElements,
-            [$field]); // array must be numeric for honeypot field
+        return array_filter($elements);
     }
 
-}
-
-/**
- * Insert a form field before another form field
- * Can be used if you have not created the form by your own, but you need to add a new field to a created
- * formElements array at a certain position
- * @param Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field -
- *     the current form field
- * @param Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $before_field -
- *     the form field object before which the current form field object should be inserted
- * @return void
- * @throws Exception
- */
-public
-function addBefore(
-    Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose      $field,
-    Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $before_field
-): void
-{
-    // if a field is present inside the formelements array, remove it first
-    if (($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))) {
-        $this->remove($field);
+    /**
+     * Output an error message that email could not be sent due to possible wrong email configuration settings
+     * This is a general message that could be used for all forms
+     * @return void
+     */
+    protected
+    function generateEmailSentErrorAlert(): void
+    {
+        $this->alert->setCSSClass('alert_dangerClass');
+        $this->alert->setText($this->_('Email could not be sent due to possible wrong email configuration settings.'));
     }
-    $this->add($field, $before_field, true);
-}
 
-/**
- * Insert a form field after another form field
- * Can be used if you have not created the form by your own, but you need to add a new field to a created
- * formElements array at a certain position
- *                    *
- * @param Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose $field -
- *     the current form field
- * @param Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $after_field -
- *     the form field object after which the current form field object should be inserted
- * @return void
- * @throws Exception
- */
-public
-function addAfter(
-    Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose      $field,
-    Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $after_field
-): void
-{
-    // if a field is present inside the formelements array, remove it first
-    if (($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))) {
-        $this->remove($field);
+    /**
+     * Return placeholders for email pre-header to prevent showing up other text
+     * The Litmus hack adds empty spaces after the mail placeholder to prevent the display of other text inside the
+     * pre-header
+     * @return string
+     */
+    protected
+    function getLitmusHack(): string
+    {
+        return '&#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279;';
     }
-    $this->add($field, $after_field);
-}
 
-/**
- * Remove a form field from the fields array
- * @param object $field
- * @return void
- */
-public
-function remove(object $field): void
-{
-    if (($key = array_search($field, $this->formElements)) !== false) {
-        unset($this->formElements[$key]);
-        // remove the placeholders too if they are present
-        $fieldname = $field->getAttribute('name');
-        $this->removePlaceholder(strtoupper($fieldname . 'label'));
-        $this->removePlaceholder(strtoupper($fieldname . 'value'));
+    /**
+     * Method for internal usage only
+     * @return string
+     */
+    protected
+    function getPreheaderStyle(): string
+    {
+        return 'display:none;font-size:1px; color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;';
     }
-}
 
-/**
- * Get the min time value
- * @return int
- */
-public
-function getMinTime(): int
-{
-    return $this->frontendforms['input_minTime'];
-}
-
-/**
- * Set the min time in seconds before the form should be submitted
- * @param int $minTime
- * @return $this
- */
-public
-function setMinTime(int $minTime): self
-{
-    $this->frontendforms['input_minTime'] = $minTime;
-    return $this;
-}
-
-/**
- * Get the max time value
- * @return int
- */
-protected
-function getMaxTime(): int
-{
-    return $this->frontendforms['input_maxTime'];
-}
-
-/**
- * Set the max time in seconds until the form should be submitted
- * @param int $maxTime
- * @return $this
- */
-public
-function setMaxTime(int $maxTime): self
-{
-    $this->frontendforms['input_maxTime'] = $maxTime;
-    return $this;
-}
-
-/** Static method to encrypt/decrypt a string according to the encryption settings
- * @param string $string
- * @param string $method
- * @return string
- */
-public
-static function encryptDecrypt(string $string, string $method = 'encrypt'): string
-{
-    // encryption settings
-    $encrypt_method = 'AES-256-CBC';
-    $secret_key = 'd0a7e7997b6d5fcd55f4b5c32611b87cd923e88837b63bf2941ef819dc8ca282';
-    $secret_iv = '5fgf5HJ5g27';
-    $algo = 'sha256';
-    // user define secret key
-    $key = hash($algo, $secret_key);
-    $iv = substr(hash($algo, $secret_iv), 0, 16);
-    $methods = ['encrypt', 'decrypt'];
-    if (in_array($method, $methods)) {
-        if ($method === 'encrypt') {
-            $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
-            return base64_encode($output);
-        } else {
-            return openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+    /**
+     * Generate an invisible pre-header text after the subject for an email
+     * @param WireMail $mail
+     * @return string
+     */
+    protected
+    function generateEmailPreHeader(WireMail $mail): string
+    {
+        if ($mail->title) { // check if title property was set
+            // generate an invisible div container
+            return '<div id="preheader-text" style="' . $this->getPreheaderStyle() . '">' . $mail->title . $this->getLitmusHack() . '</div>';
         }
-    }
-    return $string;
-}
-
-/**
- * Create a required hint text element if showTextHint is set to true
- * @param string $position - has to be 'top' or 'bottom'
- * @return string
- */
-private
-function renderRequiredText(string $position): string
-{
-    if ($this->defaultRequiredTextPosition === $position) {
-        return $this->requiredHint->render();
-    }
-    return ''; // return empty string
-}
-
-/**
- * Create a random string with a certain length for usage in URL query strings
- * @param int $charLength - the length of the random string - default is 100
- * @return string - returns a slug version of the generated random string that can be used inside an url
- */
-protected
-function createQueryCode(int $charLength = 100): string
-{
-    $pass = new \ProcessWire\Password();
-    if ($charLength <= 0) {
-        $charLength = 10;
-    }
-    // instantiate a password object to use the methods
-    $string = $pass->randomBase64String($charLength);
-    return $this->generateSlug($string);
-}
-
-/**
- * Generate a slug out of a string for usage in urls (fe query strings)
- * This is only a helper function
- * @param $string - the string
- * @return string
- */
-protected
-function generateSlug(string $string): string
-{
-    return preg_replace('/[^A-Za-z\d-]+/', '-', $string);
-}
-
-/**
- * Make a readable string from a number of seconds
- * @param int $seconds - a number of seconds which should be converted to a readable string
- * @return string|null - a readable string of the time (fe 1 day instead of 86400 seconds)
- * @throws Exception
- */
-protected
-function readableTimestringFromSeconds(int $seconds = 0): ?string
-{
-    $then = new DateTime(date('Y-m-d H:i:s', 0));
-    $now = new DateTime(date('Y-m-d H:i:s', $seconds));
-    $interval = $then->diff($now);
-
-    if ($interval->y >= 1) {
-        $thetime[] = $interval->y . ' ' . _n($this->_('year'),
-                $this->_('years'), $interval->y);
-    }
-    if ($interval->m >= 1) {
-        $thetime[] = $interval->m . ' ' . _n($this->_('month'),
-                $this->_('months'), $interval->m);
-    }
-    if ($interval->d >= 1) {
-        $thetime[] = $interval->d . ' ' . _n($this->_('day'),
-                $this->_('days'), $interval->d);
-    }
-    if ($interval->h >= 1) {
-        $thetime[] = $interval->h . ' ' . _n($this->_('hour'),
-                $this->_('hours'), $interval->h);
-    }
-    if ($interval->i >= 1) {
-        $thetime[] = $interval->i . ' ' . _n($this->_('minute'),
-                $this->_('minutes'), $interval->i);
-    }
-    if ($interval->s >= 1) {
-        $thetime[] = $interval->s . ' ' . _n($this->_('second'),
-                $this->_('seconds'), $interval->s);
+        return '';
     }
 
-    return isset($thetime) ? implode(' ', $thetime) : null;
-}
+    /**
+     * Get all Captcha questions as a PageArray
+     * @return array
+     * @throws WireException
+     */
+    protected
+    function getCaptchaQuestions(): array
+    {
+        // need to include all, otherwise pages under the admin tree will not be listed
+        $questions = $this->wire('pages')->find('template=ff_question,include=all,status=published,status!=hidden');
 
-/**
- * Return the names of all input fields inside a form as an array
- * @return array
- */
-public
-function getNamesOfInputFields(): array
-{
-    $elements = [];
-    if ($this->formElements) {
-        foreach ($this->formElements as $element) {
-            if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
-                $elements[] = $element->getAttribute('name');
-            }
-        }
-    }
-    return array_filter($elements);
-}
+        $questionArray = [];
 
-/**
- * Output an error message that email could not be sent due to possible wrong email configuration settings
- * This is a general message that could be used for all forms
- * @return void
- */
-protected
-function generateEmailSentErrorAlert(): void
-{
-    $this->alert->setCSSClass('alert_dangerClass');
-    $this->alert->setText($this->_('Email could not be sent due to possible wrong email configuration settings.'));
-}
+        $numberOfQuestions = $questions->count;
+        if (!$numberOfQuestions) return $questionArray;
 
-/**
- * Return placeholders for email pre-header to prevent showing up other text
- * The Litmus hack adds empty spaces after the mail placeholder to prevent the display of other text inside the
- * pre-header
- * @return string
- */
-protected
-function getLitmusHack(): string
-{
-    return '&#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279;';
-}
-
-/**
- * Method for internal usage only
- * @return string
- */
-protected
-function getPreheaderStyle(): string
-{
-    return 'display:none;font-size:1px; color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;';
-}
-
-/**
- * Generate an invisible pre-header text after the subject for an email
- * @param WireMail $mail
- * @return string
- */
-protected
-function generateEmailPreHeader(WireMail $mail): string
-{
-    if ($mail->title) { // check if title property was set
-        // generate an invisible div container
-        return '<div id="preheader-text" style="' . $this->getPreheaderStyle() . '">' . $mail->title . $this->getLitmusHack() . '</div>';
-    }
-    return '';
-}
-
-/**
- * Get all Captcha questions as a PageArray
- * @return array
- * @throws WireException
- */
-protected
-function getCaptchaQuestions(): array
-{
-    // need to include all, otherwise pages under the admin tree will not be listed
-    $questions = $this->wire('pages')->find('template=ff_question,include=all,status=published,status!=hidden');
-
-    $questionArray = [];
-
-    $numberOfQuestions = $questions->count;
-    if (!$numberOfQuestions) return $questionArray;
-
-    // just the case there are more than 25 pages, pick only 25 pages randomly to prevent a too large array
-    if ($numberOfQuestions > 25) {
-        $questions = $questions->findRandom(25);
-    }
-
-    // check if multi-language site
-    $multilang = false;
-    if ($this->wire('languages')) {
-        $multilang = true;
-        $lang = $this->wire('user')->language;
-    }
-    // create the multidim. array
-    foreach ($questions as $key => $question) {
-
-        if ($multilang) {
-            $title = $question->getLanguageValue($lang, 'title');
-            // check if field "title" contains a value in this language, otherwise take the value from the default lanugage
-            if (!$title) {
-                $title = $question->getLanguageValue('default', 'title');
-            }
-            $answers = explode("\n", $question->getLanguageValue($lang, 'ff_answers'));
-            // check if field "answers" contains values in this language, otherwise take the values from the default lanugage
-            if ($answers) {
-                $answers = explode("\n", $question->getLanguageValue('default', 'ff_answers'));
-            }
-            $successmsg = $question->getLanguageValue($lang, 'ff_successmsg');
-            $errormsg = $question->getLanguageValue($lang, 'ff_errormsg');
-            $placeholder = $question->getLanguageValue($lang, 'ff_placeholder');
-            $notes = $question->getLanguageValue($lang, 'ff_notes');
-            $description = $question->getLanguageValue($lang, 'ff_description');
-            $descriptionPosition = $question->getLanguageValue($lang, 'ff_descposition')->value;
-        } else {
-            $title = $question->title;
-            $answers = explode("\n", $question->ff_answers);
-            $successmsg = $question->ff_successmsg;
-            $errormsg = $question->ff_errormsg;
-            $placeholder = $question->ff_placeholder;
-            $notes = $question->ff_notes;
-            $description = $question->description;
-            $descriptionPosition = $question->ff_descposition->value;
+        // just the case there are more than 25 pages, pick only 25 pages randomly to prevent a too large array
+        if ($numberOfQuestions > 25) {
+            $questions = $questions->findRandom(25);
         }
 
-        $questionArray[$key]['question'] = $title;
-        $questionArray[$key]['answers'] = $answers;
-        $questionArray[$key]['successMsg'] = $successmsg;
-        $questionArray[$key]['errorMsg'] = $errormsg;
-        $questionArray[$key]['placeholder'] = $placeholder;
-        $questionArray[$key]['notes'] = $notes;
-        $questionArray[$key]['description'] = $description;
-        $questionArray[$key]['descriptionPosition'] = $descriptionPosition;
+        // check if multi-language site
+        $multilang = false;
+        if ($this->wire('languages')) {
+            $multilang = true;
+            $lang = $this->wire('user')->language;
+        }
+        // create the multidim. array
+        foreach ($questions as $key => $question) {
+
+            if ($multilang) {
+                $title = $question->getLanguageValue($lang, 'title');
+                // check if field "title" contains a value in this language, otherwise take the value from the default lanugage
+                if (!$title) {
+                    $title = $question->getLanguageValue('default', 'title');
+                }
+                $answers = explode("\n", $question->getLanguageValue($lang, 'ff_answers'));
+                // check if field "answers" contains values in this language, otherwise take the values from the default lanugage
+                if ($answers) {
+                    $answers = explode("\n", $question->getLanguageValue('default', 'ff_answers'));
+                }
+                $successmsg = $question->getLanguageValue($lang, 'ff_successmsg');
+                $errormsg = $question->getLanguageValue($lang, 'ff_errormsg');
+                $placeholder = $question->getLanguageValue($lang, 'ff_placeholder');
+                $notes = $question->getLanguageValue($lang, 'ff_notes');
+                $description = $question->getLanguageValue($lang, 'ff_description');
+                $descriptionPosition = $question->getLanguageValue($lang, 'ff_descposition')->value;
+            } else {
+                $title = $question->title;
+                $answers = explode("\n", $question->ff_answers);
+                $successmsg = $question->ff_successmsg;
+                $errormsg = $question->ff_errormsg;
+                $placeholder = $question->ff_placeholder;
+                $notes = $question->ff_notes;
+                $description = $question->description;
+                $descriptionPosition = $question->ff_descposition->value;
+            }
+
+            $questionArray[$key]['question'] = $title;
+            $questionArray[$key]['answers'] = $answers;
+            $questionArray[$key]['successMsg'] = $successmsg;
+            $questionArray[$key]['errorMsg'] = $errormsg;
+            $questionArray[$key]['placeholder'] = $placeholder;
+            $questionArray[$key]['notes'] = $notes;
+            $questionArray[$key]['description'] = $description;
+            $questionArray[$key]['descriptionPosition'] = $descriptionPosition;
+
+        }
+        return array_filter($questionArray);
 
     }
-    return array_filter($questionArray);
+
+    /**
+     * Add a step marker for multi-step forms to the form on a given position
+     * @return $this
+     *
+     */
+    public
+    function addStep(): self
+    {
+        $steps = $this->steps;
+        $total = count($this->formElements);
+        $steps[] = ['position' => $total];
+        $this->steps = $steps;
+        return $this;
+    }
+
+    /**
+     * Add a text above the list at the last step
+     * @param string $text
+     * @return void
+     */
+    public
+    function setLastStepListText(string $text): self
+    {
+        $this->lastStepListText = $text;
+        return $this;
+    }
 
 }
 
-/**
- * Add a step marker for multi-step forms to the form on a given position
- * @return $this
- *
- */
-public
-function addStep(): self
-{
-    $steps = $this->steps;
-    $total = count($this->formElements);
-    $steps[] = ['position' => $total];
-    $this->steps = $steps;
-    return $this;
-}
-
-/**
- * Add a text above the list at the last step
- * @param string $text
- * @return void
- */
-public
-function setLastStepListText(string $text): self
-{
-    $this->lastStepListText = $text;
-    return $this;
-}
-
-}
