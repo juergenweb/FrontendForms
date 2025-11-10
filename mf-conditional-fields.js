@@ -6,12 +6,13 @@
  * Author: Ali Khallad
  * Author link: http://alikhallad.com
  * Source : https://github.com/bomsn/mf-conditional-fields
- * Version 1.0.7
+ * Version 1.0.9
  *
  */
 "use strict";
+
 const mfConditionalFields = (forms, options = {}) => {
-   
+
     // Ensure the passed form(s) is in the correct format (array of elements)
     switch (typeof forms) {
         case 'string':
@@ -342,7 +343,6 @@ const mfConditionalFields = (forms, options = {}) => {
                             }
                         }
                         triggerValue = triggerValue.join('|');
-                        console.log(triggerValue);
                     } else {
                         triggerValue = trigger.value;
                     }
@@ -636,3 +636,5 @@ const mfConditionalFields = (forms, options = {}) => {
         return false;
     }
 }
+
+
