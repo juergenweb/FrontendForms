@@ -20,7 +20,7 @@ abstract class Element extends Tag
     protected ?Wrapper $wrapper = null; // wrapper object
     protected array|null $conditions = null; // string containing the conditions as json string
     protected bool $contains_conditions = false; // bool value if conditions are used on this input field
-
+    protected string|null $conditionContainerClass = null;
     /**
      * @param string|null $id
      * @throws WireException
@@ -44,6 +44,26 @@ abstract class Element extends Tag
     }
 
     /**
+     * Set (change) the condition container on per field base
+     * @param string $class
+     * @return void
+     */
+    public function setConditionContainerClass(string $class): void
+    {
+        if(!str_starts_with($class, '.')) $class = '.' . $class;
+        $this->conditionContainerClass = $class;
+    }
+
+    /**
+     * Get the condition container if set (or null)
+     * @return string|null
+     */
+    public function getConditionContainerClass(): ?string
+    {
+        return $this->conditionContainerClass;
+    }
+
+    /**
      * Remove the conditions of an element
      * @return void
      */
@@ -51,6 +71,7 @@ abstract class Element extends Tag
     {
         $this->conditions = null;
         $this->contains_conditions = false;
+        $this->getFieldWrapper()->removeAttribute('hidden');
         $this->removeAttribute('data-conditional-rules');
     }
 
@@ -99,6 +120,7 @@ abstract class Element extends Tag
         }
         $this->conditions = $rule;
         $this->contains_conditions = true;
+
     }
 
 
