@@ -147,10 +147,6 @@ abstract class Element extends Tag
     public function showIf(array $rules, string $logic = 'or', string $container = '.fieldwrapper'): void
     {
         $this->get_mf_conditional_rules('show', $rules, $logic, $container);
-        // add hidden attribute to field wrapper
-        if (is_subclass_of($this, 'FrontendForms\Inputfields')) {
-            $this->getFieldWrapper()->setAttribute('hidden');
-        }
     }
 
     /**
