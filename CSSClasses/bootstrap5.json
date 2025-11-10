@@ -43,5 +43,7 @@
 	"horizontalWrapperClass": "horizontal-align-wrapper",
     "progressbarClass": "progress-bar",
     "responsiveTableClass": "table-responsive",
-    "tableClass": "table"
+    "tableClass": "table",
+    "finaltableLabelClass": "w-50",
+    "finaltableEditClass": "w-20"
 }
