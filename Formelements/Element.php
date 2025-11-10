@@ -50,6 +50,7 @@ abstract class Element extends Tag
     public function removeConditions(): void
     {
         $this->conditions = null;
+        $this->removeAttribute('data-conditional-rules');
     }
 
     /**
@@ -185,5 +186,4 @@ abstract class Element extends Tag
     {
         return $this->wrapper;
     }
-
 }
