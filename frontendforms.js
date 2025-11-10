@@ -299,6 +299,27 @@ function deleteFileBlock(e, fileBlock, dt, inputfield) {
     document.querySelector(".fileupload").files = dt.files;
 }
 
+function initializeConditionalFields() {
+    // initialize all forms for the conditional form dependencies
+    let frontendforms = document.getElementsByTagName("form");
+
+    if (frontendforms.length > 0) {
+        for (let i = 0; i < frontendforms.length; i++) {
+
+            let formID = frontendforms[i].id;
+            if (formID) {
+                if (typeof mfConditionalFields !== "undefined") {
+                    mfConditionalFields("#" + formID, {rules: "inline", dynamic: true, debug: true});
+                }
+                if (frontendforms[i].getAttribute("data-valid")) {
+                    // jump to error alert box
+                    jumpTo(formID + "-alert");
+                }
+            }
+        }
+    }
+}
+
 // check if DOM is loaded completely
 window.addEventListener("DOMContentLoaded", function () {
 
@@ -308,6 +329,7 @@ window.addEventListener("DOMContentLoaded", function () {
     handleFileUploads();
     editLinks();
     prevLinks();
+    initializeConditionalFields();
 
     // listen to click on submit button of the last step form
     let submitButtons = document.getElementsByTagName("button");
@@ -328,25 +350,6 @@ window.addEventListener("DOMContentLoaded", function () {
             if (i === 0) {
                 let alertID = successAlerts[i].id;
                 jumpTo(alertID);
-            }
-        }
-    }
-
-    // initialize all forms for the conditional form dependencies
-    let frontendforms = document.getElementsByTagName("form");
-
-    if (frontendforms.length > 0) {
-        for (let i = 0; i < frontendforms.length; i++) {
-
-            let formID = frontendforms[i].id;
-            if (formID) {
-                if (typeof mfConditionalFields !== "undefined") {
-                    mfConditionalFields("#" + formID, {rules: "inline", dynamic: true, debug: true});
-                }
-                if (frontendforms[i].getAttribute("data-valid")) {
-                    // jump to error alert box
-                    jumpTo(formID + "-alert");
-                }
             }
         }
     }
@@ -379,22 +382,22 @@ function editLinks() {
                         let newValue = inputwrapper.children[0].value; // get the value of a single value field
 
                         // do not show undefined as new value
-                        console.log(newValue);
-                        if(newValue === undefined) {
-                            let values = [];;
+                        if (newValue === undefined) {
+                            let values = [];
+                            ;
                             // get all inputfields inside the wrapper
                             let inputs = inputwrapper.getElementsByTagName('input');
                             // works for checkboxes and radios multiple
                             if (inputs.length > 0) {
                                 for (let i = 0; i < inputs.length; i++) {
                                     let input = inputs[i];
-                                    if (input.checked){
+                                    if (input.checked) {
                                         values.push(input.value);
                                     }
                                 }
                             }
 
-                            if (values.length > 0){
+                            if (values.length > 0) {
                                 newValue = values.toString();
                             } else {
                                 newValue = '';
@@ -771,6 +774,8 @@ function subAjax(form) {
                         // handle edit links in multi-step forms
                         editLinks();
                         prevLinks();
+                        // initialze conditional fields
+                        initializeConditionalFields();
                         // load star rating again if it exists
                         if (typeof stars !== "undefined" && stars !== null) {
                             // variable is not undefined or not null
@@ -893,7 +898,7 @@ function openHiddenWrapper(event) {
                 let fieldID = field.id;
                 let fieldName = fieldID.replace(formID + "-", "");
                 let hiddenWrapper = document.getElementById(fieldName + "-hidden-wrapper");
-                if(hiddenWrapper) {
+                if (hiddenWrapper) {
                     hiddenWrapper.classList.remove("ff-final-list-hidden");
                     // change the text from the edit link back to "close"
                     let toggleLink = document.getElementById(fieldID + "-edit");
