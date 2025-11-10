@@ -3846,7 +3846,7 @@ class Form extends CustomRules
                                 }
 
                                 // create edit link element
-                                $editLink = '<td class="ff-final-list-edit">';
+                                $editLink = '<td class="ff-final-list-edit '.$this->getCSSClass('finaltableEditClass').'">';
                                 $editLink .= '<a id="' . $this->getID() . '-' . $element->getAttribute('id') . '-edit" class="ff-edit-link" href="#" rel="nofollow" data-element="' . $element->getAttribute('id') . '-hidden-wrapper"';
                                 $editLink .= ' data-close="' . $this->_('close') . '"';
                                 $editLink .= ' data-edit="' . $this->_('edit') . '"';
@@ -3866,7 +3866,7 @@ class Form extends CustomRules
                                     $label = $element->getLabel();
                                     $labelText = $label->getText();
                                 }
-                                $markup .= '<td class="ff-final-list-label">' . $labelText . '</td>';
+                                $markup .= '<td class="ff-final-list-label '.$this->getCSSClass('finaltableLabelClass').'">' . $labelText . '</td>';
                                 if (array_key_exists($element->getAttribute('name'), $values)) {
                                     $valText = $values[$element->getAttribute('name')];
                                 } else {
