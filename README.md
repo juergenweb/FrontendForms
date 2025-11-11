@@ -2707,7 +2707,7 @@ There are a lot more placeholder variables: You can take a look if you are using
 object. You will get an array of all available placeholders, that can be used.
 
 ```php
-$form = getMailPlaceholders(); // this will output an array of all global placeholders that can be used inside your templates
+$form->getMailPlaceholders(); // this will output an array of all global placeholders that can be used inside your templates
 ```
 
 In addition, a placeholder for each field of the form will be created automatically.
