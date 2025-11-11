@@ -36,6 +36,7 @@ You can see FrontendForms in action on the following sites:
 * [fugamo.de](https://fugamo.de/kontakt/)
 * [surfdacha.com](https://surfdacha.com/en/booking/)
 * [rehamed-reichenbach.de](https://www.rehamed-reichenbach.de/terminvereinbarung/)
+* [d-e-v.foerderschnecke-pfaffenweiler.de](https://d-e-v.foerderschnecke-pfaffenweiler.de/#Kontakt)
 
 ## Table of contents
 * [Installation and Quick-start guide](#installation-and-quick-start-guide)
