@@ -275,7 +275,7 @@ class Form extends CustomRules
         $this->ajaxProgressbar->setAttribute('role', 'progressbar');
         $this->ajaxProgressbar->setAttribute('class', 'ajaxbar');
         if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
-                $this->ajaxProgressbar->setAttribute('class', 'progress');
+            $this->ajaxProgressbar->setAttribute('class', 'progress');
         }
 
         // Global text for auto-generated emails
@@ -941,25 +941,6 @@ class Form extends CustomRules
             'browservalue' => $browser,
             'donotreplayvalue' => $this->_('This is an auto generated message, please do not reply.')
         ];
-    }
-
-    /**
-     * Create the default progress bar
-     * @return string
-     */
-    public function createProgressbar(): string
-    {
-
-        /*
-        return '
-            <div class="cssProgress">
-          <div class="progress1">
-            <div id="' . $this->getID() . '-progressbar" class="cssProgress-bar cssProgress-active cssProgress-success" data-percent="100" style="width: 100%; transition: none 0s ease 0s;">
-            </div>
-          </div>
-        </div>
-            ';
-        */
     }
 
     /**
@@ -3353,14 +3334,25 @@ class Form extends CustomRules
                 $this->setAttribute('enctype', 'multipart/form-data');
                 // check if request method is set to get
                 $method = strtolower($this->getAttribute('method'));
-                if ($method === 'get' && !$this->getPreventGetFileUploadWarning()) {
-                    // create a warning alert to inform the dev
-                    $warningAlert = new Alert();
-                    $warningAlert->setCSSClass('alert_warningClass');
-                    $warningAlert->setText($this->_('Uploading files via GET request is not possible. Please use POST instead or remove the file upload field.'));
-                    $out .= $warningAlert->render();
+
+                if ($method === 'get'){
+                    if(!$this->getPreventGetFileUploadWarning()){
+                        // create a warning alert to inform the dev
+                        $warningAlert = new Alert();
+                        $warningAlert->setCSSClass('alert_warningClass');
+                        $warningAlert->setText($this->_('Uploading files via GET request is not possible. Please use POST instead or remove the file upload field.'));
+                        $out .= $warningAlert->render();
+                    }
+                } else {
+                    if(!$this->lastStep){
+                        // create a warning alert to inform the dev
+                        $warningAlert = new Alert();
+                        $warningAlert->setCSSClass('alert_warningClass');
+                        $warningAlert->setText($this->_('A file upload is only possible in the last step. Please move the file upload field(s) to the last step. Otherwise it would not work.'));
+                        $out .= $warningAlert->render();
+                    }
                 }
-                break;
+
             }
 
             if (is_subclass_of($obj, 'FrontendForms\Inputfields')) {
@@ -4596,4 +4588,3 @@ class Form extends CustomRules
     }
 
 }
-
