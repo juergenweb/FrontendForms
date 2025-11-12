@@ -1518,7 +1518,7 @@
 
             if ((!is_null($page->ff_forms)) && (!$this->input_removeCSS || $page->useCSS)) {
 
-                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.css?v=' . $version. '">' . PHP_EOL;
+                $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.min.css?v=' . $version. '">' . PHP_EOL;
 
                 if (!is_null($page->ff_forms) && array_filter($page->useCSS)) {
                     $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
@@ -3134,6 +3134,7 @@
         }
 
     }
+
 
 
 
