@@ -4012,7 +4012,7 @@ class Form extends CustomRules
                         } else {
                             if ($key === $position) { // add it only before the first button inside the form
                                 if ($this->showProgressbar) {
-                                    $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission">' . $submitInfo . '</div>';
+                                    $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none;">' . $submitInfo . '</div>';
                                 }
                             }
                         }
