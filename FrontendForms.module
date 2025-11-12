@@ -862,8 +862,8 @@
                 $version = $this->getModuleInfo()['version'] . '-' . time();
 
                 if (self::isModuleEditPage(['FrontendForms'])) {
-                    $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version;
-                    $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version;
+                    $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version);
+                    $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version);
                 }
 
                 // add image picker js and CSS files to the backend (used for the email template select)
@@ -3134,6 +3134,7 @@
         }
 
     }
+
 
 
 
