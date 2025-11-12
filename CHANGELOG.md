@@ -1808,3 +1808,10 @@ Now, every form can be divided into several parts to create a multi-step form. R
 
 The new validation rule checks if a string does not contain letters. Read more about it [here](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#noletters).
 
+**New style for Ajax form submission progressbar added**
+
+Now, the progressbar, which is visible during an Ajax request, has been adapte to fit with the progressbar style of the CSS framework choosen. In addition a new transition has been added which shows the progressbar from moving left to right and back (all time long). It looks like the front-light from K.I.T.T (Knight Rider) ;-)
+
+**Bug fixed: Conditional fields were not working with Ajax request**
+
+The script for showing/hiding fields on certain conditions was not triggered during an Ajax request because the initialization was missing. This has been fixed now.
