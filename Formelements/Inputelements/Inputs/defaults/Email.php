@@ -39,4 +39,3 @@ class Email extends InputEmail
     }
 
 }
-

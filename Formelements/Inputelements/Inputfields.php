@@ -298,7 +298,7 @@ abstract class Inputfields extends Element
 
         // inform about max number of files
         if ($validator == 'allowedFileNumber') {
-            if(isset($variables[0])){
+            if (isset($variables[0])) {
                 $this->notes_array['allowedFileNumber']['text'] = sprintf($this->_('Please do not upload more than %s files'),
                     $variables[0]);
                 $this->notes_array['allowedFileNumber']['value'] = $variables[0];
@@ -420,7 +420,7 @@ abstract class Inputfields extends Element
             // grab all key with the name 'text'
             $wrappedTexts = [];
             foreach ($this->notes_array as $key => $array) {
-                $wrappedTexts[$key] = '<span id="'.$this->getID().'-'.$key.'">'.$array['text'].'</span>';
+                $wrappedTexts[$key] = '<span id="' . $this->getID() . '-' . $key . '">' . $array['text'] . '</span>';
             }
             $this->setNotes(implode('<br>', $wrappedTexts));
         }
@@ -2015,7 +2015,7 @@ abstract class Inputfields extends Element
     {
         $this->setAttribute('pattern', '[^a-zA-ZäöüÖÄÜ]+');
         $label = $this->getLabel()->getText();
-        if(!$label) $label = $this->_('This field');
+        if (!$label) $label = $this->_('This field');
         $this->setAttribute('title',
             sprintf($this->_('%s contains letters, but they are not allowed'), $label));
     }
@@ -2056,6 +2056,7 @@ abstract class Inputfields extends Element
             if ($this->getNotes()->getText()) $this->setAttribute('aria-describedby', $this->getID() . '-notes');
 
         }
+
     }
 
 }

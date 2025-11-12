@@ -136,6 +136,8 @@ class Form extends CustomRules
     protected object $captcha; // the captcha object
     protected Progressbar $stepsProgressbar; // the progressbar for multi-steps forms
 
+    protected Progressbar $ajaxProgressbar; // the progressbar for AJAX form submission
+
     /**
      * Every form must have an id. You can set it custom via the constructor - otherwise a random ID will be
      * generated. The id will be taken for further automatic id generation of the input fields
@@ -195,7 +197,7 @@ class Form extends CustomRules
         $this->requiredHint = new RequiredTextHint();
         $this->formElementsWrapper = new Wrapper();
         $this->stepsProgressbar = new Progressbar($id . '-steps-progress');
-
+        $this->ajaxProgressbar = new Progressbar($id . '-form-submission');
 
         // set default properties
         $this->visitorIP = $this->wire('session')->getIP();
@@ -259,12 +261,21 @@ class Form extends CustomRules
         $messagesTag = (!empty($this->frontendforms['input_global_msg_tag'])) ? $this->frontendforms['input_global_msg_tag'] : $defaultMsgTag;
         $this->setMessageTag($messagesTag);
 
-        // 5) Progressbar
+        // 5) Steps-Progressbar
         $this->stepsProgressbar->setCSSClass('progressbarClass');
         if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
             $this->stepsProgressbar->setTag('div');
             $this->stepsProgressbar->setAttribute('role', 'progressbar');
             $this->stepsProgressbar->prepend('<div class="progress mb-4">')->append('</div>');
+        }
+
+        // 5) Ajax-Progressbar
+        $this->ajaxProgressbar->setCSSClass('progressbarClass')->setTag('div');
+        $this->ajaxProgressbar->setContent('<div class="progress-bar__indicator"></div>');
+        $this->ajaxProgressbar->setAttribute('role', 'progressbar');
+        $this->ajaxProgressbar->setAttribute('class', 'ajaxbar');
+        if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
+                $this->ajaxProgressbar->setAttribute('class', 'progress');
         }
 
         // Global text for auto-generated emails
@@ -938,6 +949,8 @@ class Form extends CustomRules
      */
     public function createProgressbar(): string
     {
+
+        /*
         return '
             <div class="cssProgress">
           <div class="progress1">
@@ -946,6 +959,7 @@ class Form extends CustomRules
           </div>
         </div>
             ';
+        */
     }
 
     /**
@@ -3989,7 +4003,7 @@ class Form extends CustomRules
                     if ($this->getSubmitWithAjax()) {
 
                         // create progressbar and info text for form submission
-                        $submitInfo = '<div class="ajax-progressbar-wrapper">'.$this->createProgressbar() . $this->frontendforms['input_ajaxMsg'].'</div>';
+                        $submitInfo = $this->ajaxProgressbar->render().'<div class="ajax-submission-text">'.$this->frontendforms['input_ajaxMsg'].'</div>';
 
                         if($this->steps && $this->lastStep){
                             if($element->getAttribute('name') == $firstButton){
@@ -3998,7 +4012,7 @@ class Form extends CustomRules
                         } else {
                             if ($key === $position) { // add it only before the first button inside the form
                                 if ($this->showProgressbar) {
-                                    $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo . '</div>';
+                                    $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission">' . $submitInfo . '</div>';
                                 }
                             }
                         }
