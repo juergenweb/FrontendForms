@@ -1794,7 +1794,7 @@ BTW: It was not possible to upload multiple files in a single upload field, but 
 
 According to [this issue report](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/17/#findComment-250530), PHP 8.4. is more strictly and complains about some deprecated code parts. So I have adapted the code to work with PHP 8.4.
 
-## 2025-10-25
+## [2.3.0] 2025-11-13
 
 **Jump directly to the alert box if form is not valid**
 
@@ -1815,3 +1815,4 @@ Now, the progressbar, which is visible during an Ajax request, has been adapte t
 **Bug fixed: Conditional fields were not working with Ajax request**
 
 The script for showing/hiding fields on certain conditions was not triggered during an Ajax request because the initialization was missing. This has been fixed now.
+
