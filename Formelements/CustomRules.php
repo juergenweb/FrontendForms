@@ -649,12 +649,6 @@ class CustomRules extends Tag
             $conditions = $params[0];
             foreach( $conditions as $condition_field => $condition_value) {
                 $condition_field = $this->getID().'-'.$condition_field;
-                bd($condition_field);
-                bd($condition_value);
-                bd($value);
-                bd($fields[$condition_field]);
-                bd($fields);
-                bd($this);
                 if( $fields[$condition_field] == $condition_value
                     && empty($value) ) {
                     return false;
@@ -850,3 +844,4 @@ class CustomRules extends Tag
 
 
 }
+
