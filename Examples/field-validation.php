@@ -167,7 +167,7 @@ $form->add($equals);
 
 $different = new \FrontendForms\InputText('different');
 $different->setLabel('Validator different');
-$different->setRule('different', 'validators-ip'); // be aware that the field name is not ip - it is validators-ip!!!
+$different->setRule('different', 'ip'); // Enter the name of the field you want to compare the value to (in this case it is the field with the name "ip") 
 $different->setDescription('Validator to check if this value is different as the value as field Validator ip above');
 $different->setNotes('Valid value: enter different value as in field ip, invalid value: enter same value as in field ip');
 $form->add($different);
@@ -366,4 +366,5 @@ if ($form->isValid()) {
 
 $content .= $form->render();
 echo $content;
+
 
