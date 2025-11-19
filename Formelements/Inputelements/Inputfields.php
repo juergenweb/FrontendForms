@@ -260,6 +260,14 @@ abstract class Inputfields extends Element
             $variables = $args;
         }
 
+        // add form id as prefix to the field name on certain fields if necessary
+        $validatorNames = ['equals','different'];
+        if(in_array($validator, $validatorNames)) {
+            if(!str_starts_with($variables[0],$this->form_id_submitted.'-')){
+                $variables[0] = $this->form_id_submitted.'-'.$variables[0];
+            }
+        }
+        
         // if only a integer has been added as allowed file size, convert it to kb, MB and so on on error messages
         if ($validator == 'allowedFileSize') {
             if (is_int($variables[0])) {
@@ -272,6 +280,10 @@ abstract class Inputfields extends Element
         $this->api->setValidator($validator);
         $result = $this->api->setRule($validator, $variables);
         $this->validatonRules[$result['name']] = ['options' => $variables];
+
+        if($validator == 'equals') {
+            bd($result);
+        }
 
         // add notes if a special validator has been added
         // this is special designed for file upload field to inform the user about the restrictions
