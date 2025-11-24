@@ -1816,8 +1816,12 @@ Now, the progressbar, which is visible during an Ajax request, has been adapte t
 
 The script for showing/hiding fields on certain conditions was not triggered during an Ajax request because the initialization was missing. This has been fixed now.
 
-## 2025-11-19
+## [2.3.0] 2025-11-24
 
 **Form id added as prefix to validation rules "equals" and "different"**
 
 Until know, you have to add the form id as a prefix to the second parameter of the validator (= the field name) manually to get these 2 validation rules work. This was a little bit confusing, so I changed the code a little bit to get it working with our without the prefix. 
+
+**Some HTML validation errors fixed**
+There was an opening div tag instead of a closing div tag which leads to an error in the HTML validation. Another validation bug was caused by using the pattern attribute on input type where it is not allowed. This has been fixed too.
+
