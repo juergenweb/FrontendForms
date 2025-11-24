@@ -73,6 +73,17 @@ abstract class Inputfields extends Element
     }
 
     /**
+     * Method to check if pattern attribute is allowed for the given inputfield
+     * @return bool
+     */
+    public function patternAttributeAllowed(): bool
+    {
+        $type = $this->getAttribute('type');
+        $allowedInputTypes = ['email', 'password', 'search', 'tel', 'text', 'url'];
+        return (in_array($type, $allowedInputTypes));
+    }
+
+    /**
      * Create a custom wrapper as the most outer container of a form field
      * This wrapper can be added on per input field base and can be used fe for JavaScript manipulations
      * @param bool $use
@@ -267,7 +278,7 @@ abstract class Inputfields extends Element
                 $variables[0] = $this->form_id_submitted.'-'.$variables[0];
             }
         }
-        
+
         // if only a integer has been added as allowed file size, convert it to kb, MB and so on on error messages
         if ($validator == 'allowedFileSize') {
             if (is_int($variables[0])) {
@@ -280,10 +291,6 @@ abstract class Inputfields extends Element
         $this->api->setValidator($validator);
         $result = $this->api->setRule($validator, $variables);
         $this->validatonRules[$result['name']] = ['options' => $variables];
-
-        if($validator == 'equals') {
-            bd($result);
-        }
 
         // add notes if a special validator has been added
         // this is special designed for file upload field to inform the user about the restrictions
