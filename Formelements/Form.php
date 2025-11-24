@@ -4061,7 +4061,7 @@ class Form extends CustomRules
                     $formElements .= $element->render() . PHP_EOL;
 
                     if($this->steps && $element->getAttribute('name') === $lastButton){
-                        $formElements .= '<div>';
+                        $formElements .= '</div>';
                     }
 
                 }
