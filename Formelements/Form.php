@@ -197,7 +197,7 @@ class Form extends CustomRules
         $this->requiredHint = new RequiredTextHint();
         $this->formElementsWrapper = new Wrapper();
         $this->stepsProgressbar = new Progressbar($id . '-steps-progress');
-        $this->ajaxProgressbar = new Progressbar($id . '-form-submission');
+        $this->ajaxProgressbar = new Progressbar($id . '-form-submission-ajax');
 
         // set default properties
         $this->visitorIP = $this->wire('session')->getIP();
@@ -2295,7 +2295,7 @@ class Form extends CustomRules
         if ($this->steps) {
 
             // add a special data-set attribute to mulit-step forms
-            $this->setAttribute('dataset-multistep', 'true');
+            $this->setAttribute('data-multistep', 'true');
 
             // get the submit button (and reset button if present) element
             $submitButton = null;
@@ -2814,6 +2814,7 @@ class Form extends CustomRules
                                     }
                                 }
                                 $this->setValues();
+
                             }
 
                             if ($v->validate()) {
@@ -4053,7 +4054,10 @@ class Form extends CustomRules
                             $element->setAttribute('class', 'ff-finalstep-submit');
                         }
                     }
-
+                    // remove pattern attribute, if it is not allowed for the given input type
+                    if($this->hasAttribute('pattern') && !$this->patternAttributeAllowed()){
+                        $this->removeAttribute('pattern');
+                    }
                     $formElements .= $element->render() . PHP_EOL;
 
                     if($this->steps && $element->getAttribute('name') === $lastButton){
