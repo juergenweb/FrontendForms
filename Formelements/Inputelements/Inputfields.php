@@ -1227,7 +1227,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5checkBic(): void
     {
-        $pattern = '[A-Z]{6}[A-Z2-9][A-NP-Z0-9][A-Z0-9]{3}';
+        $pattern = '[A-Z0-9]{4}[A-Z]{2}[A-Z0-9]{2}(?:[A-Z0-9]{3})?';
         $this->setAttribute('pattern', $pattern);
     }
 
