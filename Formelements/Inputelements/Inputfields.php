@@ -1243,6 +1243,29 @@ abstract class Inputfields extends Element
     }
 
     /**
+     * Add HTML5 attribute pattern for the the input tag
+     * Validator rule: noNumbers
+     * @return void
+     */
+    protected function addHTML5NoNumbers(): void
+    {
+        $pattern = '[^0-9]+';
+        $this->setAttribute('pattern', $pattern);
+    }
+
+    /**
+     * Remove attribute pattern from the input tag
+     * Validator rule: noNumbers
+     * Can be used on input type text and textarea
+     * @return void
+     */
+    protected function removeHTML5noNumbers(): void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+
+    /**
      * Add HTML5 attribute pattern for the Iban code only to the input tag
      * Validator rule: checkIban
      * @return void
