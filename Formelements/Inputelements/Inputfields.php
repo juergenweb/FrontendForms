@@ -1319,10 +1319,9 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5firstAndLastname()
     {
-        $chars = 'a-z '.$this->_('and').' àáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð,-';
         $this->setAttribute('pattern ', '[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð,-.\']+');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain allowed characters for names. Allowed characters are: %s.'), $label, $chars));
+        $this->setAttribute('title', sprintf($this->_('%s should only contain allowed characters for names'), $label));
     }
 
     /**
