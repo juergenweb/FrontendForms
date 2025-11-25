@@ -1816,7 +1816,7 @@ Now, the progressbar, which is visible during an Ajax request, has been adapte t
 
 The script for showing/hiding fields on certain conditions was not triggered during an Ajax request because the initialization was missing. This has been fixed now.
 
-## [2.3.0] 2025-11-24
+## [2.3.1] 2025-11-24
 
 **Form id added as prefix to validation rules "equals" and "different"**
 
@@ -1825,3 +1825,8 @@ Until know, you have to add the form id as a prefix to the second parameter of t
 **Some HTML validation errors fixed**
 There was an opening div tag instead of a closing div tag which leads to an error in the HTML validation. Another validation bug was caused by using the pattern attribute on input type where it is not allowed. This has been fixed too.
 
+## [2.3.2] 2025-11-25
+
+**Wrong calculation of last array index for the final list table fixed"**
+
+There was an error in the calculation of the array index for the last element inside the final list table, which could leads to that the first field of the last step has not been displayed. This is fixed now.
