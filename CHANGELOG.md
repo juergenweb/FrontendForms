@@ -1830,3 +1830,14 @@ There was an opening div tag instead of a closing div tag which leads to an erro
 **Wrong calculation of last array index for the final list table fixed"**
 
 There was an error in the calculation of the array index for the last element inside the final list table, which could leads to that the first field of the last step has not been displayed. This is fixed now.
+
+## [2.3.3] 2025-11-25
+
+**Bug in placeholder for InputCheckbox and InputRadio fixed"**
+
+If a single checkbox or single radio has a value set, then the placeholder value contained always this value, independent if the input was selected or not. This has been fixed now
+
+**New HTML5 pattern for first and last name validation added"**
+
+Now, the first and lastname validation can also be check via browser validation by using the pattern attribute.
+
