@@ -4157,7 +4157,15 @@ class Form extends CustomRules
             // create a placeholder for the label of this field
             $fieldname = $field->getAttribute('name');
             $this->setMailPlaceholder($fieldname . 'label', $field->getLabel()->getText());
-            $this->setMailPlaceholder($fieldname . 'value', $field->getAttribute('value'));
+
+            $className = $field->className();
+            $value = '';
+            // special treatment for single checkbox and single radio - do not add the value by default to the placeholder
+            if($className !== 'InputCheckbox' && !is_subclass_of($field, 'FrontendForms\InputCheckbox') && $className !== 'InputRadio' && !is_subclass_of($field, 'FrontendForms\InputRadio')){
+                $field->getAttribute('value');
+            }
+            $this->setMailPlaceholder($fieldname . 'value', $value);
+
         }
 
 
