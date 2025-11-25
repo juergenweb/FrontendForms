@@ -641,6 +641,12 @@ class CustomRules extends Tag
 
 
         /**
+         * 40) Check if a string does not contain a number
+         */
+        V::addRule('noNumbers', function ($field, $value) {
+            return (preg_match('/^[^0-9]+$/', $value));
+        }, $this->_('contains at least one number, but this is not allowed.'));
+        /**
          * 40) Check if the field is not empty if another field contains a certain value
          * This validator is not ready to use at the moment
          */
