@@ -550,7 +550,7 @@ class CustomRules extends Tag
          * 33) Check if BIC code is in the right format
          */
         V::addRule('checkBic', function ($field, $value) {
-            $pattern = '/^[a-z]{6}[0-9a-z]{2}([0-9a-z]{3})?\z/i';
+            $pattern = '^[A-Z0-9]{4}[A-Z]{2}[A-Z0-9]{2}(?:[A-Z0-9]{3})?$';
             return preg_match($pattern, $value);
         }, $this->_('is not in the correct format.'));
 
