@@ -118,6 +118,9 @@
         },
         "bc25b3a4b90db7519ac28e2f7c36f461": {
             "text": "enth\u00e4lt Buchstaben und das ist nicht erlaubt."
+        },
+        "f72b05ac0a4658c473ef8b455ecf0dbb": {
+            "text": "enth\u00e4lt mindestens eine Zahl, was aber nicht erlaubt ist."
         }
     }
 }
