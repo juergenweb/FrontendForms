@@ -140,7 +140,6 @@ class Form extends CustomRules
     protected Progressbar $ajaxProgressbar; // the progressbar for AJAX form submission
 
 
-
     /**
      * Every form must have an id. You can set it custom via the constructor - otherwise a random ID will be
      * generated. The id will be taken for further automatic id generation of the input fields
@@ -3346,8 +3345,8 @@ class Form extends CustomRules
                 // check if request method is set to get
                 $method = strtolower($this->getAttribute('method'));
 
-                if ($method === 'get'){
-                    if(!$this->getPreventGetFileUploadWarning()){
+                if ($method === 'get') {
+                    if (!$this->getPreventGetFileUploadWarning()) {
                         // create a warning alert to inform the dev
                         $warningAlert = new Alert();
                         $warningAlert->setCSSClass('alert_warningClass');
@@ -3355,7 +3354,7 @@ class Form extends CustomRules
                         $out .= $warningAlert->render();
                     }
                 } else {
-                    if(!$this->lastStep){
+                    if (!$this->lastStep) {
                         // create a warning alert to inform the dev
                         $warningAlert = new Alert();
                         $warningAlert->setCSSClass('alert_warningClass');
@@ -3645,7 +3644,7 @@ class Form extends CustomRules
                 }
             }
 
-            if($this->steps){
+            if ($this->steps) {
                 if ($this->showStepsOf) {
                     $out .= '<p class="ff-steps-of">' . sprintf($this->_('Step %s of %s'), $this->currentStepNumber, (int)$this->totalStepsNumber) . '</p>';
                 }
@@ -3679,7 +3678,6 @@ class Form extends CustomRules
                 $this->prepend($this->renderRequiredText('top')); // required a text hint at the top
                 $this->append($this->renderRequiredText('bottom')); // required text hint at bottom
                 $formElements = '';
-
 
 
                 $elementsClassNames = (array_map("get_class", $this->formElements));
@@ -3858,7 +3856,7 @@ class Form extends CustomRules
                                 $hideWrapperOpen = '<tr id="' . $element->getAttribute('id') . '-hidden-wrapper" class="ff-hidden-wrapper ' . $hideClass . '"><td colspan="3">';
 
                                 $hideWrapperClose = '</td></tr>';
-                                if($this->formFieldConditions && array_key_exists($element->getAttribute('name'), $this->formFieldConditions)) {
+                                if ($this->formFieldConditions && array_key_exists($element->getAttribute('name'), $this->formFieldConditions)) {
                                     $hideWrapperClose = '</td></tr></tbody>';
                                 }
 
@@ -3868,15 +3866,15 @@ class Form extends CustomRules
                                 }
 
                                 // create edit link element
-                                $editLink = '<td class="ff-final-list-edit '.$this->getCSSClass('finaltableEditClass').'">';
+                                $editLink = '<td class="ff-final-list-edit ' . $this->getCSSClass('finaltableEditClass') . '">';
                                 $editLink .= '<a id="' . $this->getID() . '-' . $element->getAttribute('id') . '-edit" class="ff-edit-link" href="#" rel="nofollow" data-element="' . $element->getAttribute('id') . '-hidden-wrapper"';
                                 $editLink .= ' data-close="' . $this->_('close') . '"';
                                 $editLink .= ' data-edit="' . $this->_('edit') . '"';
                                 $editLink .= '>' . $this->_('edit') . '</a>';
                                 $editLink .= '</td>';
 
-                                if($this->formFieldConditions && array_key_exists($element->getAttribute('name'), $this->formFieldConditions)) {
-                                    $markup .= '<tbody id="'.$element->getAttribute('id').'-tablebody" class="tbodywrapper">';
+                                if ($this->formFieldConditions && array_key_exists($element->getAttribute('name'), $this->formFieldConditions)) {
+                                    $markup .= '<tbody id="' . $element->getAttribute('id') . '-tablebody" class="tbodywrapper">';
                                     // replace the default container class with the tbodywrapper class
                                     $element->setConditionContainerClass('tbodywrapper');
                                 }
@@ -3888,7 +3886,7 @@ class Form extends CustomRules
                                     $label = $element->getLabel();
                                     $labelText = $label->getText();
                                 }
-                                $markup .= '<td class="ff-final-list-label '.$this->getCSSClass('finaltableLabelClass').'">' . $labelText . '</td>';
+                                $markup .= '<td class="ff-final-list-label ' . $this->getCSSClass('finaltableLabelClass') . '">' . $labelText . '</td>';
                                 if (array_key_exists($element->getAttribute('name'), $values)) {
                                     $valText = $values[$element->getAttribute('name')];
                                 } else {
@@ -3945,7 +3943,7 @@ class Form extends CustomRules
                         $conditions['rules'] = $modified_rules;
 
                         // check if the container has been overwritten
-                        if(!is_null($element->getConditionContainerClass())){
+                        if (!is_null($element->getConditionContainerClass())) {
                             $conditions['container'] = $element->getConditionContainerClass();
                         }
 
@@ -4011,10 +4009,10 @@ class Form extends CustomRules
                     if ($this->getSubmitWithAjax()) {
 
                         // create progressbar and info text for form submission
-                        $submitInfo = $this->ajaxProgressbar->render().'<div class="ajax-submission-text">'.$this->frontendforms['input_ajaxMsg'].'</div>';
+                        $submitInfo = $this->ajaxProgressbar->render() . '<div class="ajax-submission-text">' . $this->frontendforms['input_ajaxMsg'] . '</div>';
 
-                        if($this->steps && $this->lastStep){
-                            if($element->getAttribute('name') == $firstButton){
+                        if ($this->steps && $this->lastStep) {
+                            if ($element->getAttribute('name') == $firstButton) {
                                 $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo . '</div>';
                             }
                         } else {
@@ -4062,21 +4060,23 @@ class Form extends CustomRules
                     }
 
                     // add a button wrapper on multi-step form
-                    if($this->steps && $element->getAttribute('name') === $firstButton){
-                        $formElements .= '<div id="'.$this->getID().'-button-wrapper" class="button-wrapper">';
+                    if ($this->steps && $element->getAttribute('name') === $firstButton) {
+                        $formElements .= '<div id="' . $this->getID() . '-button-wrapper" class="button-wrapper">';
                         // add additional class to submit button on last step
-                        if($element->hasAttribute('type') && $element->getAttribute('type') === 'submit'){
+                        if ($element->hasAttribute('type') && $element->getAttribute('type') === 'submit') {
                             $element->setAttribute('class', 'ff-finalstep-submit');
                         }
                     }
                     // remove pattern attribute, if it is not allowed for the given input type
-                    if($this->hasAttribute('pattern') && !$this->patternAttributeAllowed()){
-                        $this->removeAttribute('pattern');
+                    if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
+                        if ($element->hasAttribute('pattern') && !$element->patternAttributeAllowed()) {
+                            $element->removeAttribute('pattern');
+                        }
                     }
 
                     $formElements .= $element->render() . PHP_EOL;
 
-                    if($this->steps && $element->getAttribute('name') === $lastButton){
+                    if ($this->steps && $element->getAttribute('name') === $lastButton) {
                         $formElements .= '</div>';
                     }
 
@@ -4161,7 +4161,7 @@ class Form extends CustomRules
             $className = $field->className();
             $value = '';
             // special treatment for single checkbox and single radio - do not add the value by default to the placeholder
-            if($className !== 'InputCheckbox' && !is_subclass_of($field, 'FrontendForms\InputCheckbox') && $className !== 'InputRadio' && !is_subclass_of($field, 'FrontendForms\InputRadio')){
+            if ($className !== 'InputCheckbox' && !is_subclass_of($field, 'FrontendForms\InputCheckbox') && $className !== 'InputRadio' && !is_subclass_of($field, 'FrontendForms\InputRadio')) {
                 $field->getAttribute('value');
             }
             $this->setMailPlaceholder($fieldname . 'value', $value);
