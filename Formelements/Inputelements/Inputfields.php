@@ -1312,6 +1312,27 @@ abstract class Inputfields extends Element
         $this->removeAttribute('maxlength');
     }
 
+    /**
+     * Remove attribute pattern from the input tag
+     * Validator rule: firstAndLastname
+     * @return void
+     */
+    protected function addHTML5firstAndLastname()
+    {
+        $this->setAttribute('pattern ', '[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð,-.\']');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s should only contain allowed characters for names.'), $label));
+    }
+
+    /**
+     * Remove attribute pattern from the input tag
+     * Validator rule: firstAndLastname
+     * @return void
+     */
+    protected function removeHTML5firstAndLastname(): void
+    {
+        $this->removeAttribute('pattern');
+    }
 
     /**
      * Add HTML5 attribute pattern for ascii characters to the input tag
