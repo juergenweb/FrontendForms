@@ -76,6 +76,12 @@
         },
         "bf6ac479841bb45d2ee40e1cced66241": {
             "text": "%s enth\u00e4lt Buchstaben welche aber nicht erlaubt sind"
+        },
+        "be5d5d37542d75f93a87094459f76678": {
+            "text": "und"
+        },
+        "193051f44c55a7c5a8e62fb7a465b77e": {
+            "text": "%s darf nur erlaubte Zeichen f\u00fcr Namen enthalten. Erlaubte Zeichen sind: %."
         }
     }
 }
