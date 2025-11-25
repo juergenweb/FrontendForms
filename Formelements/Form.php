@@ -124,6 +124,7 @@ class Form extends CustomRules
     protected string $customProgressbar = '';
 
     protected string $lastStepListText = '';
+    protected array $lastStepElements = [];
 
     /* objects */
     protected Page $page; // the current page object, where the form is integrated
@@ -137,6 +138,8 @@ class Form extends CustomRules
     protected Progressbar $stepsProgressbar; // the progressbar for multi-steps forms
 
     protected Progressbar $ajaxProgressbar; // the progressbar for AJAX form submission
+
+
 
     /**
      * Every form must have an id. You can set it custom via the constructor - otherwise a random ID will be
@@ -2382,7 +2385,9 @@ class Form extends CustomRules
 
             // get the first and last input field and ignore all others (fieldset, markup,..)
             $inputFields = [];
+
             foreach ($fields as $key => $field) {
+
                 if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
                     if ($this->lastStep) {
                         if (!$field->getRemoveFromLastStep()) {
@@ -2426,6 +2431,9 @@ class Form extends CustomRules
             // set the form elements array new
             $this->formElements = $formElements;
 
+
+            $lastElementKey = $this->getSlices()[$this->totalStepsNumber - 1]['end'];
+
             if (!$this->lastStep) { // all steps except the last
 
                 // remove CAPTCHA on all steps (except the last)
@@ -2450,9 +2458,7 @@ class Form extends CustomRules
                 $this->setAttribute('data-step', 'last');
 
                 // make all form elements visible with a special markup
-
-                $lastElementKey = $this->getSlices()[$this->totalStepsNumber - 1]['end'];
-
+                $lastStepElements = [];
                 foreach ($this->formElements as $key => $field) {
 
                     if ($key <= $lastElementKey) {
@@ -2465,8 +2471,12 @@ class Form extends CustomRules
                             }
 
                         }
+                    } else {
+                        $lastStepElements[] = $field;
                     }
                 }
+
+                $this->lastStepElements = $lastStepElements;
             }
 
             /*****
@@ -3670,6 +3680,8 @@ class Form extends CustomRules
                 $this->append($this->renderRequiredText('bottom')); // required text hint at bottom
                 $formElements = '';
 
+
+
                 $elementsClassNames = (array_map("get_class", $this->formElements));
                 $position = array_search('FrontendForms\Button', $elementsClassNames);
 
@@ -3726,7 +3738,6 @@ class Form extends CustomRules
                         // remove all non inputfields from the form fields array inside the final list
 
                         // get key number of the last element of the previous step
-                        $lastListKey = $this->getSlices()[count($this->getSlices()) - 1]['end'];
                         $cleanedFormElements = [];
 
                         $nonAllowed = [
@@ -3735,10 +3746,14 @@ class Form extends CustomRules
                             'Markup'
                         ];
 
+
+                        $lastElement = $this->lastStepElements[0];
+                        $lastKey = (array_search($lastElement, $this->formElements)) - 1;
+
                         foreach ($this->formElements as $key => $element) {
 
                             // non allowed objects in final list
-                            if ($key < $lastListKey) {
+                            if ($key <= $lastKey) {
                                 if (!in_array($element->className(), $nonAllowed)) {
                                     $cleanedFormElements[] = $element;
                                 }
@@ -4058,6 +4073,7 @@ class Form extends CustomRules
                     if($this->hasAttribute('pattern') && !$this->patternAttributeAllowed()){
                         $this->removeAttribute('pattern');
                     }
+
                     $formElements .= $element->render() . PHP_EOL;
 
                     if($this->steps && $element->getAttribute('name') === $lastButton){
