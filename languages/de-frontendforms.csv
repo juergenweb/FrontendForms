@@ -537,7 +537,7 @@ Surname,Nachname,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/d
 "You have %s characters left.","Sie haben noch %s Zeichen übrig.",,site/modules/FrontendForms/Formelements/Inputelements/Textarea/Textarea.php,c265a6b5fe0229c56cdf89d9ff9d7754
 Username,Benutzername,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Username.php,f6039d44b29456b20f8f373155ae4973
 Reset,Zurücksetzen,,site/modules/FrontendForms/Formelements/Miscellaneous/defaults/ResetButton.php,526d688f37a86d3c3f27d0c5016eb71d
-
-
+"%s should only contain allowed characters for names. Allowed characters are: %s.","%s darf nur erlaubte Zeichen für Namen enthalten. Erlaubte Zeichen sind: %.",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,193051f44c55a7c5a8e62fb7a465b77e
+and,und,,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,be5d5d37542d75f93a87094459f76678
 
 
