@@ -1832,6 +1832,7 @@ For more detailed explanation on each validation rule click the link at the vali
 | [allowedFileNumber](#allowedfilenumber) | Limit the number of files inside a file upload multiple field
 | [allowedTotalFileSize](#allowedtotalfilesize) | Set a total max file size limit for all files inside a file upload field
 | [noLetters](#noletters) | Check if a string does not contain any letters and German Umlauts
+| [noNumbers](#nonumbers) | Check if a string does not contain any number at all
 
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
@@ -2216,6 +2217,14 @@ This validation rule is added to the class *InputTel* by default, because no tel
 
 ```php
 $field->setRule('noLetters');
+```
+
+### noNumbers
+This validator checks if a string does not contain numbers (0-9).
+If a string contains at least one number, the validator returns false.
+
+```php
+$field->setRule('noNumbers');
 ```
 
 ## Create your own custom validation rules
