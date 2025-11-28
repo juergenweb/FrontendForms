@@ -104,6 +104,11 @@ class InputRadioMultiple extends Input
                 $radio->useFieldWrapper(false);
                 $radio->getLabel()->disableAsterisk();
 
+                // add required attribute for browser validation
+                if($this->hasAttribute('required')){
+                    $radio->setAttribute('required');
+                }
+
                 // add for attribute to label tag if it is appended
                 if ($this->getAppendLabel())
                     $radio->getLabel()->setAttribute('for', $this->getAttribute('id') . '-' . $key);
