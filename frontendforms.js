@@ -42,6 +42,59 @@ function submitCounter() {
     }
 }
 
+
+/*
+Function to validate multiple checkboxes with browser validation
+Checks if at least one checkbox is checked inside checkbox multiple
+ */
+
+
+function checkMultiCheckboxesRequired()
+{
+    const forms = document.getElementsByTagName('form');
+
+    if (forms && forms.length) {
+
+        //const validationMessage = document.getElementById('validation-message');
+        for (let i = 0; i < forms.length; i++) {
+
+            // check if HTML5 validation is enabled
+            if (!forms[i].noValidate) {
+
+                // find all multi-checkboxes inside this form
+                const checkboxes = forms[i].querySelectorAll('[data-multicheckbox]');
+
+                if (checkboxes.length) {
+                    console.log(checkboxes);
+                    // group all checkboxes
+                    const groupedByName = Object.groupBy(checkboxes, checkbox => checkbox.name);
+
+                    if (Object.keys(groupedByName).length) {
+
+                        for (let [key, value] of Object.entries(groupedByName)) {
+
+                            for (let j = 0; j < value.length; j++) {
+                                value[j].addEventListener('change', function () {
+                                    let items = document.getElementsByName(key);
+                                    if (value[j].required) {
+                                        for (let k = 0; k < items.length; k++) {
+                                            items[k].removeAttribute("required");
+                                        }
+                                    } else {
+                                        for (let l = 0; l < items.length; l++) {
+                                            items[l].required = true;
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 /*
 Handler for File Uploads
  */
@@ -330,6 +383,7 @@ window.addEventListener("DOMContentLoaded", function () {
     editLinks();
     prevLinks();
     initializeConditionalFields();
+    checkMultiCheckboxesRequired();
 
     // listen to click on submit button of the last step form
     let submitButtons = document.getElementsByTagName("button");
@@ -337,6 +391,7 @@ window.addEventListener("DOMContentLoaded", function () {
         if (submitButtons[i].type === "submit") {
             submitButtons[i].addEventListener("click", function (e) {
                 // this next function runs only if HTML5 validation is enabled
+                openHiddenWrapper(e);
                 openHiddenWrapper(e);
             });
         }
@@ -385,7 +440,6 @@ function editLinks() {
                         // do not show undefined as new value
                         if (newValue === undefined) {
                             let values = [];
-                            ;
                             // get all inputfields inside the wrapper
                             let inputs = inputwrapper.getElementsByTagName('input');
                             // works for checkboxes and radios multiple
@@ -688,7 +742,6 @@ function subAjax(form) {
 
         // add eventlistener to all forms which include the data-submit attribute
         form.addEventListener("submit", function (e) {
-
             e.preventDefault();
 
             let formid = form.dataset.submitajax;
@@ -777,6 +830,8 @@ function subAjax(form) {
                         prevLinks();
                         // initialze conditional fields
                         initializeConditionalFields();
+                        // multicheckboxes required check
+                        checkMultiCheckboxesRequired();
                         // load star rating again if it exists
                         if (typeof stars !== "undefined" && stars !== null) {
                             // variable is not undefined or not null
