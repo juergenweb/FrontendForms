@@ -116,6 +116,11 @@ class InputCheckboxMultiple extends Input
                 if ($this->getAppendLabel())
                     $checkbox->getLabel()->setAttribute('for', $this->getAttribute('id') . '-' . $key)->setAttribute('class', 'uk-margin-small-right');
 
+                // add required attribute for browser validation
+                if($this->hasAttribute('required')){
+                    $checkbox->setAttribute('required');
+                }
+
                 switch ($this->markupType) {
                     case ('uikit3.json'):
                         if (!$this->directionHorizontal) {
