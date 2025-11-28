@@ -1841,3 +1841,9 @@ If a single checkbox or single radio has a value set, then the placeholder value
 
 Now, the first and lastname validation can also be check via browser validation by using the pattern attribute.
 
+## [2.3.4] 2025-11-28
+
+**Browser validation for multiple checkboxes and radios added"**
+
+If you want to use the HTML5 browser validation to validate multi-checkboxes and radios if there is at least one item required, you can do this now. 
+Multi-checkboxes will be validated with the help of a little JS function because there is no built in validation for this kind of inputfield.
