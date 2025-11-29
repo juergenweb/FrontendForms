@@ -2239,10 +2239,11 @@ $field->setRule('requiredIf', 'myconditionalfield');
 ```
 
 ### requiredIfEqual
-This validator is almost identical to the "requiredIf" validator, but in this case it checks whether the conditional field has a certain value.
-This validator needs a third parameter, which is the value that the conditional field must have in order to execute this validator.
+This validator is almost identical to the "requiredIf" validator, but in this case it checks if the conditional field is not empty and has a certain value.
+In this case, this validator needs a third parameter, which is the value that the conditional field must have in order to execute this validator.
 
 Explanation of the following example:
+
 This means the field must be filled out (is required) if the field with the name "myconditionalfield" has exactly the value "1". 
 
 ```php
