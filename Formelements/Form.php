@@ -3354,7 +3354,7 @@ class Form extends CustomRules
                         $out .= $warningAlert->render();
                     }
                 } else {
-                    if (!$this->lastStep) {
+                    if ($this->steps && !$this->lastStep) {
                         // create a warning alert to inform the dev
                         $warningAlert = new Alert();
                         $warningAlert->setCSSClass('alert_warningClass');
