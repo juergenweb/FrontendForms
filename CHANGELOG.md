@@ -1857,3 +1857,16 @@ Some minor bugs have been fixed now.
 **Showing warning alert fixed**
 
 The warning alert for forms containing steps has been mistakely showed on forms with upload fields and steps disabled. This has been fixed now.
+
+## [2.3.5] 2025-11-28
+
+**2 new validation rules added**
+
+1) RequiredIf validator: checks if a field has a value if a conditional field is not empty
+2) RequiredIfEqual validator: checks if a field has a value if a conditional field is not empty and has a specific value
+
+The valitron library has been updated too.
+
+More information about these 2 new rules:
+* [requiredIf](https://github.com/juergenweb/FrontendForms/blob/main/README.md#requiredif)
+* [requiredIfEqual](https://github.com/juergenweb/FrontendForms/blob/main/README.md#requiredifequal)
