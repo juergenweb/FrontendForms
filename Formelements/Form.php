@@ -2854,28 +2854,28 @@ class Form extends CustomRules
                                 /***********************************
                                  * check if it is a multi-step form
                                  * ********************************/
+                                if($this->steps) {
+                                    if (!$this->lastStep) { // run if it is not the final step
 
-                                if ($this->steps && !$this->lastStep) { // run if it is not the final step
+                                        // 1) save all values inside a session
 
-                                    // 1) save all values inside a session
-
-                                    if ($this->wire('session')->get($this->getID() . '-values')) {
-                                        // remove the old values from the array
-                                        unset($formValues[$this->currentStepNumber]);
-                                        $newValues = [$this->currentStepNumber => $this->getValues()];
-                                        // add new values to the array
-                                        $values = array_replace($formValues, $newValues);
-                                        $this->wire('session')->set($this->getID() . '-values', $values);
+                                        if ($this->wire('session')->get($this->getID() . '-values')) {
+                                            // remove the old values from the array
+                                            unset($formValues[$this->currentStepNumber]);
+                                            $newValues = [$this->currentStepNumber => $this->getValues()];
+                                            // add new values to the array
+                                            $values = array_replace($formValues, $newValues);
+                                            $this->wire('session')->set($this->getID() . '-values', $values);
+                                        } else {
+                                            // session does not exist -> set session for the first time
+                                            $this->wire('session')->set($this->getID() . '-values', [$this->currentStepNumber => $this->getValues()]);
+                                        }
+                                        return false; // set to false to prevent the execution of the code inside the isValid() method
                                     } else {
-                                        // session does not exist -> set session for the first time
-                                        $this->wire('session')->set($this->getID() . '-values', [$this->currentStepNumber => $this->getValues()]);
+                                        // last step: remove the session
+                                        $this->wire('session')->remove($this->getID() . '-values');
                                     }
-                                    return false; // set to false to prevent the execution of the code inside the isValid() method
-                                } else {
-                                    // last step: remove the session
-                                    $this->wire('session')->remove($this->getID() . '-values');
                                 }
-
                                 /*** Multi-step form end */
 
                                 return true;
