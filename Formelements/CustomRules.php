@@ -635,7 +635,7 @@ class CustomRules extends Tag
          * 39) Check if a string does not contain a letter (including German Umlauts)
          */
         V::addRule('noLetters', function ($field, $value) {
-            if(preg_match('/[a-zA-ZäöüÖÄÜ]/', $value)) return false;
+            if (preg_match('/[a-zA-ZäöüÖÄÜ]/', $value)) return false;
             return true;
         }, $this->_('contains letters which are not allowed.'));
 
@@ -646,23 +646,39 @@ class CustomRules extends Tag
         V::addRule('noNumbers', function ($field, $value) {
             return (preg_match('/^[^0-9]+$/', $value));
         }, $this->_('contains at least one number, but this is not allowed.'));
-        /**
-         * 40) Check if the field is not empty if another field contains a certain value
-         * This validator is not ready to use at the moment
-         */
-        V::addRule('requiredIf', function ($field, $value, $params, $fields) {
 
-            $conditions = $params[0];
-            foreach( $conditions as $condition_field => $condition_value) {
-                $condition_field = $this->getID().'-'.$condition_field;
-                if( $fields[$condition_field] == $condition_value
-                    && empty($value) ) {
-                    return false;
+
+        /**
+         * 41) Check if the field has a value if another field contains a specific value
+         */
+        V::addRule('requiredIfEqual', function ($field, $value, $params) {
+
+            // check if field with the given name exist
+            if ($this->getFormElementByName($params[0])) {
+                if ($this->getValue($params[0]) === $params[1]) {
+                    return (!empty($value));
                 }
             }
             return true;
-
         }, $this->_('is required.'));
+
+
+        /**
+         * 42) Check if the field has a value if another field contains a value (not a specific value - any value)
+         */
+        V::addRule('requiredIf', function ($field, $value, $params) {
+
+            // check if field with the given name exist
+            if ($this->getFormElementByName($params[0])) {
+                if ($this->getValue($params[0])) {
+                    return (!empty($value));
+                }
+            }
+            return true;
+        }, $this->_('is required.'));
+
+
+
     }
 
 
