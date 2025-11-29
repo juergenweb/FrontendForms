@@ -426,7 +426,7 @@ class Validator
         }
 
         if ($forceAsAssociative || $this->isAssociativeArray($params[0])) {
-           $params[0] = array_keys($params[0]);
+            $params[0] = array_keys($params[0]);
         }
 
         $strict = false;
@@ -1197,7 +1197,8 @@ class Validator
 
     private function validationMustBeExcecuted($validation, $field, $values, $multiple){
         //always excecute requiredWith(out) rules
-        if (in_array($validation['rule'], array('requiredWith', 'requiredWithout'))){
+        // custom changes made
+        if (in_array($validation['rule'], array('requiredWith', 'requiredWithout', 'requiredIfEqual', 'requiredIf'))){
             return true;
         }
 
