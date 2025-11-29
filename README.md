@@ -2247,7 +2247,7 @@ Explanation of the following example:
 This means the field must be filled out (is required) if the field with the name "myconditionalfield" has exactly the value "1". 
 
 ```php
-$field->setRule('requiredIf', 'myconditionalfield', '1');
+$field->setRule('requiredIfEqual', 'myconditionalfield', '1');
 ```
 
 ## Create your own custom validation rules
