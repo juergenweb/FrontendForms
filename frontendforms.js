@@ -47,10 +47,7 @@ function submitCounter() {
 Function to validate multiple checkboxes with browser validation
 Checks if at least one checkbox is checked inside checkbox multiple
  */
-
-
-function checkMultiCheckboxesRequired()
-{
+function checkMultiCheckboxesRequired() {
     const forms = document.getElementsByTagName('form');
 
     if (forms && forms.length) {
@@ -65,15 +62,25 @@ function checkMultiCheckboxesRequired()
                 const checkboxes = forms[i].querySelectorAll('[data-multicheckbox]');
 
                 if (checkboxes.length) {
-                    console.log(checkboxes);
                     // group all checkboxes
                     const groupedByName = Object.groupBy(checkboxes, checkbox => checkbox.name);
 
                     if (Object.keys(groupedByName).length) {
 
                         for (let [key, value] of Object.entries(groupedByName)) {
+                            // check first if at least one checkbox is checked by default
+                            let hasValue = false;
+                            for (let j = 0; j < value.length; j++) {
+                                if (value[j].checked) {
+                                    hasValue = true;
+                                }
+                            }
 
                             for (let j = 0; j < value.length; j++) {
+                                if (hasValue) {
+                                    // remove required attribute first
+                                    value[j].required = false;
+                                }
                                 value[j].addEventListener('change', function () {
                                     let items = document.getElementsByName(key);
                                     if (value[j].required) {
@@ -385,6 +392,7 @@ window.addEventListener("DOMContentLoaded", function () {
     initializeConditionalFields();
     checkMultiCheckboxesRequired();
 
+
     // listen to click on submit button of the last step form
     let submitButtons = document.getElementsByTagName("button");
     for (let i = 0; i < submitButtons.length; i++) {
@@ -569,40 +577,42 @@ for (let i = 0; i < numInputs.length; i++) {
     numInputs[i].addEventListener("change", calculateTimeRange, false);
 }
 
-// Change the HTML5 attribute on change
+// Change the HTML5 attribute on change for a field depending on another field
 function changeHTML5AttributeValue() {
     // find all instances where data-attribute is present
     let field_data_ID = this.id.replace(this.form.id + "-", "");
-    let fields = document.querySelectorAll("[data-ff_field=" + field_data_ID + "]");
 
-    if (fields.length > 0) {
-        for (let i = 0; i < fields.length; i++) {
-            // get the field object
-            let field = document.getElementById(fields[i].id);
-            if (field) {
-                // get which attribute should be changed
-                let attribute = field.dataset.ff_attribute;
-                let validator = field.dataset.ff_validator;
-                let value = this.value;
-                if (attribute && value) {
-                    if (validator) {
-                        // check if validator is dateBeforeField
-                        if (validator === "dateBeforeField") {
-                            value = calculateBeforeAfterValue(-1, value);
-                            value = value.toISOString().split("T")[0];
+    if (field_data_ID) {
+        let fields = document.querySelectorAll("[data-ff_field=" + field_data_ID + "]");
+
+        if (fields.length > 0) {
+            for (let i = 0; i < fields.length; i++) {
+                // get the field object
+                let field = document.getElementById(fields[i].id);
+                if (field) {
+                    // get which attribute should be changed
+                    let attribute = field.dataset.ff_attribute;
+                    let validator = field.dataset.ff_validator;
+                    let value = this.value;
+                    if (attribute && value) {
+                        if (validator) {
+                            // check if validator is dateBeforeField
+                            if (validator === "dateBeforeField") {
+                                value = calculateBeforeAfterValue(-1, value);
+                                value = value.toISOString().split("T")[0];
+                            }
+                            // check if validator is dateAfterField
+                            if (validator === "dateAfterField") {
+                                value = calculateBeforeAfterValue(1, value);
+                                value = value.toISOString().split("T")[0];
+                            }
                         }
-                        // check if validator is dateAfterField
-                        if (validator === "dateAfterField") {
-                            value = calculateBeforeAfterValue(1, value);
-                            value = value.toISOString().split("T")[0];
-                        }
+                        field.setAttribute(attribute, value);
                     }
-                    field.setAttribute(attribute, value);
                 }
             }
         }
     }
-
 }
 
 /**
