@@ -2227,6 +2227,26 @@ If a string contains at least one number, the validator returns false.
 $field->setRule('noNumbers');
 ```
 
+### requiredIf
+This validator checks whether a dependent field has a value, if the conditional field also has a value.
+In this case, it doesn't matter what the value of the conditional field is - the validator will only run if the conditional field generally contains a value.
+The second parameter must be the name of the conditional field (in the following example the field name is "myconditionalfield").
+
+```php
+$field->setRule('requiredIf', 'myconditionalfield');
+```
+
+### requiredIfEqual
+This validator is almost identical to the "requiredIf" validator, but in this case it checks whether the conditional field has a certain value.
+This validator needs a third parameter, which is the value that the conditional field must have in order to execute this validator.
+
+Explanation of the following example:
+This means the field must be filled out (is required) if the field with the name "myconditionalfield" has exactly the value "1". 
+
+```php
+$field->setRule('requiredIf', 'myconditionalfield', '1');
+```
+
 ## Create your own custom validation rules
 
 However, this module contains many built-in validation rules, but sometimes you need a special validation rule. Fortunately, the Valitron library supports the creation of custom rules in a simple way. Please take a look at the [Valitron Library documentation](https://github.com/vlucas/valitron?tab=readme-ov-file#adding-custom-validation-rules), which explains how to create custom rules.
