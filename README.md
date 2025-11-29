@@ -1833,6 +1833,8 @@ For more detailed explanation on each validation rule click the link at the vali
 | [allowedTotalFileSize](#allowedtotalfilesize) | Set a total max file size limit for all files inside a file upload field
 | [noLetters](#noletters) | Check if a string does not contain any letters and German Umlauts
 | [noNumbers](#nonumbers) | Check if a string does not contain any number at all
+| [requiredif](#requiredif) | Checks if a field is not empty if conditional field is not empty too
+| [requiredifEqual](#requiredifequal) | Checks if a field is not empty if conditional field is not empty too and has a specific value
 
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
