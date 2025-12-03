@@ -78,7 +78,7 @@ class InputCheckboxMultiple extends Input
         $checkbox->useFieldWrapper(false);
         $checkbox->getLabel()->disableAsterisk(); // disable the required signs if present
         $this->checkboxes = array_merge($this->checkboxes, [$checkbox]);
-        $checkbox->setAttribute('data-multicheckbox', $this->getAttribute('name'));
+
         return $checkbox;
     }
 
@@ -120,6 +120,7 @@ class InputCheckboxMultiple extends Input
                 // add required attribute for browser validation
                 if($this->hasAttribute('required')){
                     $checkbox->setAttribute('required');
+                    $checkbox->setAttribute('data-multicheckbox', $this->getAttribute('name'));
                 }
 
                 switch ($this->markupType) {
