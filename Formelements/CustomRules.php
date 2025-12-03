@@ -650,13 +650,52 @@ class CustomRules extends Tag
 
         /**
          * 41) Check if the field has a value if another field contains a specific value
+         * Can check for a single value or for an array with and|or operator
+         * $params[0]: the name of the conditional field
+         * $params[1]: the value(s) to compare: either a string or an array
+         * $params[2]: the operator -> either "and" or "or"
          */
         V::addRule('requiredIfEqual', function ($field, $value, $params) {
 
             // check if field with the given name exist
             if ($this->getFormElementByName($params[0])) {
-                if ($this->getValue($params[0]) === $params[1]) {
-                    return (!empty($value));
+                $conditionalFieldValue = $this->getValue($params[0]);
+                $conditionFieldName = $params[0];
+                $equalValues = $params[1];
+
+                if(is_array($equalValues)) {
+                    $operator = array_key_exists(2, $params) ? $params[2] : 'AND';
+                    if($operator == 'AND'){
+                        if ($conditionalFieldValue == $equalValues) {
+                            if($value) return true;
+                            return false;
+                        }
+                    } else {
+                        // OR
+                        if($conditionalFieldValue){
+                            $arr = array_intersect($conditionalFieldValue, $equalValues);
+                            if (count($arr) > 0) {
+                               if($value) return true;
+                               return false;
+                            }
+                            return true;
+                        }
+                        return true;
+                    }
+                } else {
+                    if(is_array($equalValues)) {
+                        $arr = array_intersect($conditionalFieldValue, $equalValues);
+                        if (count($arr) > 0) {
+                            if($value) return true;
+                            return false;
+                        }
+                    } else {
+                        if($conditionalFieldValue == $equalValues) {
+                            // check for value
+                            if($value) return true;
+                            return false;
+                        }
+                    }
                 }
             }
             return true;
@@ -666,8 +705,7 @@ class CustomRules extends Tag
         /**
          * 42) Check if the field has a value if another field contains a value (not a specific value - any value)
          */
-        V::addRule('requiredIf', function ($field, $value, $params) {
-
+        V::addRule('requiredIfNotEmpty', function ($field, $value, $params) {
             // check if field with the given name exist
             if ($this->getFormElementByName($params[0])) {
                 if ($this->getValue($params[0])) {
@@ -677,10 +715,20 @@ class CustomRules extends Tag
             return true;
         }, $this->_('is required.'));
 
-
+        /**
+         * 43) Check if the field has a value if another field contains no value
+         */
+        V::addRule('requiredIfEmpty', function ($field, $value, $params) {
+            // check if field with the given name exist
+            if ($this->getFormElementByName($params[0])) {
+                if (!$this->getValue($params[0])) {
+                    return (!empty($value));
+                }
+            }
+            return true;
+        }, $this->_('is required.'));
 
     }
-
 
     /**
      * Check if a file with the same name exists in the destination directory
