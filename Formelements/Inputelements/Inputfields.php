@@ -2062,7 +2062,7 @@ abstract class Inputfields extends Element
      * Validator rule: dateOutsideOfDaysRange
      * @return void
      */
-    protected function removedateOutsideOfDaysRange(): void
+    protected function removeHTML5dateOutsideOfDaysRange(): void
     {
         $this->removeAttribute('min');
         $this->removeAttribute('max');
@@ -2088,9 +2088,75 @@ abstract class Inputfields extends Element
      * Validator rule: noLetters
      * @return void
      */
-    protected function removenoLetters(): void
+    protected function removeHTML5noLetters(): void
     {
         $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute required to the input tag if conditional field contains a value
+     * Validator rule: requiredIf
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5requiredIfEmpty(array $value): void
+    {
+        $this->setAttribute('data-ff_field', $value[0]);
+        $this->setAttribute('data-ff_attribute', 'ff-required');
+        $this->setAttribute('data-ff_validator', 'requiredIfEmpty');
+    }
+
+    /**
+     * Remove certain data-attributes from input field
+     * Validator rule: requiredIf
+     * @return void
+     */
+    protected function removeHTML5requiredIfEmpty(): void
+    {
+        $this->removeAttribute('data-ff_field');
+        $this->removeAttribute('data-ff_attribute');
+        $this->removeAttribute('data-ff_validator');
+    }
+
+    /**
+     * Add HTML5 attribute required to the input tag if conditional field contains a specific value
+     * Validator rule: requiredIfEqual
+     * @param array $value
+     * @return void
+     */
+    protected function addHTML5requiredIfEqual(array $value): void
+    {
+
+        $this->setAttribute('data-ff_field', $value[0]);
+        $this->setAttribute('data-ff_attribute', 'ff-required');
+        $this->setAttribute('data-ff_validator', 'requiredIfEqual');
+
+        if(!array_key_exists(2, $value)) {
+            $operator = 'AND';
+        } else {
+            $operator = $value[2];
+        }
+
+        if(is_array($value[1])) {
+            $this->setAttribute('data-ff_operator', $operator);
+            $value = json_encode($value[1]);
+            $value = str_replace('"', '\'', $value);
+        } else {
+            $value = $value[1];
+        }
+        $this->setAttribute('data-ff_equal', $value);
+    }
+
+    /**
+     * Remove certain data-attributes from input field
+     * Validator rule: requiredIfEqual
+     * @return void
+     */
+    protected function removeHTML5requiredIfEqual(): void
+    {
+        $this->removeAttribute('data-ff_field');
+        $this->removeAttribute('data-ff_attribute');
+        $this->removeAttribute('data-ff_validator');
     }
 
     /**
