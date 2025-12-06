@@ -1860,13 +1860,15 @@ The warning alert for forms containing steps has been mistakely showed on forms 
 
 ## [2.3.5] 2025-11-28
 
-**2 new validation rules added**
+**3 new validation rules added**
 
-1) RequiredIf validator: checks if a field has a value if a conditional field is not empty
-2) RequiredIfEqual validator: checks if a field has a value if a conditional field is not empty and has a specific value
+1) RequiredIfEmpty validator: checks if a field has a value if a conditional field is empty. [more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#requiredifempty)
+2) RequiredIfNotEmpty validator: checks if a field has a value if a conditional field is not empty. [more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#requiredifnotempty)
+3) RequiredIfEqual validator: checks if a field has a value if a conditional field is not empty and has a specific value. [more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#requiredifequal)
 
 The valitron library has been updated too.
 
-More information about these 2 new rules:
-* [requiredIf](https://github.com/juergenweb/FrontendForms/blob/main/README.md#requiredif)
-* [requiredIfEqual](https://github.com/juergenweb/FrontendForms/blob/main/README.md#requiredifequal)
+**New method inspired by a user request**
+
+A new method to prevent the direct jump to the form top has been added due to a [user request](https://github.com/juergenweb/FrontendForms/issues/26). You wil find more information [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#preventjumptoform---enabledisable-internal-anchor-jump-to-the-form-container).
+
