@@ -42,7 +42,7 @@ class Form extends CustomRules
     const FORMMETHODS = ['get', 'post']; // array that holds allowed action methods (get, post)
 
     /* properties */
-
+    protected string|int|bool $preventJumpToForm = false;
     protected string|int $load_time = ''; // the time, when the form was loaded
     protected array $storedFiles = []; // array that holds all files (including overwritten filenames)
     protected string $doubleSubmission = ''; // value hold by the double form submission session
@@ -342,6 +342,17 @@ class Form extends CustomRules
             $this->page->ff_forms = [$this->getID()];
         }
 
+    }
+
+    /**
+     * Disable the internal jump to the form container after form submission
+     * @param bool $prevent
+     * @return $this
+     */
+    public function preventJumpToForm(bool $prevent = true): self
+    {
+        $this->preventJumpToForm = $prevent;
+        return $this;
     }
 
     /**
@@ -2293,6 +2304,7 @@ class Form extends CustomRules
      */
     public function ___isValid(): bool
     {
+
         // if it is a multi-step form -> remove all not used form elements from each step
         if ($this->steps) {
 
@@ -2414,7 +2426,9 @@ class Form extends CustomRules
                 $prevButton->setAttribute('value', $this->_('Previous'));
                 $prevButton->setAttribute('type', 'button');
                 $prevButton->setAttribute('class', 'ff-prev-button');
-                $location = $this->page->url . '?' . $this->getID() . '-step=' . ($this->currentStepNumber - 1) . '#' . $this->getID() . '-allwrapper';
+
+                $anchor = ($this->preventJumpToForm) ? '' : '#' . $this->getID() . '-allwrapper';
+                $location = $this->page->url . '?' . $this->getID() . '-step=' . ($this->currentStepNumber - 1) . $anchor;
                 $prevButton->setAttribute('data-prev', $location);
                 $prevButton->setAttribute('data-formid', $this->getID());
                 $formElements[] = $prevButton;
@@ -2439,7 +2453,8 @@ class Form extends CustomRules
                 $this->disableCaptcha();
 
                 // set redirect URL to the next step
-                $redirectUrl = $this->page->url . '?' . $this->getID() . '-step=' . ($this->currentStepNumber + 1) . '#' . $this->getID() . '-allwrapper';
+                $anchor = ($this->preventJumpToForm) ? '' : '#' . $this->getID() . '-allwrapper';
+                $redirectUrl = $this->page->url . '?' . $this->getID() . '-step=' . ($this->currentStepNumber + 1) . $anchor;
                 $this->setRedirectURL($redirectUrl);
 
                 // set the submit button text to "next" (except on the last step)
@@ -2831,6 +2846,7 @@ class Form extends CustomRules
                                 $this->validated = '1';
 
                                 $this->alert->setAttribute('data-ffsuccess', 'true');
+                                $this->alert->setAttribute('data-formid', $this->getID());
                                 $this->alert->setAttribute('id', $this->getID() . '-alert');
                                 $this->alert->setCSSClass('alert_successClass');
                                 $this->alert->setText($this->getSuccessMsg());
@@ -3311,7 +3327,11 @@ class Form extends CustomRules
             $this->page->sliderCaptcha = true;
         }
 
-        $out = '<div id="' . $this->getID() . '-allwrapper">';
+        $dataPrevent = ' data-preventjumptoform="false"';
+        if($this->preventJumpToForm){
+            $dataPrevent = ' data-preventjumptoform="true"';
+        }
+        $out = '<div id="' . $this->getID() . '-allwrapper"'.$dataPrevent.'>';
 
         // if Ajax submit was selected, add an additional data attribute to the form tag
         if ($this->getSubmitWithAjax()) {
@@ -3577,7 +3597,13 @@ class Form extends CustomRules
             if ($this->getSubmitWithAjax()) {
                 if ($this->ajaxRedirect) {
                     $ajaxredirectField = new InputHidden('ajax_redirect');
-                    $ajaxredirectField->setAttribute('value', $this->ajaxRedirect);
+                    $url = $this->ajaxRedirect;
+                    if($this->preventJumpToForm){
+                        // remove internal anchor
+                        $url = explode("#", $url);
+                        $url = $url[0];
+                    }
+                    $ajaxredirectField->setAttribute('value', $url);
                     $this->add($ajaxredirectField);
                 }
             }
