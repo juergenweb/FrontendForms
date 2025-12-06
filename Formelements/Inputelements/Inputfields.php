@@ -2131,20 +2131,19 @@ abstract class Inputfields extends Element
         $this->setAttribute('data-ff_attribute', 'ff-required');
         $this->setAttribute('data-ff_validator', 'requiredIfEqual');
 
-        if(!array_key_exists(2, $value)) {
-            $operator = 'AND';
-        } else {
-            $operator = $value[2];
+
+        if(array_key_exists(1, $value) && str_contains($value[1], '|')) {
+            if(!array_key_exists(2, $value)) {
+                $operator = 'OR';
+            } else {
+                $operator = ($value[2]) ? 'AND' : 'OR';
+            }
+            $this->setAttribute('data-ff_operator', $operator);
+        }
+        if(array_key_exists(1, $value)){
+            $this->setAttribute('data-ff_equal', $value[1]);
         }
 
-        if(is_array($value[1])) {
-            $this->setAttribute('data-ff_operator', $operator);
-            $value = json_encode($value[1]);
-            $value = str_replace('"', '\'', $value);
-        } else {
-            $value = $value[1];
-        }
-        $this->setAttribute('data-ff_equal', $value);
     }
 
     /**
