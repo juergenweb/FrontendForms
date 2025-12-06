@@ -2518,8 +2518,12 @@ class Form extends CustomRules
                     }
                     $stepValues = $values;
                 } else {
-                    if (array_key_exists($this->currentStepNumber, $formValues)) {
-                        $stepValues = $formValues[$this->currentStepNumber];
+                    if ($_POST) {
+                        $stepValues = $_POST;
+                    } else {
+                        if (array_key_exists($this->currentStepNumber, $formValues)) {
+                            $stepValues = $formValues[$this->currentStepNumber];
+                        }
                     }
                 }
             }
@@ -4642,3 +4646,4 @@ class Form extends CustomRules
     }
 
 }
+
