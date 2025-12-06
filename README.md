@@ -574,6 +574,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [setAjaxMessage()](#setajaxmessage---customize-the-info-text-during-an-ajax-submission-on-per-form-base)  | Customize the info text during an AJAX submission on per form base |
 | [useJS()](#usejs---enabledisable-the-embedding-of-js-files-on-per-form-base)  | Enable/disable the embedding of JS files of this module on per form base |
 | [useCSS()](#usecss---enabledisable-the-embedding-of-css-files-on-per-form-base)  | Enable/disable the embedding of CSS files of this module on per form base |
+|[preventJumpToForm()](#preventjumptoform---enabledisable-internal-anchor-jump-to-the-form-container)  | Enable/disable internal anchor jump to the form container |
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
