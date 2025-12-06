@@ -366,6 +366,7 @@ function initializeConditionalFields() {
     if (frontendforms.length > 0) {
         for (let i = 0; i < frontendforms.length; i++) {
 
+            let form = frontendforms[i];
             let formID = frontendforms[i].id;
             if (formID) {
                 if (typeof mfConditionalFields !== "undefined") {
@@ -373,7 +374,8 @@ function initializeConditionalFields() {
                 }
                 if (frontendforms[i].getAttribute("data-valid")) {
                     // jump to error alert box
-                    jumpTo(formID + "-alert");
+                    let allwrapper = document.getElementById(formID + "-allwrapper");
+                    jumpTo(allwrapper, formID + "-alert");
                 }
             }
         }
@@ -391,7 +393,6 @@ window.addEventListener("DOMContentLoaded", function () {
     prevLinks();
     initializeConditionalFields();
     checkMultiCheckboxesRequired();
-
 
     // listen to click on submit button of the last step form
     let submitButtons = document.getElementsByTagName("button");
@@ -412,7 +413,9 @@ window.addEventListener("DOMContentLoaded", function () {
         for (let i = 0; i < successAlerts.length; i++) {
             if (i === 0) {
                 let alertID = successAlerts[i].id;
-                jumpTo(alertID);
+                let formID = successAlerts[i].dataset.formid;
+                let allwrapper = document.getElementById(formID + "-allwrapper");
+                jumpTo(allwrapper, alertID);
             }
         }
     }
@@ -945,10 +948,15 @@ function calculateNewDate(date, days, operator) {
  * Jump to an internal anchor
  * @param anchor_id
  */
-function jumpTo(anchor_id) {
-    let url = location.href;               //Saving URL without a hash.
-    location.href = "#" + anchor_id;                 //Navigate to the target element.
-    history.replaceState(null, null, url);   //method modifies the current history entry.
+function jumpTo(allwrapper, anchor_id) {
+
+    // check if jump to form is disabled
+    if(allwrapper.dataset.preventjumptoform === "false"){
+        let url = location.href;               //Saving URL without a hash.
+        location.href = "#" + anchor_id;                 //Navigate to the target element.
+        history.replaceState(null, null, url);   //method modifies the current history entry.
+    }
+
 }
 
 /**
@@ -1045,7 +1053,7 @@ function subAjax(form) {
                         if (redirectUrl) {
                             let urlParts = redirectUrl.split("#");
                             // check if an internal anchor is set
-                            if (urlParts.length > 1) {
+                            if (urlParts.length > 1 ) {
                                 // an internal anchor is set
                                 redirectUrl = urlParts[0];
                                 let anchor = urlParts[1];
@@ -1056,7 +1064,8 @@ function subAjax(form) {
                             // load the validated form back into the target div
                             document.getElementById(formid + "-ajax-wrapper").innerHTML = content;
                             // jump to the start of the form
-                            jumpTo(formid + "-ajax-wrapper");
+                            let allwrapper = document.getElementById(formid + "-allwrapper");
+                            jumpTo(allwrapper, formid + "-ajax-wrapper");
                         }
                     } else {
 
@@ -1064,7 +1073,8 @@ function subAjax(form) {
                         // load the validated form back into the target div
                         document.getElementById(formid + "-ajax-wrapper").innerHTML = content;
                         // jump to the start of the form
-                        jumpTo(formid + "-ajax-wrapper");
+                        let allwrapper = document.getElementById(formid + "-allwrapper");
+                        jumpTo(allwrapper, formid + "-ajax-wrapper");
                         // load a new CAPTCHA if CAPTCHA is used
                         reloadCaptcha(formid + "-captcha-image", e);
                         // start as the first page load
