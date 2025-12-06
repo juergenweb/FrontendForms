@@ -1833,9 +1833,9 @@ For more detailed explanation on each validation rule click the link at the vali
 | [allowedTotalFileSize](#allowedtotalfilesize) | Set a total max file size limit for all files inside a file upload field
 | [noLetters](#noletters) | Check if a string does not contain any letters and German Umlauts
 | [noNumbers](#nonumbers) | Check if a string does not contain any number at all
-| [requiredif](#requiredif) | Checks if a field is not empty if conditional field is not empty too
-| [requiredifEqual](#requiredifequal) | Checks if a field is not empty if conditional field is not empty too and has a specific value
-
+| [requiredIfEqual](#requiredifequal) | Checks if a field is not empty if a conditional field is not empty too and has a specific value
+| [requiredIfEmpty](#requiredifempty) | Checks if a field is not empty if aconditional field is empty
+| [requiredIfNotEmpty](#requiredifnotempty) | Checks if a field is not empty if a conditional field is not empty too
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
 
@@ -2229,25 +2229,53 @@ If a string contains at least one number, the validator returns false.
 $field->setRule('noNumbers');
 ```
 
-### requiredIf
-This validator checks whether a dependent field has a value, if the conditional field also has a value.
-In this case, it doesn't matter what the value of the conditional field is - the validator will only run if the conditional field generally contains a value.
-The second parameter must be the name of the conditional field (in the following example the field name is "myconditionalfield").
+### requiredIfEqual
+
+This validator checks that the field is not empty if a conditional field has a certain single value or has certain multiple values.
+You can check for multiple values with OR or AND conditions.
+
+Take a look at the following examples:
+
+1) Checking for a single value
+
+If the conditional field with the name *myconditionalfield* has the value "1", then this field is required.
 
 ```php
-$field->setRule('requiredIf', 'myconditionalfield');
+$field->setRule('requiredIfEqual', 'myconditionalfield', '1'); 
 ```
 
-### requiredIfEqual
-This validator is almost identical to the "requiredIf" validator, but in this case it checks if the conditional field is not empty and has a certain value.
-In this case, this validator needs a third parameter, which is the value that the conditional field must have in order to execute this validator.
+2) Checking for a multiple values (with OR condition)
 
-Explanation of the following example:
-
-This means the field must be filled out (is required) if the field with the name "myconditionalfield" has exactly the value "1". 
+If the conditional field with the name *myconditionalfield* has the value "1" **OR** "2", then this field is required.
 
 ```php
-$field->setRule('requiredIfEqual', 'myconditionalfield', '1');
+$field->setRule('requiredIfEqual', 'myconditionalfield', '1|2'); 
+```
+
+3) Checking for a multiple values (with AND condition)
+
+If the conditional field with the name *myconditionalfield* has the value "1" **AND** "2", then this field is required.
+
+```php
+$field->setRule('requiredIfEqual', 'myconditionalfield', '1|2', true); // the last parameter "true" changes from OR to AND condition
+```
+
+Please note: The "AND" condition only works on multiple checkboxes and multi-select input fields, because these are the only fields that accept more than one value.
+
+### requiredIfEmpty
+
+This validator checks that the field is not empty if a conditional field has no value (is empty).
+
+```php
+$field->setRule('requiredIfEmpty', 'myconditionalfield');
+```
+
+### requiredIfNotEmpty
+
+This validator is the opposite of the previous valdiator and checks that the field is not empty if a conditional field has a value (is not empty). In this case it does not matter what value the other field has.
+
+```php
+$field->setRule('requiredIfNotEmpty', 'myconditionalfield');
 ```
 
 ## Create your own custom validation rules
