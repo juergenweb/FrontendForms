@@ -1224,6 +1224,23 @@ So this is an API method, to set the embedding of the CSS file directly on the f
 $form->useCSS(false); // enable (true) or disable (false) the embedding of the modules CSS file on the frontend (default is true)
 ```
 
+### preventJumpToForm() - Enable/disable internal anchor jump to the form container
+
+By default, the page scrolls to the top of the form after form submission or after changing the step at a multistep form. This is the logic behavior to make it more userfriendly, becaues the user will be redirected to the start of the form and do not need to scroll down. 
+
+But there are use cases, where this behavior can lead to problems. Think of a fixed header where the start top of the form could be hidden by the header. 
+
+For this scenario, you can disable this direct jump to the top of the form by using the following method:
+
+```php
+$form->preventJumpToForm();
+```
+
+This leads to that you will land directl at the top of the page instead at the top of the form.
+
+This feature was inspired by a user [request](https://github.com/juergenweb/FrontendForms/issues/26).
+
+
 ## Input field methods
 
 For better understanding of methods explained afterwards, take a look of the anatomy of input fields first.
