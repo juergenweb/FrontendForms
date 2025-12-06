@@ -1237,7 +1237,7 @@ For this scenario, you can disable this direct jump to the top of the form by us
 $form->preventJumpToForm();
 ```
 
-This leads to that you will land directl at the top of the page instead at the top of the form.
+This leads to that you will land directly at the top of the page instead of at the top of the form.
 
 This feature was inspired by a user [request](https://github.com/juergenweb/FrontendForms/issues/26).
 
