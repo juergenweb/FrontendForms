@@ -420,7 +420,7 @@ window.addEventListener("DOMContentLoaded", function () {
 });
 
 /**
- * Check if an edit link in the final step of a multi-step form has been clicked
+ * Check if an edit link in the final step of a multistep form has been clicked
  */
 function editLinks() {
     let editLinks = document.getElementsByClassName("ff-edit-link");
@@ -569,31 +569,255 @@ function removeURLParameter(url, parameter) {
  */
 
 // get all input HTML elements
-let numInputs = document.querySelectorAll("input");
+let numInputs = document.querySelectorAll("input,select");
 
 // check if something has been changed inside an input field
 for (let i = 0; i < numInputs.length; i++) {
-    numInputs[i].addEventListener("change", changeHTML5AttributeValue, false);
+    numInputs[i].addEventListener("input", changeHTML5AttributeValue, false);
     numInputs[i].addEventListener("change", calculateTimeRange, false);
+}
+
+
+function requiredIfEqualHTML5Validation(field, compareField) {
+
+    let value;
+
+    // get comparison input type
+    switch (compareField.type) {
+        case "checkbox":
+            value = requiredIfEqualCheckbox(field, compareField);
+            break;
+        case "select-one":
+        case "select-multiple":
+            value = requiredIfEqualSelect(field, compareField);
+            break;
+        default:
+            value = requiredIfEqualDefault(field, compareField)
+    }
+    return value;
+
+}
+
+/*
+* Function to add required attribute to a dependence field if conditional field is a checkbox input field
+ */
+function requiredIfEqualCheckbox(field, compareField) {
+    let i;
+    let comparisonValue = "";
+
+    let compareValue = field.dataset.ff_equal;
+
+    // create array of string if "|" is present
+    if (compareValue && compareValue.includes("|")) {
+        compareValue = compareValue.split('|');
+    }
+
+    if (compareField.checked) {
+        if (compareField.value !== "on") {
+            comparisonValue = compareField.value;
+        } else {
+            // checkbox without value attribute
+            compareValue = comparisonValue = "ff-equal-checked";
+
+        }
+    }
+
+    let matches;
+    if (Array.isArray(compareValue)) {// is array
+
+        // get operator
+        let operator = field.dataset.ff_operator;
+        let checked = [];
+        let chks = document.getElementsByName(compareField.name);
+
+        if (operator === "AND") {
+
+            compareValue = compareValue.map(String);
+
+            // Loop and push the checked CheckBox value in Array.
+            for (i = 0; i < chks.length; i++) {
+                if (chks[i].checked) {
+                    checked.push(chks[i].value);
+                }
+            }
+
+            // check if every element is checked
+            if (compareValue.every(r => checked.includes(r))) {
+                return "required";
+            }
+            return "";
+        } else {
+            // OR-condition
+            compareValue = compareValue.map(String);
+
+            // Loop and push the checked CheckBox value in Array.
+            for (i = 0; i < chks.length; i++) {
+                if (chks[i].checked) {
+                    checked.push(chks[i].value);
+                }
+            }
+            matches = checked.filter(e => compareValue.indexOf(e) !== -1);
+            if (matches.length > 0) {
+                return "required";
+            }
+            return "";
+        }
+    } else {
+        // is string
+
+        let chks = document.getElementsByName(compareField.name);
+
+        if (chks.length > 1) {
+            // multiple checkbox
+
+            let checked = [];
+            // Loop and push the checked CheckBox value in Array.
+            for (i = 0; i < chks.length; i++) {
+                if (chks[i].checked) {
+                    checked.push(chks[i].value);
+                }
+            }
+            matches = checked.filter(e => compareValue.indexOf(e) !== -1);
+            if (matches.length > 0) {
+                return "required";
+            }
+            return "";
+        } else {
+            // single checkbox
+            if (comparisonValue === "ff-equal-checked") {
+                return "required";
+            } else {
+                if (comparisonValue == compareValue) {
+                    return "required";
+                }
+            }
+            return "";
+        }
+    }
+}
+
+
+/*
+* Function to add required attribute to a dependence field if conditional field is a select input field
+ */
+function requiredIfEqualSelect(field, compareField) {
+
+    let i;
+    let compareValue = field.dataset.ff_equal;
+
+    // create array of string if "|" is present
+    if (compareValue.includes("|")) {
+        compareValue = compareValue.split('|');
+    }
+
+    let matches;
+    if (Array.isArray(compareValue)) {// is array
+
+        // get operator
+        let operator = field.dataset.ff_operator;
+        if (!operator) {
+            operator = "AND"
+        }
+
+        let selected = [];
+        let select = document.querySelector("[name='" + compareField.name + "']");
+        let options = select.options;
+
+        if (operator === "AND") {
+
+            compareValue = compareValue.map(String);
+
+            // Loop and push the selected option value in Array.
+            for (i = 0; i < options.length; i++) {
+                if (options[i].selected) {
+                    selected.push(options[i].value);
+                }
+            }
+            // check if every element is checked
+            if (compareValue.every(r => selected.includes(r))) {
+                return "required";
+            }
+            return "";
+        } else {
+            // OR-condition
+            compareValue = compareValue.map(String);
+
+            // Loop and push the selected option value in Array.
+            for (i = 0; i < options.length; i++) {
+                if (options[i].selected) {
+                    selected.push(options[i].value);
+                }
+            }
+            matches = selected.filter(e => compareValue.indexOf(e) !== -1);
+            if (matches.length > 0) {
+                return "required";
+            }
+            return "";
+        }
+    } else {
+        // is string
+        if (compareField.value == compareValue) {
+            return "required";
+        }
+        return "";
+    }
+}
+
+/**
+ * Function to add required attribute to a dependence field if conditional field is a radio input field
+ * @param field
+ * @param compareField
+ * @returns {string}
+ */
+function requiredIfEqualDefault(field, compareField) {
+
+    let compareValue = field.dataset.ff_equal;
+
+    // create array of string if "|" is present
+    if (compareValue.includes("|")) {
+        compareValue = compareValue.split('|');
+    }
+
+    if (Array.isArray(compareValue)) { // is array
+        if (compareValue.includes(compareField.value)) {
+            return "required";
+        }
+        return "";
+    } else {
+        // is string
+        if (compareField.value == compareValue) {
+            return "required";
+        }
+        return "";
+    }
 }
 
 // Change the HTML5 attribute on change for a field depending on another field
 function changeHTML5AttributeValue() {
+
     // find all instances where data-attribute is present
-    let field_data_ID = this.id.replace(this.form.id + "-", "");
+    let field_data_ID = this.name.replace(this.form.id + "-", "");
+    let fieldName = field_data_ID.replace(/[[]]/g, '');
 
     if (field_data_ID) {
-        let fields = document.querySelectorAll("[data-ff_field=" + field_data_ID + "]");
+        let fields = document.querySelectorAll("[data-ff_field=" + fieldName + "]");
 
         if (fields.length > 0) {
+
             for (let i = 0; i < fields.length; i++) {
                 // get the field object
                 let field = document.getElementById(fields[i].id);
                 if (field) {
+
                     // get which attribute should be changed
                     let attribute = field.dataset.ff_attribute;
-                    let validator = field.dataset.ff_validator;
+                    // special treatment for required attribute
+                    if (attribute === "ff-required") {
+                        attribute = "required";
+                    }
                     let value = this.value;
+                    let validator = field.dataset.ff_validator;
+
                     if (attribute && value) {
                         if (validator) {
                             // check if validator is dateBeforeField
@@ -606,8 +830,22 @@ function changeHTML5AttributeValue() {
                                 value = calculateBeforeAfterValue(1, value);
                                 value = value.toISOString().split("T")[0];
                             }
+                            // check if validator is requiredIf or requiredIfEqual
+                            if (validator === "requiredIfEmpty") {
+                                value = 'required';
+                            }
+                            if ((validator === "requiredIfEqual")) {
+                                value = requiredIfEqualHTML5Validation(field, this);
+
+                            }
                         }
                         field.setAttribute(attribute, value);
+                    }
+                    if (attribute && !value) {
+                        // check if validator is requiredIf or requiredIfEqual
+                        if ((validator === "requiredIfEmpty") || (validator === "requiredIfEqual")) {
+                            field.removeAttribute(attribute);
+                        }
                     }
                 }
             }
