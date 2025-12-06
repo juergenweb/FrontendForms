@@ -1858,7 +1858,7 @@ Some minor bugs have been fixed now.
 
 The warning alert for forms containing steps has been mistakely showed on forms with upload fields and steps disabled. This has been fixed now.
 
-## [2.3.5] 2025-11-28
+## [2.3.6] 2025-12-06
 
 **3 new validation rules added**
 
@@ -1871,4 +1871,5 @@ The valitron library has been updated too.
 **New method inspired by a user request**
 
 A new method to prevent the direct jump to the form top has been added due to a [user request](https://github.com/juergenweb/FrontendForms/issues/26). You wil find more information [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#preventjumptoform---enabledisable-internal-anchor-jump-to-the-form-container).
+
 
