@@ -658,43 +658,44 @@ class CustomRules extends Tag
         V::addRule('requiredIfEqual', function ($field, $value, $params) {
 
             // check if field with the given name exist
+
             if ($this->getFormElementByName($params[0])) {
+
                 $conditionalFieldValue = $this->getValue($params[0]);
                 $conditionFieldName = $params[0];
                 $equalValues = $params[1];
 
-                if(is_array($equalValues)) {
-                    $operator = array_key_exists(2, $params) ? $params[2] : 'AND';
-                    if($operator == 'AND'){
+                // create array out of string if string contains "|"
+                if (str_contains($equalValues, '|')) {
+                    $equalValues = explode('|', $equalValues);
+                }
+
+                if (is_array($equalValues)) {
+
+                    $operator = array_key_exists(2, $params) ? 'AND' : 'OR';
+
+                    if ($operator == 'AND') {
                         if ($conditionalFieldValue == $equalValues) {
-                            if($value) return true;
+                            if ($value) return true;
                             return false;
                         }
                     } else {
                         // OR
-                        if($conditionalFieldValue){
+                        if ($conditionalFieldValue) {
                             $arr = array_intersect($conditionalFieldValue, $equalValues);
                             if (count($arr) > 0) {
-                               if($value) return true;
-                               return false;
+                                if ($value) return true;
+                                return false;
                             }
                             return true;
                         }
                         return true;
                     }
                 } else {
-                    if(is_array($equalValues)) {
-                        $arr = array_intersect($conditionalFieldValue, $equalValues);
-                        if (count($arr) > 0) {
-                            if($value) return true;
-                            return false;
-                        }
-                    } else {
-                        if($conditionalFieldValue == $equalValues) {
-                            // check for value
-                            if($value) return true;
-                            return false;
-                        }
+                    if ($conditionalFieldValue == $equalValues) {
+                        // check for value
+                        if ($value) return true;
+                        return false;
                     }
                 }
             }
