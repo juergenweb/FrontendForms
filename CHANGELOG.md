@@ -1872,4 +1872,9 @@ The valitron library has been updated too.
 
 A new method to prevent the direct jump to the form top has been added due to a [user request](https://github.com/juergenweb/FrontendForms/issues/26). You wil find more information [here](https://github.com/juergenweb/FrontendForms?tab=readme-ov-file#preventjumptoform---enabledisable-internal-anchor-jump-to-the-form-container).
 
+## [2.3.7] 2025-12-09
+
+**Adding asterisk on required fields depending on if condition**
+
+JavaScript file has been updated to add/remove the asterisk from the label of required fields with if conditions. This is used by the new validators requiredIfEqual, requiredIfEmpty and requiredIfNotEmpty.
 
