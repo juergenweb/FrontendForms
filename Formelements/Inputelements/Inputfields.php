@@ -609,7 +609,7 @@ abstract class Inputfields extends Element
             case ('InputRadio'):
             case ('Privacy'):
             case ('SendCopy'):
-                $this->useInputWrapper = false;
+                //$this->useInputWrapper = false; // is needed for multistep form
                 break;
         }
         return $this->renderDefault($className, $input);
