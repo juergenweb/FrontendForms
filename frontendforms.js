@@ -847,6 +847,8 @@ function changeHTML5AttributeValue() {
                         // add asterisk if field is required
                         if(value == "required"){
                             label.innerHTML = labelText + asterisk;
+                            // add class required to the label tag
+                            label.classList.add("required");
                         }
                         field.setAttribute(attribute, value);
                     }
@@ -856,6 +858,8 @@ function changeHTML5AttributeValue() {
                             field.removeAttribute(attribute);
                             labelText = labelText.replace(asterisk, "");
                             label.innerHTML = labelText;
+                            // add class required to the label tag
+                            label.classList.remove("required");
                         }
                     }
                 }
