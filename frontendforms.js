@@ -820,6 +820,8 @@ function changeHTML5AttributeValue() {
                     }
                     let value = this.value;
                     let validator = field.dataset.ff_validator;
+                    let label = document.querySelector("label[for='" + field.name + "']");
+                    let labelText = label.innerHTML;
 
                     if (attribute && value) {
                         if (validator) {
@@ -842,12 +844,18 @@ function changeHTML5AttributeValue() {
 
                             }
                         }
+                        // add asterisk if field is required
+                        if(value == "required"){
+                            label.innerHTML = labelText + asterisk;
+                        }
                         field.setAttribute(attribute, value);
                     }
                     if (attribute && !value) {
                         // check if validator is requiredIf or requiredIfEqual
                         if ((validator === "requiredIfEmpty") || (validator === "requiredIfEqual")) {
                             field.removeAttribute(attribute);
+                            labelText = labelText.replace(asterisk, "");
+                            label.innerHTML = labelText;
                         }
                     }
                 }
