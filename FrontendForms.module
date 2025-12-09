@@ -1597,6 +1597,12 @@
                         $css .= '<link rel="stylesheet" type="text/css" href="' . $url . 'star-rating.css?v=' . $moduleVersion . '">' . PHP_EOL;
                     }
 
+                    // set the asterisk as JS constant, because it could be changed via Hook
+                    // will be used to add it via JS to conditional required input fields
+                    $label = new \FrontendForms\Label();
+                    $asterisk = $label->renderAsterisk();
+                    $css .= '<script>const asterisk = \''.$asterisk.'\';</script>' . PHP_EOL;
+
                     $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
 
                 }
