@@ -1880,7 +1880,7 @@ JavaScript file has been updated to add/remove the asterisk from the label of re
 
 ## 2025-12-17
 
-This update comes with improvements and fixes for the HTML5 browser validation.
+This update comes with improvements, additions and fixes for the HTML5 browser validation.
 
 **Wrong HTML5 slug pattern fixed**
 
@@ -1893,3 +1893,7 @@ The HTML5 pattern for an URL has been written to be more strict and accurate.
 **Wrong HTML5 numeric pattern fixed**
 
 The regex for the HTML5 numeric validation was not correct and has been fixed now.
+
+**HTML5 pattern for time validator added**
+
+A regex pattern for the time validator to validate a time string in the format HH:MM:SS has been added.
