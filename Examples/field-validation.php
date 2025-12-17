@@ -71,7 +71,7 @@ $lengthmax = new \FrontendForms\InputText('lengthmax');
 $lengthmax->setLabel('Validator lengthMax');
 $lengthmax->setRule('lengthMax', '10');
 $lengthmax->setDescription('Validator to check if the string is max 10 characters long');
-$lengthmin->setNotes('Valid value: abcdef, invalid value: abcdefghijklmn');
+$lengthmax->setNotes('Valid value: abcdef, invalid value: abcdefghijklmn');
 $form->add($lengthmax);
 
 $lengthbetween = new \FrontendForms\InputText('lengthbetween');
@@ -366,5 +366,6 @@ if ($form->isValid()) {
 
 $content .= $form->render();
 echo $content;
+
 
 
