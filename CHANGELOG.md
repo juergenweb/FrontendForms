@@ -1878,3 +1878,10 @@ A new method to prevent the direct jump to the form top has been added due to a 
 
 JavaScript file has been updated to add/remove the asterisk from the label of required fields with if conditions. This is used by the new validators requiredIfEqual, requiredIfEmpty and requiredIfNotEmpty.
 
+## 2025-12-17
+
+**Wrong HTML5 slug pattern fixed**
+
+The regex for the HTML5 slug validation was not correct and has been fixed now.
+
+
