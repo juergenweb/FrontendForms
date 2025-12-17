@@ -1388,7 +1388,7 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5slug(): void
     {
-        $this->setAttribute('pattern ', '[-a-z0-9_-]+');
+        $this->setAttribute('pattern ', '[a-z0-9_\-]+');
         $label = $this->getLabel()->getText();
         $this->setAttribute('title',
             sprintf($this->_('%s should only contain letters, numbers, underscores or hyphens'), $label));
