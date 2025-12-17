@@ -1890,3 +1890,6 @@ The regex for the HTML5 slug validation was not correct and has been fixed now.
 
 The HTML5 pattern for an URL has been written to be more strict and accurate.
 
+**Wrong HTML5 numeric pattern fixed**
+
+The regex for the HTML5 numeric validation was not correct and has been fixed now.
