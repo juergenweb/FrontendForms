@@ -1459,6 +1459,28 @@ abstract class Inputfields extends Element
     }
 
     /**
+     * Add HTML5 attribute pattern for a time string to the input tag
+     * Validator rule: time
+     * @return void
+     */
+    protected function addHTML5time(): void
+    {
+        $this->setAttribute('pattern ', '([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]');
+        $label = $this->getLabel()->getText();
+        $this->setAttribute('title', sprintf($this->_('%s is not a valid time. You have to enter the time in this format: HH:MM:SS (fe. 19:00:00)'), $label));
+    }
+
+    /**
+     * Remove attribute pattern for a time string from the input tag
+     * Validator rule: numeric
+     * @return void
+     */
+    protected function removeHTML5time(): void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
      * Add HTML5 attribute pattern for a numeric string to the input tag
      * Validator rule: numeric
      * @return void
