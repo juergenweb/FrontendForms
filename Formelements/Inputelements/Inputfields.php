@@ -1465,9 +1465,9 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5numeric(): void
     {
-        $this->setAttribute('pattern ', '[-+]?[0-9]*[.,]?[0-9]+');
+        $this->setAttribute('pattern ', '(([0-9]*)|(([0-9]*)\.([0-9]*)))');
         $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only numbers (integers or floats)'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should only contain numbers (integers or floats with a dot, not a comma)'), $label));
     }
 
     /**
