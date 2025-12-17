@@ -1412,7 +1412,7 @@ abstract class Inputfields extends Element
     protected function addHTML5url(): void
     {
         if (($this->className() != 'InputUrl') || (is_subclass_of($this, 'InputUrl'))) {
-            $this->setAttribute('pattern ', 'https?://.+');
+            $this->setAttribute('pattern ', 'https?://.{1,63}\.[A-z]{2,13}');
             $label = $this->getLabel()->getText();
             $this->setAttribute('title',
                 sprintf($this->_('%s should be a valid URL starting with http:// or https://'), $label));
