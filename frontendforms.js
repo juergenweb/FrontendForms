@@ -814,11 +814,11 @@ function requiredIfEqualDefault(field, compareField) {
 
 // Change the HTML5 attribute on change for a field depending on another field
 function changeHTML5AttributeValue() {
+    
+    let field_data_ID = this.name.replace(this.form.id + "-", ""); // remove the form id suffix
+    let fieldName = field_data_ID.replace(/[[]]/g, ''); // remove brackets from name on multi-value fields
 
     // find all instances where data-attribute is present
-    let field_data_ID = this.name.replace(this.form.id + "-", "");
-    let fieldName = field_data_ID.replace(/[[]]/g, '');
-
     if (field_data_ID) {
         let fields = document.querySelectorAll("[data-ff_field=" + fieldName + "]");
 
