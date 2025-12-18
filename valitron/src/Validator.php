@@ -1198,7 +1198,7 @@ class Validator
     private function validationMustBeExcecuted($validation, $field, $values, $multiple){
         //always excecute requiredWith(out) rules
         // custom changes made
-        if (in_array($validation['rule'], array('requiredWith', 'requiredWithout', 'requiredIfEqual', 'requiredIf', 'requiredIfEmpty', 'requiredIfNotEmpty'))){
+        if (in_array($validation['rule'], array('requiredWith', 'requiredWithout', 'requiredIfEqual', 'requiredIfEmpty', 'requiredIfNotEmpty'))){
             return true;
         }
 
