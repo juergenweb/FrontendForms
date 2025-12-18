@@ -820,14 +820,15 @@ function changeHTML5AttributeValue() {
     let fieldName = field_data_ID.replace(/[[]]/g, '');
 
     if (field_data_ID) {
-        let fields = document.querySelectorAll("[data-ff_field=" + this.form.id + "-" +fieldName + "]");
-    
+        let fields = document.querySelectorAll("[data-ff_field=" + fieldName + "]");
+
         if (fields.length > 0) {
 
             for (let i = 0; i < fields.length; i++) {
                 // get the field object
 
                 let field = document.getElementById(fields[i].id);
+
                 if (field) {
 
                     // get which attribute should be changed
