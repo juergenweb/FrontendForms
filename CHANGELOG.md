@@ -1913,3 +1913,8 @@ A regex pattern for the contains validator to validate if a string contains a sp
 **Wrong validation regex for username fixed**
 
 The wrong regex pattern for the username browser validation is fixed now.
+
+**New JS function groupIbanInFour added**
+
+This is a little helper function to divide the IBAN code into parts of four during the input. So it is better readable for the user.
+
