@@ -521,7 +521,9 @@ class CustomRules extends Tag
          * This validator is taken from cakephp 3.7 validation class.
          */
         V::addRule('checkIban', function ($field, $value) {
-            $check = $value;
+            // remove whitespaces first if present
+            $check = str_replace(' ', '', $value);
+
             if (!preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/', $check)) {
                 return false;
             }
