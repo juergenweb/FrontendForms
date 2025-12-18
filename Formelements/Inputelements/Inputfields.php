@@ -2027,7 +2027,9 @@ abstract class Inputfields extends Element
      */
     private function beforeAfter(array $value, bool $before): void
     {
-        $this->setAttribute('data-ff_field', $value[0]); // get name of the reference field
+        // normalize field name value
+        $fieldName = str_replace($this->getID().'-', '', $value[0]);
+        $this->setAttribute('data-ff_field', $fieldName); // set name of the reference field
         $attribute = ($before) ? 'max' : 'min';
         $this->setAttribute('data-ff_attribute', $attribute);
         $this->setAttribute('data-ff_id', $this->getID()); // get the pure ID of this field
@@ -2092,7 +2094,9 @@ abstract class Inputfields extends Element
 
     private function withinOutside(array $value, string $type): void
     {
-        $this->setAttribute('data-ff_field', $value[0]); // get name of the reference field
+        // normalize field name value
+        $fieldName = str_replace($this->getID().'-', '', $value[0]);
+        $this->setAttribute('data-ff_field', $fieldName); // get name of the reference field
         $this->setAttribute('data-ff_days', (string)$value[1]);
         $this->setAttribute('data-ff_attribute', ($value[1] > 0) ? 'min' : 'max');
         $this->setAttribute('data-ff_validator', $type);
@@ -2190,7 +2194,9 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5requiredIfEmpty(array $value): void
     {
-        $this->setAttribute('data-ff_field', $value[0]);
+        // normalize field name value
+        $fieldName = str_replace($this->getID().'-', '', $value[0]);
+        $this->setAttribute('data-ff_field', $fieldName);
         $this->setAttribute('data-ff_attribute', 'ff-required');
         $this->setAttribute('data-ff_validator', 'requiredIfEmpty');
     }
@@ -2215,11 +2221,11 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5requiredIfEqual(array $value): void
     {
-
-        $this->setAttribute('data-ff_field', $value[0]);
+        // normalize field name value
+        $fieldName = str_replace($this->getID().'-', '', $value[0]);
+        $this->setAttribute('data-ff_field', $fieldName);
         $this->setAttribute('data-ff_attribute', 'ff-required');
         $this->setAttribute('data-ff_validator', 'requiredIfEqual');
-
 
         if (array_key_exists(1, $value) && str_contains($value[1], '|')) {
             if (!array_key_exists(2, $value)) {
