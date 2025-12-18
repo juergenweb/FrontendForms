@@ -2,6 +2,7 @@ en,de,description,file,hash
 "Click to load a new captcha","Bitte anklicken, um ein neues Captcha zu laden",,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,b52dc33684da9e3d394738b7d0dd2725
 "Reload image","Bild neu laden",,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,7c89feb583d9e778c3533017b111263d
 Captcha,=,,site/modules/FrontendForms/Formelements/Captcha/AbstractCaptcha.php,45d048c35e3cfd449dc0a1b503cd103a
+en,de,description,file,hash
 "Please select what you see in the image above.","Bitte wählen Sie aus, was sie im Bild oberhalb sehen.",,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,118f3464042a036c52a1087e923a307e
 Animal,Tier,,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,161e7ce7bfdc89ab4b9f52c1d4c94212
 Car,Auto,,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,e9989db5dabeea617f40c8dbfd07f5fb
@@ -11,11 +12,15 @@ Lake,See,,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.p
 Mountain,Berg,,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,ec9903c79dd510ffa43f69ee867a9002
 Tree,Baum,,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,3b0c14770e6bd663518496da60f524da
 "CAPTCHA field for SPAM protection","CAPTCHA als SPAM-Schutz",,site/modules/FrontendForms/Formelements/Captcha/AbstractImageCaptcha.php,2caf429ed0a858c9cb2b6456d1914fe1
+en,de,description,file,hash
 "I am a human","Ich bin ein Mensch",,site/modules/FrontendForms/Formelements/Captcha/AbstractSliderCaptcha.php,da1e1af671e5b51f10c9fe3f494fbb3f
+en,de,description,file,hash
 "This file is not a TrueType font file.","Diese Datei ist keine TrueType Schriftart Datei.",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,ad1ca00ca558c196b2ffa224309706e4
 "This file does not exist under the specified path","Diese Datei existiert nicht unter dem angegebenen Pfad",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,d472945618bae0b84ca5082c7d916966
 "Captcha field for security","CAPTCHA Sicherheitsabfrage",,site/modules/FrontendForms/Formelements/Captcha/AbstractTextCaptcha.php,f985413aacdc4d6e125cd3b6fb2a3eae
+en,de,description,file,hash
 Send,Senden,,site/modules/FrontendForms/Formelements/Miscellaneous/Button.php,94966d90747b97d1f0f206c98a8b1ac3
+en,de,description,file,hash
 "must be unique. This username is already in use. Please choose another username.","muss eindeutig sein. Dieser Benutzername wird bereits verwendet. Bitte wählen Sie einen anderen aus.",,site/modules/FrontendForms/Formelements/CustomRules.php,5f20144817f8a8a10c0c3e42aaacb234
 "and username do not match.","und Benutzername stimmen nicht überein.",,site/modules/FrontendForms/Formelements/CustomRules.php,0692f1d96297b3d3ebb476ecb909b71f
 "does not meet the conditions.","erfüllt nicht die Bedingungen.",,site/modules/FrontendForms/Formelements/CustomRules.php,a19a1f724a26244cf7542e78fce6082d
@@ -55,17 +60,23 @@ Send,Senden,,site/modules/FrontendForms/Formelements/Miscellaneous/Button.php,94
 "contains more files than the allowed number of files.","enthält mehr Dateien als erlaubt.",,site/modules/FrontendForms/Formelements/CustomRules.php,39534a9014bda909eaa5fe53662d4305
 "contains files whose total size is larger than the total allowed size.","enthält Dateien, deren Gesamtgröße größer ist als die zulässige Gesamtgröße.",,site/modules/FrontendForms/Formelements/CustomRules.php,ad54894db3694629a0ff11fd048f6aad
 "contains letters which are not allowed.","enthält Buchstaben und das ist nicht erlaubt.",,site/modules/FrontendForms/Formelements/CustomRules.php,bc25b3a4b90db7519ac28e2f7c36f461
+"contains at least one number, but this is not allowed.","enthält mindestens eine Zahl, was aber nicht erlaubt ist.",,site/modules/FrontendForms/Formelements/CustomRules.php,f72b05ac0a4658c473ef8b455ecf0dbb
+en,de,description,file,hash
 "Image captcha","Bild CAPTCHA",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,1e27db1c7a9a959ca4cd75964525fa2d
 "Assign the image to a category","Ordnen sie das Bild einer Kategorie zu",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultImageCaptcha.php,5972e22698d0e9faba6397ce1b6b6f74
+en,de,description,file,hash
 "Random string captcha","Zufallstext Captcha",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultTextCaptcha.php,7c62e8d4b13ecc03f28bb44905a5ec51
 "Enter the text from the image in the input field.","Geben Sie den Text aus dem Bild in das Eingabefeld ein.",,site/modules/FrontendForms/Formelements/Captcha/variants/DefaultTextCaptcha.php,3c6c9439c3e38d0da29b7629a300c3c5
+en,de,description,file,hash
 "More information about %s","Zusätzliche Informationen über %s",,site/modules/FrontendForms/detail-view.php,77c41ffdf7bebe6e2f1896cf8ae78a73
 "Geo location","Geographischer Standort",,site/modules/FrontendForms/detail-view.php,0f66316eff804ffa836d2214d80f3756
 Country,Land,,site/modules/FrontendForms/detail-view.php,59716c97497eb9694541f7c3d37b1a4d
 Region,Region,,site/modules/FrontendForms/detail-view.php,f447ac856e7e72435904956e3b15f433
 City,Stadt,,site/modules/FrontendForms/detail-view.php,57d056ed0984166336b7879c2af3657f
 "We are sorry, but ip-api.com does not have any information about this IP address.","Es tut uns leid, aber ip-api.com hat keine Informationen über diese IP-Adresse.",,site/modules/FrontendForms/detail-view.php,ac598c39fd0d78fb3eff40b3a5b5cbbd
+en,de,description,file,hash
 Email,E-Mail,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Email.php,ce8ae9da5b7cd6c3df2929543a9af92d
+en,de,description,file,hash
 "contains non-ascii characters.","enthält Nicht-ASCII-Zeichen.",,site/modules/FrontendForms/valitron/errormessages.php,2e6530ea732a56c9eed09d995a64be55
 "is required.","ist erforderlich.",,site/modules/FrontendForms/valitron/errormessages.php,ee66f9c9930cb33d2a5dde9b240d3f7e
 "must be the same as %s.","muss mit %s identisch sein.",,site/modules/FrontendForms/valitron/errormessages.php,c3e99e59b3b51e343792bdf6ce436df9
@@ -102,10 +113,14 @@ Email,E-Mail,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defau
 "must contain unique elements only.","darf nur einzigartige Elemente enthalten.",,site/modules/FrontendForms/valitron/errormessages.php,76117bca0e24c5caf8645279712c42a6
 "contains an item that is not in the list.","enthält ein Element, welches nicht in der Liste enthalten ist.",,site/modules/FrontendForms/valitron/errormessages.php,3fb8919799ddfdba930fbb44f484fbd1
 "does not contain all required keys.","enthält nicht alle erforderlichen Schlüssel.",,site/modules/FrontendForms/valitron/errormessages.php,3f27bc263791779a69e946f06e55bf8d
+en,de,description,file,hash
 "Even string captcha","Jedes zweite Zeichen Captcha",,site/modules/FrontendForms/Formelements/Captcha/variants/EvenCharacterTextCaptcha.php,07919a26035f7d7aaec32087cc2c0b4d
 "Enter every second character of the text from the image in the input field.","Geben Sie jedes zweite Zeichen vom Text aus dem Bild in das Eingabefeld ein.",,site/modules/FrontendForms/Formelements/Captcha/variants/EvenCharacterTextCaptcha.php,923fb30f185465aa974330e30a9a97c7
+en,de,description,file,hash
 "Upload multiple files","Laden Sie mehrere Dateien hoch",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/FileUploadMultiple.php,c837009ce96fdfc1615d310bc667f996
+en,de,description,file,hash
 "Upload single file","Laden Sie eine Datei hoch",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/FileUploadSingle.php,e14f1d680e8b3d40bc2744468332eb46
+en,de,description,file,hash
 "This email was generated automatically. So please do not reply to this email.","Diese E-Mail wurde automatisch erstellt. Bitte antworten Sie daher nicht auf diese E-Mail Adresse.",,site/modules/FrontendForms/Formelements/Form.php,fa1cb3adb3f8108c13402b3f24ca237b
 "Please be patient... the form will be validated!","Bitte haben Sie etwas Geduld... Das Formular wird geprüft!",,site/modules/FrontendForms/Formelements/Form.php,e4e8a61a31a079875c2721207825142e
 n/a,k.A.,,site/modules/FrontendForms/Formelements/Form.php,274b68192b056e268f128ff63bfcd4a4
@@ -158,6 +173,7 @@ minutes,Minuten,,site/modules/FrontendForms/Formelements/Form.php,640fd0cc0ffa03
 second,Sekunde,,site/modules/FrontendForms/Formelements/Form.php,a9f0e61a137d86aa9db53465e0801612
 seconds,Sekunden,,site/modules/FrontendForms/Formelements/Form.php,783e8e29e6a8c3e22baa58a19420eb4f
 "Email could not be sent due to possible wrong email configuration settings.","E-Mail konnte aufgrund einer fehlerhaften Konfiguration in den Einstellungen nicht gesendet werden.",,site/modules/FrontendForms/Formelements/Form.php,72cf6df09879e3c5e34778bf6f1bc965
+en,de,description,file,hash
 "seconds left","Sekunden übrig",plural,site/modules/FrontendForms/Formelements/FormValidation.php,c2d918e53348ee8896137bec79036f84
 "second left","Sekunde übrig",singular,site/modules/FrontendForms/Formelements/FormValidation.php,1793e600a6822489f25244c196a05085
 "You have submitted the form within %s. This seems pretty fast for a human. Your behavior is more similar to a Spam bot. Please wait at least %s until you submit the form once more.","Sie haben das Formular innerhalb von %s abgeschickt. Das scheint für einen Menschen ziemlich schnell zu sein. Ihr Verhalten ähnelt eher einem Spam-Bot. Bitte warten Sie mindestens %s, bis Sie das Formular erneut absenden.",,site/modules/FrontendForms/Formelements/FormValidation.php,1196c16ef68e26acc46dae99fcc50522
@@ -175,6 +191,7 @@ hours,Stunden,,site/modules/FrontendForms/Formelements/FormValidation.php,73cddd
 minutes,Minuten,,site/modules/FrontendForms/Formelements/FormValidation.php,640fd0cc0ffa0316ae087652871f4486
 seconds,Sekunden,,site/modules/FrontendForms/Formelements/FormValidation.php,783e8e29e6a8c3e22baa58a19420eb4f
 and,und,,site/modules/FrontendForms/Formelements/FormValidation.php,be5d5d37542d75f93a87094459f76678
+en,de,description,file,hash
 "GD library is not installed/enabled. Please install/enable it to be able to use CAPTCHA images.","Die GD-Bibliothek ist nicht installiert/aktiviert. Bitte installieren/aktivieren Sie diese, um die CAPTCHA-Funktion verwenden zu können.",,site/modules/FrontendForms/FrontendForms.module,3f73c9dc2eed9de2758f0bf0c32893f4
 "no HTML template","kein HTML Template",,site/modules/FrontendForms/FrontendForms.module,7a646761a1d8fa416125a58d609c221d
 "Inherit from FrontendForms","Von FrontendForms übernehmen",,site/modules/FrontendForms/FrontendForms.module,5bfe6a369b802afdb9bb4909ac726c2d
@@ -473,73 +490,94 @@ None,keines,default,site/modules/FrontendForms/FrontendForms.module,6adf97f83acf
 "Use Custom mail module","Verwendung von Custom-Mail-Modulen",,site/modules/FrontendForms/FrontendForms.module,1d0f09e611ab678bcef1e00af34c5d0f
 "Select your preferred module for sending mails.","Wählen Sie Ihre bevorzugtes Modul zum Senden vom Mails aus.",,site/modules/FrontendForms/FrontendForms.module,3b56242115af067eb546fc11abd5c4e2
 "By default, all mails will be sent with WireMail, but you can select a custom module from this field for sending mails too.","Standardmäßig werden alle E-Mails mit WireMail versendet, aber Sie können in diesem Feld auch ein benutzerdefiniertes Modul für den Versand von E-Mails auswählen.",,site/modules/FrontendForms/FrontendForms.module,eac81cf85a218bdfa7a2b63d062fe715
+en,de,description,file,hash
 Gender,Anrede,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,019ec3132cdf8ee0f2e2a75cf5d3e459
 "Please select","Bitte auswählen",,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,992eda0d64a430fa5c7925d23ef9d0a3
 Mister,Herr,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,c4f448df316abb13eb7eada722c57902
 Miss,Frau,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,e7ddb7cd777b59610b220bcfa80bd95f
 Diverse,Divers,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Gender.php,e67561dfc51195ce1ac515406291900e
+en,de,description,file,hash
 "Please do not upload files larger than %s","Bitte laden Sie keine Dateien hoch, die größer als %s sind",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,d8b0ef2b22e79194c0cb1e79340e6767
 "The total size of all uploaded files must not exceed %s.","Die Gesamtgröße aller hochgeladenen Dateien darf %s nicht überschreiten.",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,679c8947fd87698642698e9571b87b66
 "Please do not upload more than %s files","Bitte wählen Sie nicht mehr als %s Dateien aus",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,2e11a9d7108deb69fe82819f5905bfee
 "Allowed file types: %s","Erlaubte Dateitypen: %s",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,a0072ad6390e4bf1839ad0ede52c2e69
 "%s should only contain letters","%s darf nur Buchstaben enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,1200911cc09227463a876a1e56e34536
 "%s should only contain letters and numbers","%s darf nur Buchstaben und Zahlen enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,4083de02c277bb0425f3aa9bad2332d0
+"%s should only contain allowed characters for names.","%s darf nur erlaubte Zeichen für Namen enthalten.",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,6facae2989c4f1db93ede942ce268737
 "%s should only contain ascii characters","%s darf nur ASCII-Zeichen enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,9dde428a87d3efada8d9a0c198ac0edd
 "%s should only contain letters, numbers, underscores or hyphens","%s darf nur Buchstaben, Zahlen, Unterstriche oder Bindestriche enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,fbb7405f1ba06168450a02769a5e518e
 "%s should be a valid URL starting with http:// or https://","%s muss eine gültige URL beginnend die mit http:// oder https:// sein",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,120dffae912cfa02a117a7684bed3c95
 "%s should be a valid email address","%s muss eine gültige E-Mail-Adresse sein",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,b250e98dcbdfaed9ef7c189ee93dbdd9
-"%s should only numbers (integers or floats)","%s darf nur Zahlen (Ganz- oder Kommazahlen) enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,e66d38c251a0c16f1f48e5b31e87669b
+"%s is not a valid time. You have to enter the time in this format: HH:MM:SS (fe. 19:00:00)","%s ist keine gültige Zeit. Sie müssen die Zeit in diesem Format eingeben: HH:MM:SS (z.B. 19:00:00)",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,3b63e2f928f8efe8734bba58bb54eb83
+"%s should only contain numbers (integers or floats with a dot, not a comma)","%s darf nur Zahlen enthalten (ganze Zahlen oder Kommazahlen mit Punkt, kein Komma)",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,e1670e29ba274f888823e37043649475
 "%s should only contain integers","%s darf nur Ganzzahlen enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,175b959de6b30258c49097a92d3b3957
 "%s should only contain a valid IP address in the format x.x.x.x","%s darf nur eine gültige IP-Adresse im Format x.x.x.x enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,0b7dbda7a3f1f8322681cca8107c4e86
 "%s should only contain a valid IPv4 address in the format x.x.x.x","%s darf nur eine gültige IPv4-Adresse im Format x.x.x.x enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,a0d61e675ea7f8e7b05398a8b1a65cb9
 "%s should only contain a valid IPv6 address in the format x:x:x:x:x:x:x:x","%s darf nur eine gültige IPv6-Adresse im Format x:x:x:x:x:x:x:x enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,c524413c58ede6f4029283b534da7846
-"%s contains not allowed characters. Please use only letters, numbers, underscores, periods, hyphens and @signs (no whitespaces)","%s enthält unzulässige Zeichen. Bitte verwenden Sie nur Buchstaben, Zahlen, Unterstriche, Punkte, Bindestriche und @-Zeichen (keine Leerzeichen)",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,aae770c1602b57559f3b60fd530b0373
+"%s contains not allowed characters or is longer than 128 characters. Allowed characters are: letters, numbers, underscores and dashes (no whitespaces)","%s enthält nicht erlaubte Zeichen oder ist länger als 128 Zeichen. Erlaubte Zeichen sind: Buchstaben, Zahlen, Unterstriche und Bindestriche (keine Leerzeichen)",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,1561967c772eb4b2cd22b3bfeb59a6bf
 "%s should only contain a valid date in the format %s","%s darf nur ein gültiges Datum im Format %s enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,d8c7bf5cd88682b17b9f4b1eba991f92
 "%s contains an invalid value","%s enthält einen ungültigen Wert",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,bb4345694f2874fabb71ab8e01c48df6
 "%s should contain the exact value %s","%s muss genau den Wert %s enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,5023212f0c2560a1dfd4a1547f2e738c
 "%s should not contain the value %s","%s darf nicht den Wert %s enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,5bf4df175a2c543ba607e1f8e8ffcd65
 "%s should only contain a valid week in the format YYYY-Www","%s muss eine gültige Woche im Format YYYY-Www enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,b5636cc5ae7dc2e4495ac2dd2adada93
+"%s should only contain a valid date in the format dd.MM.YYYY","%s darf nur ein gültiges Datum im Format dd.MM.YYYY enthalten.",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,18ae9260caf7ce5a05c34b70bddff18c
+"%s must contain the word %s","%s muss das Wort %s enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,e578185cfdb5bb878f5b48f7901848d2
 "%s should only contain a valid month in the format YYYY-MM","muss ein gültiges Monat im Format YYYY-MM enthalten",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,e1c152c6ff80439f69e2db72bb3ade3b
 "%s should be a valid HEX code in the format #XXX or #XXXXXX","%s muss ein gültiger Hexadecimal Code im Format #XXX oder #XXXXXX sein",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,98be58eb3446f813bc644faac5e42264
 "This field","Dieses Feld",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,0dbf6eced8bc871d39cec4d5a145f8a2
 "%s contains letters, but they are not allowed","%s enthält Buchstaben welche aber nicht erlaubt sind",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,bf6ac479841bb45d2ee40e1cced66241
+en,de,description,file,hash
 "File upload","Datei Upload",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,c4265549c1f4d79aea1e279149a6a084
 "Select files","Wählen Sie die Dateien aus",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,1afe200fa26ba361f59b603b22ad6392
 Total,Gesamt,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputFile.php,96b0141273eabab320119c467cdcaf17
+en,de,description,file,hash
 "Show password","Passwort anzeigen",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,a1cc7ba89ca3016cf59d7c31506a9681
 "The password must be at least %s characters and must contain characters of the following categories: %s.","Das Passwort muss mindestes %s Zeichen lang sein und folgende Zeichen enthalten: %s.",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,8bc6641f570b88866300ca703223bf6b
 "The password must be at least %s characters.","Das Passwort muss mindestes %s Zeichen lang sein.",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/InputPassword.php,3d55c273179acb11e30d1a53f8d8625e
+en,de,description,file,hash
 Language,Sprache,,site/modules/FrontendForms/Formelements/Inputelements/Select/defaults/Language.php,4994a8ffeba4ac3140beb89e8d41f174
+en,de,description,file,hash
 "To the page","Zur Seite",,site/modules/FrontendForms/Formelements/Textelements/Link.php,bea7931fd2f2e37616d0be40dd825860
+en,de,description,file,hash
 Message,Nachricht,,site/modules/FrontendForms/Formelements/Inputelements/Textarea/defaults/Message.php,4c2a8fe7eaf24721cc7a9f0175115bd4
+en,de,description,file,hash
 Name,Vorname,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Name.php,49ee3087348e8d44e1feda1917443987
+en,de,description,file,hash
 Password,Passwort,"set default label",site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Password.php,dc647eb65e6711e155375218212b3964
+en,de,description,file,hash
 "Password Confirmation","Passwort Bestätigung","set default label",site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/PasswordConfirmation.php,c2b7527a6421ad4a0c0089d87290d1cd
+en,de,description,file,hash
 Phone,Telefon,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Phone.php,bcc254b55c4a1babdf1dcb82c207506b
+en,de,description,file,hash
 "I accept the privacy policy","Ich akzeptiere die Datenschutzrichtlinien",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Privacy.php,28f678f8feb29d236b6dfcb02190ba21
 "You have to accept our privacy policy","Sie müssen die Datenschutzrichtlinien akzeptieren",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Privacy.php,9a5b98e025ebe5fd1adbddccc94ad638
 "Privacy Policy",Datenschutz-Richtlinien,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Privacy.php,fa2ead697d9998cbc65c81384e6533d5
 "To the Privacy Policy page","Zur Seite mit den Datenschutz-Richtlininen",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Privacy.php,2b91037b0240c93155085ce8c0768cb9
+en,de,description,file,hash
 "By submitting this form you agree to our %s.","Durch das Absenden des Formulars stimmen sie unseren %s zu.",,site/modules/FrontendForms/Formelements/Textelements/Defaults/PrivacyText.php,2c34ad3fc22ef60c91a73189e7f26e8e
 "Terms of use and Privacy Policy","Bedingungen und Datenschutzbestimmungen",,site/modules/FrontendForms/Formelements/Textelements/Defaults/PrivacyText.php,953a9a5b5747639204478270493a532d
+en,de,description,file,hash
+Reset,Zurücksetzen,,site/modules/FrontendForms/Formelements/Miscellaneous/defaults/ResetButton.php,526d688f37a86d3c3f27d0c5016eb71d
+en,de,description,file,hash
 "Reverse string captcha","Umgekehrter Text Captcha",,site/modules/FrontendForms/Formelements/Captcha/variants/ReverseTextCaptcha.php,d8c8728824019c0866b958d0b2562edd
 "Enter the text from the image in reverse order into the input field (from right to left).","Geben Sie den Text aus dem Bild in umgekehrter Reihenfolge (von rechts nach links) in das Eingabefeld ein.",,site/modules/FrontendForms/Formelements/Captcha/variants/ReverseTextCaptcha.php,167b8554feab7647d47863b05a0da92f
+en,de,description,file,hash
 "Send a copy of my message to me","Eine Kopie dieser Nachricht an mich senden",,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/SendCopy.php,7313e5cce02f10d1d6a22dea1aedc9eb
+en,de,description,file,hash
 "Math captcha","Mathematik Captcha",,site/modules/FrontendForms/Formelements/Captcha/variants/SimpleMathTextCaptcha.php,d0995c2ec8c5df0820426833eb777396
 "Enter the result of the calculation in the input field.","Geben Sie das Ergebnis der Berechnung in das Eingabefeld ein.",,site/modules/FrontendForms/Formelements/Captcha/variants/SimpleMathTextCaptcha.php,dc841e6076d43a6c8b03338a39a97e68
+en,de,description,file,hash
 "Simple question Captcha (Free text)","Einfache-Frage-Captcha (Freitext)",,site/modules/FrontendForms/Formelements/Captcha/variants/SimpleQuestionCaptcha.php,7f8c93e381be10c3cb9bebaa31387873
 "Please answer the question.","Bitte beantworten Sie die Frage",,site/modules/FrontendForms/Formelements/Captcha/variants/SimpleQuestionCaptcha.php,dd037cafd7ea6b996985f42b3598e6d6
+en,de,description,file,hash
 "Slider Captcha",=,,site/modules/FrontendForms/Formelements/Captcha/variants/SliderCaptcha.php,c323bd0275e1fed3b8343e450e3c7378
 "Move a puzzle piece.","Bewegen Sie ein Puzzle-Stück",,site/modules/FrontendForms/Formelements/Captcha/variants/SliderCaptcha.php,eff39d161054adaf3995f2c7988aaef2
+en,de,description,file,hash
 Subject,Betreff,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Subject.php,c7892ebbb139886662c6f2fc8c450710
+en,de,description,file,hash
 Surname,Nachname,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Surname.php,8e55577a8ed3b20bff65d23c000280d4
+en,de,description,file,hash
 "You have reached the maximum number of characters.","Sie haben die maximale Anzahl von Zeichen erreicht.",,site/modules/FrontendForms/Formelements/Inputelements/Textarea/Textarea.php,ef4384b98530cb2c2cdd7f9828d0ada2
 "You have %s characters left.","Sie haben noch %s Zeichen übrig.",,site/modules/FrontendForms/Formelements/Inputelements/Textarea/Textarea.php,c265a6b5fe0229c56cdf89d9ff9d7754
+en,de,description,file,hash
 Username,Benutzername,,site/modules/FrontendForms/Formelements/Inputelements/Inputs/defaults/Username.php,f6039d44b29456b20f8f373155ae4973
-Reset,Zurücksetzen,,site/modules/FrontendForms/Formelements/Miscellaneous/defaults/ResetButton.php,526d688f37a86d3c3f27d0c5016eb71d
-"%s should only contain allowed characters for names. Allowed characters are: %s.","%s darf nur erlaubte Zeichen für Namen enthalten. Erlaubte Zeichen sind: %.",,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,193051f44c55a7c5a8e62fb7a465b77e
-and,und,,site/modules/FrontendForms/Formelements/Inputelements/Inputfields.php,be5d5d37542d75f93a87094459f76678
-"contains at least one number, but this is not allowed.","enthält mindestens eine Zahl, was aber nicht erlaubt ist.",,site/modules/FrontendForms/Formelements/CustomRules.php,f72b05ac0a4658c473ef8b455ecf0dbb
-
-
-
