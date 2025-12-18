@@ -1280,8 +1280,8 @@ abstract class Inputfields extends Element
     {
         // This pattern is for international IBAN numbers
         $pattern = '[A-Z]{2}\d{13,32}|(?=.{18,42}$)[A-Z]{2}\d{2}( )(\d{4}\1){2,7}\d{1,4}';
-        //$pattern = '[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}';
         $this->setAttribute('pattern', $pattern);
+        $this->setAttribute('data-checkiban', 'true');
     }
 
     /**
