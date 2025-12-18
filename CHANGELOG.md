@@ -1886,36 +1886,45 @@ This update comes with improvements, additions and fixes for the HTML5 browser v
 
 The regex for the HTML5 slug validation was not correct and has been fixed now.
 
+
 **HTML5 pattern for URL improved**
 
 The HTML5 pattern for an URL has been written to be more strict and accurate.
+
 
 **Wrong HTML5 numeric pattern fixed**
 
 The regex for the HTML5 numeric validation was not correct and has been fixed now.
 
+
 **HTML5 pattern for "time" validator added**
 
 A regex pattern for the time validator to validate a time string in the format HH:MM:SS has been added.
+
 
 **Wrong validation regex for week fixed**
 
 The regex pattern for the week validator to validate a week string in the format YYYY-Www was wrong and is fixed now.
 
+
 **HTML5 pattern for "date" validator added**
 
 A regex pattern for the date validator to validate a date string in the format dd.MM.YYYY has been added.
+
 
 **HTML5 pattern for "contains" validator added**
 
 A regex pattern for the contains validator to validate if a string contains a specific word or number has been added.
 
+
 **Wrong validation regex for "username" fixed**
 
 The wrong regex pattern for the username browser validation is fixed now.
 
+
 **New JS function groupIbanInFour added**
 
 This is a little helper function to divide the IBAN code into parts of four during the input. So it is better readable for the user.
+
 
 
