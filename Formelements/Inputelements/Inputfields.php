@@ -41,6 +41,7 @@ abstract class Inputfields extends Element
     protected array $notes_array = []; // property that holds multiple notes as an array - needed for some fields internally
     protected string $form_id_submitted = ''; // get the id of the form after form submission - needed for some validation rules
     protected string|int|bool $useAriaAttr = true; // whether to render area attributes or not
+    const patternInputs = ['text', 'password', 'email', 'search', 'url' ];
 
     /**
      * Every input field must have a name, so the name is required as parameter in the constructor
@@ -418,6 +419,11 @@ abstract class Inputfields extends Element
 
     public function ___render(): string
     {
+
+        // remove pattern attributes if input type is not one of the allowed types for this attribute
+        if(!in_array($this->getAttribute('type'), self::patternInputs)){
+            $this->removeAttribute('pattern');
+        }
 
         // Add Aria attributes if set
         $this->addAriaAttributes();
