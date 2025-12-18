@@ -1901,3 +1901,7 @@ A regex pattern for the time validator to validate a time string in the format H
 **Wrong validation regex for week fixed**
 
 The regex pattern for the week validator to validate a week string in the format YYYY-Www was wrong and is fixed now.
+
+**HTML5 pattern for date validator added**
+
+A regex pattern for the date validator to validate a date string in the format dd.MM.YYYY has been added.
