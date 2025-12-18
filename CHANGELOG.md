@@ -1909,3 +1909,7 @@ A regex pattern for the date validator to validate a date string in the format d
 **HTML5 pattern for contains validator added**
 
 A regex pattern for the contains validator to validate if a string contains a specific word or number has been added.
+
+**Wrong validation regex for username fixed**
+
+The wrong regex pattern for the username browser validation is fixed now.
