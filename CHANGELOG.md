@@ -1880,7 +1880,7 @@ JavaScript file has been updated to add/remove the asterisk from the label of re
 
 ## 2025-12-17
 
-This update comes with improvements, additions and fixes for the HTML5 browser validation.
+This update comes with improvements, additions and fixes for the HTML5 browser validation and the field validators.
 
 **Wrong HTML5 slug pattern fixed**
 
@@ -1897,3 +1897,7 @@ The regex for the HTML5 numeric validation was not correct and has been fixed no
 **HTML5 pattern for time validator added**
 
 A regex pattern for the time validator to validate a time string in the format HH:MM:SS has been added.
+
+**Wrong validation regex for week fixed**
+
+The regex pattern for the week validator to validate a week string in the format YYYY-Www was wrong and is fixed now.
