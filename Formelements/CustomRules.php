@@ -402,7 +402,7 @@ class CustomRules extends Tag
         V::addRule('week', function ($field, $value) {
 
             if ($value) {
-                $week_regex = '#^\d{4}-W(0[1-9]|1[053])$#'; //regex for week format
+                $week_regex = '#^\d{4}-W((?:0[1-9]|[1-4]\d|5[0-3]))$#'; //regex for week format
                 return (preg_match($week_regex, $value));
             }
             return true;
