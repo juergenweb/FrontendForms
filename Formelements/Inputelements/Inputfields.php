@@ -272,10 +272,10 @@ abstract class Inputfields extends Element
         }
 
         // add form id as prefix to the field name on certain fields if necessary
-        $validatorNames = ['equals','different'];
-        if(in_array($validator, $validatorNames)) {
-            if(!str_starts_with($variables[0],$this->form_id_submitted.'-')){
-                $variables[0] = $this->form_id_submitted.'-'.$variables[0];
+        $validatorNames = ['equals', 'different'];
+        if (in_array($validator, $validatorNames)) {
+            if (!str_starts_with($variables[0], $this->form_id_submitted . '-')) {
+                $variables[0] = $this->form_id_submitted . '-' . $variables[0];
             }
         }
 
@@ -1884,7 +1884,7 @@ abstract class Inputfields extends Element
     {
         // add pattern only if input type is not of week (fe. InputText)
         if ($this->getAttribute('type') !== 'week') {
-            $this->setAttribute('pattern', '^\d{1,4}-[W](\d|[0-4]\d|5[0123])$');
+            $this->setAttribute('pattern', '^\d{1,4}-[W](\d|[0-4]\d|5[0123])');
         }
         $label = $this->getLabel()->getText();
         $this->setAttribute('title',
@@ -1898,7 +1898,35 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5week(): void
     {
-        if ($this->getAttribute('type') === 'week') {
+        if ($this->getAttribute('type') !== 'week') {
+            $this->removeAttribute('pattern');
+        }
+    }
+
+    /**
+     * Add HTML5 attribute pattern to the input tag
+     * Validator rule: date
+     * @return void
+     */
+    protected function addHTML5date(): void
+    {
+        // add pattern only if input type is not of week (fe. InputText)
+        if ($this->getAttribute('type') !== 'date') {
+            $this->setAttribute('pattern', '^\d{2}.\d{2}.\d{4}');
+            $label = $this->getLabel()->getText();
+            $this->setAttribute('title',
+                sprintf($this->_('%s should only contain a valid date in the format dd.MM.YYYY'), $label));
+        }
+    }
+
+    /**
+     * Remove attribute pattern from the input tag
+     * Validator rule: date
+     * @return void
+     */
+    protected function removeHTML5date(): void
+    {
+        if ($this->getAttribute('type') !== 'date') {
             $this->removeAttribute('pattern');
         }
     }
@@ -1912,9 +1940,9 @@ abstract class Inputfields extends Element
     {
         if ($this->getAttribute('type') !== 'month') {
             $this->setAttribute('pattern', '^\d{4}-(0[1-9]|1[012])$');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title',
-            sprintf($this->_('%s should only contain a valid month in the format YYYY-MM'), $label));
+            $label = $this->getLabel()->getText();
+            $this->setAttribute('title',
+                sprintf($this->_('%s should only contain a valid month in the format YYYY-MM'), $label));
         }
     }
 
@@ -1939,9 +1967,9 @@ abstract class Inputfields extends Element
     {
         if ($this->getAttribute('type') !== 'color') {
             $this->setAttribute('pattern', '#([a-fA-F0-9]{3}){1,2}\b');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title',
-            sprintf($this->_('%s should be a valid HEX code in the format #XXX or #XXXXXX'), $label));
+            $label = $this->getLabel()->getText();
+            $this->setAttribute('title',
+                sprintf($this->_('%s should be a valid HEX code in the format #XXX or #XXXXXX'), $label));
         }
     }
 
@@ -2160,15 +2188,15 @@ abstract class Inputfields extends Element
         $this->setAttribute('data-ff_validator', 'requiredIfEqual');
 
 
-        if(array_key_exists(1, $value) && str_contains($value[1], '|')) {
-            if(!array_key_exists(2, $value)) {
+        if (array_key_exists(1, $value) && str_contains($value[1], '|')) {
+            if (!array_key_exists(2, $value)) {
                 $operator = 'OR';
             } else {
                 $operator = ($value[2]) ? 'AND' : 'OR';
             }
             $this->setAttribute('data-ff_operator', $operator);
         }
-        if(array_key_exists(1, $value)){
+        if (array_key_exists(1, $value)) {
             $this->setAttribute('data-ff_equal', $value[1]);
         }
 
