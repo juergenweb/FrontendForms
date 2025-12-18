@@ -28,6 +28,12 @@ $required->setRule('required');
 $required->setDescription('Validator to check field is not empty');
 $form->add($required);
 
+$iban = new \FrontendForms\InputText('iban');
+$iban->setLabel('Validator iban');
+$iban->setRule('checkIban');
+$iban->setDescription('Validator to check if the value contains a valid IBAN code');
+$form->add($iban);
+
 $hex = new \FrontendForms\InputText('hex');
 $hex->setLabel('Validator checkHex');
 $hex->setRule('checkHex');
@@ -366,6 +372,7 @@ if ($form->isValid()) {
 
 $content .= $form->render();
 echo $content;
+
 
 
 
