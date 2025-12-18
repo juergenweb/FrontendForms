@@ -1878,7 +1878,7 @@ A new method to prevent the direct jump to the form top has been added due to a 
 
 JavaScript file has been updated to add/remove the asterisk from the label of required fields with if conditions. This is used by the new validators requiredIfEqual, requiredIfEmpty and requiredIfNotEmpty.
 
-## 2025-12-17
+## [2.3.8 & 2.3.9] 2025-12-17
 
 This update comes with improvements, additions and fixes for the HTML5 browser validation and the field validators.
 
@@ -1933,6 +1933,7 @@ This is a little helper function to divide the IBAN code into parts of four duri
 **German translations updated**
 
 The translation files for the German translations have been updated
+
 
 
 
