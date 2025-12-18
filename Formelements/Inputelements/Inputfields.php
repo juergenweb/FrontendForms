@@ -1933,6 +1933,33 @@ abstract class Inputfields extends Element
 
     /**
      * Add HTML5 attribute pattern to the input tag
+     * Validator rule: contains
+     * @return void
+     */
+    protected function addHTML5contains(): void
+    {
+        $validators = $this->getRules();
+        $word = $validators['contains']['options'][0];
+        if ($word) {
+            $this->setAttribute('pattern', '\b' . $word . '\b');
+            $label = $this->getLabel()->getText();
+            $this->setAttribute('title',
+                sprintf($this->_('%s must contain the word %s'), $label, $word));
+        }
+    }
+
+    /**
+     * Remove attribute pattern from the input tag
+     * Validator rule: contains
+     * @return void
+     */
+    protected function removeHTML5contains(): void
+    {
+        $this->removeAttribute('pattern');
+    }
+
+    /**
+     * Add HTML5 attribute pattern to the input tag
      * Validator rule: month
      * @return void
      */
