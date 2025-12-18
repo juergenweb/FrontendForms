@@ -592,6 +592,7 @@ let numInputs = document.querySelectorAll("input,select");
 
 // check if something has been changed inside an input field
 for (let i = 0; i < numInputs.length; i++) {
+
     numInputs[i].addEventListener("input", changeHTML5AttributeValue, false);
     numInputs[i].addEventListener("change", calculateTimeRange, false);
 }
@@ -819,12 +820,13 @@ function changeHTML5AttributeValue() {
     let fieldName = field_data_ID.replace(/[[]]/g, '');
 
     if (field_data_ID) {
-        let fields = document.querySelectorAll("[data-ff_field=" + fieldName + "]");
-
+        let fields = document.querySelectorAll("[data-ff_field=" + this.form.id + "-" +fieldName + "]");
+    
         if (fields.length > 0) {
 
             for (let i = 0; i < fields.length; i++) {
                 // get the field object
+
                 let field = document.getElementById(fields[i].id);
                 if (field) {
 
