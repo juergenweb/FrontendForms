@@ -3,6 +3,21 @@ JavaScript file for the FrontendForms module
 contains no JQuery - pure JavaScript
 */
 
+/**
+ * Function to make a white space after every forth character inside an input element
+ * Will be used for the IBAN input field for better readability
+ */
+function groupIbanInFour(){
+    let ibanInputs = document.querySelectorAll('[data-checkiban="true"]');
+    if(ibanInputs.length > 0){
+      for(let i=0; i<ibanInputs.length; i++){
+          ibanInputs[i].addEventListener('input', function (e) {
+              e.target.value = e.target.value.replace(/[^\da-zA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim();
+          });
+      }
+    }
+}
+
 /*
 JavaScript counter in seconds
 Outputs a timer in seconds depending on values set in data attributes
@@ -393,6 +408,7 @@ window.addEventListener("DOMContentLoaded", function () {
     prevLinks();
     initializeConditionalFields();
     checkMultiCheckboxesRequired();
+    groupIbanInFour();
 
     // listen to click on submit button of the last step form
     let submitButtons = document.getElementsByTagName("button");
@@ -1102,6 +1118,8 @@ function subAjax(form) {
                         initializeConditionalFields();
                         // multicheckboxes required check
                         checkMultiCheckboxesRequired();
+                        // format IBAN input
+                        groupIbanInFour();
                         // load star rating again if it exists
                         if (typeof stars !== "undefined" && stars !== null) {
                             // variable is not undefined or not null
