@@ -1905,3 +1905,7 @@ The regex pattern for the week validator to validate a week string in the format
 **HTML5 pattern for date validator added**
 
 A regex pattern for the date validator to validate a date string in the format dd.MM.YYYY has been added.
+
+**HTML5 pattern for contains validator added**
+
+A regex pattern for the contains validator to validate if a string contains a specific word or number has been added.
