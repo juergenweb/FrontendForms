@@ -1465,7 +1465,9 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5time(): void
     {
-        $this->setAttribute('pattern ', '([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]');
+        if ($this->getAttribute('type') !== 'time') {
+            $this->setAttribute('pattern', '([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]');
+        }
         $label = $this->getLabel()->getText();
         $this->setAttribute('title', sprintf($this->_('%s is not a valid time. You have to enter the time in this format: HH:MM:SS (fe. 19:00:00)'), $label));
     }
@@ -1881,7 +1883,7 @@ abstract class Inputfields extends Element
     protected function addHTML5week(): void
     {
         // add pattern only if input type is not of week (fe. InputText)
-        if (($this->className() != 'InputWeek') || (is_subclass_of($this, 'InputWeek'))) {
+        if ($this->getAttribute('type') !== 'week') {
             $this->setAttribute('pattern', '^\d{1,4}-[W](\d|[0-4]\d|5[0123])$');
         }
         $label = $this->getLabel()->getText();
@@ -1896,7 +1898,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5week(): void
     {
-        if (($this->className() != 'InputWeek') || (is_subclass_of($this, 'InputWeek'))) {
+        if ($this->getAttribute('type') === 'week') {
             $this->removeAttribute('pattern');
         }
     }
@@ -1908,12 +1910,12 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5month(): void
     {
-        if (($this->className() != 'InputMonth') || (is_subclass_of($this, 'InputMonth'))) {
+        if ($this->getAttribute('type') !== 'month') {
             $this->setAttribute('pattern', '^\d{4}-(0[1-9]|1[012])$');
-        }
         $label = $this->getLabel()->getText();
         $this->setAttribute('title',
             sprintf($this->_('%s should only contain a valid month in the format YYYY-MM'), $label));
+        }
     }
 
     /**
@@ -1923,7 +1925,7 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5month(): void
     {
-        if (($this->className() != 'InputMonth') || (is_subclass_of($this, 'InputMonth'))) {
+        if ($this->getAttribute('type') !== 'month') {
             $this->removeAttribute('pattern');
         }
     }
@@ -1935,10 +1937,12 @@ abstract class Inputfields extends Element
      */
     protected function addHTML5checkHex(): void
     {
-        $this->setAttribute('pattern', '#([a-fA-F0-9]{3}){1,2}\b');
+        if ($this->getAttribute('type') !== 'color') {
+            $this->setAttribute('pattern', '#([a-fA-F0-9]{3}){1,2}\b');
         $label = $this->getLabel()->getText();
         $this->setAttribute('title',
             sprintf($this->_('%s should be a valid HEX code in the format #XXX or #XXXXXX'), $label));
+        }
     }
 
     /**
@@ -1948,7 +1952,9 @@ abstract class Inputfields extends Element
      */
     protected function removeHTML5checkHex(): void
     {
-        $this->removeAttribute('pattern');
+        if ($this->getAttribute('type') !== 'color') {
+            $this->removeAttribute('pattern');
+        }
     }
 
     /**
