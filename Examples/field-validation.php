@@ -223,6 +223,7 @@ $form->add($week);
 
 $date = new \FrontendForms\InputText('date');
 $date->setLabel('Validator date');
+$date->setRule('date');
 $date->setDescription('Validator to check if the value is a valid date');
 $date->setNotes('Valid value: 01.01.2023, invalid value: 01.01.20235');
 $form->add($date);
@@ -365,6 +366,7 @@ if ($form->isValid()) {
 
 $content .= $form->render();
 echo $content;
+
 
 
 
