@@ -1883,13 +1883,13 @@ JavaScript file has been updated to add/remove the asterisk from the label of re
 This update comes with improvements, additions and fixes for the HTML5 browser validation and the field validators.
 
 
-**Wrong HTML5 "slug" pattern fixed**
+### Wrong HTML5 "slug" pattern fixed
 
 The regex for the HTML5 slug validation was not correct and has been fixed now.
 
 
 
-**HTML5 pattern for URL improved**
+### HTML5 pattern for URL improved
 
 The HTML5 pattern for an URL has been written to be more strict and accurate.
 
@@ -1929,6 +1929,7 @@ The wrong regex pattern for the username browser validation is fixed now.
 **New JS function groupIbanInFour added**
 
 This is a little helper function to divide the IBAN code into parts of four during the input. So it is better readable for the user.
+
 
 
 
