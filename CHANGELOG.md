@@ -1930,6 +1930,10 @@ The wrong regex pattern for the username browser validation is fixed now.
 This is a little helper function to divide the IBAN code into parts of four during the input. So it is better readable for the user.
 
 
+**German translations updated**
+
+The translation files for the German translations have been updated
+
 
 
 
