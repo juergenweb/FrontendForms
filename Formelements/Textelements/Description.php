@@ -19,7 +19,7 @@
     class Description extends TextElements
     {
         use TraitTags;
-        protected string|null $desc_position = 'afterInput'; // position of the field description - before the label, after the label or after the input
+        protected string|null $desc_position = null; // position of the field description - before the label, after the label or after the input
 
         /**
          * @throws WireException
@@ -56,3 +56,4 @@
 
 
     }
+
