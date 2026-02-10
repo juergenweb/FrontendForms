@@ -1935,7 +1935,12 @@ This is a little helper function to divide the IBAN code into parts of four duri
 The translation files for the German translations have been updated
 
 
+## [2.3.10] 2026-02-10
 
+**Some user reported bugs have been fixed**
 
+* [setDefaultValue for multiple checkboxes not working](https://github.com/juergenweb/FrontendForms/issues/29)
+* [Warning: Undefined array key in /var/www/html/site/modules/FrontendForms/Formelements/Form.php:3882](https://github.com/juergenweb/FrontendForms/issues/28)
+* [Description position is ignored](https://github.com/juergenweb/FrontendForms/issues/27)
 
 
