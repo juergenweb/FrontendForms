@@ -3879,7 +3879,13 @@ class Form extends CustomRules
                                         'bootstrap5.json' => 'table-sm'
                                     ];
 
-                                    $markup .= '<table id="' . $this->getID() . '-final-step-table" class="' . $this->getCSSClass('tableClass') . ' ' . $tableStyling[$this->frontendforms['input_framework']] . ' final-list-table">';
+                                    if(array_key_exists($this->frontendforms['input_framework'], $tableStyling)){
+                                        $tableStyleClass = $tableStyling[$this->frontendforms['input_framework']];
+                                    } else {
+                                        $tableStyleClass = 'ff-table';
+                                    }
+
+                                    $markup .= '<table id="' . $this->getID() . '-final-step-table" class="' . $this->getCSSClass('tableClass') . ' ' . $tableStyleClass. ' final-list-table">';
 
                                 }
 
