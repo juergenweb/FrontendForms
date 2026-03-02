@@ -1949,7 +1949,8 @@ The translation files for the German translations have been updated
 
 The jump to the beginning of the form did not work properly if the form was submitted too fast. The jump goes always to the top of the site not to the top of the form. This has been fixed now. 
 
-To make it more stable by using multiple forms on the same page, the time alert box includes now the form id attribute of the given form, so every time alert box has its unique id, that will be fetched by the JavaScript, even if 2 forms on the same page have been submitted too fast.
+To make it more stable by using multiple forms on the same page, the time alert box includes now the form id attribute of the given form, so every time alert box has its unique id, that will be fetched by the JavaScript, even if 2 or more forms on the same page have been submitted too fast at the same time.
+
 
 
 
