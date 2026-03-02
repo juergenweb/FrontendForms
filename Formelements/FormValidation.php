@@ -107,9 +107,9 @@
                         $secondLeft = $this->_('second left'); // singular
                         $text = sprintf($this->_('You have submitted the form within %s. This seems pretty fast for a human. Your behavior is more similar to a Spam bot. Please wait at least %s until you submit the form once more.'),
                                 $submit_Time,
-                                '<span id="minTime" data-time="' . $this->form->getMinTime() . '" data-unit="' . $secondsLeft . ';' . $secondLeft . '">' . $this->secondsToReadable($this->form->getMinTime())) . '</span><div id="timecounter"></div>';
+                                '<span id="'.$this->form->getID().'-minTime" data-time="' . $this->form->getMinTime() . '" data-unit="' . $secondsLeft . ';' . $secondLeft . '">' . $this->secondsToReadable($this->form->getMinTime())) . '</span><div id="'.$this->form->getID().'-timecounter"></div>';
                         $this->alert->setCSSClass('alert_warningClass');
-                        $this->alert->setAttribute('id', 'ff-time-alert');
+                        $this->alert->setAttribute('id', $this->form->getID().'-ff-time-alert');
                         $this->alert->setAttribute('data-submittime', $this->form->getID());
                         $this->alert->setText($text);
 
