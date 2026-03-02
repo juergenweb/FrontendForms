@@ -23,38 +23,61 @@ JavaScript counter in seconds
 Outputs a timer in seconds depending on values set in data attributes
 */
 function submitCounter() {
-    let timeAlert = document.getElementById("ff-time-alert");
-    let el = document.getElementById("timecounter");
-    if (el) {
-        let timeleft = parseInt(document.getElementById("minTime").getAttribute("data-time"));
-        let timetext = document.getElementById("minTime").getAttribute("data-unit");
-        timetext = timetext.split(";");
 
-        let downloadTimer = setInterval(function () {
-            if (timeleft <= 0) {
-                clearInterval(downloadTimer);
-                el.remove();
+    // get all elements that contain the data attribute "data-submittime"
+    let timeAlerts = document.querySelectorAll('[data-submittime]');
+    if(timeAlerts.length > 0){
+        for(let i = 0; i < timeAlerts.length; i++) {
+           let formID = timeAlerts[i].dataset.submittime;
+           // jump to the time alert box
 
-                let fadeEffect = setInterval(function () {
-                    if (!timeAlert.style.opacity) {
-                        timeAlert.style.opacity = 1;
+            let allwrapper = document.getElementById(formID + "-allwrapper");
+            let timeAlert = document.getElementById(formID + "-ff-time-alert");
+            jumpTo(allwrapper, formID + "-ff-time-alert");
+
+            let el = document.getElementById(formID + "-timecounter");
+
+            if (el) {
+
+                let timeleft = parseInt(document.getElementById(formID + "-minTime").getAttribute("data-time"));
+                let timetext = document.getElementById(formID + "-minTime").getAttribute("data-unit");
+                timetext = timetext.split(";");
+
+                let downloadTimer = setInterval(function () {
+                    if (timeleft <= 0) {
+                        clearInterval(downloadTimer);
+                        el.remove();
+
+                        let fadeEffect = setInterval(function () {
+                            if (!timeAlert.style.opacity) {
+                                timeAlert.style.opacity = 1;
+                            }
+                            if (timeAlert.style.opacity > 0) {
+                                timeAlert.style.opacity -= 0.1;
+                            } else {
+                                clearInterval(fadeEffect);
+                                timeAlert.remove();
+                            }
+                        }, 200);
                     }
-                    if (timeAlert.style.opacity > 0) {
-                        timeAlert.style.opacity -= 0.1;
-                    } else {
-                        clearInterval(fadeEffect);
-                        timeAlert.remove();
+                    let text = timetext[0];
+                    if (timeleft <= 1) {
+                        text = timetext[1];
                     }
-                }, 200);
+                    el.innerText = timeleft + " " + text;
+                    timeleft -= 1;
+                }, 1000);
             }
-            let text = timetext[0];
-            if (timeleft <= 1) {
-                text = timetext[1];
-            }
-            el.innerText = timeleft + " " + text;
-            timeleft -= 1;
-        }, 1000);
+
+
+
+        }
     }
+
+
+
+
+
 }
 
 
