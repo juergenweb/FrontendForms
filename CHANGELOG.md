@@ -1943,4 +1943,11 @@ The translation files for the German translations have been updated
 * [Warning: Undefined array key in /var/www/html/site/modules/FrontendForms/Formelements/Form.php:3882](https://github.com/juergenweb/FrontendForms/issues/28)
 * [Description position is ignored](https://github.com/juergenweb/FrontendForms/issues/27)
 
+## [2.3.11] 2026-03-02
+
+**Bug on scroll to top if time alert is viewed fixed**
+
+The jump to the beginning of the form did not work properly if the form was submitted to fast. The jump goes always to the top of the site not to the top of the form. This has been fixed now. 
+
+To make it more stable by using multiple forms on the same page, the time alert box includes now the form id attribute of the given form, so every time alert box has its unique id.
 
