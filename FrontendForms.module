@@ -1046,7 +1046,7 @@
             $data = $event->arguments(1);
             // run only on FrontendForms module
             if ($class == 'FrontendForms') {
-                if (!is_null($data['input_blacklist'])) {
+                if (is_array($data) && !is_null($data['input_blacklist'])) {
                     $data['input_blacklist'] = $this->cleanUpPasswordList($data['input_blacklist']);
                 }
             }
