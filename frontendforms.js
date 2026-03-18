@@ -567,7 +567,10 @@ Show or hide the password in the password field by checking/unchecking the show/
 document.addEventListener("click", function (element) {
 
     if (element.target.classList.contains("pwtoggle")) {
-        let passwordInput = element.target.parentNode.previousElementSibling;
+
+        let passwordInputID = element.target.dataset.toggle;
+        let passwordInput  = this.getElementById(passwordInputID);
+
         if (passwordInput.type === "password") {
             passwordInput.type = "text";
         } else {
