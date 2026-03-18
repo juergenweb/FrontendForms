@@ -89,6 +89,7 @@
             $toggle = new InputCheckbox('pwtoggle');
             $toggle->setLabel($this->_('Show password'))->setAttribute('class', 'pwtoggleLabel');
             $toggle->setAttribute('class', 'pwtoggle');
+            $toggle->setAttribute('data-toggle', $this->getAttribute('id'));
             $toggle->useInputWrapper(false);
             $toggle->useFieldWrapper(false);
             $toggle->removeAttribute('id');
