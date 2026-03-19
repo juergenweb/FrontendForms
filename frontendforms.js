@@ -288,7 +288,7 @@ function handleFileUploads() {
                             // create the badge markup
                             let badgeContentDef = "<span class='ff-file-item" + invalidFileSizeClass + "'>";
                             badgeContentDef += "<span class='file-delete'><span class='ff-close'></span></span>";
-                            badgeContentDef += "<span class='file-name'>" + file.name + "</span>";
+                            badgeContentDef += "<span class='ff-file-name'>" + file.name + "</span>";
                             badgeContentDef += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
                             fileBlock.innerHTML = badgeContentDef;
 
