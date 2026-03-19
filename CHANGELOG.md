@@ -1957,4 +1957,6 @@ To make it more stable by using multiple forms on the same page, the time alert 
 
 If you have chosen Bootstrap as CSS framework, then the toggle checkbox for showing the password in clear form did not work properly. This has been fixed now.
 
+**Support for Bulma CSS framework added**
 
+Now FrontendForms support the Bulma CSS framework too. Take a look here to read more about Burma: https://bulma.io/
