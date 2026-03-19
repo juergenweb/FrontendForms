@@ -9,7 +9,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 1. Simple form creation
 2. 60+ validation types (rules) to validate form fields
 3. The ability to create your own validation rules
-4. Support for UiKit 3, Pico 2 and Bootstrap 5 CSS framework
+4. Support for UiKit 3, Pico 2, Bulma 1 and Bootstrap 5 CSS framework
 5. SPAM protection and security features
 6. Highly customizable
 7. Multi-language
