@@ -19,6 +19,7 @@ class InputFile extends Input
 
     protected Button $button; // the button object for uikit3
     protected ?Wrapper $wrapper; // the wrapper object for uikit3
+    protected ?Wrapper $labelWrapper; // the label wrapper object for Bulma1
     protected bool $multiple = true; // allow multiple file upload or not
     protected bool $showClearLink = true; // set default to true to show the link under the input field
     protected bool $showTotalFileSize = false;
@@ -58,6 +59,15 @@ class InputFile extends Input
             $this->wrapper->setAttribute('data-uk-form-custom');
         }
 
+        if ($this->frontendforms['input_framework'] === 'bulma1.json') {
+            $this->wrapper = new Wrapper();
+            $this->wrapper->setAttribute('class', 'file');
+
+            $this->labelWrapper = new Wrapper();
+            $this->labelWrapper->setAttribute('class', 'file-label')->setTag('label');
+
+        }
+
     }
 
     /**
@@ -66,7 +76,7 @@ class InputFile extends Input
      * @param bool $show
      * @return $this
      */
-    public function showTotalFileSize(bool $show=true): self
+    public function showTotalFileSize(bool $show = true): self
     {
         $this->showTotalFileSize = $show;
         return $this;
@@ -123,15 +133,21 @@ class InputFile extends Input
     public function ___renderInputFile(): string
     {
         // add additional suffix to ID attribute to display always the current file name next to the upload button on single upload fields
-        $this->setAttribute('id', $this->getAttribute('id').'-fileupload');
+        $this->setAttribute('id', $this->getAttribute('id') . '-fileupload');
         // add brackets to name attribute if multiple attribute is present
         if ($this->getMultiple())
             $this->setAttribute('name', $this->getAttribute('name') . '[]');
         switch ($this->frontendforms['input_framework']) {
             case('uikit3.json'):
-
                 $out = $this->renderInput();
                 $out .= $this->button->render();
+                $this->wrapper->setContent($out);
+                $out = $this->wrapper->render();
+                break;
+            case('bulma1.json'):
+                $out = $this->append('<span class="file-cta"><span class="file-label">' . $this->_('Select files') . '</span>');
+                $this->labelWrapper->setContent($out->renderInput());
+                $out = $this->labelWrapper->render();
                 $this->wrapper->setContent($out);
                 $out = $this->wrapper->render();
                 break;
@@ -142,8 +158,8 @@ class InputFile extends Input
             $out .= '<div class="files-area"><div id="' . $this->getID() . '-files" class="files-list"></div></div>';
         }
 
-        if($this->getMultiple() && $this->getShowTotalFileSize()){
-            $out .= '<div class="ff-total-file-size"><span class="ff-totallabel">'.$this->_('Total').':</span><span id="' . $this->getID() . '-total">0 kB</span></span></div>';
+        if ($this->getMultiple() && $this->getShowTotalFileSize()) {
+            $out .= '<div class="ff-total-file-size"><span class="ff-totallabel">' . $this->_('Total') . ':</span><span id="' . $this->getID() . '-total">0 kB</span></span></div>';
         }
 
         return $out;
@@ -170,7 +186,7 @@ class InputFile extends Input
         }
 
         // disable total file size notes text on single upload fields
-        if(!$this->getAttribute('multiple')){
+        if (!$this->getAttribute('multiple')) {
             unset($this->notes_array['allowedTotalFileSize']); // remove allowedFileSize from the array
         }
 
@@ -182,12 +198,12 @@ class InputFile extends Input
         }
 
         // Add dataset attribute if the number of files to upload is limited by the validator "allowedFileNumber"
-        if($this->getMultiple() && (array_key_exists('allowedFileNumber', $this->notes_array))){
+        if ($this->getMultiple() && (array_key_exists('allowedFileNumber', $this->notes_array))) {
             $this->setAttribute('data-uploadlimit', $this->notes_array['allowedFileNumber']['value']);
         }
 
         // Add dataset attribute if the total size of all uploaded files is limited by the validator "allowedTotalFileSize"
-        if($this->getMultiple() && (array_key_exists('allowedTotalFileSize', $this->notes_array))){
+        if ($this->getMultiple() && (array_key_exists('allowedTotalFileSize', $this->notes_array))) {
             $this->setAttribute('data-maxtotalfilesize', Inputfields::convertToBytes($this->notes_array['allowedTotalFileSize']['value']));
         }
 
