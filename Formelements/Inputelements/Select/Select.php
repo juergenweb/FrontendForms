@@ -82,7 +82,24 @@ class Select extends Inputfields
                 }
             }
             $this->setContent($options);
+
             $out = $this->renderNonSelfclosingTag($this->getTag());
+
+            // special treatment for Bulma framework
+            if($this->frontendforms['input_framework'] === 'bulma1.json') {
+
+                $selectWrapper = new Wrapper();
+                $selectWrapper->setTag('div');
+                $selectWrapper->setAttribute('class', 'select');
+
+                // get class
+                if(get_class($this) == 'FrontendForms\SelectMultiple') {
+                    $selectWrapper->setAttribute('class', 'is-multiple');
+                }
+
+                $selectWrapper->setContent($out);
+                $out = $selectWrapper->renderNonSelfclosingTag($selectWrapper->getTag());
+            }
         }
         return $out;
     }
