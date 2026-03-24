@@ -1951,7 +1951,7 @@ The jump to the beginning of the form did not work properly if the form was subm
 
 To make it more stable by using multiple forms on the same page, the time alert box includes now the form id attribute of the given form, so every time alert box has its unique id, that will be fetched by the JavaScript, even if 2 or more forms on the same page have been submitted too fast at the same time.
 
-## 2026-03-18
+## [2.3.12] 2026-03-24
 
 **JS bug on showing password in clear text fixed**
 
