@@ -20,6 +20,8 @@ class Select extends Inputfields
 
     use TraitOption, TraitPWOptions, TraitOptionElements, TraitInputfields;
 
+    protected ?Wrapper $selectWrapper = null; // special wrapper for Bulma framework
+
     /**
      * @param string $id
      * @throws WireException
@@ -30,6 +32,17 @@ class Select extends Inputfields
         parent::__construct($id);
         $this->setTag('select');
         $this->setCSSClass('selectClass');
+
+        if($this->frontendforms['input_framework'] === 'bulma1.json') {
+            $this->selectWrapper = new Wrapper();
+            $this->selectWrapper->setTag('div');
+            $this->selectWrapper->setAttribute('class', 'select');
+
+            // get class
+            if(get_class($this) == 'FrontendForms\SelectMultiple') {
+                $this->selectWrapper->setAttribute('class', 'is-multiple');
+            }
+        }
     }
 
     /**
@@ -51,6 +64,15 @@ class Select extends Inputfields
     protected function getOptions(): array
     {
         return $this->options;
+    }
+
+    /**
+     * Get the select wrapper element if Bulma 1 is used
+     * @return Wrapper|null
+     */
+    public function getSelectWrapper(): ?Wrapper
+    {
+        return $this->selectWrapper;
     }
 
     /**
@@ -87,18 +109,8 @@ class Select extends Inputfields
 
             // special treatment for Bulma framework
             if($this->frontendforms['input_framework'] === 'bulma1.json') {
-
-                $selectWrapper = new Wrapper();
-                $selectWrapper->setTag('div');
-                $selectWrapper->setAttribute('class', 'select');
-
-                // get class
-                if(get_class($this) == 'FrontendForms\SelectMultiple') {
-                    $selectWrapper->setAttribute('class', 'is-multiple');
-                }
-
-                $selectWrapper->setContent($out);
-                $out = $selectWrapper->renderNonSelfclosingTag($selectWrapper->getTag());
+                $this->selectWrapper->setContent($out);
+                $out = $this->selectWrapper->renderNonSelfclosingTag($this->selectWrapper->getTag());
             }
         }
         return $out;
