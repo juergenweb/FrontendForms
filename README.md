@@ -1241,6 +1241,17 @@ This leads to that you will land directly at the top of the page instead of at t
 
 This feature was inspired by a user [request](https://github.com/juergenweb/FrontendForms/issues/26).
 
+### setErrorMessageToField() - Trigger the display of an error message under an inputfield manually
+
+With this method you can trigger the display of an error message under a given inputfield. This can be used if you want to do some more validations inside the isValid() method. 
+
+This feature was inspired by a [question in the support forum](https://processwire.com/talk/topic/26015-frontendforms-a-module-for-creating-and-validating-forms-on-the-frontend/page/18/#findComment-252175) and could be useful for other users too.
+
+As the first parameter enter the field object where you want to show the error message and as the second parameter the error message text.
+
+```php
+$form->setErrorMessageToField($field, 'This is my error message that will be displayed under the inputfield');
+```
 
 ## Input field methods
 
