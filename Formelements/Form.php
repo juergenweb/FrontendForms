@@ -2921,7 +2921,6 @@ class Form extends CustomRules
                                 // set error alert
                                 $this->wire('session')->set('errors', '1');
                                 $this->formErrors = $v->errors();
-                                bd($this->formErrors);
 
                                 // set data-attribute for validation status for later usage with JS
                                 $this->setAttribute('data-valid', 'false');
