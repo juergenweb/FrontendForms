@@ -1960,3 +1960,11 @@ If you have chosen Bootstrap as CSS framework, then the toggle checkbox for show
 **Support for Bulma CSS framework added**
 
 Now FrontendForms support the Bulma CSS framework too. Take a look here to read more about Burma: https://bulma.io/
+
+## 2026-04-02
+
+**New method setErrorMessageToField() added**
+
+This new method was added due to a user request inside the support forum and can trigger the display of an error message under a given inputfield manually.
+
+[Read more](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#seterrormessagetofield---trigger-the-display-of-an-error-message-under-an-inputfield-manually)
