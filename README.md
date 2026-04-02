@@ -575,6 +575,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [useJS()](#usejs---enabledisable-the-embedding-of-js-files-on-per-form-base)  | Enable/disable the embedding of JS files of this module on per form base |
 | [useCSS()](#usecss---enabledisable-the-embedding-of-css-files-on-per-form-base)  | Enable/disable the embedding of CSS files of this module on per form base |
 |[preventJumpToForm()](#preventjumptoform---enabledisable-internal-anchor-jump-to-the-form-container)  | Enable/disable internal anchor jump to the form container |
+|[setErrorMessageToField()](#seterrormessagetofield---trigger-the-display-of-an-error-message-under-an-inputfield-manually)  | Trigger the display of an error message under an inpufield manually |
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
