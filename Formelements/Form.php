@@ -2300,7 +2300,7 @@ class Form extends CustomRules
      * @param string $message
      * @return void
      */
-    public function setErrorMessageToField($field, string $message): void
+    public function setErrorMessageToField(Inputfields $field, string $message): void
     {
         $field->setErrorMessage($message);
         if($this->isSubmitted()){
