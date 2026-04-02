@@ -2296,7 +2296,7 @@ class Form extends CustomRules
 
     /**
      * Method to trigger an error message on a certain field manually
-     * @param $field
+     * @param Inputfields $field
      * @param string $message
      * @return void
      */
