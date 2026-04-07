@@ -226,7 +226,7 @@ function handleFileUploads() {
                             // create the badge markup
                             let badgeContentUK = "<span class='uk-light uk-badge uk-padding-small uk-margin-xsmall-top" + invalidFileSizeClass + "'>";
                             badgeContentUK += "<span class='file-delete uk-margin-xsmall-right'><span data-uk-icon='icon: close'></span></span>";
-                            badgeContentUK += "<span class='ff-file-name'>" + file.name + "</span>";
+                            badgeContentUK += "<span class='file-name'>" + file.name + "</span>";
                             badgeContentUK += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
                             fileBlock.innerHTML = badgeContentUK;
 
@@ -277,6 +277,7 @@ function handleFileUploads() {
 
                             break;
                         default:
+
                             if (!validFileSize) {
                                 invalidFileSizeClass = " text-danger";
                                 invalidfilezSizeSpanClass = " ff-invalid-fs";
@@ -296,6 +297,7 @@ function handleFileUploads() {
                                 notesAllowedFileSizeElement.className += invalidNotesClass;
                             } else {
                                 if (!multiple) {
+                                    if(notesAllowedFileSizeElement)
                                     notesAllowedFileSizeElement.removeAttribute("class");
                                 }
                             }
@@ -349,7 +351,7 @@ function handleFileUploads() {
 function deleteFileBlock(e, fileBlock, dt, inputfield) {
 
     let totalFileSize = inputfield.dataset.filesize;
-    let name = fileBlock.querySelector(".file-name").textContent;
+    let name = fileBlock.querySelector(".ff-file-name").textContent;
     let notesAllowedFileSizeElement = document.getElementById(inputfield.id + "-allowedFileSize");
     let notesAllowedTotalFileSizeElement = document.getElementById(inputfield.id + "-allowedTotalFileSize");
     let totalSizeDiv = document.getElementById(inputfield.id + "-total");
