@@ -334,6 +334,15 @@ abstract class Inputfields extends Element
             }
         }
 
+        // inform about allowed extensions in compressed folders (zip, rar,...)
+        if ($validator == 'compressedContentAllowedFileExt') {
+            if (isset($variables[0])) {
+                $this->notes_array['compressedContentAllowedFileExt']['text'] = sprintf($this->_('Allowed file types inside compressed folder(s): %s'),
+                    implode(', ', $variables[0]));
+                $this->notes_array['compressedContentAllowedFileExt']['value'] = implode(', ', $variables[0]);
+            }
+        }
+
         // inform about max filesize according to php.ini value
         if ($validator == 'phpIniFilesize') {
 
