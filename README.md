@@ -2296,6 +2296,31 @@ This validator is the opposite of the previous valdiator and checks that the fie
 $field->setRule('requiredIfNotEmpty', 'myconditionalfield');
 ```
 
+### uniqueStringValueOfPWField
+
+This validator can check whether a value entered in an input field is already stored inside a ProcessWire field or not. The check can be carried out globally or limited only to pages that use a certain template.
+A typical use case could be to check a name to see if it is already in use. The name is for example stored inside the PW-field with the name "myname". This field can be used in a single template only or in multiple templates.
+
+```php
+field->setRule('uniqueStringValueOfPWField', 'myname');
+```
+For example, if a user enters the name "Hanibal", the validator checks whether the name "Hanibal" is stored globally in the "myname" field. If the name is found, the validator will return an error message.
+
+If you want to limit the search to only certain templates, you must add the names of the templates as a second parameter as an array.
+
+```php
+field->setRule('uniqueStringValueOfPWField', 'myname', ['user']);
+```
+In this case, the unique name search is limited only to those pages that use the template with the name "user".
+
+If you want to search in multiple templates instead of just one, you just need to add the names of those templates as an array.
+
+```php
+field->setRule('uniqueStringValueOfPWField', 'myname', ['user','template1','template2']);
+```
+
+Please note: The search is case insensitive, because ProcessWire selectors do not support case sensitive search options.
+
 ## Create your own custom validation rules
 
 However, this module contains many built-in validation rules, but sometimes you need a special validation rule. Fortunately, the Valitron library supports the creation of custom rules in a simple way. Please take a look at the [Valitron Library documentation](https://github.com/vlucas/valitron?tab=readme-ov-file#adding-custom-validation-rules), which explains how to create custom rules.
