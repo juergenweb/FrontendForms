@@ -2294,22 +2294,6 @@ class Form extends CustomRules
         return $slices;
     }
 
-    /**
-     * Method to trigger an error message on a certain field manually
-     * @param Inputfields $field
-     * @param string $message
-     * @return void
-     */
-    public function setErrorMessageToField(Inputfields $field, string $message): void
-    {
-        $field->setErrorMessage($message);
-        if($this->isSubmitted()){
-            $this->showForm = true;
-            $this->alert->setCSSClass('alert_dangerClass');
-            $this->alert->setText($this->getErrorMsg());
-        }
-    }
-
 
     /**
      * Process the form after form submission
