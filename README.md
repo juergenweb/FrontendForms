@@ -1854,6 +1854,7 @@ For more detailed explanation on each validation rule click the link at the vali
 | [requiredIfEqual](#requiredifequal) | Checks if a field is not empty if a conditional field is not empty too and has a specific value
 | [requiredIfEmpty](#requiredifempty) | Checks if a field is not empty if aconditional field is empty
 | [requiredIfNotEmpty](#requiredifnotempty) | Checks if a field is not empty if a conditional field is not empty too
+| [uniqueStringValueOfPWField](#uniquestringvalueofpwfield) | Checks if a specific string value is stored inside the DB of a specific ProcessWire field
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
 
