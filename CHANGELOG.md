@@ -1963,8 +1963,8 @@ Now FrontendForms support the Bulma CSS framework too. Take a look here to read 
 
 ## 2026-04-02
 
-**New method setErrorMessageToField() added**
+**New validation rule "uniqueStringValueOfPWField added"**
 
-This new method was added due to a user request inside the support forum and can trigger the display of an error message under a given inputfield manually.
+This new validator can check if a specific string value is stored in the database of a specific ProcessWire field. So it checks for uniqueness. If the value already exists, an error is returned.
 
-[Read more](https://github.com/juergenweb/FrontendForms/tree/main?tab=readme-ov-file#seterrormessagetofield---trigger-the-display-of-an-error-message-under-an-inputfield-manually)
+[Read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#uniquestringvalueofpwfield)
