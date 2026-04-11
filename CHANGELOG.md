@@ -1951,7 +1951,7 @@ The jump to the beginning of the form did not work properly if the form was subm
 
 To make it more stable by using multiple forms on the same page, the time alert box includes now the form id attribute of the given form, so every time alert box has its unique id, that will be fetched by the JavaScript, even if 2 or more forms on the same page have been submitted too fast at the same time.
 
-## [2.3.12] 2026-03-24
+## [2.3.13] 2026-03-24
 
 **JS bug on showing password in clear text fixed**
 
@@ -1960,8 +1960,6 @@ If you have chosen Bootstrap as CSS framework, then the toggle checkbox for show
 **Support for Bulma CSS framework added**
 
 Now FrontendForms support the Bulma CSS framework too. Take a look here to read more about Burma: https://bulma.io/
-
-## 2026-04-02
 
 **New validation rule "uniqueStringValueOfPWField added"**
 
