@@ -731,6 +731,36 @@ class CustomRules extends Tag
             return true;
         }, $this->_('is required.'));
 
+        /**
+         * 44) Check if a value is unique inside a specific PW field
+         * $params: first param is the field name, second param are specific templates that contain the PW field
+         * The first parameter (PW field) ist required
+         * The second parameter (template) is mandatory => string (single template name) or array (multiple template names)
+         * Please note: The check of the value ist NOT CASE SENSITIVE because selectors do not support case sensitivity
+         */
+        V::addRule('uniqueStringValueOfPWField', function ($field, $value, $params) {
+
+            // sanitize all values first
+            $fieldName = $params[0];
+            $value = $this->wire('sanitizer')->string($value);
+
+            // check if specific template(s) has/have been chosen
+            if(count($params) > 1) {
+                if(is_string($params[1])) {
+                    // single template
+                    $templates = $params[1];
+                } else {
+                    // multiple templates
+                    $templates = implode('|',$params[1]);
+                }
+                $result = $this->wire('pages')->find("template=$templates,$fieldName=$value")->count();
+            } else {
+                $result = $this->wire('pages')->find("$fieldName=$value, include=all")->count();
+            }
+            return (!$result);
+        }, $this->_('is already in use. Please enter a different value.'));
+
+
     }
 
     /**
