@@ -128,6 +128,20 @@ abstract class Tag extends Wire
         return $return;
     }
 
+
+    /**
+     * Flatten a multidim. array to a one dimensional array
+     * @param array $array
+     * @return array
+     */
+    public function flattenArray(array $array): array {
+        $result = [];
+        array_walk_recursive($array, function($value) use (&$result) {
+            $result[] = $value;
+        });
+        return $result;
+    }
+
     /**
      * A method only to output print_r in formatted way for better readability
      * Only for dev purposes
