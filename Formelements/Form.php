@@ -2296,6 +2296,31 @@ class Form extends CustomRules
 
 
     /**
+     * Method to trigger an error message on a certain field manually
+     * @param $field
+     * @param string $message
+     * @return void
+     */
+    public function setErrorMessageToField(Inputfields|string $field, string $message): void
+    {
+        // check if string was entered as the first parameter
+        if (is_string($field)) {
+            $field = $this->getFormelementByName($field);
+        }
+        $fieldName = $field->getAttribute('name');
+        $sessionName = $this->getID() . '-customvalidation';
+        // check if the session exists
+        if ($this->wire('session')->get($sessionName)) {
+            $values = $this->wire('session')->get($sessionName);
+            $values[$fieldName] = $message;
+            $this->wire('session')->set($sessionName, $values);
+        } else {
+            $this->wire('session')->set($sessionName, [$fieldName => $message]);
+        }
+    }
+    
+    
+    /**
      * Process the form after form submission
      * Includes sanitization and validation
      * @return bool - true: form is valid, false: form has errors
