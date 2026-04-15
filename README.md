@@ -2362,10 +2362,10 @@ Please note: The search is case insensitive, because ProcessWire selectors do no
 
 ### maxFilesInZIPFolder
 
-This validator check the number of files inside each uploaded ZIP folder. If the number of files is higher than the allowed number, the validation fails.
+This validator checks the number of files in each uploaded ZIP folder. If the number of files is higher than the allowed number, validation fails.
 
 ```php
-field->setRule('maxFilesInZIPFolder', 10); // max allowed number of files inside a ZIP folder is 10
+field->setRule('maxFilesInZIPFolder', 10); // The maximum number of files allowed in a ZIP folder is 10 in this case
 ```
 
 ## Create your own custom validation rules
