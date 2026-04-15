@@ -575,8 +575,8 @@ The form object holds all the input fields, fieldsets, additional markup,...
 | [useJS()](#usejs---enabledisable-the-embedding-of-js-files-on-per-form-base)  | Enable/disable the embedding of JS files of this module on per form base |
 | [useCSS()](#usecss---enabledisable-the-embedding-of-css-files-on-per-form-base)  | Enable/disable the embedding of CSS files of this module on per form base |
 |[preventJumpToForm()](#preventjumptoform---enabledisable-internal-anchor-jump-to-the-form-container)  | Enable/disable internal anchor jump to the form container |
-|[getUploadedFilesForValidation()](#getuploadedfilesforvalidation---get-all-uploaded-files-including-extracted-zip-folders-as-an-array)  | Get all uploaded files including extracted ZIP folders as an array |
-|[getUploadedZipFilesForValidation()](#getuploadedzipfilesforvalidation---get-all-uploaded-files-inside-zip-folders-as-an-array)  | Get all uploaded files inside ZIP folders as an array |
+|[getUploadedFilesForValidation()](#getuploadedfilesforvalidation---get-all-uploaded-files-including-extracted-zip-folders-as-an-array)  | Get all uploaded files including extracted ZIP folders as an array for a single file upload field |
+|[getUploadedZipFilesForValidation()](#getuploadedzipfilesforvalidation---get-all-uploaded-files-inside-zip-folders-as-an-array)  | Get all uploaded files inside ZIP folders as an array for a single file upload field |
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
