@@ -761,6 +761,24 @@ class CustomRules extends Tag
         }, $this->_('is already in use. Please enter a different value.'));
 
 
+        V::addRule('maxFilesInZIPFolder', function ($field, $value, $params) {
+
+            $limit = intval($params[0]);
+            $zipfolders = $this->getUploadedZipFilesForValidation($field,false);
+            $exceeded = [];
+            if($zipfolders) {
+                foreach ($zipfolders as $filename => $zipfolder) {
+                    $totalNumberOfFiles = count($zipfolder);
+                    if($totalNumberOfFiles > $limit) {
+                        $exceeded[$filename] = $totalNumberOfFiles;
+                    }
+                }
+                if($exceeded) return false;
+            }
+
+            return true;
+        }, $this->_('contains more files than the allowed number of files.'));
+
     }
 
     /**
