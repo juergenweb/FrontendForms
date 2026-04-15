@@ -1966,3 +1966,13 @@ Now FrontendForms support the Bulma CSS framework too. Take a look here to read 
 This new validator can check if a specific string value is stored in the database of a specific ProcessWire field. So it checks for uniqueness. If the value already exists, an error is returned.
 
 [Read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#uniquestringvalueofpwfield)
+
+## 2026-04-15
+
+**3 new form methods added**
+
+3 new form methods to get uploaded files including extracted ZIP folders added
+
+- [getUploadedFilesForValidation()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getuploadedzipfilesforvalidation---get-all-uploaded-files-inside-zip-folders-as-an-array)
+- [getUploadedZipFilesForValidation()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getuploadedzipfilesforvalidation---get-all-uploaded-files-inside-zip-folders-as-an-array)
+- [getFileUploads()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getfileuploads---get-all-uploaded-files-including-extracted-zip-folders-of-all-file-upload-fields-inside-the-form)
