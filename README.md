@@ -2359,6 +2359,14 @@ field->setRule('uniqueStringValueOfPWField', 'myname', ['user','template1','temp
 
 Please note: The search is case insensitive, because ProcessWire selectors do not support case sensitive search options.
 
+### maxFilesInZIPFolder
+
+This validator check the number of files inside each uploaded ZIP folder. If the number of files is higher than the allowed number, the validation fails.
+
+```php
+field->setRule('maxFilesInZIPFolder', 10); // max allowed number of files inside a ZIP folder is 10
+```
+
 ## Create your own custom validation rules
 
 However, this module contains many built-in validation rules, but sometimes you need a special validation rule. Fortunately, the Valitron library supports the creation of custom rules in a simple way. Please take a look at the [Valitron Library documentation](https://github.com/vlucas/valitron?tab=readme-ov-file#adding-custom-validation-rules), which explains how to create custom rules.
