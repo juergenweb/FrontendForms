@@ -1267,11 +1267,11 @@ $form->getUploadedZipFilesForValidation('myuploadfield'); // returns a multidim.
 $form->getUploadedZipFilesForValidation('myuploadfield', true); // returns a flatten array
 ```
 
-### getUploadedFiles() - get all uploaded files (including extracted ZIP-folders of all file upload fields inside the form
+### getUploadedFiles() - get all uploaded files of all file upload fields inside the form
 
 The main difference between this method and the previous two methods is that this method returns the files of all file upload fields within a form, rather than just a specific file upload field. The paths of the files is linking to a temporary folder and the files can copied from there to another location if needed.
 
-The method accepts one boolean parameter to output the files with extracted ZIP folders or not.
+The method accepts one boolean parameter to output the files with extracted ZIP folders or not. If you set the parameter *true* then you will get an array containing all extracted ZIP folders. Otherwise the array does not contain the paths of the files inside the ZIP folder, only the path to the ZIP folder itself. 
 
 ```php
 $form->getUploadedFiles(); // returns array of files but ZIP folders are not extracted
