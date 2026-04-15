@@ -577,7 +577,7 @@ The form object holds all the input fields, fieldsets, additional markup,...
 |[preventJumpToForm()](#preventjumptoform---enabledisable-internal-anchor-jump-to-the-form-container)  | Enable/disable internal anchor jump to the form container |
 |[getUploadedFilesForValidation()](#getuploadedfilesforvalidation---get-all-uploaded-files-including-extracted-zip-folders-as-an-array)  | Get all uploaded files including extracted ZIP folders as an array for a single file upload field |
 |[getUploadedZipFilesForValidation()](#getuploadedzipfilesforvalidation---get-all-uploaded-files-inside-zip-folders-as-an-array)  | Get all uploaded files inside ZIP folders as an array for a single file upload field |
-|[getFileUploads()](#getfileuploads---get-all-uploaded-files-including-extracted-zip-folders-of-all-file-upload-fields-inside-the-form)  | Get all uploaded files (including extracted ZIP-folders of all file upload fields inside the form |
+|[getUploadedFiles()](#getuploadedfiles---get-all-uploaded-files-including-extracted-zip-folders-of-all-file-upload-fields-inside-the-form)  | Get all uploaded files (including extracted ZIP-folders of all file upload fields inside the form |
 
 ### useFieldWrapper() - add/remove of the most outer container to/from all formfields
 Add/remove the [field-wrapper](#field-wrapper) container to/from all form fields by adding the appropriate boolean parameter.
@@ -1267,15 +1267,15 @@ $form->getUploadedZipFilesForValidation('myuploadfield'); // returns a multidim.
 $form->getUploadedZipFilesForValidation('myuploadfield', true); // returns a flatten array
 ```
 
-### getFileUploads() - get all uploaded files (including extracted ZIP-folders of all file upload fields inside the form
+### getUploadedFiles() - get all uploaded files (including extracted ZIP-folders of all file upload fields inside the form
 
 The main difference between this method and the previous two methods is that this method returns the files of all file upload fields within a form, rather than just a specific file upload field. The paths of the files is linking to a temporary folder and the files can copied from there to another location if needed.
 
 The method accepts one boolean parameter to output the files as a flat array or not.
 
 ```php
-$form->getFileUploads(); // returns a multidim. array preserving the folder structure of all ZIP folders
-$form->getFileUploads(true); // returns a flatten array of all uploaded files
+$form->getUploadedFiles(); // returns a multidim. array preserving the folder structure of all ZIP folders
+$form->getUploadedFiles(true); // returns a flatten array of all uploaded files
 ```
 
 
