@@ -16,6 +16,8 @@ use DateTime;
 use DOMDocument;
 use DOMException;
 use Exception;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use ProcessWire\Field as Field;
 use ProcessWire\HookEvent;
 use ProcessWire\Language;
@@ -45,6 +47,7 @@ class Form extends CustomRules
     protected string|int|bool $preventJumpToForm = false;
     protected string|int $load_time = ''; // the time, when the form was loaded
     protected array $storedFiles = []; // array that holds all files (including overwritten filenames)
+    protected array $validation_files = []; // array that holds all extracted and single files for file validations
     protected string $doubleSubmission = ''; // value hold by the double form submission session
     protected string $defaultRequiredTextPosition = 'top'; // the default required text position
     protected string $doNotReply = ''; // Text for do not reply to automatically generated emails
@@ -125,6 +128,7 @@ class Form extends CustomRules
 
     protected string $lastStepListText = '';
     protected array $lastStepElements = [];
+    protected string $modulePath = '';
 
     /* objects */
     protected Page $page; // the current page object, where the form is integrated
@@ -341,6 +345,8 @@ class Form extends CustomRules
         } else {
             $this->page->ff_forms = [$this->getID()];
         }
+
+        $this->modulePath = $this->wire('config')->paths->siteModules . 'FrontendForms/';
 
     }
 
@@ -2294,32 +2300,107 @@ class Form extends CustomRules
         return $slices;
     }
 
+    /**
+     * Extract nested and unnested ZIP files to a give location
+     * Will be used to validate files inside a ZIP file
+     * @param string $zipFile
+     * @param string $destination
+     * @return false|void
+     * @throws Exception
+     */
+    protected function extractZipArchive(string $zipFile, string $destination)
+    {
+        // run only if ZipArchive class exists
+        if (!class_exists('ZipArchive')) {
+            $this->wire('files')->unlink($zipFile);
+            return false;
+        }
+
+        if (!$this->wire('files')->exists($zipFile)) {
+            throw new Exception("ZIP-file not found: $zipFile");
+        }
+
+        // Create destination directory if it does not exist
+        if (!is_dir($destination)) {
+            $this->wire('files')->mkdir($destination, true);
+        }
+
+        $zip = new \ZipArchive();
+
+        if ($zip->open($zipFile) === TRUE) {
+            $zip->extractTo($destination);
+            $zip->close();
+        } else {
+            throw new Exception("ZIP-file could not be opened: $zipFile");
+        }
+
+        // Optionally delete ZIP file
+        $this->wire('files')->unlink($zipFile);
+
+        // Search destination folder for further ZIP-files
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($destination, RecursiveDirectoryIterator::SKIP_DOTS)
+        );
+
+        foreach ($files as $file) {
+            if (strtolower($file->getExtension()) === 'zip') {
+                $nestedZip = $file->getPathname();
+                $nestedDestination = $file->getPath() . DIRECTORY_SEPARATOR . pathinfo($file->getFilename(), PATHINFO_FILENAME);
+
+                // Extract ZIP-files
+                self::extractZipArchive($nestedZip, $nestedDestination);
+
+                // Optional: delete nested ZIP after unzipping
+                $this->wire('files')->unlink($nestedZip);
+            }
+        }
+
+    }
 
     /**
-     * Method to trigger an error message on a certain field manually
-     * @param $field
-     * @param string $message
-     * @return void
+     * Get all uploaded files for doing some validations
+     * @return array|null - returns all file paths as a numeric array
      */
-    public function setErrorMessageToField(Inputfields|string $field, string $message): void
+    public function getUploadedFilesForValidation(string $fieldname, bool $flatArray = true): ?array
     {
-        // check if string was entered as the first parameter
-        if (is_string($field)) {
-            $field = $this->getFormelementByName($field);
+        if(array_key_exists($fieldname, $this->validation_files)){
+            if($flatArray){
+                return $this->flattenArray($this->validation_files[$fieldname]);
+            } else {
+                return $this->validation_files[$fieldname];
+            }
         }
-        $fieldName = $field->getAttribute('name');
-        $sessionName = $this->getID() . '-customvalidation';
-        // check if the session exists
-        if ($this->wire('session')->get($sessionName)) {
-            $values = $this->wire('session')->get($sessionName);
-            $values[$fieldName] = $message;
-            $this->wire('session')->set($sessionName, $values);
-        } else {
-            $this->wire('session')->set($sessionName, [$fieldName => $message]);
-        }
+        return null;
     }
-    
-    
+
+    /**
+     * Return all uploaded files, which are inside a ZIP folder
+     * All other files will be ignored
+     * This method is especially for validation of files inside a ZIP folder
+     * @param string $fieldname
+     * @return array|null - returns all file paths as a numeric array
+     */
+    public function getUploadedZipFilesForValidation(string $fieldname, bool $flatArray = true): ?array
+    {
+
+        $files = $this->getUploadedFilesForValidation($fieldname, false);
+        if(is_null($files)) return null;
+        $zipFiles = [];
+        foreach ($files as $key => $file) {
+            if(pathinfo($key, PATHINFO_EXTENSION) === 'zip'){
+                $zipFiles[$key] = $file;
+            }
+        }
+        if($zipFiles){
+            if($flatArray){
+                return $this->flattenArray($zipFiles);
+            } else {
+                return $zipFiles;
+            }
+        }
+        return null;
+    }
+
     /**
      * Process the form after form submission
      * Includes sanitization and validation
@@ -2745,7 +2826,6 @@ class Form extends CustomRules
                                 $formElements[] = $this->captchafield;
                             }
 
-
                             // Get only input field for user inputs (no fieldsets, buttons,..)
                             $formElements = $validation->getRealInputFields($formElements);
 
@@ -2787,6 +2867,63 @@ class Form extends CustomRules
                                 }
 
                             }
+
+                            // start loading all files into a temp dir for later validation purposes
+                            // all ZIP files will be extracted to be able to validate the content of the compressed folder
+                            if ($_FILES) {
+
+                                $validation_files = [];
+                                foreach ($_FILES as $fieldname => $data) {
+
+                                    if (is_array($data['name'])) {
+
+                                        if (count(array_filter($data['name']))) {
+
+                                            // create a new temp dir for each upload field
+                                            $tempDir = $this->wire('files')->tempDir();
+                                            $path = $tempDir->get();
+
+                                            // multiple upload field
+                                            $files = $this->reArrayFiles($_FILES[$fieldname]);
+                                            foreach ($files as $file) {
+                                                $this->wire('files')->copy($file['tmp_name'], $path . $file['name']);
+
+                                                // extract if ZIP
+                                                if ($file['type'] == 'application/x-zip-compressed') {
+                                                    $this->extractZipArchive($path . $file['name'], $path . pathinfo($file['name'], PATHINFO_FILENAME) . '/');
+                                                    $zip_files = $this->wire('files')->find($path . pathinfo($file['name'], PATHINFO_FILENAME) . '/');
+                                                    $validation_files[$fieldname][$file['name']] = $zip_files;
+                                                } else {
+                                                    $validation_files[$fieldname][$file['name']] = $path . $file['name'];
+                                                }
+                                            }
+                                        }
+                                    } else {
+
+                                        if ($data['name']) {
+
+                                            // create a new temp dir for each upload field
+                                            $tempDir = $this->wire('files')->tempDir();
+                                            $path = $tempDir->get();
+
+                                            // single upload field
+                                            $this->wire('files')->copy($data['tmp_name'], $path . $data['name']);
+
+                                            if ($data['type'] == 'application/x-zip-compressed') {
+
+                                                $this->extractZipArchive($path . $data['name'], $path . pathinfo($data['name'], PATHINFO_FILENAME) . '/');
+                                                $zip_files = $this->wire('files')->find($path . pathinfo($data['name'], PATHINFO_FILENAME) . '/');
+                                                $validation_files[$fieldname][$data['name']] = $zip_files;
+
+                                            } else {
+                                                $validation_files[$fieldname][$file['name']] = $path . $file['name'];
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            $this->validation_files = $validation_files;
+                            // end of temp dir operation
 
                             $v = new Validator($sanitizedValues);
 
@@ -2899,7 +3036,7 @@ class Form extends CustomRules
                                 /***********************************
                                  * check if it is a multi-step form
                                  * ********************************/
-                                if($this->steps) {
+                                if ($this->steps) {
                                     if (!$this->lastStep) { // run if it is not the final step
 
                                         // 1) save all values inside a session
@@ -3357,10 +3494,10 @@ class Form extends CustomRules
         }
 
         $dataPrevent = ' data-preventjumptoform="false"';
-        if($this->preventJumpToForm){
+        if ($this->preventJumpToForm) {
             $dataPrevent = ' data-preventjumptoform="true"';
         }
-        $out = '<div id="' . $this->getID() . '-allwrapper"'.$dataPrevent.'>';
+        $out = '<div id="' . $this->getID() . '-allwrapper"' . $dataPrevent . '>';
 
         // if Ajax submit was selected, add an additional data attribute to the form tag
         if ($this->getSubmitWithAjax()) {
@@ -3627,7 +3764,7 @@ class Form extends CustomRules
                 if ($this->ajaxRedirect) {
                     $ajaxredirectField = new InputHidden('ajax_redirect');
                     $url = $this->ajaxRedirect;
-                    if($this->preventJumpToForm){
+                    if ($this->preventJumpToForm) {
                         // remove internal anchor
                         $url = explode("#", $url);
                         $url = $url[0];
@@ -3904,13 +4041,13 @@ class Form extends CustomRules
                                         'bootstrap5.json' => 'table-sm'
                                     ];
 
-                                    if(array_key_exists($this->frontendforms['input_framework'], $tableStyling)){
+                                    if (array_key_exists($this->frontendforms['input_framework'], $tableStyling)) {
                                         $tableStyleClass = $tableStyling[$this->frontendforms['input_framework']];
                                     } else {
                                         $tableStyleClass = 'ff-table';
                                     }
 
-                                    $markup .= '<table id="' . $this->getID() . '-final-step-table" class="' . $this->getCSSClass('tableClass') . ' ' . $tableStyleClass. ' final-list-table">';
+                                    $markup .= '<table id="' . $this->getID() . '-final-step-table" class="' . $this->getCSSClass('tableClass') . ' ' . $tableStyleClass . ' final-list-table">';
 
                                 }
 
