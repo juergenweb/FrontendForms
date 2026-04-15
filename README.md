@@ -1242,6 +1242,27 @@ This leads to that you will land directly at the top of the page instead of at t
 
 This feature was inspired by a user [request](https://github.com/juergenweb/FrontendForms/issues/26).
 
+### getUploadedFilesForValidation() - get all uploaded files including extracted ZIP folders as an array
+
+This method outputs an array of all uploaded files including their paths for a given file upload field. The special feature of this method is, that all uploaded ZIP files will be exctracted too. This also applies to nested ZIP files too. 
+
+The method needs the name of the file upload field as the first parameter and this parameter is required.
+The second parameter is optional and can transform a multidimensional array into a flat array if needed. You only have to add the boolean value true as the second parameter and you will get a one-dimensional numeric array instead of a multi-dimensional. 
+
+```php
+$form->getUploadedFilesForValidation('myuploadfield'); // returns a multidim. array preserving the folder structure of a ZIP folder
+$form->getUploadedFilesForValidation('myuploadfield', true); // returns a flatten array
+```
+
+### getUploadedZipFilesForValidation() - get all uploaded files inside ZIP folders as an array
+
+This method is similar to the previous method *getUploadedFilesForValidation()*, but it outputs only files which are inside a ZIP folder and ignores all others. This can be useful if you are using this method in custom validation rules, where you want to validate only files inside uploaded ZIP folder. 
+
+```php
+$form->getUploadedZipFilesForValidation('myuploadfield'); // returns a multidim. array preserving the folder structure of a ZIP folder
+$form->getUploadedZipFilesForValidation('myuploadfield', true); // returns a flatten array
+```
+
 ## Input field methods
 
 For better understanding of methods explained afterwards, take a look of the anatomy of input fields first.
