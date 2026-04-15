@@ -1975,7 +1975,7 @@ This new validator can check if a specific string value is stored in the databas
 
 - [getUploadedFilesForValidation()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getuploadedfilesforvalidation---get-all-uploaded-files-including-extracted-zip-folders-as-an-array)
 - [getUploadedZipFilesForValidation()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getuploadedzipfilesforvalidation---get-all-uploaded-files-inside-zip-folders-as-an-array)
-- [getFileUploads()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getfileuploads---get-all-uploaded-files-including-extracted-zip-folders-of-all-file-upload-fields-inside-the-form)
+- [getFileUploads()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getuploadedfiles---get-all-uploaded-files-of-all-file-upload-fields-inside-the-form)
 
 In addition a new validation rule to validate the number of files inside a ZIP archive has been added.
 
