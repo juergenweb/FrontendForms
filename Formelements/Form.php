@@ -763,7 +763,7 @@ class Form extends CustomRules
     /**
      * Get all files that were uploaded
      * @param bool $extracted - if set to true, then you will get all ZIP files extracted too from the temp folder
-     * Please note: In case of extracted files, the filenames are raw and not sanitzied 
+     * Please note: In case of extracted files, the filenames are raw and not sanitzied
      * @return array
      *
      */
@@ -2368,6 +2368,10 @@ class Form extends CustomRules
      */
     public function getUploadedFilesForValidation(string $fieldname, bool $flatArray = true): ?array
     {
+        // sanitize fieldname to use form id as prefix if not present
+        if(!str_starts_with($fieldname, $this->getID())){
+            $fieldname = $this->getID().'-'.$fieldname;
+        }
         if(array_key_exists($fieldname, $this->validation_files)){
             if($flatArray){
                 return $this->flattenArray($this->validation_files[$fieldname]);
