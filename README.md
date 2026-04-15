@@ -1248,7 +1248,7 @@ This feature was inspired by a user [request](https://github.com/juergenweb/Fron
 This method outputs an array of all uploaded files including their paths for a given file upload field. The special feature of this method is, that all uploaded ZIP files will be exctracted too. This also applies to nested ZIP files too. 
 
 The method needs the name of the file upload field as the first parameter and this parameter is required.
-The second parameter is optional and can transform a multidimensional array into a flat array if needed. You only have to add the boolean value true as the second parameter and you will get a one-dimensional numeric array instead of a multi-dimensional. 
+The second parameter is optional and can transform a multidimensional array into a flat array if needed. You only have to add the boolean value *true* as the second parameter (*false* is the default value) and you will get a one-dimensional numeric array instead of a multi-dimensional one. 
 
 ```php
 $form->getUploadedFilesForValidation('myuploadfield'); // returns a multidim. array preserving the folder structure of a ZIP folder
