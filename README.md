@@ -1271,11 +1271,11 @@ $form->getUploadedZipFilesForValidation('myuploadfield', true); // returns a fla
 
 The main difference between this method and the previous two methods is that this method returns the files of all file upload fields within a form, rather than just a specific file upload field. The paths of the files is linking to a temporary folder and the files can copied from there to another location if needed.
 
-The method accepts one boolean parameter to output the files as a flat array or not.
+The method accepts one boolean parameter to output the files with extracted ZIP folders or not.
 
 ```php
-$form->getUploadedFiles(); // returns a multidim. array preserving the folder structure of all ZIP folders
-$form->getUploadedFiles(true); // returns a flatten array of all uploaded files
+$form->getUploadedFiles(); // returns array of files but ZIP folders are not extracted
+$form->getUploadedFiles(true); // returns array of all uploaded files including extracted ZIP folders
 ```
 
 
