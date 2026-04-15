@@ -1967,12 +1967,16 @@ This new validator can check if a specific string value is stored in the databas
 
 [Read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#uniquestringvalueofpwfield)
 
-## 2026-04-15
+## [2.3.14] 2026-04-15
 
-**3 new form methods added**
+**3 new form methods and a new validation rule added**
 
 3 new form methods to get uploaded files including extracted ZIP folders added
 
 - [getUploadedFilesForValidation()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getuploadedfilesforvalidation---get-all-uploaded-files-including-extracted-zip-folders-as-an-array)
 - [getUploadedZipFilesForValidation()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getuploadedzipfilesforvalidation---get-all-uploaded-files-inside-zip-folders-as-an-array)
 - [getFileUploads()](https://github.com/juergenweb/FrontendForms/blob/main/README.md#getfileuploads---get-all-uploaded-files-including-extracted-zip-folders-of-all-file-upload-fields-inside-the-form)
+
+In addition a new validation rule to validate the number of files inside a ZIP archive has been added.
+
+- [maxFilesInZIPFolder](https://github.com/juergenweb/FrontendForms/blob/main/README.md#maxfilesinzipfolder)
