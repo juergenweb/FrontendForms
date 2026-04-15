@@ -1247,6 +1247,8 @@ This feature was inspired by a user [request](https://github.com/juergenweb/Fron
 
 This method outputs an array of all uploaded files including their paths for a given file upload field. The special feature of this method is, that all uploaded ZIP files will be exctracted too. This also applies to nested ZIP files too. 
 
+The files (including the ZIP files) will be added to a secure temporary folder which cannot be reached via the internet. So it is not possible that harmful code inside the uploaded files will be executed. For more technical information please visit [ProcessWire temp-dir](https://processwire.com/api/ref/wire-file-tools/temp-dir/). There you can read how it is done.
+
 The method needs the name of the file upload field as the first parameter and this parameter is required.
 The second parameter is optional and can transform a multidimensional array into a flat array if needed. You only have to add the boolean value *true* as the second parameter (*false* is the default value) and you will get a one-dimensional numeric array instead of a multi-dimensional one. 
 
@@ -1263,6 +1265,18 @@ This method is similar to the previous method *getUploadedFilesForValidation()*,
 $form->getUploadedZipFilesForValidation('myuploadfield'); // returns a multidim. array preserving the folder structure of a ZIP folder
 $form->getUploadedZipFilesForValidation('myuploadfield', true); // returns a flatten array
 ```
+
+### getFileUploads() - get all uploaded files inside ZIP folders as an array for all file upload fields inside the form
+
+The main difference between this method and the previous two methods is that this method returns the files of all file upload fields within a form, rather than just a specific file upload field. The paths of the files is linking to a temporary folder and the files can copied from there to another location if needed.
+
+The method accepts one boolean parameter to output the files as a flat array or not.
+
+```php
+$form->getFileUploads(); // returns a multidim. array preserving the folder structure of all ZIP folders
+$form->getFileUploads(true); // returns a flatten array of all uploaded files
+```
+
 
 ## Input field methods
 
