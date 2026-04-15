@@ -762,9 +762,14 @@ class Form extends CustomRules
 
     /**
      * Get all files that were uploaded
+     * @param bool $extracted - if set to true, then you will get all ZIP files extracted too from the temp folder
+     * Please note: In case of extracted files, the filenames are raw and not sanitzied 
+     * @return array
+     *
      */
-    public function getUploadedFiles(): array
+    public function getUploadedFiles(bool $extracted = false): array
     {
+        if($extracted) return $this->validation_files;
         return $this->uploaded_files;
     }
 
@@ -2923,6 +2928,7 @@ class Form extends CustomRules
                                 }
                             }
                             $this->validation_files = $validation_files;
+
                             // end of temp dir operation
 
                             $v = new Validator($sanitizedValues);
