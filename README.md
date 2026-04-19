@@ -2368,6 +2368,70 @@ This validator checks the number of files in each uploaded ZIP folder. If the nu
 field->setRule('maxFilesInZIPFolder', 10); // The maximum number of files allowed in a ZIP folder is 10 in this case
 ```
 
+### minFilesInZIPFolder
+
+This validator validates the minimum required number of files inside a ZIP folder. If the number of files is lower than the required number, validation fails.
+
+```php
+field->setRule('minFilesInZIPFolder', 3); // The maximum number of files allowed in a ZIP folder is 3 in this case
+```
+
+### maxTotalFileSizeZipUncompressed
+
+Verifies that the uncompressed filesize of all files in an uploaded ZIP folder does not exceed the total file size limit. If the total filesize inside a ZIP folder uncompressed is higher than the allowed maximum filesize, validation fails.
+
+```php
+field->setRule('maxTotalFileSizeZipUncompressed', '10 MB'); // The maximum total filesize uncompressed in a ZIP folder is 10 MB in this case
+```
+
+### requiredFileNamesInZip
+
+Validate if a Zip file contains specific files. If the at least one of the files is not present inside the ZIP folder, the validation fails.
+
+```php
+field->setRule('requiredFileNamesInZip', ['testfile1.jpg', 'image1.png']); // Enter the names of the required files as an array
+```
+
+### maxNumberOfZipFolders
+
+Validate the maximum number of ZIP files uploaded inside an upload field. This validation rule does only make sense on multi-upload fields. With this validation rule you can restrict the number of ZIP files that can be uploaded by a multi-upload field
+
+```php
+field->setRule('maxNumberOfZipFolders', 2); // Enter the number of ZIP folders. In this case it is only allowed to upload max. 2 ZIP files.
+```
+
+### maxDepthOfZipFolders
+
+Validate that a ZIP folder does not contain more sub-dir levels than allowed in the hierarchy.
+
+```php
+field->setRule('maxDepthOfZipFolders', 2); // Enter the depth number of of ZIP folders. In this case the maximum allowed folder/directory depth in a ZIP file is 2.
+```
+
+### allowedFileTypesInZipFolder
+
+Validate if all files inside a ZIP folder are of the allowed type.
+
+```php
+field->setRule('allowedFileTypesInZipFolder', ['jpg', 'png']); // Enter the allowed file types as an array. In this case only file types of jpg and png are allowed to be inside a ZIP folder
+```
+
+### notAllowedFileTypesInZipFolder
+
+Validate if all files inside a ZIP folder are NOT of a specific type. This validator is the opposite of the previous one.
+
+```php
+field->setRule('notAllowedFileTypesInZipFolder', ['exe']); // Enter the forbidden file types as an array. In this case file types of exe are not allowed to be inside a ZIP folder
+```
+
+### maxAllowedFileSizeOfFileInZipFolder
+
+Validate the max. filesize of an individual file inside a ZIP folder.
+
+```php
+field->setRule('maxAllowedFileSizeOfFileInZipFolder', '1 MB'); // In this case a single file inside the ZIP folder is not allowed to exeed the max. filesize of 1 MB
+```
+
 ## Create your own custom validation rules
 
 However, this module contains many built-in validation rules, but sometimes you need a special validation rule. Fortunately, the Valitron library supports the creation of custom rules in a simple way. Please take a look at the [Valitron Library documentation](https://github.com/vlucas/valitron?tab=readme-ov-file#adding-custom-validation-rules), which explains how to create custom rules.
