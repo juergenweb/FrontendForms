@@ -149,7 +149,7 @@
                 'summary' => 'Create forms and validate them using the Valitron library.',
                 'author' => "Jürgen Kern",
                 'href' => 'https://github.com/juergenweb/FrontendForms',
-                'version' => '2.3.14',
+                'version' => '2.3.15',
                 'singular' => true,
                 'autoload' => true,
                 'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.181']
