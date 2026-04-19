@@ -1844,7 +1844,19 @@ more than 60 validators available out of the box.
 
 In addition, some of the validation rules add HTML 5 attributes to the input tag, which will be used for browser validation, if enabled.
 
-Table of all custom validation rules for better overview:
+### Removing automatically added notes text on validation rules
+Some of the validation rules add a additional notes text under the input field by default. This notes text should inform the user about what to care. An example of this could be a maximum filesize validation. If you want to restrict f.e. the maximum filesize of an uploaded file to 10 MB, than a hint will be displayed under the inputfield to inform the user about this filesize limitation (f.e. "Please do not upload files larger than 10 MB"). This makes sense in most cases, but you have the possibility to disable this automatically added notes text, by adding the following array as the last parameter to the setRule() method: ['defaultnotes' => false]
+
+Here is an example on how to disable the automatically added notes text:
+
+```php
+$field->setRule('allowedFileSize', '10 MB', ['defaultnotes' => false]); // add defaultnotes array as the last parameter to disable the automatically added notes text
+```
+
+Not every validation rule adds a notes text by default - take a look at your form and you will see where notes texts are added. If so, you can use these possibility to remove the automatically added notes text if you want.
+
+
+### Table of all custom validation rules for better overview:
 
 For more detailed explanation on each validation rule click the link at the validation rule name
 
