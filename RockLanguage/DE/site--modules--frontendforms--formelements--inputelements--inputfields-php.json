@@ -26,9 +26,6 @@
         "b250e98dcbdfaed9ef7c189ee93dbdd9": {
             "text": "%s muss eine g\u00fcltige E-Mail-Adresse sein"
         },
-        "e66d38c251a0c16f1f48e5b31e87669b": {
-            "text": "%s darf nur Zahlen (Ganz- oder Kommazahlen) enthalten"
-        },
         "175b959de6b30258c49097a92d3b3957": {
             "text": "%s darf nur Ganzzahlen enthalten"
         },
@@ -40,9 +37,6 @@
         },
         "c524413c58ede6f4029283b534da7846": {
             "text": "%s darf nur eine g\u00fcltige IPv6-Adresse im Format x:x:x:x:x:x:x:x enthalten"
-        },
-        "aae770c1602b57559f3b60fd530b0373": {
-            "text": "%s enth\u00e4lt unzul\u00e4ssige Zeichen. Bitte verwenden Sie nur Buchstaben, Zahlen, Unterstriche, Punkte, Bindestriche und @-Zeichen (keine Leerzeichen)"
         },
         "d8c7bf5cd88682b17b9f4b1eba991f92": {
             "text": "%s darf nur ein g\u00fcltiges Datum im Format %s enthalten"
@@ -79,6 +73,51 @@
         },
         "6facae2989c4f1db93ede942ce268737": {
             "text": "%s darf nur erlaubte Zeichen f\u00fcr Namen enthalten."
+        },
+        "f1ad5d525baf191da55e02d01616fc29": {
+            "text": "ZIP-Ordner m\u00fcssen mindestens %s Dateien enthalten"
+        },
+        "9d7b73d29ea9f85b12c024be902eb74a": {
+            "text": "ZIP-Ordner d\u00fcrfen nicht mehr als %s Dateien enthalten"
+        },
+        "c1a5e479c839d57058bed6198849eedb": {
+            "text": "ZIP-Dateien d\u00fcrfen nach dem Extrahieren die Gesamtgr\u00f6\u00dfe von %s  nicht \u00fcberschreiten"
+        },
+        "26e303a657e662b5f9f1453e7f514182": {
+            "text": "ZIP-Dateien m\u00fcssen folgende Dateien enthalten: %s"
+        },
+        "04298dbff163b83c60c6b8994eb7eb51": {
+            "text": "Bitte laden Sie nicht mehr als %s ZIP-Dateien hoch"
+        },
+        "289e04d80d8c7b4d9c26acf2a8366ea0": {
+            "text": "Die maximal erlaubte Ordner-\/Verzeichnistiefe in einer ZIP-Datei betr\u00e4gt %s"
+        },
+        "3686e07c08d00173bc8c21eb3929ad3c": {
+            "text": "ZIP-Dateien d\u00fcrfen nur die folgenden Dateitypen enthalten: %s"
+        },
+        "6a04bb2130627555c413868486fd4132": {
+            "text": "ZIP-Dateien k\u00f6nnen nur Dateien enthalten, deren Dateigr\u00f6\u00dfe nicht %s \u00fcberschreitet"
+        },
+        "e685a1c86131e8f78ed6531ec20cbbde": {
+            "text": "ZIP-Dateien d\u00fcrfen keine Dateien der folgenden Dateitypen enthalten: %s"
+        },
+        "becc30bc5291a8631f3681343530de6a": {
+            "text": "Erlaubte Dateitypen innerhalb von ZIP-Dateien: %s"
+        },
+        "3b63e2f928f8efe8734bba58bb54eb83": {
+            "text": "%s ist keine g\u00fcltige Zeit. Sie m\u00fcssen die Zeit in diesem Format eingeben: HH:MM:SS (z.B. 19:00:00)"
+        },
+        "e1670e29ba274f888823e37043649475": {
+            "text": "%s sollte nur Zahlen enthalten (ganze Zahlen oder Kommazahlen mit Punkt, kein Komma)"
+        },
+        "1561967c772eb4b2cd22b3bfeb59a6bf": {
+            "text": "%s enth\u00e4lt nicht erlaubten Zeichen oder ist l\u00e4nger als 128 Zeichen. Erlaubte Zeichen sind: Buchstaben, Zahlen, Unterstriche und Striche (keine Leerzeichen)"
+        },
+        "18ae9260caf7ce5a05c34b70bddff18c": {
+            "text": "%s sollte nur ein g\u00fcltiges Datum im Format dd.MM.YYYY enthalten."
+        },
+        "e578185cfdb5bb878f5b48f7901848d2": {
+            "text": "%s muss das Wort %s enthalten"
         }
     }
 }
