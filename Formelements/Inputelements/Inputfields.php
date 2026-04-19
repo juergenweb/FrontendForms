@@ -298,6 +298,66 @@ abstract class Inputfields extends Element
         // fe only 40kb, only jpg,....
         // but can be used for other fields to if needed
 
+        // min files in ZIP folders
+        if ($validator == 'minFilesInZIPFolder') {
+            $this->notes_array['minFilesInZIPFolder']['text'] = sprintf($this->_('ZIP folder(s) must contain at least %s files'), $variables[0]);
+            $this->notes_array['minFilesInZIPFolder']['value'] = $variables[0];
+        }
+
+        // max files in ZIP folders
+        if ($validator == 'maxFilesInZIPFolder') {
+            $this->notes_array['maxFilesInZIPFolder']['text'] = sprintf($this->_('ZIP folders may not contain more than %s files'), $variables[0]);
+            $this->notes_array['maxFilesInZIPFolder']['value'] = $variables[0];
+        }
+
+        // max total file size of all files inside a ZIP folder uncompressed
+        if ($validator == 'maxTotalFileSizeZipUncompressed') {
+            $this->notes_array['maxTotalFileSizeZipUncompressed']['text'] = sprintf($this->_('ZIP files must not exceed a total size of %s when extracted'), $variables[0]);
+            $this->notes_array['maxTotalFileSizeZipUncompressed']['value'] = $variables[0];
+        }
+
+        // required filenames inside a ZIP folder
+        if ($validator == 'requiredFileNamesInZip') {
+            $this->notes_array['requiredFileNamesInZip']['text'] = sprintf($this->_('ZIP files must contain the following files: %s'), implode(', ', $variables[0]));
+            $this->notes_array['requiredFileNamesInZip']['value'] = $variables[0];
+        }
+
+        // max number of ZIP files for upload
+        if ($validator == 'maxNumberOfZipFolders') {
+            $this->notes_array['maxNumberOfZipFolders']['text'] = sprintf($this->_('Please do not upload more than %s ZIP file(s)'), $variables[0]);
+            $this->notes_array['maxNumberOfZipFolders']['value'] = $variables[0];
+        }
+
+        // max depth of hierarchy
+        if ($validator == 'maxNumberOfZipFolders') {
+            $this->notes_array['maxNumberOfZipFolders']['text'] = sprintf($this->_('Please do not upload more than %s ZIP file(s)'), $variables[0]);
+            $this->notes_array['maxNumberOfZipFolders']['value'] = $variables[0];
+        }
+
+        // max depth of hierarchy
+        if ($validator == 'maxDepthOfZipFolders') {
+            $this->notes_array['maxDepthOfZipFolders']['text'] = sprintf($this->_('The maximum allowed folder/directory depth in a ZIP file is %s'), $variables[0]);
+            $this->notes_array['maxDepthOfZipFolders']['value'] = $variables[0];
+        }
+
+        // file types allowed inside a ZIP file
+        if ($validator == 'allowedFileTypesInZipFolder') {
+            $this->notes_array['allowedFileTypesInZipFolder']['text'] = sprintf($this->_('ZIP files may only contain the following file types:  %s'), $variables[0]);
+            $this->notes_array['allowedFileTypesInZipFolder']['value'] = $variables[0];
+        }
+
+        // max file size of a file inside a ZIP file
+        if ($validator == 'maxAllowedFileSizeOfFileInZipFolder') {
+            $this->notes_array['maxAllowedFileSizeOfFileInZipFolder']['text'] = sprintf($this->_('ZIP files may only contain files which are not larger than %s'), $variables[0]);
+            $this->notes_array['maxAllowedFileSizeOfFileInZipFolder']['value'] = $variables[0];
+        }
+
+        // not allowed file type(s) inside a ZIP folder
+        if ($validator == 'notAllowedFileTypesInZipFolder') {
+            $this->notes_array['notAllowedFileTypesInZipFolder']['text'] = sprintf($this->_('ZIP files may not contain files of the following file types: %s'), $variables[0]);
+            $this->notes_array['notAllowedFileTypesInZipFolder']['value'] = $variables[0];
+        }
+
         // inform about max filesize
 
         if ($validator == 'allowedFileSize') {
