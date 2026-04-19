@@ -1980,3 +1980,22 @@ This new validator can check if a specific string value is stored in the databas
 In addition a new validation rule to validate the number of files inside a ZIP archive has been added.
 
 - [maxFilesInZIPFolder](https://github.com/juergenweb/FrontendForms/blob/main/README.md#maxfilesinzipfolder)
+
+
+## 2026-04-19
+
+**9 new validators especially for ZIP folders added**
+
+This update comes with a bunch of new validation rules especially for ZIP folders an their contents.
+
+* [maxFilesInZIPFolder](https://github.com/juergenweb/FrontendForms/blob/main/README.md#maxfilesinzipfolder)
+* [minFilesInZIPFolder](https://github.com/juergenweb/FrontendForms/blob/main/README.md#minfilesinzipfolder)
+* [maxTotalFileSizeZipUncompressed](https://github.com/juergenweb/FrontendForms/blob/main/README.md#maxtotalfilesizezipuncompressed)
+* [requiredFileNamesInZip](https://github.com/juergenweb/FrontendForms/blob/main/README.md#requiredfilenamesinzip)
+* [maxNumberOfZipFolders](https://github.com/juergenweb/FrontendForms/blob/main/README.md#maxnumberofzipfolders)
+* [maxDepthOfZipFolders](https://github.com/juergenweb/FrontendForms/blob/main/README.md#maxdepthofzipfolders)
+* [allowedFileTypesInZipFolder](https://github.com/juergenweb/FrontendForms/blob/main/README.md#allowedfiletypesinzipfolder)
+* [notAllowedFileTypesInZipFolder](https://github.com/juergenweb/FrontendForms/blob/main/README.md#notallowedfiletypesinzipfolder)
+* [maxAllowedFileSizeOfFileInZipFolder](https://github.com/juergenweb/FrontendForms/blob/main/README.md#maxallowedfilesizeoffileinzipfolder)
+
+The ZIP folders will be extracted on a safe place and all files inside of this folders will be validated. The files inside these ZIP folders are not public reachable, so there should not be any security risk at all. Afterwards the temporarly opened ZIP folders will be removed from this safe place automatically. 
