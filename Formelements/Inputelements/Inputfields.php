@@ -41,7 +41,7 @@ abstract class Inputfields extends Element
     protected array $notes_array = []; // property that holds multiple notes as an array - needed for some fields internally
     protected string $form_id_submitted = ''; // get the id of the form after form submission - needed for some validation rules
     protected string|int|bool $useAriaAttr = true; // whether to render area attributes or not
-    const patternInputs = ['text', 'password', 'email', 'search', 'url' ];
+    const patternInputs = ['text', 'password', 'email', 'search', 'url'];
 
     /**
      * Every input field must have a name, so the name is required as parameter in the constructor
@@ -253,6 +253,47 @@ abstract class Inputfields extends Element
     }
 
     /**
+     * Remove a specific array key from a multi-dim. assoc. array
+     * @param array $array
+     * @param string $keyToRemove
+     * @return void
+     */
+    private function removeKeyRecursive(array &$array, string $keyToRemove)
+    {
+        $result = 0;
+        foreach ($array as $key => &$value) {
+
+            // key found → delete
+            if ($key === $keyToRemove) {
+                unset($array[$key]);
+                continue;
+            }
+
+            // value is an array → go deeper
+            if (is_array($value)) {
+                self::removeKeyRecursive($value, $keyToRemove);
+            }
+        }
+
+        unset($value); // solve reference
+    }
+
+    /**
+     * Remove empty array elements from multi-dim. array
+     * @param $input
+     * @return array
+     */
+    private function array_filter_recursive($input)
+    {
+        foreach ($input as &$value) {
+            if (is_array($value)) {
+                $value = self::array_filter_recursive($value);
+            }
+        }
+        return array_filter($input);
+    }
+
+    /**
      * Set a validator rule to validate the input value
      * Checks first if the validator method exists, otherwise do nothing
      * Check https://processwire.com/api/ref/sanitizer/ for all sanitizer methods
@@ -266,150 +307,162 @@ abstract class Inputfields extends Element
         $validator = $args[0];
         $variables = [];
 
-        // check if paramters were set
+        // check if parameters were set
         if (func_num_args() > 1) {
             array_shift($args); // remove the first element (validator name)
             $variables = $args;
         }
 
-        // add form id as prefix to the field name on certain fields if necessary
-        $validatorNames = ['equals', 'different'];
-        if (in_array($validator, $validatorNames)) {
-            if (!str_starts_with($variables[0], $this->form_id_submitted . '-')) {
-                $variables[0] = $this->form_id_submitted . '-' . $variables[0];
+
+        $preNumberOfVariables = count($variables);
+
+        // check if remove notes array is present
+        $this->removeKeyRecursive($variables, 'defaultnotes');
+        $variables = $this->array_filter_recursive($variables);
+        $postNumberOfVariables = count($variables);
+
+        if ($preNumberOfVariables == $postNumberOfVariables) {
+
+            // add form id as prefix to the field name on certain fields if necessary
+            $validatorNames = ['equals', 'different'];
+            if (in_array($validator, $validatorNames)) {
+                if (!str_starts_with($variables[0], $this->form_id_submitted . '-')) {
+                    $variables[0] = $this->form_id_submitted . '-' . $variables[0];
+                }
             }
-        }
 
-        // if only a integer has been added as allowed file size, convert it to kb, MB and so on on error messages
-        if ($validator == 'allowedFileSize') {
-            if (is_int($variables[0])) {
-                $variables[0] = wireBytesStr($variables[0]);
+            // if only a integer has been added as allowed file size, convert it to kb, MB and so on on error messages
+            if ($validator == 'allowedFileSize') {
+                if (is_int($variables[0])) {
+                    $variables[0] = wireBytesStr($variables[0]);
+                }
             }
-        }
 
 
-        $this->api = new ValitronAPI();
-        $this->api->setValidator($validator);
-        $result = $this->api->setRule($validator, $variables);
-        $this->validatonRules[$result['name']] = ['options' => $variables];
+            $this->api = new ValitronAPI();
+            $this->api->setValidator($validator);
+            $result = $this->api->setRule($validator, $variables);
+            $this->validatonRules[$result['name']] = ['options' => $variables];
 
-        // add notes if a special validator has been added
-        // this is special designed for file upload field to inform the user about the restrictions
-        // fe only 40kb, only jpg,....
-        // but can be used for other fields to if needed
+            // add notes if a special validator has been added
+            // this is special designed for file upload field to inform the user about the restrictions
+            // fe only 40kb, only jpg,....
+            // but can be used for other fields to if needed
 
-        // min files in ZIP folders
-        if ($validator == 'minFilesInZIPFolder') {
-            $this->notes_array['minFilesInZIPFolder']['text'] = sprintf($this->_('ZIP folder(s) must contain at least %s files'), $variables[0]);
-            $this->notes_array['minFilesInZIPFolder']['value'] = $variables[0];
-        }
-
-        // max files in ZIP folders
-        if ($validator == 'maxFilesInZIPFolder') {
-            $this->notes_array['maxFilesInZIPFolder']['text'] = sprintf($this->_('ZIP folders may not contain more than %s files'), $variables[0]);
-            $this->notes_array['maxFilesInZIPFolder']['value'] = $variables[0];
-        }
-
-        // max total file size of all files inside a ZIP folder uncompressed
-        if ($validator == 'maxTotalFileSizeZipUncompressed') {
-            $this->notes_array['maxTotalFileSizeZipUncompressed']['text'] = sprintf($this->_('ZIP files must not exceed a total size of %s when extracted'), $variables[0]);
-            $this->notes_array['maxTotalFileSizeZipUncompressed']['value'] = $variables[0];
-        }
-
-        // required filenames inside a ZIP folder
-        if ($validator == 'requiredFileNamesInZip') {
-            $this->notes_array['requiredFileNamesInZip']['text'] = sprintf($this->_('ZIP files must contain the following files: %s'), implode(', ', $variables[0]));
-            $this->notes_array['requiredFileNamesInZip']['value'] = $variables[0];
-        }
-
-        // max number of ZIP files for upload
-        if ($validator == 'maxNumberOfZipFolders') {
-            $this->notes_array['maxNumberOfZipFolders']['text'] = sprintf($this->_('Please do not upload more than %s ZIP file(s)'), $variables[0]);
-            $this->notes_array['maxNumberOfZipFolders']['value'] = $variables[0];
-        }
-
-        // max depth of hierarchy
-        if ($validator == 'maxNumberOfZipFolders') {
-            $this->notes_array['maxNumberOfZipFolders']['text'] = sprintf($this->_('Please do not upload more than %s ZIP file(s)'), $variables[0]);
-            $this->notes_array['maxNumberOfZipFolders']['value'] = $variables[0];
-        }
-
-        // max depth of hierarchy
-        if ($validator == 'maxDepthOfZipFolders') {
-            $this->notes_array['maxDepthOfZipFolders']['text'] = sprintf($this->_('The maximum allowed folder/directory depth in a ZIP file is %s'), $variables[0]);
-            $this->notes_array['maxDepthOfZipFolders']['value'] = $variables[0];
-        }
-
-        // file types allowed inside a ZIP file
-        if ($validator == 'allowedFileTypesInZipFolder') {
-            $this->notes_array['allowedFileTypesInZipFolder']['text'] = sprintf($this->_('ZIP files may only contain the following file types:  %s'), $variables[0]);
-            $this->notes_array['allowedFileTypesInZipFolder']['value'] = $variables[0];
-        }
-
-        // max file size of a file inside a ZIP file
-        if ($validator == 'maxAllowedFileSizeOfFileInZipFolder') {
-            $this->notes_array['maxAllowedFileSizeOfFileInZipFolder']['text'] = sprintf($this->_('ZIP files may only contain files which are not larger than %s'), $variables[0]);
-            $this->notes_array['maxAllowedFileSizeOfFileInZipFolder']['value'] = $variables[0];
-        }
-
-        // not allowed file type(s) inside a ZIP folder
-        if ($validator == 'notAllowedFileTypesInZipFolder') {
-            $this->notes_array['notAllowedFileTypesInZipFolder']['text'] = sprintf($this->_('ZIP files may not contain files of the following file types: %s'), $variables[0]);
-            $this->notes_array['notAllowedFileTypesInZipFolder']['value'] = $variables[0];
-        }
-
-        // inform about max filesize
-
-        if ($validator == 'allowedFileSize') {
-
-            $max_file_size = self::convertToBytes($variables[0]);
-            $this->notes_array['allowedFileSize']['text'] = sprintf($this->_('Please do not upload files larger than %s'),
-                wireBytesStr($variables[0]));
-            $this->notes_array['allowedFileSize']['value'] = $variables[0];
-        }
-
-        // inform about max total file size
-        if ($validator == 'allowedTotalFileSize') {
-            $max_file_size = self::convertToBytes($variables[0]);
-            $this->notes_array['allowedTotalFileSize']['text'] = sprintf($this->_('The total size of all uploaded files must not exceed %s.'),
-                wireBytesStr($variables[0]));
-            $this->notes_array['allowedTotalFileSize']['value'] = $variables[0];
-        }
-
-        // inform about max number of files
-        if ($validator == 'allowedFileNumber') {
-            if (isset($variables[0])) {
-                $this->notes_array['allowedFileNumber']['text'] = sprintf($this->_('Please do not upload more than %s files'),
-                    $variables[0]);
-                $this->notes_array['allowedFileNumber']['value'] = $variables[0];
+            // min files in ZIP folders
+            if ($validator == 'minFilesInZIPFolder') {
+                $this->notes_array['minFilesInZIPFolder']['text'] = sprintf($this->_('ZIP folder(s) must contain at least %s files'), $variables[0]);
+                $this->notes_array['minFilesInZIPFolder']['value'] = $variables[0];
             }
-        }
 
-        // inform about allowed extensions
-        if ($validator == 'allowedFileExt') {
-            if (isset($variables[0])) {
-                $this->notes_array['allowedFileExt']['text'] = sprintf($this->_('Allowed file types: %s'),
-                    implode(', ', $variables[0]));
-                $this->notes_array['allowedFileExt']['value'] = implode(', ', $variables[0]);
+            // max files in ZIP folders
+            if ($validator == 'maxFilesInZIPFolder') {
+                $this->notes_array['maxFilesInZIPFolder']['text'] = sprintf($this->_('ZIP folders may not contain more than %s files'), $variables[0]);
+                $this->notes_array['maxFilesInZIPFolder']['value'] = $variables[0];
             }
-        }
 
-        // inform about allowed extensions in compressed folders (zip, rar,...)
-        if ($validator == 'compressedContentAllowedFileExt') {
-            if (isset($variables[0])) {
-                $this->notes_array['compressedContentAllowedFileExt']['text'] = sprintf($this->_('Allowed file types inside compressed folder(s): %s'),
-                    implode(', ', $variables[0]));
-                $this->notes_array['compressedContentAllowedFileExt']['value'] = implode(', ', $variables[0]);
+            // max total file size of all files inside a ZIP folder uncompressed
+            if ($validator == 'maxTotalFileSizeZipUncompressed') {
+                $this->notes_array['maxTotalFileSizeZipUncompressed']['text'] = sprintf($this->_('ZIP files must not exceed a total size of %s when extracted'), $variables[0]);
+                $this->notes_array['maxTotalFileSizeZipUncompressed']['value'] = $variables[0];
             }
-        }
 
-        // inform about max filesize according to php.ini value
-        if ($validator == 'phpIniFilesize') {
+            // required filenames inside a ZIP folder
+            if ($validator == 'requiredFileNamesInZip') {
+                $this->notes_array['requiredFileNamesInZip']['text'] = sprintf($this->_('ZIP files must contain the following files: %s'), implode(', ', $variables[0]));
+                $this->notes_array['requiredFileNamesInZip']['value'] = $variables[0];
+            }
 
-            $max_file_size = self::convertToBytes(ini_get("upload_max_filesize"), true);
-            $this->notes_array['phpIniFilesize']['text'] = sprintf($this->_('Please do not upload files larger than %s'),
-                wireBytesStr($max_file_size));
-            $this->notes_array['phpIniFilesize']['value'] = $max_file_size;
+            // max number of ZIP files for upload
+            if ($validator == 'maxNumberOfZipFolders') {
+                $this->notes_array['maxNumberOfZipFolders']['text'] = sprintf($this->_('Please do not upload more than %s ZIP file(s)'), $variables[0]);
+                $this->notes_array['maxNumberOfZipFolders']['value'] = $variables[0];
+            }
+
+            // max depth of hierarchy
+            if ($validator == 'maxNumberOfZipFolders') {
+                $this->notes_array['maxNumberOfZipFolders']['text'] = sprintf($this->_('Please do not upload more than %s ZIP file(s)'), $variables[0]);
+                $this->notes_array['maxNumberOfZipFolders']['value'] = $variables[0];
+            }
+
+            // max depth of hierarchy
+            if ($validator == 'maxDepthOfZipFolders') {
+                $this->notes_array['maxDepthOfZipFolders']['text'] = sprintf($this->_('The maximum allowed folder/directory depth in a ZIP file is %s'), $variables[0]);
+                $this->notes_array['maxDepthOfZipFolders']['value'] = $variables[0];
+            }
+
+            // file types allowed inside a ZIP file
+            if ($validator == 'allowedFileTypesInZipFolder') {
+                $this->notes_array['allowedFileTypesInZipFolder']['text'] = sprintf($this->_('ZIP files may only contain the following file types:  %s'), $variables[0]);
+                $this->notes_array['allowedFileTypesInZipFolder']['value'] = $variables[0];
+            }
+
+            // max file size of a file inside a ZIP file
+            if ($validator == 'maxAllowedFileSizeOfFileInZipFolder') {
+                $this->notes_array['maxAllowedFileSizeOfFileInZipFolder']['text'] = sprintf($this->_('ZIP files may only contain files which are not larger than %s'), $variables[0]);
+                $this->notes_array['maxAllowedFileSizeOfFileInZipFolder']['value'] = $variables[0];
+            }
+
+            // not allowed file type(s) inside a ZIP folder
+            if ($validator == 'notAllowedFileTypesInZipFolder') {
+                $this->notes_array['notAllowedFileTypesInZipFolder']['text'] = sprintf($this->_('ZIP files may not contain files of the following file types: %s'), $variables[0]);
+                $this->notes_array['notAllowedFileTypesInZipFolder']['value'] = $variables[0];
+            }
+
+            // inform about max filesize
+
+            if ($validator == 'allowedFileSize') {
+
+                $max_file_size = self::convertToBytes($variables[0]);
+                $this->notes_array['allowedFileSize']['text'] = sprintf($this->_('Please do not upload files larger than %s'),
+                    wireBytesStr($variables[0]));
+                $this->notes_array['allowedFileSize']['value'] = $variables[0];
+            }
+
+            // inform about max total file size
+            if ($validator == 'allowedTotalFileSize') {
+                $max_file_size = self::convertToBytes($variables[0]);
+                $this->notes_array['allowedTotalFileSize']['text'] = sprintf($this->_('The total size of all uploaded files must not exceed %s.'),
+                    wireBytesStr($variables[0]));
+                $this->notes_array['allowedTotalFileSize']['value'] = $variables[0];
+            }
+
+            // inform about max number of files
+            if ($validator == 'allowedFileNumber') {
+                if (isset($variables[0])) {
+                    $this->notes_array['allowedFileNumber']['text'] = sprintf($this->_('Please do not upload more than %s files'),
+                        $variables[0]);
+                    $this->notes_array['allowedFileNumber']['value'] = $variables[0];
+                }
+            }
+
+            // inform about allowed extensions
+            if ($validator == 'allowedFileExt') {
+                if (isset($variables[0])) {
+                    $this->notes_array['allowedFileExt']['text'] = sprintf($this->_('Allowed file types: %s'),
+                        implode(', ', $variables[0]));
+                    $this->notes_array['allowedFileExt']['value'] = implode(', ', $variables[0]);
+                }
+            }
+
+            // inform about allowed extensions in compressed folders (zip, rar,...)
+            if ($validator == 'compressedContentAllowedFileExt') {
+                if (isset($variables[0])) {
+                    $this->notes_array['compressedContentAllowedFileExt']['text'] = sprintf($this->_('Allowed file types inside compressed folder(s): %s'),
+                        implode(', ', $variables[0]));
+                    $this->notes_array['compressedContentAllowedFileExt']['value'] = implode(', ', $variables[0]);
+                }
+            }
+
+            // inform about max filesize according to php.ini value
+            if ($validator == 'phpIniFilesize') {
+
+                $max_file_size = self::convertToBytes(ini_get("upload_max_filesize"), true);
+                $this->notes_array['phpIniFilesize']['text'] = sprintf($this->_('Please do not upload files larger than %s'),
+                    wireBytesStr($max_file_size));
+                $this->notes_array['phpIniFilesize']['value'] = $max_file_size;
+            }
+
         }
 
         // add HTML5 validation attribute if present
@@ -490,7 +543,7 @@ abstract class Inputfields extends Element
     {
 
         // remove pattern attributes if input type is not one of the allowed types for this attribute
-        if(!in_array($this->getAttribute('type'), self::patternInputs)){
+        if (!in_array($this->getAttribute('type'), self::patternInputs)) {
             $this->removeAttribute('pattern');
         }
 
@@ -2097,7 +2150,7 @@ abstract class Inputfields extends Element
     private function beforeAfter(array $value, bool $before): void
     {
         // normalize field name value
-        $fieldName = str_replace($this->getID().'-', '', $value[0]);
+        $fieldName = str_replace($this->getID() . '-', '', $value[0]);
         $this->setAttribute('data-ff_field', $fieldName); // set name of the reference field
         $attribute = ($before) ? 'max' : 'min';
         $this->setAttribute('data-ff_attribute', $attribute);
@@ -2164,7 +2217,7 @@ abstract class Inputfields extends Element
     private function withinOutside(array $value, string $type): void
     {
         // normalize field name value
-        $fieldName = str_replace($this->getID().'-', '', $value[0]);
+        $fieldName = str_replace($this->getID() . '-', '', $value[0]);
         $this->setAttribute('data-ff_field', $fieldName); // get name of the reference field
         $this->setAttribute('data-ff_days', (string)$value[1]);
         $this->setAttribute('data-ff_attribute', ($value[1] > 0) ? 'min' : 'max');
@@ -2264,7 +2317,7 @@ abstract class Inputfields extends Element
     protected function addHTML5requiredIfEmpty(array $value): void
     {
         // normalize field name value
-        $fieldName = str_replace($this->getID().'-', '', $value[0]);
+        $fieldName = str_replace($this->getID() . '-', '', $value[0]);
         $this->setAttribute('data-ff_field', $fieldName);
         $this->setAttribute('data-ff_attribute', 'ff-required');
         $this->setAttribute('data-ff_validator', 'requiredIfEmpty');
@@ -2291,7 +2344,7 @@ abstract class Inputfields extends Element
     protected function addHTML5requiredIfEqual(array $value): void
     {
         // normalize field name value
-        $fieldName = str_replace($this->getID().'-', '', $value[0]);
+        $fieldName = str_replace($this->getID() . '-', '', $value[0]);
         $this->setAttribute('data-ff_field', $fieldName);
         $this->setAttribute('data-ff_attribute', 'ff-required');
         $this->setAttribute('data-ff_validator', 'requiredIfEqual');
