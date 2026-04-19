@@ -745,13 +745,13 @@ class CustomRules extends Tag
             $value = $this->wire('sanitizer')->string($value);
 
             // check if specific template(s) has/have been chosen
-            if(count($params) > 1) {
-                if(is_string($params[1])) {
+            if (count($params) > 1) {
+                if (is_string($params[1])) {
                     // single template
                     $templates = $params[1];
                 } else {
                     // multiple templates
-                    $templates = implode('|',$params[1]);
+                    $templates = implode('|', $params[1]);
                 }
                 $result = $this->wire('pages')->find("template=$templates,$fieldName=$value")->count();
             } else {
@@ -760,24 +760,320 @@ class CustomRules extends Tag
             return (!$result);
         }, $this->_('is already in use. Please enter a different value.'));
 
-
-        V::addRule('maxFilesInZIPFolder', function ($field, $value, $params) {
+        /**
+         * 45) Validates the min number of files inside a ZIP folder
+         * Set the min number as int or string as $param
+         */
+        V::addRule('minFilesInZIPFolder', function ($field, $value, $params) {
 
             $limit = intval($params[0]);
-            $zipfolders = $this->getUploadedZipFilesForValidation($field,false);
+            $zipfolders = $this->getUploadedZipFilesForValidation($field, false);
             $exceeded = [];
-            if($zipfolders) {
+            if ($zipfolders) {
                 foreach ($zipfolders as $filename => $zipfolder) {
                     $totalNumberOfFiles = count($zipfolder);
-                    if($totalNumberOfFiles > $limit) {
+                    if ($totalNumberOfFiles < $limit) {
                         $exceeded[$filename] = $totalNumberOfFiles;
                     }
                 }
-                if($exceeded) return false;
+                if ($exceeded) return false;
             }
 
             return true;
-        }, $this->_('contains more files than the allowed number of files.'));
+        }, $this->_('contains less files inside a ZIP file than the required number of %s files.'));
+
+        /**
+         * 46) Validates the max number of files inside a ZIP folder
+         * Set the max number as int or string as $param
+         */
+        V::addRule('maxFilesInZIPFolder', function ($field, $value, $params) {
+
+            $limit = intval($params[0]);
+            $zipfolders = $this->getUploadedZipFilesForValidation($field, false);
+            $exceeded = [];
+            if ($zipfolders) {
+                foreach ($zipfolders as $filename => $zipfolder) {
+                    $totalNumberOfFiles = count($zipfolder);
+                    if ($totalNumberOfFiles > $limit) {
+                        $exceeded[$filename] = $totalNumberOfFiles;
+                    }
+                }
+                if ($exceeded) return false;
+            }
+
+            return true;
+        }, $this->_('contains more files inside a ZIP file than the maximum allowed number of %s files.'));
+
+
+        /**
+         * 47) Verifies that the uncompressed filesize of all files in an uploaded ZIP folder does not exceed the total file size limit.
+         * Enter the max file size including unit (fe 10 MB)
+         */
+        V::addRule('maxTotalFileSizeZipUncompressed', function ($field, $value, $params) {
+
+            $zipFolders = $this->getUploadedZipFilesForValidation($field, false);
+
+            if (empty($zipFolders)) {
+                return true;
+            }
+
+            $maxSize = Inputfields::convertToBytes($params[0]);
+
+            foreach ($zipFolders as $filename => $zipFolder) {
+
+                $totalSize = 0;
+                foreach ($zipFolder as $file) {
+
+                    $size = filesize($file);
+                    $totalSize += $size;
+
+                    // Early exit
+                    if ($totalSize > $maxSize) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+
+        }, $this->_('contains a ZIP folder whose files (uncompressed) in total exceed the maximum total file size of %s.'));
+
+        /**
+         * 48) Validate if a Zip file contains all files set as $params
+         * A single file could be entered as a string, multiple files have to be entered as an array
+         */
+        V::addRule('requiredFileNamesInZip', function ($field, $value, $params) {
+
+            $zipFolders = $this->getUploadedZipFilesForValidation($field, false);
+            $expected = $params[0];
+
+            // String → Array
+            if (is_string($expected)) {
+                $expected = [$expected];
+            }
+
+            if (empty($zipFolders) || empty($expected)) {
+                return false;
+            }
+
+            // collect all found files
+            $found = [];
+
+            foreach ($zipFolders as $zipFolder) {
+                foreach ($zipFolder as $file) {
+                    $name = basename($file);
+                    $found[$name] = true;
+                }
+            }
+
+            // check if all necessary files exists
+            foreach ($expected as $file) {
+                if (!isset($found[$file])) {
+                    return false;
+                }
+            }
+
+            return true;
+
+        }, $this->_('does not contain all required files inside the ZIP folder.'));
+
+        /**
+         * 49) Validate the number of ZIP files uploaded inside an upload field
+         * This validation rule does only make sense on multi-upload fields
+         * Set the max. number as integer or string param
+         */
+        V::addRule('maxNumberOfZipFolders', function ($field, $value, $params) {
+
+            $zipFolders = $this->getUploadedZipFilesForValidation($field, false);
+            $number = count($zipFolders);
+
+            // sanitize $param[0] to int
+            $maxNumber = intval($params[0]);
+
+            return $number <= $maxNumber;
+        }, $this->_('contains more ZIP folders than the allowed number of %s.'));
+
+        /**
+         * 50) Validate that a ZIP folder does not contain more subfolder levels than allowed in the hierarchy.
+         * Enter the number of allowed levels as integer or string
+         * 0 means that no sub-levels are allowed
+         */
+        V::addRule('maxDepthOfZipFolders', function ($field, $value, $params) {
+
+            $zipFolders = $this->getUploadedZipFilesForValidation($field, false);
+
+            if (empty($zipFolders)) {
+                return true;
+            }
+
+            $maxDepth = isset($params[0]) ? (int)$params[0] : 0;
+
+            foreach ($zipFolders as $filename => $zipFolder) {
+
+                // get basefolder name
+                $baseFolder = pathinfo($filename, PATHINFO_FILENAME);
+
+                foreach ($zipFolder as $path) {
+
+                    // normalize path (Windows + Linux)
+                    $path = str_replace('\\', '/', $path);
+
+                    // find rootfolder
+                    $pos = strpos($path, $baseFolder . '/');
+                    if ($pos === false) {
+                        continue;
+                    }
+
+                    // extract relative path
+                    $relativePath = substr($path, $pos + strlen($baseFolder) + 1);
+
+                    // count number of subfolders
+                    $depth = substr_count($relativePath, '/') - 1;
+
+                    if ($depth > $maxDepth) {
+                        return false; // early exit
+                    }
+                }
+            }
+
+            return true;
+
+        }, $this->_('contains a ZIP folder which has more sublevel folders than the allowed number of %s.'));
+
+
+        /**
+         * 51) Validate if all files inside a ZIP folder are of the allowed type
+         */
+        V::addRule('allowedFileTypesInZipFolder', function ($field, $value, $params) {
+
+            $zipFolders = (array)$this->getUploadedZipFilesForValidation($field, false);
+
+            if (empty($zipFolders)) {
+                return true;
+            }
+
+            // get all allowed file extensions
+            $allowed = $params[0] ?? [];
+
+            // String → Array
+            $allowed = (array)$allowed;
+
+            // normalize all file extensions
+            $allowedMap = [];
+            foreach ($allowed as $ext) {
+                $ext = ltrim(strtolower($ext), '.');
+                if ($ext !== '') {
+                    $allowedMap[$ext] = true;
+                }
+            }
+
+            if (empty($allowedMap)) {
+                return true; // nothing to validate
+            }
+
+            foreach ($zipFolders as $files) {
+                foreach ($files as $file) {
+
+                    $ext = pathinfo($file, PATHINFO_EXTENSION);
+                    $ext = strtolower($ext);
+
+                    // take care about files with no extensions too
+                    if ($ext === '' || !isset($allowedMap[$ext])) {
+                        return false; // early exit
+                    }
+                }
+            }
+
+            return true;
+
+        }, $this->_('contains at least one file of a not allowed type.'));
+
+        /**
+         * 52) Validate if a ZIP folder does not contain a file of a not allowed file type
+         */
+        V::addRule('notAllowedFileTypesInZipFolder', function ($field, $value, $params) {
+
+            $zipFolders = (array)$this->getUploadedZipFilesForValidation($field, false);
+
+            if (empty($zipFolders)) {
+                return true;
+            }
+
+            // get all not allowed file extensions
+            $allowed = $params[0] ?? [];
+
+            // String → Array
+            $allowed = (array)$allowed;
+
+            // normalize all file extensions
+            $allowedMap = [];
+            foreach ($allowed as $ext) {
+                $ext = ltrim(strtolower($ext), '.');
+                if ($ext !== '') {
+                    $allowedMap[$ext] = true;
+                }
+            }
+
+            if (empty($allowedMap)) {
+                return true; // nothing to validate
+            }
+
+            foreach ($zipFolders as $files) {
+                foreach ($files as $file) {
+
+                    $ext = pathinfo($file, PATHINFO_EXTENSION);
+                    $ext = strtolower($ext);
+
+                    // take care about files with no extensions too
+                    if ($ext === '' || isset($allowedMap[$ext])) {
+                        return false; // early exit
+                    }
+                }
+            }
+
+            return true;
+
+        }, $this->_('contains at least one file of a not allowed file type.'));
+
+        /**
+         * 53) Validate the max. filesize of an individual file inside a ZIP folder
+         * Enter the filesize as fe 10 MB, 500 kB, if no unit is entered than the unit is B (Bytes)
+         *
+         */
+        V::addRule('maxAllowedFileSizeOfFileInZipFolder', function ($field, $value, $params) {
+
+            $zipFolders = (array)$this->getUploadedZipFilesForValidation($field, false);
+
+            if (empty($zipFolders)) {
+                return true;
+            }
+
+            $max = $params[0] ?? null;
+
+            if (!$max) {
+                return true; // no limit defined
+            }
+
+            $maxFileSize = Inputfields::convertToBytes($max);
+
+            if ($maxFileSize === null) {
+                return false; // non-valid value
+            }
+
+            foreach ($zipFolders as $files) {
+                foreach ($files as $file) {
+
+                    $size = @filesize($file); // could be false
+
+                    if ($size === false || $size > $maxFileSize) {
+                        return false; // early exit
+                    }
+                }
+            }
+
+            return true;
+
+        }, $this->_('contains at least one file that is larger than the allowed maximum filesize of %s.'));
 
     }
 
