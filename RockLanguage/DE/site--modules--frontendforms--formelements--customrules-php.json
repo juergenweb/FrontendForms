@@ -124,6 +124,33 @@
         },
         "09e1d1816564a23aa73ff34af0abad3b": {
             "text": "ist bereits in Gebrauch. Bitte geben Sie einen anderen Wert ein."
+        },
+        "b570b5c5388c58cb8a956d11713a21f6": {
+            "text": "enth\u00e4lt weniger Dateien in einer ZIP-Datei als die erforderliche Anzahl von %s Dateien."
+        },
+        "a7641381baa257304a5935e9a170f2bd": {
+            "text": "enth\u00e4lt mehr Dateien in einer ZIP-Datei als die maximal zul\u00e4ssige Anzahl von %s Dateien."
+        },
+        "6f927ebe0267b72b246022e802f5c9b4": {
+            "text": "enth\u00e4lt einen ZIP-Ordner, dessen Dateien (unkomprimiert) insgesamt die maximale Gesamtdateigr\u00f6\u00dfe von %s \u00fcberschreiten."
+        },
+        "6854e1a0722f6495fdb0a2a312dc765c": {
+            "text": "enth\u00e4lt nicht alle erforderlichen Dateien im ZIP-Ordner."
+        },
+        "492eeb7cd6545b99e5f712ffee1a18bf": {
+            "text": "enth\u00e4lt mehr ZIP-Ordner als die erlaubte Anzahl von %s."
+        },
+        "a8cae31752a21435b238397e9e24eddb": {
+            "text": "enth\u00e4lt einen ZIP-Ordner, der mehr Unterebenen-Ordner enth\u00e4lt als die zul\u00e4ssige Anzahl von Prozenten."
+        },
+        "2dd9df5546616b86108b08f5734d5b0a": {
+            "text": "enth\u00e4lt mindestens eine Datei eines nicht erlaubten Dateiformats."
+        },
+        "0aa465f2026b0675430c60cc8126fa80": {
+            "text": "enth\u00e4lt mindestens eine Datei eines nicht erlaubten Dateiformats."
+        },
+        "9d483bd859bf89aae5b5d23b9cccb9e7": {
+            "text": "enth\u00e4lt mindestens eine Datei, die gr\u00f6\u00dfer ist als die zul\u00e4ssige maximale Dateigr\u00f6\u00dfe von %s."
         }
     }
 }
