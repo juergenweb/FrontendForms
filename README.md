@@ -1893,6 +1893,14 @@ For more detailed explanation on each validation rule click the link at the vali
 | [requiredIfNotEmpty](#requiredifnotempty) | Checks if a field is not empty if a conditional field is not empty too
 | [uniqueStringValueOfPWField](#uniquestringvalueofpwfield) | Checks if a specific string value is stored inside the DB of a specific ProcessWire field
 | [maxFilesInZIPFolder](#maxfilesinzipfolder) | Checks if the number of files inside a ZIP folder is not higher than allowed
+| [minFilesInZIPFolder](#minfilesinzipfolder) | This validator validates the minimum required number of files inside a ZIP folder
+| [maxTotalFileSizeZipUncompressed](#maxtotalfilesizezipuncompressed) | Verifies that the uncompressed filesize of all files in an uploaded ZIP folder does not exceed the total file size limit
+| [requiredFileNamesInZip](#requiredfilenamesinzip) | Validate if a Zip file contains specific files
+| [maxNumberOfZipFolders](#maxnumberofzipfolders) | Validate the maximum number of ZIP files uploaded inside an upload field
+| [maxDepthOfZipFolders](#maxdepthofzipfolders) | Validates that a ZIP folder does not contain more sub-dir levels than allowed in the hierarchy
+| [allowedFileTypesInZipFolder](#allowedfiletypesinzipfolder) | Validate if all files inside a ZIP folder are of the allowed type
+| [notAllowedFileTypesInZipFolder](#notallowedfiletypesinzipfolder) | Validate if all files inside a ZIP folder are NOT of a specific type
+| [maxAllowedFileSizeOfFileInZipFolder](#notallowedfiletypesinzipfolder) | Validate the max. filesize of an individual file inside a ZIP folder
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
 
