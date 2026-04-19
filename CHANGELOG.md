@@ -1982,7 +1982,7 @@ In addition a new validation rule to validate the number of files inside a ZIP a
 - [maxFilesInZIPFolder](https://github.com/juergenweb/FrontendForms/blob/main/README.md#maxfilesinzipfolder)
 
 
-## 2026-04-19
+## [2.3.15] 2026-04-19
 
 **9 new validators especially for ZIP folders added**
 
@@ -1999,3 +1999,9 @@ This update comes with a bunch of new validation rules especially for ZIP folder
 * [maxAllowedFileSizeOfFileInZipFolder](https://github.com/juergenweb/FrontendForms/blob/main/README.md#maxallowedfilesizeoffileinzipfolder)
 
 The ZIP folders will be extracted on a safe place and all files inside of this folders will be validated. The files inside these ZIP folders are not public reachable, so there should not be any security risk at all. Afterwards the temporarly opened ZIP folders will be removed from this safe place automatically. 
+
+**New parameter added to setRule() to remove automatically added notes text on certain validation rules**
+
+Some validation rules add a default notes text under the inputfield to inform the user about restrictions for the upload. To be able to remove this automatically notes if necessary, a new parameter has been introduced to the setRule() method
+
+[Read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#removing-automatically-added-notes-text-on-validation-rules)
