@@ -2879,9 +2879,9 @@ class Form extends CustomRules
 
                             // start loading all files into a temp dir for later validation purposes
                             // all ZIP files will be extracted to be able to validate the content of the compressed folder
+                            $validation_files = [];
                             if ($_FILES) {
 
-                                $validation_files = [];
                                 foreach ($_FILES as $fieldname => $data) {
 
                                     if (is_array($data['name'])) {
