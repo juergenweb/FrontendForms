@@ -2005,3 +2005,10 @@ The ZIP folders will be extracted on a safe place and all files inside of this f
 Some validation rules add a default notes text under the inputfield to inform the user about restrictions for the upload. To be able to remove this automatically notes if necessary, a new parameter has been introduced to the setRule() method
 
 [Read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#removing-automatically-added-notes-text-on-validation-rules)
+
+## 2026-04-27
+
+**Type error in Form.php fixed**
+
+Thanks to digitalbricks for reporting this issue and providing a solution too.
+[https://github.com/juergenweb/FrontendForms/issues/30](https://github.com/juergenweb/FrontendForms/issues/30)
