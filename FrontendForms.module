@@ -2987,11 +2987,15 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         $stopwords = wire('modules')->get('InputfieldTextArea');
         $stopwords->label = $this->_('STOP word list');
+        $stopwords->textFormat = Inputfield::textFormatMarkdown;
         $desc = $this->_('Enter words that are not allowed in texts (each on a new line).') . ' ';
-        $desc .= $this->_('This list will be used by the "checkContentForSpam" validator to validate a text field against STOP words and other SPAM indicators.') . ' ';
-        $desc .= $this->_('The validator returns false, if a lot of SPAM indicators (not only STOP words) were found, otherwise true.') . ' ';
+        $desc .= $this->_('This list will be used by the "checkContentForSpam" validator to validate a text field against STOP words and other SPAM indicators.') . '<br>';
+        $desc .= $this->_('The validator returns false, if a lot of SPAM indicators (not only STOP words) were found, otherwise true.') . '<br>';
         $desc .= $this->_('This validator is especially created for textarea fields, which contain for example a message of a contact form.');
         $stopwords->description = $desc;
+        $notes = sprintf($this->_('This list is for your own custom SPAM words. All other SPAM words (over 60 000) will be taken from %s and will be downloaded to FrontendForms every 4 weeks automatically.'), '<a href="https://github.com/splorp/wordpress-comment-blocklist/blob/master/blacklist.txt" target="_blank">wordpress-comment-blocklist</a>');
+        $notes .= '<br>'.$this->_('The validator checks whether words from this long list are included in the text, and then marks the text as SPAM.');
+        $stopwords->notes = $notes;
         $stopwords->attr('name', 'input_stopwords');
         $stopwords->attr('value', $this->input_stopwords);
         $fieldset9->add($stopwords, $inputfields);
