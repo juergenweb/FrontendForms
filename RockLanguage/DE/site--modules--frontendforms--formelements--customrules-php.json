@@ -47,6 +47,9 @@
         "5da3ffa343c2825257dc7f7b35b1ff21": {
             "text": "ist in der Liste der beliebtesten Passw\u00f6rter und wird daher nicht gespeichert. Bitte w\u00e4hlen Sie ein anderes aus."
         },
+        "bda00e898391b7e477936d79044230ff": {
+            "text": "enth\u00e4lt eine Datei, die gr\u00f6\u00dfer als die zul\u00e4ssige Dateigr\u00f6\u00dfe ist."
+        },
         "e73de70795c028bc6fabdaf499a9e38f": {
             "text": "verursachte einen Fehler beim Hochladen."
         },
@@ -113,9 +116,6 @@
         "ad54894db3694629a0ff11fd048f6aad": {
             "text": "enth\u00e4lt Dateien, deren Gesamtgr\u00f6\u00dfe gr\u00f6\u00dfer ist als die zul\u00e4ssige Gesamtgr\u00f6\u00dfe."
         },
-        "bda00e898391b7e477936d79044230ff": {
-            "text": "enth\u00e4lt eine Datei, die gr\u00f6\u00dfer als die zul\u00e4ssige Dateigr\u00f6\u00dfe ist."
-        },
         "bc25b3a4b90db7519ac28e2f7c36f461": {
             "text": "enth\u00e4lt Buchstaben und das ist nicht erlaubt."
         },
@@ -151,6 +151,9 @@
         },
         "9d483bd859bf89aae5b5d23b9cccb9e7": {
             "text": "enth\u00e4lt mindestens eine Datei, die gr\u00f6\u00dfer ist als die zul\u00e4ssige maximale Dateigr\u00f6\u00dfe von %s."
+        },
+        "d09b1a9f380c8864c72482ef809546df": {
+            "text": "enth\u00e4lt Teile, die so aussehen, als w\u00e4re dies ein SPAM-Text. Bitte vermeiden Sie die Verwendung folgender Teile in einem Text: Links, Texte kleiner als 10 oder l\u00e4nger als 2000 Zeichen, zu viele Gro\u00dfbuchstaben, Spamw\u00f6rter, wiederholende Zeichen (zum Beispiel !!!)."
         }
     }
 }
