@@ -5,8 +5,17 @@
         "3f73c9dc2eed9de2758f0bf0c32893f4": {
             "text": "Die GD-Bibliothek ist nicht installiert\/aktiviert. Bitte installieren\/aktivieren Sie diese, um die CAPTCHA-Funktion verwenden zu k\u00f6nnen."
         },
+        "7a646761a1d8fa416125a58d609c221d": {
+            "text": "kein HTML Template"
+        },
+        "5bfe6a369b802afdb9bb4909ac726c2d": {
+            "text": "Von FrontendForms \u00fcbernehmen"
+        },
         "0e482f9f5b5ee24fc1c79e192f3e775f": {
             "text": "Leider konnte die Datei, welche die Passw\u00f6rter enth\u00e4lt, nicht von GitHub heruntergeladen werden."
+        },
+        "8413c683b4b27cc3f4dbd4c90329d8ba": {
+            "text": "Kommentare"
         },
         "8c1cf6d64804d4ace27e32e7328ba784": {
             "text": "Die Passwort-Blacklist wurde manuell aktualisiert."
@@ -46,6 +55,21 @@
         },
         "ae3f9d4b86fc69e0ada3f76bf6e57e52": {
             "text": "Verwenden Sie diese Methode, um zu testen, ob das IP-Verbot funktioniert. Geben Sie die IP-Adresse ein, die getestet werden soll."
+        },
+        "b9a5f2677904db4468d20a5fb37984ff": {
+            "text": "Diese Methode ist nur f\u00fcr Testzwecke. Bitte vergessen Sie nicht, diese sp\u00e4ter wieder zu entfernen."
+        },
+        "e76d67cace68112a07c87cd19864fc08": {
+            "text": "Nach rechts schieben"
+        },
+        "16bfbf9c462762cf1cba4134ec53c504": {
+            "text": "Laden"
+        },
+        "0912f8f8b87c237b8415f1b4c0a50438": {
+            "text": "Nochmal versuchen!"
+        },
+        "7a91feaf15ea56c4f0247559f076a9ad": {
+            "text": "Das Antwortformular konnte aufgrund eines Fehlers nicht geladen werden."
         },
         "8f19a8c7566af54ea8981029730e5465": {
             "text": "Sekunden"
@@ -206,6 +230,18 @@
         "672c694e3c32de003ed77fa07f6420cc": {
             "text": "Keines"
         },
+        "df7e7a4b40e471bef3d8def9d6650d13": {
+            "text": "Benutzerdefinierter Pfad f\u00fcr die JSON-Datei der CSS-Klassen"
+        },
+        "fd0b6fed9e7e756313769a11093ff20d": {
+            "text": "Wenn Sie Ihre benutzerdefinierte CSS-Klassendatei in einem anderen Verzeichnis als site\/assets\/files\/FrontendForms\/frameworks\/ speichern m\u00f6chten, k\u00f6nnen Sie hier den Pfad zu Ihrem benutzerdefinierten Verzeichnis eingeben. Andernfalls lassen Sie dieses Feld leer."
+        },
+        "2faa0d1d2f63b7b5358d8d351efed3ee": {
+            "text": "Bitte geben Sie den Pfad beginnend mit site ein (z.B. site\/templates\/FrontendForms\/frameworks)."
+        },
+        "2f97875791a2ed2f8d0e37fe2459f06c": {
+            "text": "Weitere Informationen \u00fcber benutzerdefinierte CSS-json-Dateien finden Sie %s."
+        },
         "3d40631076ed8bbd19e7aaa78cd4f123": {
             "text": "Den Label-Tag nach dem Input Tag bei Checkboxen und Radio Buttons anzeigen"
         },
@@ -217,6 +253,51 @@
         },
         "0e575171cddf029c5b9fdc05725397cc": {
             "text": "Label bei Radio Buttons nach dem Input Tag anzeigen"
+        },
+        "a835c133140136c0416a5045dec59326": {
+            "text": "Bestimmen Sie die Position der Eingabefeld-Beschreibung"
+        },
+        "69749f3e4e496cf5ca8751d7f376deea": {
+            "text": "Standardm\u00e4\u00dfig wird die Eingabefeld-Beschreibung unterhalb des Eingabefeldes angezeigt. Sie k\u00f6nnen diese aber auch direkt vor oder nach dem Label anzeigen lassen."
+        },
+        "024432684785ecba47cfb7084c991a7b": {
+            "text": "Kann bei jeden Formular und auch direkt bei jeden Eingabefeld \u00fcberschrieben werden."
+        },
+        "e1f95af6b2b8cc77ca357af807df6083": {
+            "text": "Vor dem Label"
+        },
+        "1e2b06cfb055315bf2f71e90ae0ce5b0": {
+            "text": "Nach dem Label"
+        },
+        "d10fa5e10f988fcc438a488bb2f5dede": {
+            "text": "Nach dem Eingabefeld"
+        },
+        "a851fbfd023fc53cfd4c3fc913aaf0a7": {
+            "text": "Tag f\u00fcr das Label-Element"
+        },
+        "47a88281427cf3e734aab194a5afded8": {
+            "text": "\u00c4ndern Sie den Tag (p, div,..) f\u00fcr das Label eines Eingabefeldes."
+        },
+        "b4f0a0ac5d61c175e3047e45e049eb5f": {
+            "text": "Wenn Sie mit dem f\u00fcr dieses Element verwendeten Tag nicht zufrieden sind, k\u00f6nnen Sie diesen nach Ihren Bed\u00fcrfnissen \u00e4ndern. Andernfalls lassen Sie dieses Feld leer."
+        },
+        "d12f6160684a8a387e5230025dd672f9": {
+            "text": "Tag f\u00fcr das Beschreibungs-Element"
+        },
+        "36c96e06adda682dc4ad349f4e8d6db9": {
+            "text": "\u00c4ndern Sie den Tag (p, div,..) f\u00fcr die Beschreibung eines Eingabefeldes."
+        },
+        "4d0e0ce61cfb19d808810f874b7a692f": {
+            "text": "Tag f\u00fcr das Hinweis-Element"
+        },
+        "fb6b6fcbd43277c375589aa25f68aca9": {
+            "text": "\u00c4ndern Sie den Tag (p, div,..) f\u00fcr den Hinweistext eines Eingabefeldes."
+        },
+        "ad269b44f7c4efb0b648213a1ec7ff7b": {
+            "text": "Tag f\u00fcr die Meldungselemente (Erfolgs- und Fehlermeldung)"
+        },
+        "99db3bbafc897f6819b0bb8e0621e5d6": {
+            "text": "\u00c4ndern Sie den Tag (p, div,..) f\u00fcr die Meldungselemente eines Eingabefeldes."
         },
         "2aa8d951a33a4ede2260e61e9030b6d7": {
             "text": "Eigene CSS Klassen"
@@ -230,8 +311,17 @@
         "e7a61cfa8747480af7070c6f8e63c812": {
             "text": "Aktuelle Klasse"
         },
+        "d8e4d251281d05f85acf5cc936fa7f4d": {
+            "text": "Einstellungen f\u00fcr die Stylesheets und Skripte"
+        },
         "c454d41006c3a47ef050056608a6b7d9": {
             "text": "JavaScript Einstellung"
+        },
+        "73e95f708b3641dc5fca104171c32081": {
+            "text": "Die Einbindung aller Javascript-Dateien f\u00fcr dieses Modul unterbinden"
+        },
+        "456ec8e7a08a31fa2153bbea0091440c": {
+            "text": "Alle JavaScript-Dateien, die f\u00fcr einige Funktionen des Formulars ben\u00f6tigt werden, werden standardm\u00e4\u00dfig vor dem schlie\u00dfenden body-Tag im Frontend hinzugef\u00fcgt. Sie k\u00f6nnen das Einbetten der Skripte vollst\u00e4ndig verhindern, indem Sie das H\u00e4kchen setzen."
         },
         "6bfa90ae9f841ec2adedb46975347afd": {
             "text": "CSS Einstellungen"
@@ -263,14 +353,17 @@
         "17c6f55cd8c47c8c64246835709f7893": {
             "text": "In der Regel wird w\u00e4hrend des Absendens eines Formulars mittels Ajax ein Fortschrittsbalken mit einem Text angezeigt, um den Benutzer dar\u00fcber zu informieren, dass das Formular abgeschickt wird. Dies k\u00f6nnte f\u00fcr Benutzer als Info hilfreich sein, wenn die Einreichung etwas mehr Zeit in Anspruch nimmt."
         },
+        "222be968e8865753b0dbd5ea083b877e": {
+            "text": "Infotext zur AJAX-Formular\u00fcbermittlung"
+        },
+        "091a75fbe174b195242b44b8a2cc2194": {
+            "text": "Dieser Text wird neben dem Fortschrittsbalken angezeigt, wenn ein Formular \u00fcber AJAX gesendet wird."
+        },
         "5386484801d01d2ece73fbc5f605f739": {
             "text": "E-Mail Einstellungen"
         },
         "7ba64fb164e72d97660308b67acfefbe": {
             "text": "HTML E-Mail Template Einstellungen"
-        },
-        "7a646761a1d8fa416125a58d609c221d": {
-            "text": "kein HTML Template"
         },
         "cebf3687d25bd4915ed8816bf8f91604": {
             "text": "Entscheiden Sie, ob Sie ein HTML Template f\u00fcr Ihre E-Mails verwenden wollen, oder nicht"
@@ -299,8 +392,29 @@
         "3d68b09877695bf8ec9113899ff693ad": {
             "text": "Datenschutz Einstellungen"
         },
+        "8505305f66de73c3333016eca221de3d": {
+            "text": "W\u00e4hlen Sie den Seitentyp aus, der Ihre Datenschutzerkl\u00e4rung enth\u00e4lt"
+        },
+        "3b314feef3a760d84c30ae0cc3204c94": {
+            "text": "W\u00e4hlen Sie aus, ob Sie eine interne ProcessWire-Seite oder eine externe Website als Ihre Datenschutzrichtlinien-Seite verwenden m\u00f6chten."
+        },
+        "de3237e4be387dcdc969538f20f15f00": {
+            "text": "Interne ProcessWire-Seite"
+        },
+        "9e6c6de8da88dcf38c4fe9fd0f71e0b8": {
+            "text": "Seite einer externen Webseite"
+        },
+        "15508888087480ed9fc1f1e912defd00": {
+            "text": "URL zur externen Seite mit der Datenschutzerkl\u00e4rung"
+        },
+        "f0a25732b34fad9f41d2fc69772ed923": {
+            "text": "Geben Sie die URL der Seite ein, die Ihre Datenschutzerkl\u00e4rung enth\u00e4lt."
+        },
         "3b75aac75dc5f26614dab746da7b081d": {
             "text": "Seite f\u00fcr die Datenschutz Richtlinien"
+        },
+        "658a5b22c4343bcf0c40d64bc3ec7696": {
+            "text": "W\u00e4hlen Sie die Seite aus, die Ihre Datenschutzerkl\u00e4rung enth\u00e4lt, indem Sie einen Suchbegriff f\u00fcr den Titel dieser Seite eingeben (z. B. Datenschutz)."
         },
         "b2037d2cf34d31283e27629ce628a7b1": {
             "text": "Der Link zu dieser Seite wird innerhalb der Privacy Klasse f\u00fcr die Erstellung der \"Datenschutz Richtlinie  akzeptieren\" Checkbox genutzt."
@@ -421,6 +535,39 @@
         },
         "2aa3aa9d021c7cfffb5afa08f52fbc51": {
             "text": "Bildh\u00f6he"
+        },
+        "dfd0a82c4bf37b1e90b690a22a20692e": {
+            "text": "="
+        },
+        "768eca1ed547eca00ccf011d5965dcf3": {
+            "text": "Bitte stellen Sie den Offset in px f\u00fcr das Puzzleteil ein."
+        },
+        "125e79ecb78f0bd719a4f1ce1d0b0bcd": {
+            "text": "Je niedriger der Wert, desto genauer muss das Puzzleteil platziert werden (h\u00f6chst m\u00f6glicher Wert: 25)"
+        },
+        "43741f6690a2e9fdfeb31bec1256a6e3": {
+            "text": "Bitte geben Sie eine einfache Frage ein."
+        },
+        "a97ea56b0e00b2379736ae60869ff66a": {
+            "text": "Frage"
+        },
+        "26deae250b75041ac95356308282b3cd": {
+            "text": "Die Frage sollte so einfach wie m\u00f6glich zu beantworten sein."
+        },
+        "9ab98b4c1aeeff244bb72c7c32a24bb3": {
+            "text": "Zum Beispiel: Welche Farbe hat ein gr\u00fcner Apfel"
+        },
+        "2a7d24a0ec9fd2aa89bf61daf2cfd703": {
+            "text": "Bitte geben Sie verschiedene akzeptierte Antworten ein (jede in eine eigene Zeile!!)."
+        },
+        "cce75deb233360295f6767182c938f32": {
+            "text": "Akzeptierte Antworten"
+        },
+        "0a21b20cae23f15cb9670eaa9a43c176": {
+            "text": "Sie k\u00f6nnen so viele Antworten eingeben, wie Sie m\u00f6chten, aber mindestens eine muss eingegeben werden. Sie m\u00fcssen nicht auf Gro\u00df- und Kleinschreibung achten (zum Beispiel: \"Gr\u00fcn\" ist dasselbe wie \"gr\u00fcn\")."
+        },
+        "718ff6327d50b46b85385ef573e025b9": {
+            "text": "Geben Sie mehrere Antworten ein, die akzeptiert werden (jede in einer neuen Zeile). Zum Beispiel: gr\u00fcn, Farbe gr\u00fcn, ist gr\u00fcn"
         },
         "ee19916811cfab5d6de311e94d3c49a9": {
             "text": "Einstellungen f\u00fcr den Bildhintergrund"
@@ -647,6 +794,9 @@
         "27c0974a7e22792e2c0e27e54f96e9c6": {
             "text": "Ein Passwort muss mindestens eines der folgenden Zeichen enthalten:"
         },
+        "979083b28045c36b48be1d5fa27be1a5": {
+            "text": "Es wurden keine Passwortanforderungen festgelegt!"
+        },
         "ae7850d0d0d0551097e9f426b2bfde13": {
             "text": "Zur Bearbeitungsseite des Passwortfeldes"
         },
@@ -725,8 +875,14 @@
         "460d997b9205d3a198de11fdb0a23c14": {
             "text": "Gehen Sie zu den Einstellungen, um die Protokollierung fehlgeschlagener Versuche zu aktivieren"
         },
-        "8413c683b4b27cc3f4dbd4c90329d8ba": {
-            "text": "Kommentare"
+        "df8fab9f40e065403f37075117b2a501": {
+            "text": "Die captchaimage.php Datei konnte nicht in das Stammverzeichnis (%s) kopiert werden, da das Stammverzeichnis nicht beschreibbar ist."
+        },
+        "891175e69759b61ded4cced3cd78c7f3": {
+            "text": "Machen Sie sich keine Sorgen! Um dieses Problem zu beheben, verschieben Sie die Datei bitte selbst von \"\/site\/modules\/FrontendForms\/Formelements\/Captcha\/captchaimage.php\" nach \"%s\"."
+        },
+        "eab3c0ee882228e43d1bf3acf4e8dd25": {
+            "text": "Andernfalls erhalten Sie eine Fehlermeldung, wenn Sie versuchen, das CAPTCHA in Ihren Formularen zu verwenden."
         },
         "6adf97f83acf6453d4a6a4b1070f3754": {
             "text": "keines"
@@ -740,161 +896,32 @@
         "eac81cf85a218bdfa7a2b63d062fe715": {
             "text": "Standardm\u00e4\u00dfig werden alle E-Mails mit WireMail versendet, aber Sie k\u00f6nnen in diesem Feld auch ein benutzerdefiniertes Modul f\u00fcr den Versand von E-Mails ausw\u00e4hlen."
         },
-        "a835c133140136c0416a5045dec59326": {
-            "text": "Bestimmen Sie die Position der Eingabefeld-Beschreibung"
+        "25b3f0eaa795100fe4f9c24291ec3f15": {
+            "text": "Ma\u00dfnahme 8: Stoppw\u00f6rter zur Identifizierung von SPAM-Texten"
         },
-        "69749f3e4e496cf5ca8751d7f376deea": {
-            "text": "Standardm\u00e4\u00dfig wird die Eingabefeld-Beschreibung unterhalb des Eingabefeldes angezeigt. Sie k\u00f6nnen diese aber auch direkt vor oder nach dem Label anzeigen lassen."
+        "7123d891b4eff7c50e0b9306bc457b69": {
+            "text": "Definieren Sie einige Stoppw\u00f6rter, die \u00fcber den Validator \"checkContentForSpam\" \u00fcberpr\u00fcft werden k\u00f6nnen."
         },
-        "024432684785ecba47cfb7084c991a7b": {
-            "text": "Kann bei jeden Formular und auch direkt bei jeden Eingabefeld \u00fcberschrieben werden."
+        "b44b67b26c628993f0fef14e305a1fba": {
+            "text": "STOP-Wortliste"
         },
-        "e1f95af6b2b8cc77ca357af807df6083": {
-            "text": "Vor dem Label"
+        "f568d5a999a59a5aabff2e2f23cb7179": {
+            "text": "Geben Sie W\u00f6rter ein, die in Texten nicht erlaubt sind (jedes Wort in einer neuen Zeile)."
         },
-        "1e2b06cfb055315bf2f71e90ae0ce5b0": {
-            "text": "Nach dem Label"
+        "bc7aafc341a5978f2bd04c20859772d7": {
+            "text": "Diese Liste wird vom \"checkContentForSpam\"-Validator verwendet, um ein Textfeld mit STOP-W\u00f6rtern und anderen SPAM-Indikatoren zu \u00fcberpr\u00fcfen."
         },
-        "d10fa5e10f988fcc438a488bb2f5dede": {
-            "text": "Nach dem Eingabefeld"
+        "38f6995b9ef89f27b1e80d9c2d5f761f": {
+            "text": "Der Validator gibt false zur\u00fcck, wenn viele SPAM-Indikatoren (nicht nur STOP-W\u00f6rter) gefunden wurden, ansonsten true."
         },
-        "df8fab9f40e065403f37075117b2a501": {
-            "text": "Die captchaimage.php Datei konnte nicht in das Stammverzeichnis (%s) kopiert werden, da das Stammverzeichnis nicht beschreibbar ist."
+        "0ec1afdafb938691c120e2ed55b6fa9b": {
+            "text": "Dieser Validator wird speziell f\u00fcr Texarea-Felder erstellt, die beispielsweise eine Nachricht eines Kontaktformulars enthalten."
         },
-        "891175e69759b61ded4cced3cd78c7f3": {
-            "text": "Machen Sie sich keine Sorgen! Um dieses Problem zu beheben, verschieben Sie die Datei bitte selbst von \"\/site\/modules\/FrontendForms\/Formelements\/Captcha\/captchaimage.php\" nach \"%s\"."
+        "5b761e0a69a936f27a374af9329e6737": {
+            "text": "Diese Liste ist f\u00fcr Ihre eigenen benutzerdefinierten SPAM-W\u00f6rter. Alle anderen SPAM-W\u00f6rter (\u00fcber 60.000) werden aus %s \u00fcbernommen und alle 4 Wochen automatisch in FrontendForms heruntergeladen."
         },
-        "eab3c0ee882228e43d1bf3acf4e8dd25": {
-            "text": "Andernfalls erhalten Sie eine Fehlermeldung, wenn Sie versuchen, das CAPTCHA in Ihren Formularen zu verwenden."
-        },
-        "43741f6690a2e9fdfeb31bec1256a6e3": {
-            "text": "Bitte geben Sie eine einfache Frage ein."
-        },
-        "a97ea56b0e00b2379736ae60869ff66a": {
-            "text": "Frage"
-        },
-        "26deae250b75041ac95356308282b3cd": {
-            "text": "Die Frage sollte so einfach wie m\u00f6glich zu beantworten sein."
-        },
-        "9ab98b4c1aeeff244bb72c7c32a24bb3": {
-            "text": "Zum Beispiel: Welche Farbe hat ein gr\u00fcner Apfel"
-        },
-        "2a7d24a0ec9fd2aa89bf61daf2cfd703": {
-            "text": "Bitte geben Sie verschiedene akzeptierte Antworten ein (jede in eine eigene Zeile!!)."
-        },
-        "cce75deb233360295f6767182c938f32": {
-            "text": "Akzeptierte Antworten"
-        },
-        "0a21b20cae23f15cb9670eaa9a43c176": {
-            "text": "Sie k\u00f6nnen so viele Antworten eingeben, wie Sie m\u00f6chten, aber mindestens eine muss eingegeben werden. Sie m\u00fcssen nicht auf Gro\u00df- und Kleinschreibung achten (zum Beispiel: \"Gr\u00fcn\" ist dasselbe wie \"gr\u00fcn\")."
-        },
-        "718ff6327d50b46b85385ef573e025b9": {
-            "text": "Geben Sie mehrere Antworten ein, die akzeptiert werden (jede in einer neuen Zeile). Zum Beispiel: gr\u00fcn, Farbe gr\u00fcn, ist gr\u00fcn"
-        },
-        "df7e7a4b40e471bef3d8def9d6650d13": {
-            "text": "Benutzerdefinierter Pfad f\u00fcr die JSON-Datei der CSS-Klassen"
-        },
-        "fd0b6fed9e7e756313769a11093ff20d": {
-            "text": "Wenn Sie Ihre benutzerdefinierte CSS-Klassendatei in einem anderen Verzeichnis als site\/assets\/files\/FrontendForms\/frameworks\/ speichern m\u00f6chten, k\u00f6nnen Sie hier den Pfad zu Ihrem benutzerdefinierten Verzeichnis eingeben. Andernfalls lassen Sie dieses Feld leer."
-        },
-        "2faa0d1d2f63b7b5358d8d351efed3ee": {
-            "text": "Bitte geben Sie den Pfad beginnend mit site ein (z.B. site\/templates\/FrontendForms\/frameworks)."
-        },
-        "2f97875791a2ed2f8d0e37fe2459f06c": {
-            "text": "Weitere Informationen \u00fcber benutzerdefinierte CSS-json-Dateien finden Sie %s."
-        },
-        "a851fbfd023fc53cfd4c3fc913aaf0a7": {
-            "text": "Tag f\u00fcr das Label-Element"
-        },
-        "47a88281427cf3e734aab194a5afded8": {
-            "text": "\u00c4ndern Sie den Tag (p, div,..) f\u00fcr das Label eines Eingabefeldes."
-        },
-        "b4f0a0ac5d61c175e3047e45e049eb5f": {
-            "text": "Wenn Sie mit dem f\u00fcr dieses Element verwendeten Tag nicht zufrieden sind, k\u00f6nnen Sie diesen nach Ihren Bed\u00fcrfnissen \u00e4ndern. Andernfalls lassen Sie dieses Feld leer."
-        },
-        "d12f6160684a8a387e5230025dd672f9": {
-            "text": "Tag f\u00fcr das Beschreibungs-Element"
-        },
-        "36c96e06adda682dc4ad349f4e8d6db9": {
-            "text": "\u00c4ndern Sie den Tag (p, div,..) f\u00fcr die Beschreibung eines Eingabefeldes."
-        },
-        "4d0e0ce61cfb19d808810f874b7a692f": {
-            "text": "Tag f\u00fcr das Hinweis-Element"
-        },
-        "fb6b6fcbd43277c375589aa25f68aca9": {
-            "text": "\u00c4ndern Sie den Tag (p, div,..) f\u00fcr den Hinweistext eines Eingabefeldes."
-        },
-        "ad269b44f7c4efb0b648213a1ec7ff7b": {
-            "text": "Tag f\u00fcr die Meldungselemente (Erfolgs- und Fehlermeldung)"
-        },
-        "99db3bbafc897f6819b0bb8e0621e5d6": {
-            "text": "\u00c4ndern Sie den Tag (p, div,..) f\u00fcr die Meldungselemente eines Eingabefeldes."
-        },
-        "658a5b22c4343bcf0c40d64bc3ec7696": {
-            "text": "W\u00e4hlen Sie die Seite aus, die Ihre Datenschutzerkl\u00e4rung enth\u00e4lt, indem Sie einen Suchbegriff f\u00fcr den Titel dieser Seite eingeben (z. B. Datenschutz)."
-        },
-        "979083b28045c36b48be1d5fa27be1a5": {
-            "text": "Es wurden keine Passwortanforderungen festgelegt!"
-        },
-        "b9a5f2677904db4468d20a5fb37984ff": {
-            "text": "Diese Methode ist nur f\u00fcr Testzwecke. Bitte vergessen Sie nicht, diese sp\u00e4ter wieder zu entfernen."
-        },
-        "e76d67cace68112a07c87cd19864fc08": {
-            "text": "Nach rechts schieben"
-        },
-        "16bfbf9c462762cf1cba4134ec53c504": {
-            "text": "Laden"
-        },
-        "0912f8f8b87c237b8415f1b4c0a50438": {
-            "text": "Nochmal versuchen!"
-        },
-        "dfd0a82c4bf37b1e90b690a22a20692e": {
-            "text": "="
-        },
-        "768eca1ed547eca00ccf011d5965dcf3": {
-            "text": "Bitte stellen Sie den Offset in px f\u00fcr das Puzzleteil ein."
-        },
-        "125e79ecb78f0bd719a4f1ce1d0b0bcd": {
-            "text": "Je niedriger der Wert, desto genauer muss das Puzzleteil platziert werden (h\u00f6chst m\u00f6glicher Wert: 25)"
-        },
-        "d8e4d251281d05f85acf5cc936fa7f4d": {
-            "text": "Einstellungen f\u00fcr die Stylesheets und Skripte"
-        },
-        "73e95f708b3641dc5fca104171c32081": {
-            "text": "Die Einbindung aller Javascript-Dateien f\u00fcr dieses Modul unterbinden"
-        },
-        "456ec8e7a08a31fa2153bbea0091440c": {
-            "text": "Alle JavaScript-Dateien, die f\u00fcr einige Funktionen des Formulars ben\u00f6tigt werden, werden standardm\u00e4\u00dfig vor dem schlie\u00dfenden body-Tag im Frontend hinzugef\u00fcgt. Sie k\u00f6nnen das Einbetten der Skripte vollst\u00e4ndig verhindern, indem Sie das H\u00e4kchen setzen."
-        },
-        "222be968e8865753b0dbd5ea083b877e": {
-            "text": "Infotext zur AJAX-Formular\u00fcbermittlung"
-        },
-        "091a75fbe174b195242b44b8a2cc2194": {
-            "text": "Dieser Text wird neben dem Fortschrittsbalken angezeigt, wenn ein Formular \u00fcber AJAX gesendet wird."
-        },
-        "5bfe6a369b802afdb9bb4909ac726c2d": {
-            "text": "Von FrontendForms \u00fcbernehmen"
-        },
-        "8505305f66de73c3333016eca221de3d": {
-            "text": "W\u00e4hlen Sie den Seitentyp aus, der Ihre Datenschutzerkl\u00e4rung enth\u00e4lt"
-        },
-        "3b314feef3a760d84c30ae0cc3204c94": {
-            "text": "W\u00e4hlen Sie aus, ob Sie eine interne ProcessWire-Seite oder eine externe Website als Ihre Datenschutzrichtlinien-Seite verwenden m\u00f6chten."
-        },
-        "de3237e4be387dcdc969538f20f15f00": {
-            "text": "Interne ProcessWire-Seite"
-        },
-        "9e6c6de8da88dcf38c4fe9fd0f71e0b8": {
-            "text": "Seite einer externen Webseite"
-        },
-        "15508888087480ed9fc1f1e912defd00": {
-            "text": "URL zur externen Seite mit der Datenschutzerkl\u00e4rung"
-        },
-        "f0a25732b34fad9f41d2fc69772ed923": {
-            "text": "Geben Sie die URL der Seite ein, die Ihre Datenschutzerkl\u00e4rung enth\u00e4lt."
-        },
-        "7a91feaf15ea56c4f0247559f076a9ad": {
-            "text": "Das Antwortformular konnte aufgrund eines Fehlers nicht geladen werden."
+        "e108a8c086d39b0e1af2467862132a59": {
+            "text": "Der Validator pr\u00fcft, ob W\u00f6rter aus dieser langen Liste im Text enthalten sind, und markiert den Text dann als SPAM."
         }
     }
 }
