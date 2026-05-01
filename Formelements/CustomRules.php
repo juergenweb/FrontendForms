@@ -1075,6 +1075,154 @@ class CustomRules extends Tag
 
         }, $this->_('contains at least one file that is larger than the allowed maximum filesize of %s.'));
 
+        /**
+         * 54) Validate the text against various SPAM properties to identify SPAM texts
+         * Enter the degree of strictness as a parameter (0 means everything is allowed, 100 means very strict).
+         * This parameter is optional. By default, a level of 50 is set, which means an average strictness
+         * This validator is especially designed for textarea fields to validate for example messages in contact forms
+         */
+        V::addRule('checkContentForSpam', function ($field, $value, $params) {
+
+            // get stop words form module config
+            if (array_key_exists('input_stopwords', $this->wire('modules')->getConfig('FrontendForms'))) {
+                $stopwords = $this->wire('modules')->getConfig('FrontendForms')['input_stopwords'];
+                $stopwords = explode("\n", $stopwords);
+            } else {
+                $stopwords = null;
+            }
+
+            $score = $this->calculateContentScore($value, $stopwords);
+
+            $treshold = $params[0] ?? null;
+            if (!is_null($treshold)) {
+                $treshold = intval($treshold);
+                if ($treshold > 100) $treshold = 100;
+            } else {
+                $treshold = 50;
+            }
+            if ($treshold == 0) { // everything is allowed -> no test for SPAM
+                return true;
+            }
+
+            return $score <= (100 - $treshold);
+
+        }, $this->_('contains parts that look like that this is a SPAM text. Please try to prevent using the following parts in a text: links, text smaller than 10 or longer than 2000 characters, too much uppercase letters, spam words, repeating signs (for example !!!!).'));
+
+    }
+
+
+    /**
+     * Method to calculate the score of a text depending on suspicious content
+     * The higher the number, the higher the possibility that it is a spam text
+     * @param string $text - the text that should be validated
+     * @param array|null $spamWords - list of spam words added to the module config
+     * @return int
+     */
+    private function calculateContentScore(string $text, null|array $spamWords)
+    {
+        $score = 0;
+        $textLower = strtolower($text);
+
+        // 1. check for SPAM words provided inside the stopwords.txt file (over 60 000 words)
+        $stopwordPath = $this->wire('config')->paths->siteModules . 'FrontendForms/stopwords.txt'; // path to password.txt file
+
+        if ($this->wire('files')->exists($stopwordPath)) {
+
+            $foundWords = $this->findSpamWords($text, $stopwordPath);
+            $numberofFoundWords = count($foundWords);
+            if ($numberofFoundWords >= 5) { // 5 or more STOP words found - this is surely a SPAM -> stop and return false
+                return false;
+            }
+            $score += $numberofFoundWords * 20;
+
+            if ($score >= 100) return false;
+
+        }
+
+        // 2. check for my own custom SPAM words set inside the module config
+        if (is_array($spamWords) && array_filter($spamWords)) {
+
+            foreach ($spamWords as $word) {
+                if (strpos($textLower, $word) !== false) {
+                    $score += 20; // every word found counts 20 points
+                    // to prevent overload stop after score reached 100
+                    if ($score >= 100) return false;
+                }
+            }
+        }
+
+        // 3. Check for excessive capital letters (>50% of letters)
+        $letters = preg_replace('/[^a-zA-Z]/', '', $text);
+        if ($letters !== '') {
+            $upperCount = preg_match_all('/[A-Z]/', $letters);
+            $totalLetters = strlen($letters);
+            if (($upperCount / $totalLetters) > 0.5) {
+                $score += 15;
+            }
+        }
+
+        // 4. Check many links (>2 links)
+        $linkCount = preg_match_all('~https?://[^\s]+~i', $text);
+        if ($linkCount > 2) {
+            $score += 20;
+        }
+
+        // 5. Check for repeated special characters (!,??, $$, ##)
+        if (preg_match('/(\!\!|\?\?|\$\$|\#\#)/', $text)) {
+            $score += 10;
+        }
+
+        // 6. Excessive exclamation marks (>5)
+        if (substr_count($text, '!') > 5) {
+            $score += 10;
+        }
+
+        // 7. Short texts with suspicious keywords
+        if (strlen($text) < 50 && $score > 0) {
+            $score += 10;
+        }
+
+        // Maximum Score 100
+        return $score > 100 ? 100 : $score; //Return: 0–100 points
+    }
+
+    private function findSpamWords(string $text, string $filePath, int $chunkSize = 1000): array
+    {
+        static $patterns = null;
+
+        // Patterns nur einmal bauen (wichtig für Performance)
+        if ($patterns === null) {
+            if (!file_exists($filePath)) {
+                throw new Exception("Datei nicht gefunden: " . $filePath);
+            }
+
+            $words = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $words = array_map('trim', $words);
+            $words = array_filter($words);
+
+            // Escapen
+            $escaped = array_map(fn($w) => preg_quote($w, '/'), $words);
+
+            // In Chunks aufteilen (verhindert zu große Regex)
+            $chunks = array_chunk($escaped, $chunkSize);
+
+            $patterns = array_map(function ($chunk) {
+                return '/\b(' . implode('|', $chunk) . ')\b/iu';
+            }, $chunks);
+        }
+
+        $matchesFound = [];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match_all($pattern, $text, $matches)) {
+                foreach ($matches[1] as $hit) {
+                    $matchesFound[] = $hit;
+                }
+            }
+        }
+
+        // Duplikate entfernen
+        return array_values(array_unique($matchesFound));
     }
 
     /**
