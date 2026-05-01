@@ -2012,3 +2012,9 @@ Some validation rules add a default notes text under the inputfield to inform th
 
 Thanks to digitalbricks for reporting this issue and providing a solution too.
 [https://github.com/juergenweb/FrontendForms/issues/30](https://github.com/juergenweb/FrontendForms/issues/30)
+
+**New validator "checkContentForSpam" added**
+
+This new validator is very powerful and can check if a text contains suspicious elements inside a text (fe links, stop words, a lot of uppercase letter and so on). It is especially designed to be used at a textarea field.
+
+Thanks to
