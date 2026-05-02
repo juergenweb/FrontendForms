@@ -1109,7 +1109,7 @@ class CustomRules extends Tag
 
             return $score <= (100 - $treshold);
 
-        }, $this->_('contains parts that look like that this is a SPAM text. Please try to prevent using the following parts in a text: links, text smaller than 10 or longer than 2000 characters, too much uppercase letters, spam words, repeating signs (for example !!!!).'));
+        }, $this->_('contains parts that look like this is a SPAM text. Please avoid using the following parts in a text: more than 2 links, text less than 50 characters, too many words in capital letters, typical spam words, many exclamation marks in a row (e.g. !!!!!).'));
 
     }
 
@@ -1121,91 +1121,140 @@ class CustomRules extends Tag
      * @param array|null $spamWords - list of spam words added to the module config
      * @return int
      */
-    private function calculateContentScore(string $text, null|array $spamWords, null|array $excludes): int
+    private function calculateContentScore(string $text, ?array $spamWords, ?array $excludes): int
     {
         $score = 0;
+
+        // Convert excludes in HashMap  (O(1) instead of O(n))
+        $ex = $excludes ? array_flip($excludes) : [];
+
+        // normalize
         $textLower = strtolower($text);
 
-        // 1. check for SPAM words provided inside the stopwords.txt file (over 60 000 words)
-        if (!in_array('stopwords', $excludes)) {
+        /**
+         * =========================
+         * 1. STOPWORDS (large list)
+         * =========================
+         */
+        if (!isset($ex['stopwords'])) {
 
-            $stopwordPath = $this->wire('config')->paths->siteModules . 'FrontendForms/stopwords.txt'; // path to password.txt file
+            $stopwordPath = $this->wire('config')->paths->siteModules . 'FrontendForms/stopwords.txt';
 
             if ($this->wire('files')->exists($stopwordPath)) {
 
                 $foundWords = $this->findSpamWords($text, $stopwordPath);
-                $numberofFoundWords = count($foundWords);
-                if ($numberofFoundWords >= 5) { // 5 or more STOP words found - this is surely a SPAM -> stop and return false
-                    return 100; // early exit
-                }
-                $score += $numberofFoundWords * 20;
+                $count = count($foundWords);
 
-                if ($score >= 100) return 100; // early exit
+                if ($count >= 5) return 100;
 
+                $score += $count * 20;
+                if ($score >= 100) return 100;
             }
         }
 
-        // 2. check for my own custom SPAM words set inside the module config
-        if (!in_array('customstopwords', $excludes)) {
-            if (is_array($spamWords) && array_filter($spamWords)) {
+        /**
+         * =========================
+         * 2. CUSTOM WORDS
+         * =========================
+         */
+        if (!isset($ex['customstopwords']) && !empty($spamWords)) {
 
-                foreach ($spamWords as $word) {
-                    if (strpos($textLower, $word) !== false) {
-                        $score += 20; // every word found counts 20 points
-                        // to prevent overload stop after score reached 100
-                        if ($score >= 100) return 100; // early exit
+            foreach ($spamWords as $word) {
+                if (!$word) continue;
+
+                if (strpos($textLower, $word) !== false) {
+                    $score += 20;
+                    if ($score >= 100) return 100;
+                }
+            }
+        }
+
+        /**
+         * =========================
+         * 3. CAPITAL LETTERS (1 pass)
+         * =========================
+         */
+        if (!isset($ex['captialletters'])) {
+
+            $len = strlen($text);
+            if ($len > 0) {
+                $letters = 0;
+                $upper = 0;
+
+                for ($i = 0; $i < $len; $i++) {
+                    $c = $text[$i];
+
+                    if (($c >= 'a' && $c <= 'z') || ($c >= 'A' && $c <= 'Z')) {
+                        $letters++;
+                        if ($c >= 'A' && $c <= 'Z') $upper++;
                     }
                 }
-            }
-        }
 
-        // 3. Check for excessive capital letters (>50% of letters)
-        if (!in_array('captialletters', $excludes)) {
-            $letters = preg_replace('/[^a-zA-Z]/', '', $text);
-            if ($letters !== '') {
-                $upperCount = preg_match_all('/[A-Z]/', $letters);
-                $totalLetters = strlen($letters);
-                if (($upperCount / $totalLetters) > 0.5) {
+                if ($letters > 0 && ($upper / $letters) > 0.5) {
                     $score += 15;
+                    if ($score >= 100) return 100;
                 }
             }
-            if ($score >= 100) return 100; // early exit
         }
 
-        // 4. Check many links (>2 links)
-        if (!in_array('links', $excludes)) {
-            $linkCount = preg_match_all('~https?://[^\s]+~i', $text);
-            if ($linkCount > 2) {
+        /**
+         * ==========
+         * 4. LINKS
+         * ==========
+         */
+        if (!isset($ex['links'])) {
+
+            // schneller als full regex count
+            if (substr_count($textLower, 'http://') + substr_count($textLower, 'https://') > 2) {
                 $score += 20;
+                if ($score >= 100) return 100;
             }
-            if ($score >= 100) return 100; // early exit
         }
 
-        // 5. Check for repeated special characters (!,??, $$, ##)
-        if (!in_array('repeatedchars', $excludes)) {
-            if (preg_match('/(\!\!|\?\?|\$\$|\#\#)/', $text)) {
+        /**
+         * =========================
+         * 5. REPEATED CHARS
+         * =========================
+         */
+        if (!isset($ex['repeatedchars'])) {
+
+            if (
+                str_contains($text, '!!') ||
+                str_contains($text, '??') ||
+                str_contains($text, '$$') ||
+                str_contains($text, '##')
+            ) {
                 $score += 10;
+                if ($score >= 100) return 100;
             }
-            if ($score >= 100) return 100; // early exit
         }
 
-        // 6. Excessive exclamation marks (>5)
-        if (!in_array('eclamations', $excludes)) {
+        /**
+         * =========================
+         * 6. EXCLAMATIONS
+         * =========================
+         */
+        if (!isset($ex['exclamations'])) {
+
             if (substr_count($text, '!') > 5) {
                 $score += 10;
+                if ($score >= 100) return 100;
             }
-            if ($score >= 100) return 100; // early exit
         }
 
-        // 7. Short texts with suspicious keywords
-        if (!in_array('lenght', $excludes)) {
-            if ((strlen($text) < 10 && $score > 0) || (strlen($text) > 2000 && $score > 0)) {
+        /**
+         * =========================
+         * 7. LENGTH CHECK
+         * =========================
+         */
+        if (!isset($ex['lenght'])) {
+
+            if (strlen($text) < 50 && $score > 0) {
                 $score += 10;
             }
         }
 
-        // Maximum Score 100
-        return $score > 100 ? 100 : $score; //Return: 0–100 points
+        return $score > 100 ? 100 : $score;
     }
 
     private function findSpamWords(string $text, string $filePath, int $chunkSize = 1000): array
