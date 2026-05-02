@@ -2511,7 +2511,7 @@ If you want to disable the check for this test please enter the following value 
 
 This validator accepts 2 parameters:
 
-* Treshold: An integer between 0 and 100.> 0 means that anything is allowed (not strict), and 100 means very strict. By default, a value of 50 is set. You can select a value between 0 and 100 to set the severity. The higher the value, the faster a text is identified as SPAM. Sometimes the value can also be set too high. This simply has to be tried out in practice
+* Treshold: An integer between 0 and 100. 0 means that anything is allowed (not strict), and 100 means very strict. By default, a value of 50 is set. You can select a value between 0 and 100 to set the sensitivity. The higher the value, the more likely it is that a text will be identified as SPAM. Sometimes it may be that the value has been set too high and non-SPAM texts are inadvertently identified as SPAM. This simply has to be tried out in practice, which value is suitable. There is no ideal value.
 * Exclusion array: You can add an array that contains all the names of the checks that you don't want to run
 
 ```php
