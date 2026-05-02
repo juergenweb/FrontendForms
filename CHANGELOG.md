@@ -2006,7 +2006,7 @@ Some validation rules add a default notes text under the inputfield to inform th
 
 [Read more](https://github.com/juergenweb/FrontendForms/blob/main/README.md#removing-automatically-added-notes-text-on-validation-rules)
 
-## 2026-04-27
+## [2.3.16] 2026-04-27
 
 **Type error in Form.php fixed**
 
@@ -2015,6 +2015,6 @@ Thanks to digitalbricks for reporting this issue and providing a solution too.
 
 **New validator "checkContentForSpam" added**
 
-This new validator is very powerful and can check if a text contains suspicious elements inside a text (fe links, stop words, a lot of uppercase letter and so on). It is especially designed to be used at a textarea field.
+This new validator is very powerful and can check if a text contains suspicious elements inside a text (fe more than 2 links, stop words, a lot of uppercase letter words and so on). It is designed to be used with text fields.
 
-Thanks to
+You will find a detailed explanation [here](https://github.com/juergenweb/FrontendForms#checkcontentforspam)
