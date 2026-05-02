@@ -152,8 +152,8 @@
         "9d483bd859bf89aae5b5d23b9cccb9e7": {
             "text": "enth\u00e4lt mindestens eine Datei, die gr\u00f6\u00dfer ist als die zul\u00e4ssige maximale Dateigr\u00f6\u00dfe von %s."
         },
-        "d09b1a9f380c8864c72482ef809546df": {
-            "text": "enth\u00e4lt Teile, die so aussehen, als w\u00e4re dies ein SPAM-Text. Bitte vermeiden Sie die Verwendung folgender Teile in einem Text: Links, Texte kleiner als 10 oder l\u00e4nger als 2000 Zeichen, zu viele Gro\u00dfbuchstaben, Spamw\u00f6rter, wiederholende Zeichen (zum Beispiel !!!)."
+        "67d41abe73e7f7fc69c608637d2cb7ae": {
+            "text": "enth\u00e4lt Inhalte, die so aussehen, als w\u00e4re dies ein SPAM-Text. Bitte vermeiden Sie die Verwendung folgender Inhalte in einem Text: mehr als 2 Links, Text kleiner als 50 Zeichen, zu viele W\u00f6rter in Gro\u00dfbuchstaben, typische Spamw\u00f6rter, viele Rufzeichen hintereinander (zum Beispiel !!!)."
         }
     }
 }
