@@ -1,4 +1,3 @@
-validator to check if a text has characteristics of a SPAM text.# FrontendForms
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![ProcessWire 3](https://img.shields.io/badge/ProcessWire-3.x-orange.svg)](https://github.com/processwire/processwire)
 
@@ -2463,6 +2462,9 @@ This is a very powerful validator to check if a text has characteristics of a SP
 * Repeated usage of special characters ($,!,# and ?)
 * Excessive usage of exclamation signs in a row
 * Short text with less then 50 characters and with verious suspicious keywords in it
+
+Each characteristic found adds a certain number of points to the SPAM value, and when the limit is reached, the validator returns *false*.
+By default, the treshold is set to 50 (average), but you can increase or decrease the treshold (described in detail later).
 
 #### 1. STOP words
 These are special terms, such as *Viagra, Bitcoin, insurance* etc., which are often used in SPAM mails. The list of suspicious words used to check is from the following GitHub page: [https://github.com/splorp/wordpress-comment-blocklist/blob/master/blacklist.txt](https://github.com/splorp/wordpress-comment-blocklist/blob/master/blacklist.txt).
