@@ -1091,9 +1091,12 @@ class CustomRules extends Tag
                 $stopwords = null;
             }
 
-            $score = $this->calculateContentScore($value, $stopwords);
-
             $treshold = $params[0] ?? null;
+            $excludes = $params[1] ?? null;
+
+            $score = $this->calculateContentScore($value, $stopwords, $excludes);
+
+
             if (!is_null($treshold)) {
                 $treshold = intval($treshold);
                 if ($treshold > 100) $treshold = 100;
@@ -1118,68 +1121,87 @@ class CustomRules extends Tag
      * @param array|null $spamWords - list of spam words added to the module config
      * @return int
      */
-    private function calculateContentScore(string $text, null|array $spamWords)
+    private function calculateContentScore(string $text, null|array $spamWords, null|array $excludes): int
     {
         $score = 0;
         $textLower = strtolower($text);
 
         // 1. check for SPAM words provided inside the stopwords.txt file (over 60 000 words)
-        $stopwordPath = $this->wire('config')->paths->siteModules . 'FrontendForms/stopwords.txt'; // path to password.txt file
+        if (!in_array('stopwords', $excludes)) {
 
-        if ($this->wire('files')->exists($stopwordPath)) {
+            $stopwordPath = $this->wire('config')->paths->siteModules . 'FrontendForms/stopwords.txt'; // path to password.txt file
 
-            $foundWords = $this->findSpamWords($text, $stopwordPath);
-            $numberofFoundWords = count($foundWords);
-            if ($numberofFoundWords >= 5) { // 5 or more STOP words found - this is surely a SPAM -> stop and return false
-                return false;
+            if ($this->wire('files')->exists($stopwordPath)) {
+
+                $foundWords = $this->findSpamWords($text, $stopwordPath);
+                $numberofFoundWords = count($foundWords);
+                if ($numberofFoundWords >= 5) { // 5 or more STOP words found - this is surely a SPAM -> stop and return false
+                    return 100; // early exit
+                }
+                $score += $numberofFoundWords * 20;
+
+                if ($score >= 100) return 100; // early exit
+
             }
-            $score += $numberofFoundWords * 20;
-
-            if ($score >= 100) return false;
-
         }
 
         // 2. check for my own custom SPAM words set inside the module config
-        if (is_array($spamWords) && array_filter($spamWords)) {
+        if (!in_array('customstopwords', $excludes)) {
+            if (is_array($spamWords) && array_filter($spamWords)) {
 
-            foreach ($spamWords as $word) {
-                if (strpos($textLower, $word) !== false) {
-                    $score += 20; // every word found counts 20 points
-                    // to prevent overload stop after score reached 100
-                    if ($score >= 100) return false;
+                foreach ($spamWords as $word) {
+                    if (strpos($textLower, $word) !== false) {
+                        $score += 20; // every word found counts 20 points
+                        // to prevent overload stop after score reached 100
+                        if ($score >= 100) return 100; // early exit
+                    }
                 }
             }
         }
 
         // 3. Check for excessive capital letters (>50% of letters)
-        $letters = preg_replace('/[^a-zA-Z]/', '', $text);
-        if ($letters !== '') {
-            $upperCount = preg_match_all('/[A-Z]/', $letters);
-            $totalLetters = strlen($letters);
-            if (($upperCount / $totalLetters) > 0.5) {
-                $score += 15;
+        if (!in_array('captialletters', $excludes)) {
+            $letters = preg_replace('/[^a-zA-Z]/', '', $text);
+            if ($letters !== '') {
+                $upperCount = preg_match_all('/[A-Z]/', $letters);
+                $totalLetters = strlen($letters);
+                if (($upperCount / $totalLetters) > 0.5) {
+                    $score += 15;
+                }
             }
+            if ($score >= 100) return 100; // early exit
         }
 
         // 4. Check many links (>2 links)
-        $linkCount = preg_match_all('~https?://[^\s]+~i', $text);
-        if ($linkCount > 2) {
-            $score += 20;
+        if (!in_array('links', $excludes)) {
+            $linkCount = preg_match_all('~https?://[^\s]+~i', $text);
+            if ($linkCount > 2) {
+                $score += 20;
+            }
+            if ($score >= 100) return 100; // early exit
         }
 
         // 5. Check for repeated special characters (!,??, $$, ##)
-        if (preg_match('/(\!\!|\?\?|\$\$|\#\#)/', $text)) {
-            $score += 10;
+        if (!in_array('repeatedchars', $excludes)) {
+            if (preg_match('/(\!\!|\?\?|\$\$|\#\#)/', $text)) {
+                $score += 10;
+            }
+            if ($score >= 100) return 100; // early exit
         }
 
         // 6. Excessive exclamation marks (>5)
-        if (substr_count($text, '!') > 5) {
-            $score += 10;
+        if (!in_array('eclamations', $excludes)) {
+            if (substr_count($text, '!') > 5) {
+                $score += 10;
+            }
+            if ($score >= 100) return 100; // early exit
         }
 
         // 7. Short texts with suspicious keywords
-        if (strlen($text) < 50 && $score > 0) {
-            $score += 10;
+        if (!in_array('lenght', $excludes)) {
+            if ((strlen($text) < 10 && $score > 0) || (strlen($text) > 2000 && $score > 0)) {
+                $score += 10;
+            }
         }
 
         // Maximum Score 100
