@@ -2454,58 +2454,73 @@ field->setRule('maxAllowedFileSizeOfFileInZipFolder', '1 MB'); // In this case a
 
 ### checkContentForSpam
 
-This is a very powerful validator to check if a text has characteristics of a SPAM text. By default it test for the following characteristics:
+This is a very powerful validator to check if a text has characteristics of a SPAM text. By default it tests for the following characteristics:
+
+* Presence of STOP/SPAM words
+* Capital letters of over 50%
+* More than 2 Links inside the text
+* Repeated usage of special characters ($,!,# and ?)
+* Excessive usage of exclamation signs in a row
+* Short text with less then 50 characters and with verious suspicious keywords in it
 
 #### 1. STOP words
-These are special words that occur often in SPAM mails like *viagra, bitcoin, insurance* and so on. The words will be taken from the following GitHub page: [https://github.com/splorp/wordpress-comment-blocklist/blob/master/blacklist.txt](https://github.com/splorp/wordpress-comment-blocklist/blob/master/blacklist.txt).
+These are special terms, such as *Viagra, Bitcoin, insurance* etc., which are often used in SPAM mails. The list of suspicious words used to check is from the following GitHub page: [https://github.com/splorp/wordpress-comment-blocklist/blob/master/blacklist.txt](https://github.com/splorp/wordpress-comment-blocklist/blob/master/blacklist.txt).
 
-This list contains more than 60 000 STOP words and will be downloaded to FrontendForms once per month to get the latest STOP words. You do not need to do anything.
+This list contains more than 60,000 STOP words and is downloaded once a month to FrontendForms to always get the latest STOP words. You don't have to do anything.
 
-The text will be analyzed if one or more of the words on the list occur in the text. Each word found increases the SPAM score of 20 points. 
+The text is analyzed to see if one or more of the words on the list appear in the text. Each word found increases the SPAM score by 20 points.
 
-If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *stopwords*
+If you want to disable this check please enter the following value to the second parameter of validation rule: *stopwords*
 
 #### 2. Custom STOP words
-This is the same check as the first one "STOP words" but in this case you can check for your own custom STOP words, which you have added to the module config in the backend. Under *Measure 8* inside the SPAM section of the module configuration you can enter your custom words inside a textarea field.
+This is the same check as the first "STOP words" check, but in this case you can search the text for your own custom STOP words. Under *Measure 8* in the SPAM section of the module configuration, you can enter your custom words in a textarea field.
 
 If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *customstopwords*
 
 #### 3. Capital letters 
-Spam texts often include words in uppercase letters like *OFFER, URGENT* and so on. This check takes a look if there are words with uppercase letters present and increases the SPAM score.
+Spam text often contains uppercase words of over 50% of the total text (for example, "THIS IS AMAZING, CLICK NOW"). This check checks for more than 50% capital letters in the text, and then increases the SPAM score by 15.
 
-If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *capitalletters*
+If you want to disable this check please enter the following value to the second parameter of validation rule: *capitalletters*
 
 #### 4. Links 
-Spam texts often include to a website or landing page. This check takes a look if there are links inside the text present and increases the SPAM score.
+Spam texts often contain links to a website or a landing page. This check checks if there are more than 2 links in the text and then increases the SPAM score by 20.
 
 If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *links*
 
-#### 4. Repeated characters 
-Spam texts often include often repeating characters like "*!!, ##, $$, ??*. This check takes a look if there are repeating characters inside the text present and increases the SPAM score.
+#### 4. Repeated special characters 
+Spam texts often include the following repeating characters: *!!, ##, $$, ??* (for example "BUY NOW!!! LIMITED OFFER!!! $$$"). This check takes a look if there are repeating characters inside the text present and increases the SPAM score by 10.
 
 If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *repeatedchars*
 
 #### 5. Excessive exclamation marks usage 
-Spam texts often include often multiple exlamation signs "*!!!!!!*. This check takes a look if there are multiple exclamation signs used inside the text present and increases the SPAM score.
+Spam texts often contain several exclamation marks "*!!!! *" in a row. This check checks for multiple exclamation signs in the text, and then increments the SPAM score by 10.
 
 If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *eclamations*
 
-#### 6. Short and very long texts with suspicious keywords 
-Spam texts often include often multiple exlamation signs "*!!!!!!*. This check takes a look if there are multiple exclamation signs used inside the text present and increases the SPAM score.
+#### 6. Short texts with suspicious keywords 
+Spam texts are often short and include keywords (for example *"Free money now!!!"*). If the text is shorter than 50 characters and includes SPAM words then the SPAM score will be increased by 10
 
 If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *length*
+
+#### Practical usage
+
+This validator accepts 2 parameters:
+
+* Treshold: An integer between 0 and 100.> 0 means that anything is allowed (not strict), and 100 means very strict. By default, a value of 50 is set. You can select a value between 0 and 100 to set the severity. The higher the value, the faster a text is identified as SPAM. Sometimes the value can also be set too high. This simply has to be tried out in practice
+* Exclusion array: You can add an array that contains all the names of the checks that you don't want to run
+
+```php
+field->setRule('checkContentForSpam', 30, ['stopwords', 'links']); // first parameter (treshold/sensitivity) ist set to 30 and the following tests are disabled: testing for stop words and testing for links
+```
+
+The default usage is without these 2 parameters:
 
 ```php
 field->setRule('checkContentForSpam'); // this is the default usage including all test for SPAM
 ```
 
-```php
-field->setRule('checkContentForSpam', 30); // in this case 30 is set as the treshold the reduce the strictness for SPAM (default is 50)
-```
+This validation rule makes only sense for text fields, especially for textarea fields. 
 
-```php
-field->setRule('checkContentForSpam', 50, ['stopwords', 'links']); // first parameter (treshold/sensitivity) ist set to 50 and the following tests are disabled: testing for stop words and testing for links
-```
 
 ## Create your own custom validation rules
 
