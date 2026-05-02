@@ -1913,6 +1913,7 @@ For more detailed explanation on each validation rule click the link at the vali
 | [allowedFileTypesInZipFolder](#allowedfiletypesinzipfolder) | Validate if all files inside a ZIP folder are of the allowed type
 | [notAllowedFileTypesInZipFolder](#notallowedfiletypesinzipfolder) | Validate if all files inside a ZIP folder are NOT of a specific type
 | [maxAllowedFileSizeOfFileInZipFolder](#notallowedfiletypesinzipfolder) | Validate the max. filesize of an individual file inside a ZIP folder
+| [checkContentForSpam](#checkcontentforspam) | Validator to check if a text has characteristics of a SPAM text
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
 
