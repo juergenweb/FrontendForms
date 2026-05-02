@@ -2478,6 +2478,8 @@ If you want to disable this check please enter the following value to the second
 #### 2. Custom STOP words
 This is the same check as the first "STOP words" check, but in this case you can search the text for your own custom STOP words. Under *Measure 8* in the SPAM section of the module configuration, you can enter your custom words in a textarea field.
 
+Each custom STOP word found in the text increases the SPAM score by 15.
+
 If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *customstopwords*
 
 #### 3. Capital letters 
