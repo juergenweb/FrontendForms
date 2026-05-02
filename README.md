@@ -1,4 +1,4 @@
-# FrontendForms
+validator to check if a text has characteristics of a SPAM text.# FrontendForms
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![ProcessWire 3](https://img.shields.io/badge/ProcessWire-3.x-orange.svg)](https://github.com/processwire/processwire)
 
@@ -2496,7 +2496,7 @@ If you want to disable the check for this test please enter the following value 
 #### 5. Excessive exclamation marks usage 
 Spam texts often contain several exclamation marks "*!!!! *" in a row. This check checks for multiple exclamation signs in the text, and then increments the SPAM score by 10.
 
-If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *eclamations*
+If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *exclamations*
 
 #### 6. Short texts with suspicious keywords 
 Spam texts are often short and include keywords (for example *"Free money now!!!"*). If the text is shorter than 50 characters and includes SPAM words then the SPAM score will be increased by 10
