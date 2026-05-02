@@ -2494,7 +2494,7 @@ Spam texts often include the following repeating characters: *!!, ##, $$, ??* (f
 If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *repeatedchars*
 
 #### 5. Excessive exclamation marks usage 
-Spam texts often contain several exclamation marks "*!!!! *" in a row. This check checks for multiple exclamation signs in the text, and then increments the SPAM score by 10.
+Spam texts often contain several exclamation marks "*!!!!! *" in a row. This check checks if there are more than 5 exclamation signs in a row in the text, and then increments the SPAM score by 10.
 
 If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *exclamations*
 
