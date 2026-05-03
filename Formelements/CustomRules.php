@@ -1142,7 +1142,7 @@ class CustomRules extends Tag
 
             if ($this->wire('files')->exists($stopwordPath)) {
 
-                $foundWords = $this->findSpamWords($text, $stopwordPath);
+                $foundWords = $this->findWords($text, $stopwordPath);
                 $count = count($foundWords);
 
                 if ($count >= 5) return 100;
@@ -1257,7 +1257,7 @@ class CustomRules extends Tag
         return $score > 100 ? 100 : $score;
     }
 
-    private function findSpamWords(string $text, string $filePath, int $chunkSize = 1000): array
+    private function findWords(string $text, string $filePath, int $chunkSize = 1000): array
     {
         static $patterns = null;
 
