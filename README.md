@@ -2521,7 +2521,7 @@ field->setRule('checkContentForSpam', 30, ['stopwords', 'links']); // first para
 The default usage is without these 2 parameters:
 
 ```php
-field->setRule('checkContentForSpam'); // this is the default usage including all test for SPAM
+field->setRule('checkContentForSpam'); // this is the default usage including all test for SPAM with the default treshold/sensitivity of 50
 ```
 
 This validation rule makes only sense for text fields, especially for textarea fields. 
