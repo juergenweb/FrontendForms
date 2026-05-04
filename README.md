@@ -1725,7 +1725,7 @@ Take a look at the [contact form](https://github.com/juergenweb/FrontendForms/bl
 
 #### setMultiple() - for file input fields
 
-By default, file upload fields are multi-upload fields. With this method you change between single or multi-upload field by adding true or false inside the parenthesis:
+By default, file upload fields are multi-upload fields. This means that you can upload multiple files. If you want to restrict the file upload only to a single file, you can use this method to change this behavior. With this method you change between single or multi-upload field by adding true or false inside the parenthesis:
 
 True (default): renders a multiple upload field; False: renders a single upload field
 
