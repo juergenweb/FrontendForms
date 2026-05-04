@@ -1731,7 +1731,7 @@ True (default): renders a multiple upload field; False: renders a single upload 
 
 ```php
 $fielupload = new InputFile('upload');
-$fielupload->allowMultiple(false); // turns a multi-upload field into a single upload field
+$fielupload->setMultiple(false); // turns a multi-upload field into a single upload field
 ```
 
 If you want the file upload field to be a muti-upload field, you do not have to add the setMultiple() method to the file upload field, because upload fields are multi-upload fields by default. So it only makes sense if you want to change it to a single upload field.
