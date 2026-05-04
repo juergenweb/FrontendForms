@@ -109,11 +109,11 @@ class InputFile extends Input
     public function setMultiple(bool $multiple = true): self
     {
         $this->multiple = $multiple;
-        if ($multiple) {
-            $this->setAttribute('multiple');
-        } else {
-            $this->removeAttribute('multiple');
-        }
+
+        $multiple
+            ? $this->setAttribute('multiple')
+            : $this->removeAttribute('multiple');
+
         return $this;
     }
 
@@ -132,34 +132,60 @@ class InputFile extends Input
      */
     public function ___renderInputFile(): string
     {
-        // add additional suffix to ID attribute to display always the current file name next to the upload button on single upload fields
+        // ID
         $this->setAttribute('id', $this->getAttribute('id') . '-fileupload');
-        // add brackets to name attribute if multiple attribute is present
-        if ($this->getMultiple())
+
+        // Name
+        if ($this->getMultiple()) {
             $this->setAttribute('name', $this->getAttribute('name') . '[]');
-        switch ($this->frontendforms['input_framework']) {
-            case('uikit3.json'):
-                $out = $this->renderInput();
-                $out .= $this->button->render();
-                $this->wrapper->setContent($out);
+        }
+
+        $framework = $this->frontendforms['input_framework'] ?? '';
+        $out = '';
+
+        switch ($framework) {
+            case 'uikit3.json':
+                $content = $this->renderInput() . $this->button->render();
+                $this->wrapper->setContent($content);
                 $out = $this->wrapper->render();
                 break;
-            case('bulma1.json'):
-                $out = $this->append('<span class="file-cta"><span class="file-label">' . $this->_('Select files') . '</span>');
-                $this->labelWrapper->setContent($out->renderInput());
-                $out = $this->labelWrapper->render();
-                $this->wrapper->setContent($out);
+
+            case 'bulma1.json':
+                $label = sprintf(
+                    '<span class="file-cta"><span class="file-label">%s</span></span>',
+                    $this->_('Select files')
+                );
+
+                $this->labelWrapper->setContent(
+                    $this->append($label)->renderInput()
+                );
+
+                $this->wrapper->setContent($this->labelWrapper->render());
                 $out = $this->wrapper->render();
                 break;
+
             default:
                 $out = $this->renderInput();
         }
+
+        // Files Area
         if ($this->showClearLink) {
-            $out .= '<div class="files-area"><div id="' . $this->getID() . '-files" class="files-list"></div></div>';
+            $out .= sprintf(
+                '<div class="files-area"><div id="%s-files" class="files-list"></div></div>',
+                $this->getID()
+            );
         }
 
+        // Total File Size
         if ($this->getMultiple() && $this->getShowTotalFileSize()) {
-            $out .= '<div class="ff-total-file-size"><span class="ff-totallabel">' . $this->_('Total') . ':</span><span id="' . $this->getID() . '-total">0 kB</span></span></div>';
+            $out .= sprintf(
+                '<div class="ff-total-file-size">
+                <span class="ff-totallabel">%s:</span>
+                <span id="%s-total">0 kB</span>
+            </div>',
+                $this->_('Total'),
+                $this->getID()
+            );
         }
 
         return $out;
@@ -171,41 +197,51 @@ class InputFile extends Input
      */
     public function ___render(): string
     {
+        $notes = &$this->notes_array;
 
-        // check for simultaneous presence of 'phpIniFilesize' and 'allowedFileSize'
-        if ((array_key_exists('phpIniFilesize', $this->notes_array)) && (array_key_exists('allowedFileSize',
-                $this->notes_array))) {
-            $allowed = Inputfields::convertToBytes($this->notes_array['allowedFileSize']['value']);
-            $ini = Inputfields::convertToBytes($this->notes_array['phpIniFilesize']['value']);
-            if ($allowed <= $ini) {
-                // allowed filesize is larger than the one in ini.php - so take only the value of php.ini
-                unset($this->notes_array['phpIniFilesize']); // remove phpIniFilesize from the array
-            } else {
-                unset($this->notes_array['allowedFileSize']); // remove allowedFileSize from the array
+        // phpIniFilesize vs allowedFileSize → smaller one wins
+        if (isset($notes['phpIniFilesize'], $notes['allowedFileSize'])) {
+            $allowed = Inputfields::convertToBytes($notes['allowedFileSize']['value']);
+            $ini = Inputfields::convertToBytes($notes['phpIniFilesize']['value']);
+
+            unset($notes[$allowed <= $ini ? 'phpIniFilesize' : 'allowedFileSize']);
+        }
+
+        $isMultiple = $this->getMultiple();
+
+        // Single Upload → no total size hint
+        if (!$isMultiple) {
+            unset($notes['allowedTotalFileSize']);
+        }
+
+        // set max filesize
+        $fileSize = $notes['phpIniFilesize']['value']
+            ?? $notes['allowedFileSize']['value']
+            ?? null;
+
+        if ($fileSize !== null) {
+            $this->setAttribute(
+                'data-maxfilesize',
+                Inputfields::convertToBytes($fileSize)
+            );
+        }
+
+        // only on multi-upload fields
+        if ($isMultiple) {
+
+            if (isset($notes['allowedFileNumber'])) {
+                $this->setAttribute(
+                    'data-uploadlimit',
+                    $notes['allowedFileNumber']['value']
+                );
             }
-        }
 
-        // disable total file size notes text on single upload fields
-        if (!$this->getAttribute('multiple')) {
-            unset($this->notes_array['allowedTotalFileSize']); // remove allowedFileSize from the array
-        }
-
-
-        // create dataset-maxfilesize attribute depending on validator settings
-        $file_size = $this->notes_array['phpIniFilesize']['value'] ?? $this->notes_array['allowedFileSize']['value'] ?? null;
-
-        if ($file_size !== null) {
-            $this->setAttribute('data-maxfilesize', Inputfields::convertToBytes($file_size)); // set max-size in kb
-        }
-
-        // Add dataset attribute if the number of files to upload is limited by the validator "allowedFileNumber"
-        if ($this->getMultiple() && (array_key_exists('allowedFileNumber', $this->notes_array))) {
-            $this->setAttribute('data-uploadlimit', $this->notes_array['allowedFileNumber']['value']);
-        }
-
-        // Add dataset attribute if the total size of all uploaded files is limited by the validator "allowedTotalFileSize"
-        if ($this->getMultiple() && (array_key_exists('allowedTotalFileSize', $this->notes_array))) {
-            $this->setAttribute('data-maxtotalfilesize', Inputfields::convertToBytes($this->notes_array['allowedTotalFileSize']['value']));
+            if (isset($notes['allowedTotalFileSize'])) {
+                $this->setAttribute(
+                    'data-maxtotalfilesize',
+                    Inputfields::convertToBytes($notes['allowedTotalFileSize']['value'])
+                );
+            }
         }
 
         return parent::___render();
