@@ -1722,6 +1722,29 @@ $m->sendAttachment($form, 'path/to/new/location');  sends attachments and move t
 ```
 Take a look at the [contact form](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactform.php) in the example folder which includes file upload fields.
 
+#### setMultiple() - for file input fields
+
+By default, file upload fields are multi-upload fields. With this method change between single or multi-upload field by adding true or false inside the parenthesis:
+
+True (default): renders a multiple upload field; False: renders a single upload field
+
+```php
+$fielupload = new InputFile('upload');
+$fielupload->allowMultiple(false); // turns a mulit-upload field into a single upload field
+```
+
+Instead of adding the allowMultiple method to the file upload object you can use the pre-defined objects for a single upload and a multi-upload:
+
+```php
+$fieluploadsingle = new FileUploadSingle('upload-single');
+```
+
+```php
+$fieluploadmultiple = new FileUploadMultiple('upload-multiple');
+```
+
+In this case the you do not have to add the allowMultiple() method.
+
 #### mailTemplate() - change/disable the usage of an email template manually
 This is a new method for the WireMail class, that I have created to support the usage of stylish HTML email templates. Usually you will make this setting in the module configuration, but you can overwrite it manually on per form base if needed with this method.
 Use this if you want to use an other template for sending emails or to disable the usage of a template.
