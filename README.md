@@ -1617,7 +1617,6 @@ These methods can only be used on certain input fields and not at all.
 | [showPasswordRequirements()](#showpasswordrequirements---show-the-password-requirements-under-a-password-field)  | show the password requirements under a password field  |
 | [showPasswordToggle()](#showpasswordtoggle---show-a-checkbox-to-make-the-password-value-visible-next-to-a-password-field)  | show a checkbox to make the password value visible next to a password field  |
 | [sendAttachment()](#sendattachment---send-files-via-the-wiremail-class)  | send files via the WireMail class  |
-| [allowMultiple()](#allowmultiple-for-file-input-fields)  | add support for multiple file uploads on input type file  |
 | [mailTemplate()](#mailtemplate---changedisable-the-usage-of-an-email-template-manually)  | change/disable the usage of an email template manually  |
 | [showClearLink()](#showclearlink---show-or-hide-a-link-to-clear-a-file-input-field)  | show/hide all files for upload under the file upload field  |
 | [getClearLink()](#getclearlink---get-the-link-object-described-in-the-previous-method-for-further-manipulations)  | get the link object for the clear input link for further manipulations  |
@@ -1723,17 +1722,6 @@ $m->sendAttachment($form, 'path/to/new/location');  sends attachments and move t
 ```
 Take a look at the [contact form](https://github.com/juergenweb/FrontendForms/blob/main/Examples/contactform.php) in the example folder which includes file upload fields.
 
-#### allowMultiple() for file input fields
-By default, file upload fields only allow to upload 1 file (single upload). With this method you can add support for multiple file uploads by adding true
-or false inside the parenthesis:
-
-**True**: renders a multiple upload field
-**False**: renders a single upload field
-
-```php
-$m = wireMail();
-$m->allowMultiple(true); // turns a single upload field into a multiple upload field
-```
 #### mailTemplate() - change/disable the usage of an email template manually
 This is a new method for the WireMail class, that I have created to support the usage of stylish HTML email templates. Usually you will make this setting in the module configuration, but you can overwrite it manually on per form base if needed with this method.
 Use this if you want to use an other template for sending emails or to disable the usage of a template.
