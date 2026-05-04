@@ -1725,14 +1725,16 @@ Take a look at the [contact form](https://github.com/juergenweb/FrontendForms/bl
 
 #### setMultiple() - for file input fields
 
-By default, file upload fields are multi-upload fields. With this method change between single or multi-upload field by adding true or false inside the parenthesis:
+By default, file upload fields are multi-upload fields. With this method you change between single or multi-upload field by adding true or false inside the parenthesis:
 
 True (default): renders a multiple upload field; False: renders a single upload field
 
 ```php
 $fielupload = new InputFile('upload');
-$fielupload->allowMultiple(false); // turns a mulit-upload field into a single upload field
+$fielupload->allowMultiple(false); // turns a multi-upload field into a single upload field
 ```
+
+If you want the file upload field to be a muti-upload field, you do not have to add the setMultiple() method to the file upload field, because upload fields are multi-upload fields by default. So it only makes sense if you want to change it to a single upload field.
 
 Instead of adding the allowMultiple method to the file upload object you can use the pre-defined objects for a single upload and a multi-upload:
 
