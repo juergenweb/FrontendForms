@@ -1730,8 +1730,8 @@ By default, file upload fields are multi-upload fields. This means that you can 
 True (default): renders a multiple upload field; False: renders a single upload field
 
 ```php
-$fielupload = new InputFile('upload');
-$fielupload->setMultiple(false); // turns a multi-upload field into a single upload field
+$fileupload = new InputFile('upload');
+$fileupload->setMultiple(false); // turns a multi-upload field into a single upload field
 ```
 
 If you want the file upload field to be a muti-upload field, you do not have to add the setMultiple() method to the file upload field, because upload fields are multi-upload fields by default. So it only makes sense if you want to change it to a single upload field.
@@ -1739,11 +1739,11 @@ If you want the file upload field to be a muti-upload field, you do not have to 
 Instead of adding the allowMultiple method to the file upload object you can use the pre-defined objects for a single upload and a multi-upload:
 
 ```php
-$fieluploadsingle = new FileUploadSingle('upload-single');
+$fileuploadsingle = new FileUploadSingle('upload-single');
 ```
 
 ```php
-$fieluploadmultiple = new FileUploadMultiple('upload-multiple');
+$fileuploadmultiple = new FileUploadMultiple('upload-multiple');
 ```
 
 In this case the you do not have to add the allowMultiple() method.
