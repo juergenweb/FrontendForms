@@ -36,13 +36,13 @@ class InputCheckbox extends InputRadioCheckbox
      */
     public function setChecked(): self
     {
-        if ($this->getServerMethod()) {
-            if (isset($_POST[$this->getAttribute('name')])) {
-                $this->setAttribute('checked');
-            }
-        } else {
+        $shouldCheck = !$this->getServerMethod()
+            || isset($_POST[$this->getAttribute('name')]);
+
+        if ($shouldCheck) {
             $this->setAttribute('checked');
         }
+
         return $this;
     }
 
@@ -53,21 +53,22 @@ class InputCheckbox extends InputRadioCheckbox
      */
     public function ___renderInputCheckbox(): string
     {
-        if (in_array($this->getAttribute('value'), $this->getDefaultValue())) {
+        $value = $this->getAttribute('value');
+        $default = (array)$this->getDefaultValue();
+        $post = $this->getPostValue();
+
+        $isChecked =
+            in_array($value, $default, true) ||
+            (
+            is_array($post)
+                ? in_array($value, $post, true)
+                : $post === $value
+            );
+
+        if ($isChecked) {
             $this->setAttribute('checked');
         }
-        // post value is array -> multiple checkbox value
-        if (is_array($this->getPostValue())) {
-            // set checked if post value is contains the checkbox value
-            if (in_array($this->getAttribute('value'), $this->getPostValue())) {
-                $this->setAttribute('checked');
-            }
-        } else {
-            // set checked if post value is equal the checkbox value
-            if ($this->getPostValue() === $this->getAttribute('value')) {
-                $this->setAttribute('checked');
-            }
-        }
+
         return $this->renderInput();
     }
 
