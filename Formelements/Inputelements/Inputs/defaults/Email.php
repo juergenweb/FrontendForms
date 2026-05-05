@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: Email.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 use Exception;
@@ -25,7 +26,6 @@ class Email extends InputEmail
     {
         parent::__construct($id);
         $this->setLabel($this->_('Email'));
-        $this->setRule('email');
     }
 
 
