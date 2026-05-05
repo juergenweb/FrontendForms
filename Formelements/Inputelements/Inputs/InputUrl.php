@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: InputUrl.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 use Exception;
@@ -35,7 +36,7 @@ class InputUrl extends InputText
      */
     public function ___renderInputUrl(): string
     {
-        return $this->renderInput();
+        return parent::renderInputText();
     }
 
 }
