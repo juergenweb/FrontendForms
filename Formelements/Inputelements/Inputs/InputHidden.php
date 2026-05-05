@@ -35,7 +35,7 @@ class InputHidden extends Input
      * Render the input element
      * @return string
      */
-    public function renderInputHidden(): string
+    public function ___renderInputHidden(): string
     {
         return $this->renderInput();
     }
