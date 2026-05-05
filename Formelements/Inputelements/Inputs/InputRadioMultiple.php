@@ -1,15 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
 
 /*
- * Class for creating an input radio multiple element
+ * Class for creating an input radio multiple element.
  *
  * Created by Jürgen K.
  * https://github.com/juergenweb
  * File name: InputRadioMultiple.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 use Exception;
@@ -20,13 +22,11 @@ class InputRadioMultiple extends Input
 {
     use TraitPWOptions, TraitCheckboxesAndRadios, TraitCheckboxesAndRadiosMultiple, TraitOptionElements;
 
-    protected array $radios = []; // array to hold all InputRadio objects
-    protected bool $directionHorizontal = true; // default radio button orientation
+    protected array $radios = [];
+    protected bool $directionHorizontal = true;
     public TextElements $topLabel;
 
-
     /**
-     * @param string $id
      * @throws Exception
      */
     public function __construct(string $id)
@@ -69,7 +69,7 @@ class InputRadioMultiple extends Input
         $radio = new InputRadio($this->getAttribute('name'));
         $radio->setLabel($label)->removeAttribute('class');
         $radio->setAttribute('value', $value);
-        $this->radios = array_merge($this->radios, [$radio]);
+        $this->radios[] = $radio;
         return $radio;
     }
 
@@ -92,93 +92,101 @@ class InputRadioMultiple extends Input
      */
     public function ___renderInputRadioMultiple(): string
     {
+        if (empty($this->radios)) {
+            return '';
+        }
+
+        // pico2: set appendLabel once before the loop
+        if ($this->markupType === 'pico2.json') {
+            $this->appendLabel($this->directionHorizontal);
+        }
+
+        $checkedFound = false;
+        $appendLabel = $this->getAppendLabel();
+        $name = $this->getAttribute('name');
+        $isRequired = $this->hasAttribute('required');
+        $defaultValues = (array)$this->getDefaultValue();
+        $postValue = $this->getPostValue();
         $out = '';
-        if ($this->radios) {
 
-            $checked = [];
-            //array to hold checked radios
-            foreach ($this->radios as $key => $radio) {
-                //Set unique ID for each radio button
-                $radio->setAttribute('id', $this->getAttribute('name') . '-' . $key);
-                $radio->useInputWrapper(false);
-                $radio->useFieldWrapper(false);
-                $radio->getLabel()->disableAsterisk();
+        foreach ($this->radios as $key => $radio) {
+            $inputId = $name . '-' . $key;
 
-                // add required attribute for browser validation
-                if($this->hasAttribute('required')){
-                    $radio->setAttribute('required');
-                }
+            $radio->setAttribute('id', $inputId);
+            $radio->useInputWrapper(false);
+            $radio->useFieldWrapper(false);
+            $radio->getLabel()->disableAsterisk();
 
-                // add for attribute to label tag if it is appended
-                if ($this->getAppendLabel())
-                    $radio->getLabel()->setAttribute('for', $this->getAttribute('id') . '-' . $key);
+            if ($isRequired) {
+                $radio->setAttribute('required');
+            }
 
-                if (!$this->directionHorizontal) {
-                    // vertical align
-                    switch ($this->markupType) {
-                        case ('bootstrap5.json'):
-                            $radio->prepend('<div class="' . $this->getCSSClass('checkinputClass') . '">');
-                            $radio->getLabel()->append('</div>');
-                            break;
-                        case ('pico2.json'):
-                            $this->appendLabel(false);
-                            break;
-                        case ('uikit3.json'):
-                            $radio->getLabel()->setAttribute('class', 'uk-form-label uk-display-inline-block')->append('<br>');
-                            break;
-                        default:
-                            $radio->getLabel()->append('<br>');
-                    }
-                } else {
-                    // horizontal align
-                    switch ($this->markupType) {
-                        case ('bootstrap5.json'):
-                            $radio->prepend('<div class="' . $this->getCSSClass('checkbox_horizontalClass') . '">');
-                            $radio->getLabel()->append('</div>');
-                            break;
-                        case ('pico2.json'):
-                            $this->appendLabel(true);
-                            break;
-                        case('uikit3.json'):
-                            $radio->getLabel()->setAttribute('class', 'uk-form-label uk-display-inline-block');
-                            // add a small margin after the label tag
+            if ($appendLabel) {
+                $radio->getLabel()->setAttribute('for', $inputId);
+            }
 
-                                $radio->getLabel()->setAttribute('class','uk-margin-small-right');
-                            break;
-                        default:
-                    }
-                }
+            $this->applyRadioMarkupFormatting($radio);
 
-                if (in_array($radio->getAttribute('value'), $this->getDefaultValue())) {
-                    $radio->setAttribute('checked');
-                }
+            if (in_array($radio->getAttribute('value'), $defaultValues, strict: true)
+                || $postValue === $radio->getAttribute('value')
+            ) {
+                $radio->setAttribute('checked');
+            }
 
-                if ($this->getPostValue() === $radio->getAttribute('value')) {
-                    $radio->setAttribute('checked');
-                }
-                // if you use the setChecked() method a checked attribute will be added each time, so there can be more checked attributes than allowed
-                // remove multiple checked attributes if present - only 1 checked attribute is allowed
-                // the first checked attribute will be accepted - all others will be removed
-                if (empty($checked)) {
-                    if ($radio->hasAttribute('checked')) {
-                        $checked[] = 1;
-                    }
-                } else {
+            // Only one radio may be checked — remove duplicates
+            if ($radio->hasAttribute('checked')) {
+                if ($checkedFound) {
                     $radio->removeAttribute('checked');
-                }
-                // Render label after input tag or wrap input tag with label tag
-                if ($this->getAppendLabel()) {
-
-                    $out .= $radio->renderInputRadio() . $radio->getLabel()->render();
                 } else {
-
-                    $out .= $radio->render();
+                    $checkedFound = true;
                 }
             }
 
-            $out = $this->setCheckBoxRadioAlignmentClass($this->markupType, $this, $out);
-
+            $out .= $appendLabel
+                ? $radio->renderInputRadio() . $radio->getLabel()->render()
+                : $radio->render();
         }
-        return $out;
+
+        return $this->setCheckBoxRadioAlignmentClass($this->markupType, $this, $out);
+    }
+
+    /**
+     * Create the markup for the various frameworks
+     * @param InputRadio $radio
+     * @return void
+     */
+    private function applyRadioMarkupFormatting(InputRadio $radio): void
+    {
+        if (!$this->directionHorizontal) {
+            switch ($this->markupType) {
+                case 'bootstrap5.json':
+                    $radio->prepend('<div class="' . $this->getCSSClass('checkinputClass') . '">');
+                    $radio->getLabel()->append('</div>');
+                    break;
+                case 'uikit3.json':
+                    $radio->getLabel()
+                        ->setAttribute('class', 'uk-form-label uk-display-inline-block')
+                        ->append('<br>');
+                    break;
+                case 'pico2.json':
+                    break;
+                default:
+                    $radio->getLabel()->append('<br>');
+            }
+        } else {
+            switch ($this->markupType) {
+                case 'bootstrap5.json':
+                    $radio->prepend('<div class="' . $this->getCSSClass('checkbox_horizontalClass') . '">');
+                    $radio->getLabel()->append('</div>');
+                    break;
+                case 'uikit3.json':
+                    $radio->getLabel()
+                        ->setAttribute('class', 'uk-form-label uk-display-inline-block')
+                        ->setAttribute('class', 'uk-margin-small-right');
+                    break;
+                case 'pico2.json':
+                    break;
+            }
+        }
     }
 }
