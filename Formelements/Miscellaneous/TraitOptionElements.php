@@ -11,6 +11,7 @@
      * https://github.com/juergenweb
      * File name: TraitOptionElements.php
      * Created: 24.04.2025
+     * Optimized via Claude AI 05.05.26
      */
 
     trait TraitOptionElements
@@ -22,18 +23,11 @@
          */
         protected function getOptionsPropertyName(): string
         {
-            switch ($this->className) {
-                case 'InputRadioMultiple':
-                    $name = 'radios';
-                    break;
-                case 'InputCheckboxMultiple':
-                    $name = 'checkboxes';
-                    break;
-                default:
-                    $name = 'options';
-            }
-
-            return $name;
+            return match ($this->className) {
+                'InputRadioMultiple'    => 'radios',
+                'InputCheckboxMultiple' => 'checkboxes',
+                default                 => 'options',
+            };
         }
 
         /**
@@ -41,19 +35,17 @@
          * @param string|int $value
          * @return \FrontendForms\InputRadio|\FrontendForms\InputCheckbox|\FrontendForms\Option|null
          */
-        public
-        function getOptionByValue(string|int $value): null|InputRadio|InputCheckbox|Option
+        public function getOptionByValue(string|int $value): InputRadio|InputCheckbox|Option|null
         {
-            $option = null;
             $name = $this->getOptionsPropertyName();
 
-            foreach ($this->$name as $optionElement) {
-                if ($value == $optionElement->getAttribute('value')) {
-                    $option = $optionElement;
-                    break;
+            foreach ($this->$name as $option) {
+                if ($value == $option->getAttribute('value')) {
+                    return $option;
                 }
             }
-            return $option;
+
+            return null;
         }
 
         /**
@@ -61,19 +53,16 @@
          * @param string|int $option -> option value can be a string or an integer
          * @return $this
          */
-        public
-        function removeOptionByValue(string|int $value): void
+        public function removeOptionByValue(string|int $value): void
         {
-
             $name = $this->getOptionsPropertyName();
 
-            foreach ($this->$name as $key => $optionElement) {
-                if ($value == $optionElement->getAttribute('value')) {
+            foreach ($this->$name as $key => $option) {
+                if ($value == $option->getAttribute('value')) {
                     unset($this->$name[$key]);
                     break;
                 }
             }
         }
-
 
     }
