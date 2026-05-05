@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: Button.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 class Button extends Element
@@ -19,14 +20,14 @@ class Button extends Element
     protected string|null $alternativeValue = null;
     protected string|int|bool $useAriaAttr = true; // whether to render area attributes or not
 
-    public function __construct($name = 'submit')
+    public function __construct(string $name = 'submit')
     {
         parent::__construct($name);
         $this->setTag('button');
         $this->setAttribute('name', $name);
-        $this->setAttribute('type', 'submit'); // default is submit
-        $this->setCSSClass('buttonClass');
+        $this->setAttribute('type', 'submit');
         $this->setAttribute('value', $this->_('Send'));
+        $this->setCSSClass('buttonClass');
         $this->showNoContent(false);
         $this->showAttributeValue(true);
     }
@@ -41,7 +42,10 @@ class Button extends Element
         return $this->getWrap();
     }
 
-    public function __toString()
+    /**
+     * @return string
+     */
+    public function __toString(): string
     {
         return $this->render();
     }
@@ -67,7 +71,7 @@ class Button extends Element
         $this->showAttributeValue = $showAttributeValue;
         return $this;
     }
-  
+
     /**
      * Creates a new wrapper object
      * @return Wrapper
@@ -80,7 +84,7 @@ class Button extends Element
     /**
      * Remove the button wrapper
      */
-    protected function removeWrapper()
+    protected function removeWrapper(): void
     {
         $this->removeWrap();
     }
@@ -103,15 +107,16 @@ class Button extends Element
      */
     public function ___render(): string
     {
-        $this->setContent($this->getAttribute('value'));
-        $this->setAttribute('value',$this->getAttribute('value'));
+        $value = $this->getAttribute('value');
+        $this->setContent($value);
+
         $button = $this->renderNonSelfclosingTag($this->getTag(), $this->showNoContent, $this->showAttributeValue);
 
         if ($this->getWrapper()) {
             $this->getWrapper()->setContent($button);
             return $this->getWrapper()->render();
         }
+
         return $button;
     }
-
 }
