@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: InputCheckboxMultiple.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 use Exception;
@@ -100,80 +101,82 @@ class InputCheckboxMultiple extends Input
      */
     public function ___renderInputCheckboxMultiple(): string
     {
-        $out = '';
-
-        if ($this->checkboxes) {
-            $out .= $this->topLabel->render();
-
-            // set post value as value if present
-            $this->setAttribute('value', $this->getPostValue());
-
-            foreach ($this->checkboxes as $key => $checkbox) {
-                //Set unique ID for each radio button
-                $checkbox->setAttribute('id', $this->getAttribute('name') . '-' . $key);
-                $checkbox->getLabel()->setAttribute('class', 'uk-form-label uk-display-inline-block');
-
-                // add for attribute to label tag if it is appended
-                if ($this->getAppendLabel())
-                    $checkbox->getLabel()->setAttribute('for', $this->getAttribute('id') . '-' . $key)->setAttribute('class', 'uk-margin-small-right');
-
-                // add required attribute for browser validation
-                if($this->hasAttribute('required')){
-                    $checkbox->setAttribute('required');
-                    $checkbox->setAttribute('data-multicheckbox', $this->getAttribute('name'));
-                }
-
-                switch ($this->markupType) {
-                    case ('uikit3.json'):
-                        if (!$this->directionHorizontal) {
-                            $checkbox->getLabel()->append('<br>');
-                        } else {
-
-                        }
-                        break;
-                    case ('bootstrap5.json'):
-                        $class = $this->getCSSClass('checkinputClass');
-                        if ($this->directionHorizontal) $class = $this->getCSSClass('checkbox_horizontalClass');
-                        $checkbox->prepend('<div class="' . $class . '">');
-                        $checkbox->getLabel()->append('</div>');
-                        break;
-                    case ('pico2.json'):
-                        if ($this->directionHorizontal) {
-                            // horizontal
-                            $this->appendLabel(true);
-                        } else {
-                            $this->appendLabel(false);
-                        }
-                        break;
-                    default:
-                        if (!$this->directionHorizontal) {
-                            $checkbox->getLabel()->append('<br>');
-                        }
-
-                }
-
-                if (in_array($checkbox->getAttribute('value'), $this->getDefaultValue())) {
-                    $checkbox->setAttribute('checked');
-                }
-
-                if (in_array($checkbox->getAttribute('value'), $this->getPostValue())) {
-                    $checkbox->setAttribute('checked');
-                }
-
-                // Render label after input tag or wrap input tag with label tag
-                if ($this->getAppendLabel()) {
-                    $out .= $checkbox->renderInputCheckbox() . $checkbox->getLabel()->render();
-                } else {
-                    $out .= $checkbox->render();
-                }
-
-            }
-
-            // add additional wrapper over multiple checkboxes
-            $out = $this->setCheckBoxRadioAlignmentClass($this->markupType, $this, $out);
-
+        if (empty($this->checkboxes)) {
+            return '';
         }
 
-        return $out;
+        $out = $this->topLabel->render();
+        $this->setAttribute('value', $this->getPostValue());
+
+        if ($this->markupType === 'pico2.json') {
+            $this->appendLabel($this->directionHorizontal);
+        }
+
+        $checkedValues = array_merge(
+            (array) $this->getDefaultValue(),
+            (array) $this->getPostValue()
+        );
+        $isRequired    = $this->hasAttribute('required');
+        $appendLabel   = $this->getAppendLabel();
+        $name          = $this->getAttribute('name');
+
+        foreach ($this->checkboxes as $key => $checkbox) {
+            $inputId = $name . '-' . $key;
+
+            $checkbox->setAttribute('id', $inputId);
+            $checkbox->getLabel()->setAttribute('class', 'uk-form-label uk-display-inline-block');
+
+            if ($appendLabel) {
+                $checkbox->getLabel()
+                    ->setAttribute('for', $inputId)
+                    ->setAttribute('class', 'uk-margin-small-right');
+            }
+
+            if ($isRequired) {
+                $checkbox->setAttribute('required');
+                $checkbox->setAttribute('data-multicheckbox', $name);
+            }
+
+            $this->applyMarkupFormatting($checkbox);
+
+            if (in_array($checkbox->getAttribute('value'), $checkedValues, strict: true)) {
+                $checkbox->setAttribute('checked');
+            }
+
+            $out .= $appendLabel
+                ? $checkbox->renderInputCheckbox() . $checkbox->getLabel()->render()
+                : $checkbox->render();
+        }
+
+        return $this->setCheckBoxRadioAlignmentClass($this->markupType, $this, $out);
     }
+
+    /**
+     * Render checkboxes depending on framework set
+     * @param object $checkbox
+     * @return void
+     */
+    private function applyMarkupFormatting(object $checkbox): void
+    {
+        switch ($this->markupType) {
+            case 'bootstrap5.json':
+                $class = $this->directionHorizontal
+                    ? $this->getCSSClass('checkbox_horizontalClass')
+                    : $this->getCSSClass('checkinputClass');
+                $checkbox->prepend('<div class="' . $class . '">');
+                $checkbox->getLabel()->append('</div>');
+                break;
+
+            case 'uikit3.json':
+            default:
+                if (!$this->directionHorizontal) {
+                    $checkbox->getLabel()->append('<br>');
+                }
+                break;
+
+            case 'pico2.json':
+                break;
+        }
+    }
+
 }
