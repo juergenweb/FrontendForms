@@ -226,7 +226,7 @@ function handleFileUploads() {
                             // create the badge markup
                             let badgeContentUK = "<span class='uk-light uk-badge uk-padding-small uk-margin-xsmall-top" + invalidFileSizeClass + "'>";
                             badgeContentUK += "<span class='file-delete uk-margin-xsmall-right'><span data-uk-icon='icon: close'></span></span>";
-                            badgeContentUK += "<span class='file-name'>" + file.name + "</span>";
+                            badgeContentUK += "<span class='ff-file-name'>" + file.name + "</span>";
                             badgeContentUK += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
                             fileBlock.innerHTML = badgeContentUK;
 
@@ -260,7 +260,7 @@ function handleFileUploads() {
                             // create the badge markup
                             let badgeContentBS = "<span class='badge mt-2 p-2" + invalidFileSizeClass + "'>";
                             badgeContentBS += "<span class='file-delete me-1'><span class='ff-close'></span></span>";
-                            badgeContentBS += "<span class='file-name'>" + file.name + "</span>";
+                            badgeContentBS += "<span class='ff-file-name'>" + file.name + "</span>";
                             badgeContentBS += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
                             fileBlock.innerHTML = badgeContentBS;
 
