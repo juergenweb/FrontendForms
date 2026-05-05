@@ -10,6 +10,7 @@
      * https://github.com/juergenweb
      * File name: InputPassword.php
      * Created: 03.07.2022
+     * Optimized via Claude AI 05.05.26
      */
 
     use Exception;
@@ -48,14 +49,7 @@
          */
         protected function getMinLength(): string
         {
-            // get the default min length value as set in the input field if present
-            if ($this->passwordField->minlength) {
-                $length = $this->passwordField->minlength;
-            } else {
-                // get the default value from the module
-                $length = $this->passwordModule->minlength;
-            }
-            return (string)$length;
+            return (string)($this->passwordField->minlength ?? $this->passwordModule->minlength);
         }
 
         /**
@@ -108,14 +102,16 @@
 
             // add the description to the password requirement text
             if ($this->showPasswordRequirements) {
-                if (($this->getDescription()->getText()) && ($this->getDescription()->getText() != $this->renderPasswordRequirements())) {
-                    $this->setDescription($this->renderPasswordRequirements() . '<br>' . $this->getDescription()->getText());
-                } else {
-                    $this->setDescription($this->renderPasswordRequirements());
-                }
+
+                $descriptionText = $this->getDescription()->getText();
+                $requirements = $this->renderPasswordRequirements();
+
+                $description = ($descriptionText && $descriptionText !== $requirements)
+                    ? $requirements . '<br>' . $descriptionText
+                    : $requirements;
+
+                $this->setDescription($description);
             }
-
-
 
             if ($this->showPasswordToggle) {
                 $this->append($this->createPasswordToggle()->render());
@@ -132,16 +128,20 @@
          */
         public function renderPasswordRequirements(): ?string
         {
+            $conditions = $this->getPasswordConditions();
 
-            if ($this->getPasswordConditions()) {
-                return sprintf($this->_('The password must be at least %s characters and must contain characters of the following categories: %s.'),
-                    (string)$this->minLength, $this->getPasswordConditions());
-            } else {
-                if ($this->minLength) {
-                    return sprintf($this->_('The password must be at least %s characters.'), (string)$this->minlength);
-                }
-                return null;
+            if ($conditions) {
+                return sprintf(
+                    $this->_('The password must be at least %s characters and must contain characters of the following categories: %s.'),
+                    $this->minLength,
+                    $conditions
+                );
             }
+
+            return $this->minLength ? sprintf(
+                $this->_('The password must be at least %s characters.'),
+                $this->minLength
+            ) : null;
         }
 
         /**
@@ -152,15 +152,20 @@
          */
         protected function getPasswordConditions(): ?string
         {
-            $passwordModule = $this->wire('modules')->get('InputfieldPassword');
-            $requirements = array_unique(array_merge($passwordModule->requirements, (array)$this->passwordField->requirements));
+            $requirements = array_unique(array_merge(
+                (array)$this->passwordModule->requirements,
+                (array)$this->passwordField->requirements
+            ));
+
             if (in_array('none', $requirements)) {
                 return null;
             }
-            $conditions = [];
-            foreach ($requirements as $name) {
-                $conditions[] = $passwordModule->requirementsLabels[$name];
-            }
+
+            $conditions = array_map(
+                fn($name) => $this->passwordModule->requirementsLabels[$name],
+                $requirements
+            );
+
             return implode(', ', $conditions);
         }
     }
