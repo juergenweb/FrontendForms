@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: FieldsetOpen.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 class FieldsetOpen extends Element
@@ -19,9 +20,9 @@ class FieldsetOpen extends Element
 
     public function __construct(?string $id = null)
     {
-       if(!is_null($id)){
+        if ($id !== null) {
             $this->useID = true;
-       }
+        }
         parent::__construct($id);
         $this->legend = new Legend(); // instantiate legend object
         $this->setTag('fieldset');
