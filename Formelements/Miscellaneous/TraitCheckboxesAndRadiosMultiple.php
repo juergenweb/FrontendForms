@@ -9,7 +9,8 @@ namespace FrontendForms;
  * Created by Jürgen K.
  * https://github.com/juergenweb 
  * File name: TraitCheckboxesAndRadiosMultiple.php
- * Created: 21.09.2022 
+ * Created: 21.09.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 
@@ -69,17 +70,10 @@ trait TraitCheckboxesAndRadiosMultiple
     protected function setCheckBoxRadioAlignmentClass(string $markupType, InputCheckboxMultiple|InputRadioMultiple $input, string $out): string
     {
 
-                $wrapper = $input->getMultipleWrapper();
-                if ($input->directionHorizontal) {
-                    $class = 'horizontalWrapperClass';
-                } else {
-                    $class = 'verticalWrapperClass';
-                }
-
-                $wrapper->setCSSClass($class);
-                $wrapper->setContent($out);
-
-                return $wrapper->render();
+        $wrapper = $input->getMultipleWrapper();
+        $wrapper->setCSSClass($input->directionHorizontal ? 'horizontalWrapperClass' : 'verticalWrapperClass');
+        $wrapper->setContent($out);
+        return $wrapper->render();
 
     }
 
