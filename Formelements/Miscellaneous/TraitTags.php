@@ -11,12 +11,13 @@
      * https://github.com/juergenweb
      * File name: TraitTags.php
      * Created: 12.07.2024
+     * Optimized via Claude AI 05.05.26
      */
 
 
     trait TraitTags
     {
-        protected null|string $customTag = null;
+        protected string|null $customTag = null;
 
         /**
          * Overwrite the default setTag() method to set a new property customTag
