@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: SelectMultiple.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 use ProcessWire\WireException;
@@ -38,9 +39,9 @@ class SelectMultiple extends Select
      */
     private function convertNameAttribute(): void
     {
-        $nameAttr = $this->getAttribute('name');
-        if (substr($nameAttr, -1) !== '[]') {
-            $this->setAttribute('name', $nameAttr . '[]');
+        $name = $this->getAttribute('name');
+        if (!str_ends_with($name, '[]')) {
+            $this->setAttribute('name', $name . '[]');
         }
     }
 
