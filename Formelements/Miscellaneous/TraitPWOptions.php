@@ -9,8 +9,9 @@ namespace FrontendForms;
  *
  * Created by Jürgen K.
  * https://github.com/juergenweb
- * File name: FieldsetOpen.php
+ * File name: TraitPWOptions.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 use ProcessWire\WireException;
@@ -29,14 +30,11 @@ trait TraitPWOptions
      */
     protected function setOptionsFromFieldType(string $fieldName, string $addOptionMethodName): void
     {
-        $fieldName = trim($fieldName);
-        $field = $this->wire('fields')->get($fieldName);
-        if ($field) {
-            // field must be a FieldtypeOptions field type
-            if ($field->getFieldtype()->className() === 'FieldtypeOptions') {
-                foreach ($field->type->getOptions($field) as $option) {
-                    $this->$addOptionMethodName($option->title, $option->title ?? $option->value);
-                }
+        $field = $this->wire('fields')->get(trim($fieldName));
+
+        if ($field && $field->getFieldtype()->className() === 'FieldtypeOptions') {
+            foreach ($field->type->getOptions($field) as $option) {
+                $this->$addOptionMethodName($option->title, $option->title ?? $option->value);
             }
         }
     }
