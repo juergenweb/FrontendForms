@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: InputDateTime.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 use Exception;
@@ -28,7 +29,6 @@ class InputDateTime extends InputDate
     {
         parent::__construct($id);
         $this->setAttribute('type', 'datetime-local');
-        $this->setRule('date');
     }
 
     /**
