@@ -10,6 +10,7 @@
      * https://github.com/juergenweb
      * File name: Textarea.php
      * Created: 03.07.2022
+     * Optimized via Claude AI 05.05.26
      */
 
     use Exception;
@@ -52,8 +53,7 @@
         public function useCharacterCounter(bool $use = true): self
         {
             $this->useCharacterCounter = $use;
-            $counter = ($use) ? '1' : '0';
-            $this->setAttribute('data-charactercounter', $counter);
+            $this->setAttribute('data-charactercounter', $use ? '1' : '0');
             return $this;
         }
 
@@ -73,24 +73,22 @@
         public function ___renderTextarea(): string
         {
             $this->setContent($this->getAttribute('value'));
-            // check if counter should be visible
+
             $counter = '';
 
-            if ($this->useCharacterCounter) {
-                // check if max length limitation is set, otherwise a counter does not make sense
-                if (array_key_exists('lengthMax', $this->getRules())) {
-                    // set max characters
-                    $maxChars = (string)$this->getRules()['lengthMax']['options'][0];
-                    $this->charCounter->setAttribute('id', $this->getID() . '-char_count');
-                    $this->charCounter->setAttribute('data-maxreached', $this->_('You have reached the maximum number of characters.'));
-                    $this->charCounter->setContent(sprintf($this->_('You have %s characters left.'), '<span>' . $maxChars . '</span>'));
-                    $this->charCounter->prepend('<div>');
-                    $this->charCounter->append('</div>');
-                    $counter = $this->charCounter->render();
-                }
+            if ($this->useCharacterCounter && array_key_exists('lengthMax', $this->getRules())) {
+                $maxChars = (string) $this->getRules()['lengthMax']['options'][0];
+
+                $this->charCounter->setAttribute('id', $this->getID() . '-char_count');
+                $this->charCounter->setAttribute('data-maxreached', $this->_('You have reached the maximum number of characters.'));
+                $this->charCounter->setContent(sprintf($this->_('You have %s characters left.'), '<span>' . $maxChars . '</span>'));
+                $this->charCounter->prepend('<div>');
+                $this->charCounter->append('</div>');
+
+                $counter = $this->charCounter->render();
             }
-            $textarea = $this->renderNonSelfclosingTag($this->getTag(), true);
-            return $textarea . $counter;
+
+            return $this->renderNonSelfclosingTag($this->getTag(), true) . $counter;
         }
 
     }
