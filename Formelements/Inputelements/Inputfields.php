@@ -1,15 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
 
 /*
- * Base class for creating HTML input elements for collecting user inputs
+ * Base class for creating HTML input elements for collecting user inputs.
  *
  * Created by Jürgen K.
  * https://github.com/juergenweb
  * File name: Inputfields.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 use Exception;
@@ -20,270 +22,161 @@ use function ProcessWire\wireBytesStr;
 
 abstract class Inputfields extends Element
 {
-    // Define all objects
-    protected Label $label; // Object of class Label
-    protected Notes $notes; // Object of class Notes
-    protected Description $description; // Object of class Description
-    protected Errormessage $errormessage; // Object of class error message
-    protected Successmessage $successmessage; // Object of class success message
-    protected Wrapper $customWrapper; // A custom wrapper object for certain use cases
-    protected bool $useCustomWrapper = false;
-    protected FieldWrapper $fieldWrapper; // the wrapper object for the complete form input
-    protected InputWrapper $inputWrapper; // the wrapper object for the input element
-    protected Validator $validator; // the validator object (instantiated via setRule() method)
-    protected ValitronAPI $api; // Default values
-    protected array $sanitizer = []; // array to hold all sanitizer methods for this input field
-    protected array $validatonRules = []; // array to hold all validation rules for one input field (can be none or multiple)
-    protected bool|null $useInputWrapper = null; // show or hide the wrapper for the input element
-    protected bool|null $useFieldWrapper = null; // show or hide the wrapper for the complete field element including label
-    protected string $markupType = ''; // the selected markup type (fe UiKit, none, Bootstrap,... whatever)
-    protected array $defaultValue = []; // array of all default values
-    protected array $notes_array = []; // property that holds multiple notes as an array - needed for some fields internally
-    protected string $form_id_submitted = ''; // get the id of the form after form submission - needed for some validation rules
-    protected string|int|bool $useAriaAttr = true; // whether to render area attributes or not
+    protected Label        $label;
+    protected Notes        $notes;
+    protected Description  $description;
+    protected Errormessage $errormessage;
+    protected Successmessage $successmessage;
+    protected Wrapper      $customWrapper;
+    protected FieldWrapper $fieldWrapper;
+    protected InputWrapper $inputWrapper;
+    protected Validator    $validator;
+    protected ValitronAPI  $api;
+    protected bool         $useCustomWrapper = false;
+    protected bool|null    $useInputWrapper  = null;
+    protected bool|null    $useFieldWrapper  = null;
+    protected bool         $useAriaAttr      = true;
+    protected array        $sanitizer        = [];
+    protected array        $validatonRules   = [];
+    protected array        $defaultValue     = [];
+    protected array        $notes_array      = [];
+    protected string       $markupType       = '';
+    protected string       $form_id_submitted = '';
+
     const patternInputs = ['text', 'password', 'email', 'search', 'url'];
 
     /**
-     * Every input field must have a name, so the name is required as parameter in the constructor
-     * The id will be created out of the name of the input field and the id of the form - can be overwritten
-     * @param string $name
      * @throws WireException
      * @throws WirePermissionException
      * @throws Exception
      */
     public function __construct(string $name)
     {
-        parent::__construct($name); //$this->setAttribute('id', $name);// set ID if input field will be rendered manually without the form class
-        $this->setAttribute('name', $name);// set name attribute
-        $this->customWrapper = new Wrapper(); // instantiate the custom wrapper object
-        $this->fieldWrapper = new FieldWrapper();// instantiate the field wrapper object
-        $this->inputWrapper = new InputWrapper();// instantiate the input wrapper object
-        $this->label = new Label();// instantiate the label object
-        $this->errormessage = new Errormessage();// instantiate the error message object
-        $this->successmessage = new Successmessage();// instantiate the success message object
-        $this->notes = new Notes();// instantiate the notes object
-        $this->description = new Description();// instantiate the description object
-        $this->markupType = $this->frontendforms['input_framework'];//grab the markup type (fe uikit, none, bootstrap,...) and save it to a variable
-        //  Set text sanitizer to all input elements (except multi-value inputs) for security reasons
+        parent::__construct($name);
+        $this->setAttribute('name', $name);
+        $this->customWrapper   = new Wrapper();
+        $this->fieldWrapper    = new FieldWrapper();
+        $this->inputWrapper    = new InputWrapper();
+        $this->label           = new Label();
+        $this->errormessage    = new Errormessage();
+        $this->successmessage  = new Successmessage();
+        $this->notes           = new Notes();
+        $this->description     = new Description();
+        $this->markupType      = $this->frontendforms['input_framework'];
+
         if (!in_array($this->className(), Tag::MULTIVALCLASSES)) {
             $this->setSanitizer('text');
-        }// set sanitizer text to all input fields by default
-        // get form id after submission
-        $this->form_id_submitted = $this->getFormIDFromRequest($_REQUEST);
+        }
 
+        $this->form_id_submitted = $this->getFormIDFromRequest($_REQUEST);
     }
 
-    /**
-     * Method to check if pattern attribute is allowed for the given inputfield
-     * @return bool
-     */
     public function patternAttributeAllowed(): bool
     {
-        $type = $this->getAttribute('type');
-        $allowedInputTypes = ['email', 'password', 'search', 'tel', 'text', 'url'];
-        return (in_array($type, $allowedInputTypes));
+        return in_array($this->getAttribute('type'), ['email', 'password', 'search', 'tel', 'text', 'url']);
     }
 
-    /**
-     * Create a custom wrapper as the most outer container of a form field
-     * This wrapper can be added on per input field base and can be used fe for JavaScript manipulations
-     * @param bool $use
-     * @return Wrapper
-     */
     public function useCustomWrapper(bool $use = true): Wrapper
     {
         $this->useCustomWrapper = $use;
         return $this->customWrapper;
     }
 
-    /**
-     * Get the custom wrapper object for further manipulations if needed
-     * @return Wrapper
-     */
     public function getCustomWrapper(): Wrapper
     {
         return $this->customWrapper;
     }
 
-    /**
-     * Get the id of the form
-     * Works only after Request (Get, Post)
-     * Will be needed for some validation rules
-     * @param array $arr
-     * @return string
-     */
     private function getFormIDFromRequest(array $arr): string
     {
-        $result = '';
         foreach ($arr as $key => $val) {
             if (str_ends_with($key, '-form_id')) {
-                $result = $val;
-                break;
+                return $val;
             }
         }
-        return $result;
+        return '';
     }
 
-    /**
-     * Add the input wrapper to the input field
-     * @param bool $useInputWrapper
-     * @return void
-     */
     public function useInputWrapper(bool $useInputWrapper): void
     {
         $this->useInputWrapper = $useInputWrapper;
     }
 
-    /**
-     * Internal function to check if input wrapper is set on per form base or not
-     * @return bool|null
-     */
     public function getUsageOfInputWrapper(): bool|null
     {
         return $this->useInputWrapper;
     }
 
-    /**
-     * Add the field wrapper to the input field
-     * @param bool $useFieldWrapper
-     * @return void
-     */
     public function useFieldWrapper(bool $useFieldWrapper): void
     {
         $this->useFieldWrapper = $useFieldWrapper;
     }
 
-    /**
-     * Internal function to check if field wrapper is set on per form base or not
-     * @return bool|null
-     */
     public function getUsageOfFieldWrapper(): bool|null
     {
         return $this->useFieldWrapper;
     }
 
-    /**
-     * Get the input wrapper object for further manipulation on per field base
-     * Use this method if you want to add custom attributes or remove attributes to and from the input field wrapper
-     * @return InputWrapper
-     */
     public function getInputWrapper(): InputWrapper
     {
         return $this->inputWrapper;
     }
 
-    /**
-     * Get the field wrapper object for further manipulation on per field base
-     * Use this method if you want to add custom attributes or remove attributes to and from the field wrapper
-     * @return FieldWrapper
-     */
     public function getFieldWrapper(): FieldWrapper
     {
         return $this->fieldWrapper;
     }
 
-    /**
-     * Remove 1, more or all sanitizers if necessary from the input field
-     * If you need to disable it - for whatever reason - you can use this method to remove sanitizers from an input
-     * field
-     * @param array|string|null $sanitizer
-     * null: means that all sanitizers will be removed from the input field
-     * string: remove 1 sanitizer by its name
-     * array: $sanitizers - fe ['text', 'number'] - can be one or multiple sanitizers
-     * @return void
-     */
     public function removeSanitizers(array|string|null $sanitizer = null): void
     {
-        $sanitizers = $this->sanitizer;
-        switch ($sanitizer) {
-            case(is_string($sanitizer)):
-                if (!empty($sanitizer)) {
-                    if (($key = array_search($sanitizer, $sanitizers)) !== false) {
-                        unset($sanitizers[$key]);
-                    }
-                    $this->sanitizer = $sanitizers;
-                }
-                break;
-            case(is_array($sanitizer)):
-                foreach ($sanitizer as $item) {
-                    if (($key = array_search($item, $sanitizers)) !== false) {
-                        unset($sanitizers[$key]);
-                    }
-                }
-                $this->sanitizer = $sanitizers;
-                break;
-            default:
-                $this->sanitizer = [];
+        if ($sanitizer === null) {
+            $this->sanitizer = [];
+            return;
+        }
+
+        foreach ((array) $sanitizer as $item) {
+            $key = array_search($item, $this->sanitizer);
+            if ($key !== false) {
+                unset($this->sanitizer[$key]);
+            }
         }
     }
 
-    /**
-     * Convert a filesize to bytes if
-     * @param string|int $from
-     * @param bool $ini
-     * @return int|null
-     */
     public static function convertToBytes(string|int $from, bool $ini = false): ?int
     {
+        $units = $ini ? ['B', 'K', 'M', 'G', 'T', 'P'] : ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
 
-        if ($ini) {
-            // php.ini only allows 1 letter for the unit
-            $units = ['B', 'K', 'M', 'G', 'T', 'P'];
-        } else {
-            $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+        if (is_int($from)) {
+            $from = (string) $from;
         }
 
-        if (is_int($from)) $from = (string)$from;
-
-        $pos = ($ini) ? -1 : -2;
+        $pos    = $ini ? -1 : -2;
         $number = substr($from, 0, $pos);
         $suffix = strtoupper(substr($from, $pos));
 
-        //B or no suffix
         if (is_numeric(substr($suffix, 0, 1))) {
-            return (int)preg_replace('/[^\d]/', '', $from);
+            return (int) preg_replace('/[^\d]/', '', $from);
         }
 
         $exponent = array_flip($units)[$suffix] ?? null;
-        if ($exponent === null) {
-            return null;
-        }
-
-        return (int)$number * (1024 ** $exponent);
+        return $exponent !== null ? (int) $number * (1024 ** $exponent) : null;
     }
 
-    /**
-     * Remove a specific array key from a multi-dim. assoc. array
-     * @param array $array
-     * @param string $keyToRemove
-     * @return void
-     */
-    private function removeKeyRecursive(array &$array, string $keyToRemove)
+    private function removeKeyRecursive(array &$array, string $keyToRemove): void
     {
-        $result = 0;
         foreach ($array as $key => &$value) {
-
-            // key found → delete
             if ($key === $keyToRemove) {
                 unset($array[$key]);
                 continue;
             }
-
-            // value is an array → go deeper
             if (is_array($value)) {
                 self::removeKeyRecursive($value, $keyToRemove);
             }
         }
-
-        unset($value); // solve reference
+        unset($value);
     }
 
-    /**
-     * Remove empty array elements from multi-dim. array
-     * @param $input
-     * @return array
-     */
-    private function array_filter_recursive($input)
+    private function array_filter_recursive(array $input): array
     {
         foreach ($input as &$value) {
             if (is_array($value)) {
@@ -293,278 +186,159 @@ abstract class Inputfields extends Element
         return array_filter($input);
     }
 
-    /**
-     * Set a validator rule to validate the input value
-     * Checks first if the validator method exists, otherwise do nothing
-     * Check https://processwire.com/api/ref/sanitizer/ for all sanitizer methods
-     * @param string $validator - the name of the validator
-     * @return $this
-     */
-    public function setRule($validator): self
+    public function setRule(string $validator): self
     {
+        $args      = func_get_args();
+        $variables = array_slice($args, 1);
 
-        $args = func_get_args(); // get all parameter inside the parenthesis
-        $validator = $args[0];
-        $variables = [];
-
-        // check if parameters were set
-        if (func_num_args() > 1) {
-            array_shift($args); // remove the first element (validator name)
-            $variables = $args;
-        }
-
-
-        $preNumberOfVariables = count($variables);
-
-        // check if remove notes array is present
+        $priorCount = count($variables);
         $this->removeKeyRecursive($variables, 'defaultnotes');
         $variables = $this->array_filter_recursive($variables);
-        $postNumberOfVariables = count($variables);
 
-        if ($preNumberOfVariables == $postNumberOfVariables) {
-
-            // add form id as prefix to the field name on certain fields if necessary
-            $validatorNames = ['equals', 'different'];
-            if (in_array($validator, $validatorNames)) {
-                if (!str_starts_with($variables[0], $this->form_id_submitted . '-')) {
-                    $variables[0] = $this->form_id_submitted . '-' . $variables[0];
-                }
-            }
-
-            // if only a integer has been added as allowed file size, convert it to kb, MB and so on on error messages
-            if ($validator == 'allowedFileSize') {
-                if (is_int($variables[0])) {
-                    $variables[0] = wireBytesStr($variables[0]);
-                }
-            }
-
-
-            $this->api = new ValitronAPI();
-            $this->api->setValidator($validator);
-            $result = $this->api->setRule($validator, $variables);
-            $this->validatonRules[$result['name']] = ['options' => $variables];
-
-            // add notes if a special validator has been added
-            // this is special designed for file upload field to inform the user about the restrictions
-            // fe only 40kb, only jpg,....
-            // but can be used for other fields to if needed
-
-            // min files in ZIP folders
-            if ($validator == 'minFilesInZIPFolder') {
-                $this->notes_array['minFilesInZIPFolder']['text'] = sprintf($this->_('ZIP folder(s) must contain at least %s files'), $variables[0]);
-                $this->notes_array['minFilesInZIPFolder']['value'] = $variables[0];
-            }
-
-            // max files in ZIP folders
-            if ($validator == 'maxFilesInZIPFolder') {
-                $this->notes_array['maxFilesInZIPFolder']['text'] = sprintf($this->_('ZIP folders may not contain more than %s files'), $variables[0]);
-                $this->notes_array['maxFilesInZIPFolder']['value'] = $variables[0];
-            }
-
-            // max total file size of all files inside a ZIP folder uncompressed
-            if ($validator == 'maxTotalFileSizeZipUncompressed') {
-                $this->notes_array['maxTotalFileSizeZipUncompressed']['text'] = sprintf($this->_('ZIP files must not exceed a total size of %s when extracted'), $variables[0]);
-                $this->notes_array['maxTotalFileSizeZipUncompressed']['value'] = $variables[0];
-            }
-
-            // required filenames inside a ZIP folder
-            if ($validator == 'requiredFileNamesInZip') {
-                $this->notes_array['requiredFileNamesInZip']['text'] = sprintf($this->_('ZIP files must contain the following files: %s'), implode(', ', $variables[0]));
-                $this->notes_array['requiredFileNamesInZip']['value'] = $variables[0];
-            }
-
-            // max number of ZIP files for upload
-            if ($validator == 'maxNumberOfZipFolders') {
-                $this->notes_array['maxNumberOfZipFolders']['text'] = sprintf($this->_('Please do not upload more than %s ZIP file(s)'), $variables[0]);
-                $this->notes_array['maxNumberOfZipFolders']['value'] = $variables[0];
-            }
-
-            // max depth of hierarchy
-            if ($validator == 'maxNumberOfZipFolders') {
-                $this->notes_array['maxNumberOfZipFolders']['text'] = sprintf($this->_('Please do not upload more than %s ZIP file(s)'), $variables[0]);
-                $this->notes_array['maxNumberOfZipFolders']['value'] = $variables[0];
-            }
-
-            // max depth of hierarchy
-            if ($validator == 'maxDepthOfZipFolders') {
-                $this->notes_array['maxDepthOfZipFolders']['text'] = sprintf($this->_('The maximum allowed folder/directory depth in a ZIP file is %s'), $variables[0]);
-                $this->notes_array['maxDepthOfZipFolders']['value'] = $variables[0];
-            }
-
-            // file types allowed inside a ZIP file
-            if ($validator == 'allowedFileTypesInZipFolder') {
-                $this->notes_array['allowedFileTypesInZipFolder']['text'] = sprintf($this->_('ZIP files may only contain the following file types:  %s'), $variables[0]);
-                $this->notes_array['allowedFileTypesInZipFolder']['value'] = $variables[0];
-            }
-
-            // max file size of a file inside a ZIP file
-            if ($validator == 'maxAllowedFileSizeOfFileInZipFolder') {
-                $this->notes_array['maxAllowedFileSizeOfFileInZipFolder']['text'] = sprintf($this->_('ZIP files may only contain files which are not larger than %s'), $variables[0]);
-                $this->notes_array['maxAllowedFileSizeOfFileInZipFolder']['value'] = $variables[0];
-            }
-
-            // not allowed file type(s) inside a ZIP folder
-            if ($validator == 'notAllowedFileTypesInZipFolder') {
-                $this->notes_array['notAllowedFileTypesInZipFolder']['text'] = sprintf($this->_('ZIP files may not contain files of the following file types: %s'), $variables[0]);
-                $this->notes_array['notAllowedFileTypesInZipFolder']['value'] = $variables[0];
-            }
-
-            // inform about max filesize
-
-            if ($validator == 'allowedFileSize') {
-
-                $max_file_size = self::convertToBytes($variables[0]);
-                $this->notes_array['allowedFileSize']['text'] = sprintf($this->_('Please do not upload files larger than %s'),
-                    wireBytesStr($variables[0]));
-                $this->notes_array['allowedFileSize']['value'] = $variables[0];
-            }
-
-            // inform about max total file size
-            if ($validator == 'allowedTotalFileSize') {
-                $max_file_size = self::convertToBytes($variables[0]);
-                $this->notes_array['allowedTotalFileSize']['text'] = sprintf($this->_('The total size of all uploaded files must not exceed %s.'),
-                    wireBytesStr($variables[0]));
-                $this->notes_array['allowedTotalFileSize']['value'] = $variables[0];
-            }
-
-            // inform about max number of files
-            if ($validator == 'allowedFileNumber') {
-                if (isset($variables[0])) {
-                    $this->notes_array['allowedFileNumber']['text'] = sprintf($this->_('Please do not upload more than %s files'),
-                        $variables[0]);
-                    $this->notes_array['allowedFileNumber']['value'] = $variables[0];
-                }
-            }
-
-            // inform about allowed extensions
-            if ($validator == 'allowedFileExt') {
-                if (isset($variables[0])) {
-                    $this->notes_array['allowedFileExt']['text'] = sprintf($this->_('Allowed file types: %s'),
-                        implode(', ', $variables[0]));
-                    $this->notes_array['allowedFileExt']['value'] = implode(', ', $variables[0]);
-                }
-            }
-
-            // inform about allowed extensions in compressed folders (zip, rar,...)
-            if ($validator == 'compressedContentAllowedFileExt') {
-                if (isset($variables[0])) {
-                    $this->notes_array['compressedContentAllowedFileExt']['text'] = sprintf($this->_('Allowed file types inside compressed folder(s): %s'),
-                        implode(', ', $variables[0]));
-                    $this->notes_array['compressedContentAllowedFileExt']['value'] = implode(', ', $variables[0]);
-                }
-            }
-
-            // inform about max filesize according to php.ini value
-            if ($validator == 'phpIniFilesize') {
-
-                $max_file_size = self::convertToBytes(ini_get("upload_max_filesize"), true);
-                $this->notes_array['phpIniFilesize']['text'] = sprintf($this->_('Please do not upload files larger than %s'),
-                    wireBytesStr($max_file_size));
-                $this->notes_array['phpIniFilesize']['value'] = $max_file_size;
-            }
-
+        if (count($variables) !== $priorCount) {
+            return $this;
         }
 
-        // add HTML5 validation attribute if present
-        $method_name = 'addHTML5' . $validator;
+        // Prefix field name for equals/different validators
+        if (in_array($validator, ['equals', 'different'], strict: true) && isset($variables[0])) {
+            if (!str_starts_with($variables[0], $this->form_id_submitted . '-')) {
+                $variables[0] = $this->form_id_submitted . '-' . $variables[0];
+            }
+        }
 
-        if (method_exists($this, $method_name)) {
-            $this->$method_name($variables);
+        if ($validator === 'allowedFileSize' && isset($variables[0]) && is_int($variables[0])) {
+            $variables[0] = wireBytesStr($variables[0]);
+        }
+
+        $this->api = new ValitronAPI();
+        $this->api->setValidator($validator);
+        $result = $this->api->setRule($validator, $variables);
+        $this->validatonRules[$result['name']] = ['options' => $variables];
+
+        $this->applyValidatorNote($validator, $variables);
+
+        $method = 'addHTML5' . $validator;
+        if (method_exists($this, $method)) {
+            $this->$method($variables);
         }
 
         return $this;
     }
 
-    /**
-     * Remove a validator which was set before
-     * @param string $rule ;
-     * @return $this;
-     */
+    private function applyValidatorNote(string $validator, array $variables): void
+    {
+        $notes = &$this->notes_array;
+
+        switch ($validator) {
+            case 'minFilesInZIPFolder':
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP folder(s) must contain at least %s files'), $variables[0]), 'value' => $variables[0]];
+                break;
+            case 'maxFilesInZIPFolder':
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP folders may not contain more than %s files'), $variables[0]), 'value' => $variables[0]];
+                break;
+            case 'maxTotalFileSizeZipUncompressed':
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP files must not exceed a total size of %s when extracted'), $variables[0]), 'value' => $variables[0]];
+                break;
+            case 'requiredFileNamesInZip':
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP files must contain the following files: %s'), implode(', ', $variables[0])), 'value' => $variables[0]];
+                break;
+            case 'maxNumberOfZipFolders':
+                $notes[$validator] = ['text' => sprintf($this->_('Please do not upload more than %s ZIP file(s)'), $variables[0]), 'value' => $variables[0]];
+                break;
+            case 'maxDepthOfZipFolders':
+                $notes[$validator] = ['text' => sprintf($this->_('The maximum allowed folder/directory depth in a ZIP file is %s'), $variables[0]), 'value' => $variables[0]];
+                break;
+            case 'allowedFileTypesInZipFolder':
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP files may only contain the following file types: %s'), $variables[0]), 'value' => $variables[0]];
+                break;
+            case 'maxAllowedFileSizeOfFileInZipFolder':
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP files may only contain files which are not larger than %s'), $variables[0]), 'value' => $variables[0]];
+                break;
+            case 'notAllowedFileTypesInZipFolder':
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP files may not contain files of the following file types: %s'), $variables[0]), 'value' => $variables[0]];
+                break;
+            case 'allowedFileSize':
+                $notes[$validator] = ['text' => sprintf($this->_('Please do not upload files larger than %s'), wireBytesStr($variables[0])), 'value' => $variables[0]];
+                break;
+            case 'allowedTotalFileSize':
+                $notes[$validator] = ['text' => sprintf($this->_('The total size of all uploaded files must not exceed %s.'), wireBytesStr($variables[0])), 'value' => $variables[0]];
+                break;
+            case 'allowedFileNumber':
+                if (isset($variables[0])) {
+                    $notes[$validator] = ['text' => sprintf($this->_('Please do not upload more than %s files'), $variables[0]), 'value' => $variables[0]];
+                }
+                break;
+            case 'allowedFileExt':
+                if (isset($variables[0])) {
+                    $notes[$validator] = ['text' => sprintf($this->_('Allowed file types: %s'), implode(', ', $variables[0])), 'value' => implode(', ', $variables[0])];
+                }
+                break;
+            case 'compressedContentAllowedFileExt':
+                if (isset($variables[0])) {
+                    $notes[$validator] = ['text' => sprintf($this->_('Allowed file types inside compressed folder(s): %s'), implode(', ', $variables[0])), 'value' => implode(', ', $variables[0])];
+                }
+                break;
+            case 'phpIniFilesize':
+                $maxFileSize = self::convertToBytes(ini_get('upload_max_filesize'), true);
+                $notes[$validator] = ['text' => sprintf($this->_('Please do not upload files larger than %s'), wireBytesStr($maxFileSize)), 'value' => $maxFileSize];
+                break;
+        }
+    }
+
     public function removeRule(string $rule): self
     {
-        $rules = $this->validatonRules;
-        unset($rules[$rule]);
-        $this->validatonRules = $rules;
+        unset($this->validatonRules[$rule], $this->notes_array[$rule]);
 
-        // remove HTML5 validation attribute if present
-        $method_name = 'removeHTML5' . $rule;
-        if (method_exists($this, $method_name)) {
-            $this->$method_name();
+        $method = 'removeHTML5' . $rule;
+        if (method_exists($this, $method)) {
+            $this->$method();
         }
 
-        // remove additional notes if present
-        unset($this->notes_array[$rule]);
         return $this;
     }
 
-    /**
-     * Method to overwrite default error message with a custom error message
-     * Use the syntax {field} to output the Name of the field inside your custom message
-     * @param string $msg - your custom error message text (fe {field} needs to be filled out)
-     * @return $this
-     */
     public function setCustomMessage(string $msg): self
     {
         $this->api->setCustomMessage($msg);
-        $old = $this->validatonRules[$this->api->getValidator()];
-        $new = ['customMsg' => $msg];
-        // add the new value to the validationRules array
-        $this->validatonRules[$this->api->getValidator()] = array_merge($old, $new);
+        $this->validatonRules[$this->api->getValidator()] = array_merge(
+            $this->validatonRules[$this->api->getValidator()],
+            ['customMsg' => $msg]
+        );
         return $this;
     }
 
-    /**
-     * Method to change the field name inside the error message
-     * If you need you can change fe 'Surname' to 'This field'
-     * This only affects the field name inside the error message and not beside the input field
-     * @param string $fieldname
-     * @return $this
-     */
     public function setCustomFieldname(string $fieldname): self
     {
         $this->api->setCustomFieldName($fieldname);
-        $old = $this->validatonRules[$this->api->getValidator()];
-        $new = ['customFieldName' => $fieldname];
-        // add the new value to the validationRules array
-        $this->validatonRules[$this->api->getValidator()] = array_merge($old, $new);
+        $this->validatonRules[$this->api->getValidator()] = array_merge(
+            $this->validatonRules[$this->api->getValidator()],
+            ['customFieldName' => $fieldname]
+        );
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->render();
     }
 
-
     public function ___render(): string
     {
-
-        // remove pattern attributes if input type is not one of the allowed types for this attribute
         if (!in_array($this->getAttribute('type'), self::patternInputs)) {
             $this->removeAttribute('pattern');
         }
 
-        // Add Aria attributes if set
         $this->addAriaAttributes();
 
-        // set required to label to display asterisk if set
         if ($this->hasRule('required')) {
             $this->label->setRequired();
         }
 
-        // Set notes to inputfield if present
         if ($this->notes->getContent() && $this->notes_array) {
-            // add this value at the beginning of the note_array
             $this->notes_array = ['notes' => ['text' => $this->notes->getContent()]] + $this->notes_array;
         }
 
-        // merge all notes texts
         if ($this->notes_array) {
-
-            // grab all key with the name 'text'
             $wrappedTexts = [];
             foreach ($this->notes_array as $key => $array) {
                 $wrappedTexts[$key] = '<span id="' . $this->getID() . '-' . $key . '">' . $array['text'] . '</span>';
@@ -572,47 +346,35 @@ abstract class Inputfields extends Element
             $this->setNotes(implode('<br>', $wrappedTexts));
         }
 
-        $className = $this->className();
-        $inputfield = 'render' . $className;
-        $input = $this->$inputfield();
-        $out = '';
+        $className  = $this->className();
+        $input      = $this->{'render' . $className}();
 
-        // add error class to the wrapper container
         if ($this->getErrormessage()->getText()) {
             $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getErrorClass());
         }
 
-        // add success class to the wrapper container
         if ($this->getPostValue() && $this->getSuccessmessage()->getText() && !$this->getErrormessage()->getText()) {
             $this->fieldWrapper->setAttribute('class', $this->fieldWrapper->getSuccessClass());
         } else {
-            // remove the success message
             $this->setSuccessMessage('');
         }
 
-        // Add ARIA attributes to description and notes ... for all elements except hidden inputs
-        if ($className != 'InputHidden') {
-
-            // Description
+        if ($className !== 'InputHidden') {
             if ($this->getDescription()->getText()) {
                 $this->setAttribute('aria-describedby', $this->getID() . '-desc');
             }
-            // Notes
             if ($this->getNotes()->getText()) {
                 $this->setAttribute('aria-describedby', $this->getID() . '-notes');
             }
-
         }
 
-        // generate the render method name out of the markup type
         $methodName = 'render' . ucfirst(pathinfo($this->markupType, PATHINFO_FILENAME));
-        if (method_exists($this, '___' . $methodName)) {
-            $content = $this->$methodName($className, $input);
-        } else {
-            $content = $this->renderDefault($className, $input);
-        }
+        $content    = method_exists($this, '___' . $methodName)
+            ? $this->$methodName($className, $input)
+            : $this->renderDefault($className, $input);
 
-        // Add fieldwrapper if set
+        $out = '';
+
         if (!$this->useFieldWrapper) {
             $out .= $content;
         } else {
@@ -620,215 +382,136 @@ abstract class Inputfields extends Element
             $out .= $this->fieldWrapper->render() . PHP_EOL;
         }
 
-        // check if custom wrapper was added and render it as the most outer container
         if ($this->useCustomWrapper) {
             $this->customWrapper->setContent($out);
             $out = $this->customWrapper->render() . PHP_EOL;
         }
+
         return $out;
     }
 
-    /**
-     *  Render the input field including wrappers, notes, description, prepend markup, append markup and error
-     *  message
-     * @param string $className
-     * @param $input
-     * @return string
-     */
-    public function ___renderDefault(string $className, $input): string
+    public function ___renderDefault(string $className, string $input): string
     {
-
-        $out = '';
-
-        $description = $this->description->render() . PHP_EOL;
-        $successmsg = $this->getSuccessMessage()->render() . PHP_EOL;
-        $errormsg = $this->getErrorMessage()->render() . PHP_EOL;
+        $out         = '';
+        $errormsg    = $this->getErrorMessage()->render() . PHP_EOL;
+        $successmsg  = $this->getSuccessMessage()->render() . PHP_EOL;
+        $description = $this->description;
 
         switch ($className) {
-            case ('InputHidden'):
-
-                $this->removeAttribute('class');// we need no class attribute for styling on hidden fields
+            case 'InputHidden':
+                $this->removeAttribute('class');
                 $input_markup = $input;
                 break;
-            case ('InputCheckbox'):
-            case ('InputRadio'):
-            case ('Privacy'):
-            case ('SendCopy'):
 
-                // add the description before the label
-                if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
-                    $out .= $this->getDescription()->render();
+            case 'InputCheckbox':
+            case 'InputRadio':
+            case 'Privacy':
+            case 'SendCopy':
+                if ($description->getText() && $description->getPosition() === 'beforeLabel') {
+                    $out .= $description->render();
                 }
-
-                /** Special treatment for label markup */
-                // render label and input different on single checkbox and single radio
                 $this->label->removeAttributeValue('class', $this->getCSSClass('checklabel'));
-
-                // 1) Label will be appended after checkbox/radio
                 if ($this->appendLabel) {
-                    $input = $input . PHP_EOL;
-                    $this->label->setContent($this->getLabel()->getText());
-                    $input .= $this->label->render() . PHP_EOL;
+                    $input_markup = $input . PHP_EOL . $this->label->setContent($this->getLabel()->getText())->render() . PHP_EOL;
                 } else {
-                    // 2) Input will be displayed within the label tag (default)
                     $this->label->setContent($input . $this->getLabel()->getText());
-                    $input = $this->label->render() . PHP_EOL;
+                    $input_markup = $this->label->render() . PHP_EOL;
                 }
-
-                // add the description after the label
-                if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
-                    $out .= $this->getDescription()->render();
+                if ($description->getText() && $description->getPosition() === 'afterLabel') {
+                    $out .= $description->render();
                 }
-                $input_markup = $input . $errormsg . $successmsg;
-
+                $input_markup .= $errormsg . $successmsg;
                 break;
-            default:
 
-                // add the description before the label
-                if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
-                    $out .= $this->getDescription()->render();
+            default:
+                if ($description->getText() && $description->getPosition() === 'beforeLabel') {
+                    $out .= $description->render();
                 }
                 if ($this->getLabel()->getText()) {
                     $out .= $this->getLabel()->render() . PHP_EOL;
                 }
-                // add the description after the label
-                if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
-
-                    $out .= $this->getDescription()->render();
+                if ($description->getText() && $description->getPosition() === 'afterLabel') {
+                    $out .= $description->render();
                 }
                 $input_markup = $input . $errormsg . $successmsg;
-
         }
 
-        // add input-wrapper if set
         if ($this->useInputWrapper) {
-
             $this->inputWrapper->setContent($input_markup);
             $out .= $this->inputWrapper->render() . PHP_EOL;
         } else {
             $out .= $input_markup;
         }
 
-        // add notes afterwards
         $out .= $this->getNotes()->render();
 
-        // add description at the end if set
-        if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterInput')) {
-            $out .= $this->getDescription()->render();
+        if ($description->getText() && $description->getPosition() === 'afterInput') {
+            $out .= $description->render();
         }
 
         return $out;
-
     }
 
-    /**
-     * Render the input field including wrappers, notes, description, prepend markup, append markup and error
-     * message
-     * Markup rendering for Uikit 3
-     * @param string $className
-     * @param $input
-     * @return string
-     */
-    public function ___renderUikit3(string $className, $input): string
+    public function ___renderUikit3(string $className, string $input): string
     {
-        // remove the input wrapper on all checkboxes and radio classes (excluding multiple redios and checkboxes)
-        switch ($className) {
-            case ('InputCheckbox'):
-            case ('InputRadio'):
-            case ('Privacy'):
-            case ('SendCopy'):
-                //$this->useInputWrapper = false; // is needed for multistep form
-                break;
-        }
         return $this->renderDefault($className, $input);
     }
 
-
-    /**
-     *  Render the input field including wrappers, notes, description, prepend markup, append markup and error
-     *  message
-     * Markup rendering for Bootstrap 5
-     * @param string $className
-     * @param $input
-     * @return string
-     */
-    public function ___renderBootstrap5(string $className, $input): string
+    public function ___renderBootstrap5(string $className, string $input): string
     {
-
-        $out = $content = '';
-        $description = $this->description->render() . PHP_EOL;
+        $out        = '';
+        $content    = '';
+        $errormsg   = $this->getErrorMessage()->render() . PHP_EOL;
         $successmsg = $this->getSuccessMessage()->render() . PHP_EOL;
-        $errormsg = $this->getErrorMessage()->render() . PHP_EOL;
+        $description = $this->description;
 
-
-        // add is-valid or is-invalid class to the label tag
         if ($this->getErrorMessage()->getText()) {
             $this->getLabel()->setCSSClass('input_errorClass');
-        } else {
-            if ($_POST)
-                $this->getLabel()->setCSSClass('input_successClass');
+        } elseif ($_POST) {
+            $this->getLabel()->setCSSClass('input_successClass');
         }
 
         switch ($className) {
-            case ('InputHidden'):
-                $this->removeAttribute('class');// we need no class attribute for styling on hidden fields
+            case 'InputHidden':
+                $this->removeAttribute('class');
                 $input_markup = $input;
                 break;
-            case ('InputCheckbox'):
-            case ('InputRadio'):
-            case ('Privacy'):
-            case ('SendCopy'):
 
-
-                // add the description before the label
-                if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
-                    $content .= $this->getDescription()->render();
+            case 'InputCheckbox':
+            case 'InputRadio':
+            case 'Privacy':
+            case 'SendCopy':
+                if ($description->getText() && $description->getPosition() === 'beforeLabel') {
+                    $content .= $description->render();
                 }
-
-                /** Special treatment for label markup */
-                // render label and input different on single checkbox and single radio
                 $this->label->removeAttributeValue('class', $this->getCSSClass('labelClass'));
                 $this->label->setCSSClass('checklabelClass');
                 $content .= $input . $this->label->render() . PHP_EOL;
-
-                // add the description after the label
-                if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
-                    $content .= $this->getDescription()->render();
+                if ($description->getText() && $description->getPosition() === 'afterLabel') {
+                    $content .= $description->render();
                 }
-
                 $input_markup = $content . $errormsg . $successmsg;
-
                 break;
+
             default:
-
-                // add the description before the label
-                if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
-                    $content .= $this->getDescription()->render();
+                if ($description->getText() && $description->getPosition() === 'beforeLabel') {
+                    $content .= $description->render();
                 }
-
                 if ($this->getLabel()->getText()) {
-
-                    if (($className === 'InputRadioMultiple') || ($className === 'InputCheckboxMultiple')) {
-                        if ($this->getErrorMessage()->getText()) {
-                            $this->getLabel()->setCSSClass('input_errorClass');
-                        } else {
-                            $this->getLabel()->setCSSClass('input_successClass');
-                        }
+                    if (in_array($className, ['InputRadioMultiple', 'InputCheckboxMultiple'])) {
+                        $this->getLabel()->setCSSClass(
+                            $this->getErrorMessage()->getText() ? 'input_errorClass' : 'input_successClass'
+                        );
                     }
-
                     $content .= $this->getLabel()->render() . PHP_EOL;
                 }
-
                 $content .= $input;
-                // add the description after the label
-                if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
-                    $content .= $this->getDescription()->render();
+                if ($description->getText() && $description->getPosition() === 'afterLabel') {
+                    $content .= $description->render();
                 }
                 $input_markup = $content . $errormsg . $successmsg;
-
         }
 
-        // add input-wrapper if set
         if ($this->useInputWrapper) {
             $this->inputWrapper->setContent($input_markup);
             $out .= $this->inputWrapper->render() . PHP_EOL;
@@ -836,91 +519,63 @@ abstract class Inputfields extends Element
             $out .= $input_markup;
         }
 
-        // add notes afterwards
         $out .= $this->getNotes()->render();
 
-        // add description at the end if set
-        if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterInput')) {
-            $out .= $this->getDescription()->render();
+        if ($description->getText() && $description->getPosition() === 'afterInput') {
+            $out .= $description->render();
         }
 
         return $out;
-
     }
 
-    /**
-     *  Render the input field including wrappers, notes, description, prepend markup, append markup and error
-     *  message
-     * Markup rendering for Pico 2
-     * @param string $className
-     * @param $input
-     * @return string
-     */
-    public function ___renderPico2(string $className, $input): string
+    public function ___renderPico2(string $className, string $input): string
     {
-
-        $out = '';
-        $description = $this->description->render() . PHP_EOL;
+        $out        = '';
+        $errormsg   = $this->getErrorMessage()->render() . PHP_EOL;
         $successmsg = $this->getSuccessMessage()->render() . PHP_EOL;
-        $errormsg = $this->getErrorMessage()->render() . PHP_EOL;
+        $description = $this->description;
 
         switch ($className) {
-            case ('InputHidden'):
-                $this->removeAttribute('class');// we need no class attribute for styling on hidden fields
+            case 'InputHidden':
+                $this->removeAttribute('class');
                 $input_markup = $input;
                 break;
-            case ('InputCheckbox'):
-            case ('InputRadio'):
-            case ('Privacy'):
-            case ('SendCopy'):
 
-                // add the description before the label
-                if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
-                    $out .= $this->getDescription()->render();
+            case 'InputCheckbox':
+            case 'InputRadio':
+            case 'Privacy':
+            case 'SendCopy':
+                if ($description->getText() && $description->getPosition() === 'beforeLabel') {
+                    $out .= $description->render();
                 }
-
-                /** Special treatment for label markup */
-
-                // pico does not accept an asterisk inside a tag, so every tag must be removed from the asterisk first
                 $asterisk = '';
                 if ($this->getRules() && array_key_exists('required', $this->getRules())) {
-                    $asterisk = ($this->frontendforms['input_showasterisk']) ? strip_tags($this->getLabel()->renderAsterisk()) : '';
+                    $asterisk = $this->frontendforms['input_showasterisk']
+                        ? strip_tags($this->getLabel()->renderAsterisk())
+                        : '';
                 }
-
-
-                // add the asterisk directly after the label text, but before the error message
-                // the label must also contain success and error message
                 $this->label->setContent($input . $this->getLabel()->getText() . $asterisk . $errormsg . $successmsg);
-
-                // disable the asterisk, so it will not be rendered again afterwards
                 $this->getLabel()->disableAsterisk();
                 $out .= $this->label->render() . PHP_EOL;
-
-                // add the description after the label
-                if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
-                    $out .= $this->getDescription()->render();
+                if ($description->getText() && $description->getPosition() === 'afterLabel') {
+                    $out .= $description->render();
                 }
                 $input_markup = '';
-
                 break;
-            default:
 
-                // add the description before the label
-                if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'beforeLabel')) {
-                    $out .= $this->getDescription()->render();
+            default:
+                if ($description->getText() && $description->getPosition() === 'beforeLabel') {
+                    $out .= $description->render();
                 }
                 if ($this->getLabel()->getText()) {
                     $out .= $this->getLabel()->render() . PHP_EOL;
                 }
-                // add the description after the label
-                if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterLabel')) {
-                    $out .= $this->getDescription()->render();
+                if ($description->getText() && $description->getPosition() === 'afterLabel') {
+                    $out .= $description->render();
                 }
                 $input_markup = $input . $errormsg . $successmsg;
-
         }
 
-        // add input-wrapper if set
         if ($this->useInputWrapper) {
             $this->inputWrapper->setContent($input_markup);
             $out .= $this->inputWrapper->render() . PHP_EOL;
@@ -928,1184 +583,396 @@ abstract class Inputfields extends Element
             $out .= $input_markup;
         }
 
-        // add notes afterwards
         $out .= $this->getNotes()->render();
 
-        // add description at the end if set
-        if (($this->getDescription()->getText()) && ($this->getDescription()->getPosition() === 'afterInput')) {
-            $out .= $this->getDescription()->render();
+        if ($description->getText() && $description->getPosition() === 'afterInput') {
+            $out .= $description->render();
         }
 
         return $out;
-
     }
 
-
-    /**
-     * Check if element has a specific validator
-     * @param string $ruleName ->fe required
-     * @return boolean
-     */
     public function hasRule(string $ruleName): bool
     {
-        if (array_key_exists(trim($ruleName), $this->getRules())) {
-            return true;
-        }
-        return false;
+        return array_key_exists(trim($ruleName), $this->getRules());
     }
 
-    /**
-     * Get all validation rules for an input field
-     * @return array
-     */
     public function getRules(): array
     {
         return $this->validatonRules;
     }
 
-    /**
-     * Method to clear all validation rules of an element
-     * @return void
-     */
     public function removeAllRules(): void
     {
         $this->validatonRules = [];
     }
 
-    /**
-     * Get the label object (if present)
-     * @return Label
-     */
     public function getLabel(): Label
     {
         return $this->label;
     }
 
-    /**
-     * Set the label text
-     * @param string $label
-     * @return Label
-     */
     public function setLabel(string $label): Label
     {
         $this->label->setText($label);
         return $this->label;
     }
 
-    /**
-     * Get the Errormessage object
-     * You can use this to manipulate attributes of the error message on per field base
-     * Example $field->getErrorMessage()->setAttribute('class', 'myErrorClass');
-     * @return Errormessage
-     */
     public function getErrorMessage(): Errormessage
     {
         return $this->errormessage;
     }
 
-    /**
-     * Set the error message text
-     * Will be set during processing of the form, not by the user
-     * @param string $errorMessage
-     * @return Errormessage
-     */
     protected function setErrorMessage(string $errorMessage): Errormessage
     {
         $this->errormessage->setText($errorMessage);
         return $this->errormessage;
     }
 
-    /**
-     * Get the Successmessage object
-     * You can use this to manipulate attributes of the sucess message on per field base
-     * Example $field->getSuccessMessage()->setAttribute('class', 'myErrorClass');
-     * @return Successmessage
-     */
     public function getSuccessMessage(): Successmessage
     {
         return $this->successmessage;
     }
 
-    /**
-     * Set the success message text
-     * Will be set during processing of the form, not by the user
-     * @param string $successMessage
-     * @return Successmessage
-     */
     protected function setSuccessMessage(string $successMessage): Successmessage
     {
         $this->successmessage->setText($successMessage);
         return $this->successmessage;
     }
 
-    /**
-     * Get the Description object
-     * @return Description
-     */
     public function getDescription(): Description
     {
         return $this->description;
     }
 
-    /**
-     * Set the description text
-     * @param string $description
-     * @return Description
-     */
     public function setDescription(string $description): Description
     {
         $this->description->setText($description);
         return $this->description;
     }
 
-    /**
-     * Get the Notes object
-     * @return Notes
-     */
     public function getNotes(): Notes
     {
         return $this->notes;
     }
 
-    /**
-     * Set the notes text
-     * @param string $notes
-     * @return Notes
-     */
     public function setNotes(string $notes): Notes
     {
         $this->notes->setText($notes);
         return $this->notes;
     }
 
-    /**
-     * Get all notes set as an array
-     * @return array
-     */
     public function getNotesArray(): array
     {
         return $this->notes_array;
     }
 
-    /**
-     * Remove a specific notes text by its key
-     * @param int|string $key
-     * @return Notes
-     */
     public function removeNotesByKey(int|string $key): Notes
     {
-        $notes = $this->notes_array;
-        unset($notes[$key]);
-        $this->notes_array = $notes;
+        unset($this->notes_array[$key]);
         return $this->notes;
     }
 
-    /**
-     * Return the default value
-     * @return string|array|null
-     */
     protected function getDefaultValue(): string|array|null
     {
         return $this->defaultValue;
     }
 
-    /**
-     * Set (a) default value(s) for an input field on first page load
-     * Enter values as a string: Each value has to be separated by a comma ('default value1', 'default value2')
-     * Enter values as an array: ['default value1', 'default value2']
-     * @param int|string|array|null $default
-     * @return $this
-     */
     public function setDefaultValue(int|string|array|null $default = null): self
     {
-        if (!$this->isSubmitted()) { // set default value(s) only before form is submitted
-            if (!is_null($default)) {
-                if (is_int($default)) {
-                    $default = (string)($default);
-                } // convert int to string
-                if (is_string($default)) {
-                    //create array out of string
-                    $default = func_get_args();
-                    //sanitize array values and set them as a string
-                    array_walk($default, function (&$item) {
-                        $item = trim($item);
-                    });
-                }
-                //check if input type can have multiple values or not
-                if (($this->className() === 'InputCheckboxMultiple') || ($this->className() === 'InputSelectMultiple')) {
-                    $value = $default;
-                } else {
-                    // take only the first item of the array (single value only)
-                    $value = $default[0];
-                }
-                if (($this->className() != 'InputCheckboxMultiple') || ($this->className() != 'InputSelectMultiple')) {
-                    $this->setAttribute('value', $value);
-                    // set only default value and value if a value attribute is present, or it is a select input field
-                    $this->defaultValue = $default;
-                }
-            }
+        if ($this->isSubmitted() || $default === null) {
+            return $this;
         }
+
+        if (is_int($default)) {
+            $default = (string) $default;
+        }
+
+        if (is_string($default)) {
+            $default = func_get_args();
+            array_walk($default, fn(&$item) => $item = trim($item));
+        }
+
+        $isMulti = in_array($this->className(), ['InputCheckboxMultiple', 'InputSelectMultiple']);
+        $value   = $isMulti ? $default : $default[0];
+
+        $this->setAttribute('value', $value);
+        $this->defaultValue = $default;
+
         return $this;
     }
 
     /**
-     * Set a sanitizer from ProcessWire sanitizer methods to sanitize the input value
-     * Checks first if the entered sanitizer method exists, otherwise informs you that this method does not exist
-     * Check https://processwire.com/api/ref/sanitizer/ for all sanitizer methods
-     * @param string $sanitizer - the name of the sanitizer
      * @throws Exception
      */
     public function setSanitizer(string $sanitizer): void
     {
         $sanitizer = trim(strtolower($sanitizer));
-        //if sanitizer method exist add the name of the sanitizer to the sanitizer property
         if (method_exists($this->wire('sanitizer'), $sanitizer)) {
-            $this->sanitizer = array_merge($this->sanitizer, [$sanitizer]);
+            $this->sanitizer[] = $sanitizer;
         } else {
             throw new Exception('This sanitizer method does not exist in ProcessWire');
         }
     }
 
-    /**
-     * Get all sanitizer that were set to a field
-     * @return array
-     */
     public function getSanitizers(): array
     {
         return $this->sanitizer;
     }
 
-
-    /**
-     * Check if inputfield contains the given sanitizer
-     * @param string $sanitizer
-     * @return bool
-     */
     public function hasSanitizer(string $sanitizer): bool
     {
-        $sanitizer = trim(strtolower($sanitizer));
-        return in_array($sanitizer, $this->sanitizer);
+        return in_array(trim(strtolower($sanitizer)), $this->sanitizer);
     }
 
-    /**
-     * Get the post value of the input field if it is present
-     * @return mixed
-     */
     protected function getPostValue(): mixed
     {
         if ($this->hasPostValue()) {
             $name = str_replace('[]', '', $this->getAttribute('name'));
-            // remove brackets from attribute name of multi-value input fields
             return $this->getServerMethod()[$name];
         }
-        return [];// return empty array to prevent error on in_array function
+        return [];
     }
 
-    /**
-     * Check if post value of the input field is present
-     * @return bool -> true: the post value is present, false: post value is not there
-     */
     protected function hasPostValue(): bool
     {
         $name = str_replace('[]', '', $this->getAttribute('name'));
-        // remove brackets from attribute name of multi-value input fields
-        if (isset($this->getServerMethod()[$name])) {
-            return true;
+        return isset($this->getServerMethod()[$name]);
+    }
+
+    protected function addAriaAttributes(): void
+    {
+        if (!$this->useAriaAttr) {
+            return;
         }
-        return false;
+
+        if ($this->getDescription()->getText()) {
+            $this->setAttribute('aria-describedby', $this->getID() . '-desc');
+        }
+        if ($this->getNotes()->getText()) {
+            $this->setAttribute('aria-describedby', $this->getID() . '-notes');
+        }
     }
 
-    /**
-     * Various add and remove methods for adding HTML5 Browser validation attributes depending on validators set
-     * Will be added or removed via setRule and removeRule method for field validation
-     */
-
-    /**
-     * Add HTML5 attribute required to the input tag
-     * Validator rule: required
-     * @return void
-     */
-    protected function addHTML5required(): void
+    public function useAriaAttributes(bool $ariaAttr): self
     {
-        $this->setAttribute('required');
+        $this->useAriaAttr = $ariaAttr;
+        return $this;
     }
 
-    /**
-     * Remove HTML5 required attribute from the input tag
-     * Validator rule: required
-     * @return void
-     */
-    protected function removeHTML5required(): void
+    // HTML5 attribute methods — add/remove pattern, min, max, etc.
+
+    protected function addHTML5required(): void         { $this->setAttribute('required'); }
+    protected function removeHTML5required(): void      { $this->removeAttribute('required'); }
+    protected function addHTML5min(array $v): void      { $this->setAttribute('min', $v[0]); }
+    protected function removeHTML5min(): void           { $this->removeAttribute('min'); }
+    protected function addHTML5max(array $v): void      { $this->setAttribute('max', $v[0]); }
+    protected function removeHTML5max(): void           { $this->removeAttribute('max'); }
+    protected function removeHTML5alpha(): void         { $this->removeAttribute('pattern'); }
+    protected function removeHTML5checkBic(): void      { $this->removeAttribute('pattern'); }
+    protected function removeHTML5NoNumbers(): void     { $this->removeAttribute('pattern'); }
+    protected function removeHTML5checkIban(): void     { $this->removeAttribute('pattern'); }
+    protected function removeHTML5alphaNum(): void      { $this->removeAttribute('pattern'); }
+    protected function removeHTML5slug(): void          { $this->removeAttribute('pattern'); }
+    protected function removeHTML5ascii(): void         { $this->removeAttribute('pattern'); }
+    protected function removeHTML5regex(): void         { $this->removeAttribute('pattern'); }
+    protected function removeHTML5exactValue(): void    { $this->removeAttribute('pattern'); }
+    protected function removeHTML5differentValue(): void { $this->removeAttribute('pattern'); }
+    protected function removeHTML5integer(): void       { $this->removeAttribute('pattern'); }
+    protected function removeHTML5numeric(): void       { $this->removeAttribute('pattern'); }
+    protected function removeHTML5noLetters(): void     { $this->removeAttribute('pattern'); }
+    protected function removeHTML5firstAndLastname(): void { $this->removeAttribute('pattern'); }
+    protected function removeHTML5contains(): void      { $this->removeAttribute('pattern'); }
+    protected function removeHTML5time(): void          { $this->removeAttribute('pattern'); }
+    protected function removeHTML5alphaNum2(): void     { $this->removeAttribute('pattern'); }
+    protected function removeHTML5usernameSyntax(): void { $this->removeAttribute('pattern'); }
+    protected function removeHTML5ip(): void            { $this->removeAttribute('pattern'); }
+    protected function removeHTML5ipv4(): void          { $this->removeAttribute('pattern'); }
+    protected function removeHTML5ipv6(): void          { $this->removeAttribute('pattern'); }
+    protected function removeHTML5allowedFileExt(): void { $this->removeAttribute('accept'); }
+    protected function removeHTML5dateBefore(): void    { $this->removeAttribute('max'); }
+    protected function removeHTML5dateAfter(): void     { $this->removeAttribute('min'); }
+    protected function removeHTML5dateBeforeField(): void { $this->removeAttribute('max'); }
+    protected function removeHTML5dateAfterField(): void  { $this->removeAttribute('min'); }
+    protected function removeHTML5meetsPasswordConditions(): void { $this->removeAttribute('pattern'); }
+    protected function removeHTML5dateFormat(): void    { $this->removeAttribute('pattern'); }
+
+    protected function addHTML5lengthMin(array $v): void
     {
-        $this->removeAttribute('required');
+        $this->setAttribute('minlength', (string) $v[0]);
     }
 
-
-    /**
-     * Add HTML5 attribute min to the input tag
-     * Validator rule: min
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5min(array $value): void
-    {
-        $this->setAttribute('min', $value[0]);
-    }
-
-    /**
-     * Remove HTML5 min attribute from the input tag
-     * Validator rule: min
-     * @return void
-     */
-    protected function removeHTML5min(): void
-    {
-        $this->removeAttribute('min');
-    }
-
-    /**
-     * Add HTML5 attribute max to the input tag
-     * Validator rule: max
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5max(array $value): void
-    {
-        $this->setAttribute('max', $value[0]);
-    }
-
-    /**
-     * Remove HTML5 max attribute from the input tag
-     * Validator rule: max
-     * @return void
-     */
-    protected function removeHTML5max(): void
-    {
-        $this->removeAttribute('max');
-    }
-
-    /**
-     * Add HTML5 attribute minlength to the input tag
-     * Validator rule: lengthMin
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5lengthMin(array $value): void
-    {
-        $this->setAttribute('minlength', (string)$value[0]);
-    }
-
-    /**
-     * Remove HTML5 minlength attribute from the input tag
-     * Validator rule: lengthMin
-     * @return void
-     */
     protected function removeHTML5lengthMin(): void
     {
         $this->removeAttribute('minlength');
     }
 
-    /**
-     * Add HTML5 attribute maxlength to the input tag
-     * Validator rule: lengthMax
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5lengthMax(array $value): void
+    protected function addHTML5lengthMax(array $v): void
     {
-        $this->setAttribute('maxlength', $value[0]);
+        $this->setAttribute('maxlength', $v[0]);
     }
 
-    /**
-     * Remove HTML5 maxlength attribute from the input tag
-     * Validator rule: lengthMax
-     * @return void
-     */
     protected function removeHTML5lengthMax(): void
     {
         $this->removeAttribute('maxlength');
     }
 
-    /**
-     * Add HTML5 attribute pattern for alphabetical letters only to the input tag
-     * Validator rule: alpha
-     * @return void
-     */
-    protected function addHTML5alpha(): void
+    protected function addHTML5lengthBetween(array $v): void
     {
-        $this->setAttribute('pattern', '[a-zA-Z]+');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain letters'), $label));
+        $this->setAttribute('minlength ', $v[0]);
+        $this->setAttribute('maxlength ', $v[1]);
     }
 
-    /**
-     * Remove attribute pattern for alphabetical letters only from the input tag
-     * Validator rule: alpha
-     * Can be used on input type text and textarea
-     * @return void
-     */
-    protected function removeHTML5alpha(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute pattern for the BIC code only to the input tag
-     * Validator rule: checkBic
-     * @return void
-     */
-    protected function addHTML5checkBic(): void
-    {
-        $pattern = '[A-Z0-9]{4}[A-Z]{2}[A-Z0-9]{2}(?:[A-Z0-9]{3})?';
-        $this->setAttribute('pattern', $pattern);
-    }
-
-    /**
-     * Remove attribute pattern for the BIC code only from the input tag
-     * Validator rule: checkBic
-     * Can be used on input type text and textarea
-     * @return void
-     */
-    protected function removeHTML5checkBic(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute pattern for the the input tag
-     * Validator rule: noNumbers
-     * @return void
-     */
-    protected function addHTML5NoNumbers(): void
-    {
-        $pattern = '[^0-9]+';
-        $this->setAttribute('pattern', $pattern);
-    }
-
-    /**
-     * Remove attribute pattern from the input tag
-     * Validator rule: noNumbers
-     * Can be used on input type text and textarea
-     * @return void
-     */
-    protected function removeHTML5noNumbers(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-
-    /**
-     * Add HTML5 attribute pattern for the Iban code only to the input tag
-     * Validator rule: checkIban
-     * @return void
-     */
-    protected function addHTML5checkIban(): void
-    {
-        // This pattern is for international IBAN numbers
-        $pattern = '[A-Z]{2}\d{13,32}|(?=.{18,42}$)[A-Z]{2}\d{2}( )(\d{4}\1){2,7}\d{1,4}';
-        $this->setAttribute('pattern', $pattern);
-        $this->setAttribute('data-checkiban', 'true');
-    }
-
-    /**
-     * Remove attribute pattern for the Iban code only from the input tag
-     * Validator rule: checkIban
-     * Can be used on input type text and textarea
-     * @return void
-     */
-    protected function removeHTML5checkIban(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-
-    /**
-     * Add HTML5 attribute pattern for alphanumerical letters only to the input tag
-     * Validator rule: alphaNum
-     * @return void
-     */
-    protected function addHTML5alphaNum(): void
-    {
-        $this->setAttribute('pattern', '[a-zA-Z0-9]+');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain letters and numbers'), $label));
-    }
-
-    /**
-     * Remove attribute pattern for alphanumeric letters only from the input tag
-     * Validator rule: alphaNum
-     * @return void
-     */
-    protected function removeHTML5alphaNum(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute minlength and maxlength to the input tag
-     * Validator rule: lengthBetween
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5lengthBetween(array $value): void
-    {
-        $this->setAttribute('minlength ', $value[0]);
-        $this->setAttribute('maxlength ', $value[1]);
-    }
-
-    /**
-     * Remove attribute minlength and maxlength from the input tag
-     * Validator rule: lengthBetween
-     * @return void
-     */
     protected function removeHTML5lengthBetween(): void
     {
         $this->removeAttribute('minlength');
         $this->removeAttribute('maxlength');
     }
 
-    /**
-     * Remove attribute pattern from the input tag
-     * Validator rule: firstAndLastname
-     * @return void
-     */
-    protected function addHTML5firstAndLastname()
+    protected function addHTML5alpha(): void
     {
-        $this->setAttribute('pattern ', '[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð,-.\' ]+');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain allowed characters for names.'), $label));
+        $this->setAttribute('pattern', '[a-zA-Z]+');
+        $this->setAttribute('title', sprintf($this->_('%s should only contain letters'), $this->getLabel()->getText()));
     }
 
-    /**
-     * Remove attribute pattern from the input tag
-     * Validator rule: firstAndLastname
-     * @return void
-     */
-    protected function removeHTML5firstAndLastname(): void
+    protected function addHTML5checkBic(): void
     {
-        $this->removeAttribute('pattern');
+        $this->setAttribute('pattern', '[A-Z0-9]{4}[A-Z]{2}[A-Z0-9]{2}(?:[A-Z0-9]{3})?');
     }
 
-    /**
-     * Add HTML5 attribute pattern for ascii characters to the input tag
-     * Validator rule: ascii
-     * @return void
-     */
+    protected function addHTML5NoNumbers(): void
+    {
+        $this->setAttribute('pattern', '[^0-9]+');
+    }
+
+    protected function addHTML5checkIban(): void
+    {
+        $this->setAttribute('pattern', '[A-Z]{2}\d{13,32}|(?=.{18,42}$)[A-Z]{2}\d{2}( )(\d{4}\1){2,7}\d{1,4}');
+        $this->setAttribute('data-checkiban', 'true');
+    }
+
+    protected function addHTML5alphaNum(): void
+    {
+        $this->setAttribute('pattern', '[a-zA-Z0-9]+');
+        $this->setAttribute('title', sprintf($this->_('%s should only contain letters and numbers'), $this->getLabel()->getText()));
+    }
+
+    protected function addHTML5firstAndLastname(): void
+    {
+        $this->setAttribute('pattern ', '[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð,-.\'  ]+');
+        $this->setAttribute('title', sprintf($this->_('%s should only contain allowed characters for names.'), $this->getLabel()->getText()));
+    }
+
     protected function addHTML5ascii(): void
     {
         $this->setAttribute('pattern ', '[\x00-\x7F]+');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain ascii characters'), $label));
-
+        $this->setAttribute('title', sprintf($this->_('%s should only contain ascii characters'), $this->getLabel()->getText()));
     }
 
-    /**
-     * Remove attribute pattern for ascii characters from the input tag
-     * Validator rule: ascii
-     * @return void
-     */
-    protected function removeHTML5ascii(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-
-    /**
-     * Add HTML5 attribute pattern for a slug to the input tag
-     * Validator rule: slug
-     * @return void
-     */
     protected function addHTML5slug(): void
     {
         $this->setAttribute('pattern ', '[a-z0-9_\-]+');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title',
-            sprintf($this->_('%s should only contain letters, numbers, underscores or hyphens'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should only contain letters, numbers, underscores or hyphens'), $this->getLabel()->getText()));
     }
 
-    /**
-     * Remove attribute pattern for a slug from the input tag
-     * Validator rule: slug
-     * @return void
-     */
-    protected function removeHTML5slug(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute pattern for an url to the input tag
-     * Validator rule: url
-     * @return void
-     */
     protected function addHTML5url(): void
     {
-        if (($this->className() != 'InputUrl') || (is_subclass_of($this, 'InputUrl'))) {
+        if ($this->className() !== 'InputUrl' || is_subclass_of($this, 'InputUrl')) {
             $this->setAttribute('pattern ', 'https?://.{1,63}\.[A-z]{2,13}');
-            $label = $this->getLabel()->getText();
-            $this->setAttribute('title',
-                sprintf($this->_('%s should be a valid URL starting with http:// or https://'), $label));
+            $this->setAttribute('title', sprintf($this->_('%s should be a valid URL starting with http:// or https://'), $this->getLabel()->getText()));
         }
     }
 
-    /**
-     * Remove attribute pattern for an url from the input tag
-     * Validator rule: url
-     * @return void
-     */
     protected function removeHTML5url(): void
     {
-        if (($this->className() != 'InputUrl') || (is_subclass_of($this, 'InputUrl'))) {
+        if ($this->className() !== 'InputUrl' || is_subclass_of($this, 'InputUrl')) {
             $this->removeAttribute('pattern');
         }
     }
 
-    /**
-     * Add HTML5 attribute pattern for an email address to the input tag
-     * Validator rule: email
-     * @return void
-     */
     protected function addHTML5email(): void
     {
-        if (($this->className() != 'InputEamil') || (is_subclass_of($this, 'InputEmail'))) {
-            $this->setAttribute('pattern ',
-                '^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$');
-            $label = $this->getLabel()->getText();
-            $this->setAttribute('title', sprintf($this->_('%s should be a valid email address'), $label));
+        if ($this->className() !== 'InputEmail' || is_subclass_of($this, 'InputEmail')) {
+            $this->setAttribute('pattern ', '^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$');
+            $this->setAttribute('title', sprintf($this->_('%s should be a valid email address'), $this->getLabel()->getText()));
         }
     }
 
-    /**
-     * Remove attribute pattern for an email from the input tag
-     * Validator rule: email
-     * @return void
-     */
     protected function removeHTML5email(): void
     {
-        if (($this->className() != 'InputEamil') || (is_subclass_of($this, 'InputEmail'))) {
+        if ($this->className() !== 'InputEmail' || is_subclass_of($this, 'InputEmail')) {
             $this->removeAttribute('pattern');
         }
     }
 
-    /**
-     * Add HTML5 attribute pattern for a time string to the input tag
-     * Validator rule: time
-     * @return void
-     */
     protected function addHTML5time(): void
     {
         if ($this->getAttribute('type') !== 'time') {
             $this->setAttribute('pattern', '([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]');
         }
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s is not a valid time. You have to enter the time in this format: HH:MM:SS (fe. 19:00:00)'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s is not a valid time. You have to enter the time in this format: HH:MM:SS (fe. 19:00:00)'), $this->getLabel()->getText()));
     }
 
-    /**
-     * Remove attribute pattern for a time string from the input tag
-     * Validator rule: numeric
-     * @return void
-     */
-    protected function removeHTML5time(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute pattern for a numeric string to the input tag
-     * Validator rule: numeric
-     * @return void
-     */
     protected function addHTML5numeric(): void
     {
         $this->setAttribute('pattern ', '(([0-9]*)|(([0-9]*)\.([0-9]*)))');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain numbers (integers or floats with a dot, not a comma)'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should only contain numbers (integers or floats with a dot, not a comma)'), $this->getLabel()->getText()));
     }
 
-    /**
-     * Remove attribute pattern for a numeric string from the input tag
-     * Validator rule: numeric
-     * @return void
-     */
-    protected function removeHTML5numeric(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute pattern for an integer to the input tag
-     * Validator rule: integer
-     * @return void
-     */
     protected function addHTML5integer(): void
     {
         $this->setAttribute('pattern', '[0-9]+');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should only contain integers'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should only contain integers'), $this->getLabel()->getText()));
     }
 
-    /**
-     * Remove attribute pattern for an integer from the input tag
-     * Validator rule: integer
-     * @return void
-     */
-    protected function removeHTML5integer(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute pattern for an IP address to the input tag
-     * Validator rule: ip
-     * @return void
-     */
     protected function addHTML5ip(): void
     {
-        $this->setAttribute('pattern ',
-            '(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*){3}');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title',
-            sprintf($this->_('%s should only contain a valid IP address in the format x.x.x.x'), $label));
+        $this->setAttribute('pattern ', '(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)_*){3}');
+        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IP address in the format x.x.x.x'), $this->getLabel()->getText()));
     }
 
-    /**
-     * Remove attribute pattern for an IP address from the input tag
-     * Validator rule: ip
-     * @return void
-     */
-    protected function removeHTML5ip(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute pattern for an IP4 address to the input tag
-     * Validator rule: ipv4
-     * @return void
-     */
     protected function addHTML5ipv4(): void
     {
         $this->setAttribute('pattern ', '((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title',
-            sprintf($this->_('%s should only contain a valid IPv4 address in the format x.x.x.x'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IPv4 address in the format x.x.x.x'), $this->getLabel()->getText()));
     }
 
-    /**
-     * Remove attribute pattern for an IP4 address from the input tag
-     * Validator rule: ipv4
-     * @return void
-     */
-    protected function removeHTML5ipv4(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute pattern for an IP6 address to the input tag
-     * Validator rule: ipv6
-     * @return void
-     */
     protected function addHTML5ipv6(): void
     {
         $this->setAttribute('pattern ', '((^|:)([0-9a-fA-F]{0,4})){1,8}$');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title',
-            sprintf($this->_('%s should only contain a valid IPv6 address in the format x:x:x:x:x:x:x:x'), $label));
+        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid IPv6 address in the format x:x:x:x:x:x:x:x'), $this->getLabel()->getText()));
     }
 
-    /**
-     * Remove attribute pattern for an IP6 address from the input tag
-     * Validator rule: ipv6
-     * @return void
-     */
-    protected function removeHTML5ipv6(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-
-    /**
-     * Add HTML5 attribute pattern for a username to the input tag
-     * Validator rule: usernameSyntax
-     * @return void
-     */
     protected function addHTML5usernameSyntax(): void
     {
         $this->setAttribute('pattern ', '[a-z0-9_\-]{1,128}');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title',
-            sprintf($this->_('%s contains not allowed characters or is longer than 128 characters. Allowed characters are: letters, numbers, underscores and dashes (no whitespaces)'),
-                $label));
+        $this->setAttribute('title', sprintf($this->_('%s contains not allowed characters or is longer than 128 characters. Allowed characters are: letters, numbers, underscores and dashes (no whitespaces)'), $this->getLabel()->getText()));
     }
 
-    /**
-     * Remove attribute pattern for a username from the input tag
-     * Validator rule: usernameSyntax
-     * @return void
-     */
-    protected function removeHTML5usernameSyntax(): void
+    protected function addHTML5noLetters(): void
     {
-        $this->removeAttribute('pattern');
+        $label = $this->getLabel()->getText() ?: $this->_('This field');
+        $this->setAttribute('pattern', '[^a-zA-ZäöüÖÄÜ]+');
+        $this->setAttribute('title', sprintf($this->_('%s contains letters, but they are not allowed'), $label));
     }
 
-    /**
-     * Method to generate a regex for the password validation depending on the settings of the password field
-     * @return string|null - returns the regex for usage in HTML5 validation attribute or null if requirements are
-     *     set to "none" in the backend
-     * @throws WireException
-     * @throws WirePermissionException
-     */
-    public function createPasswordRegex(): string|null
-    {
-        // get the password field module
-        $passwordModule = $this->wire('modules')->get('InputfieldPassword'); // get the password field module
-        // get the password field by the name of the field inside the user template, usually "pass"
-        $passwordField = $this->wire('fields')->get('pass');
-        // password conditions can be overwritten on per field base, so check before if they are overwritten. Otherwise, take the default from the module
-        if (!$passwordField->requirements) {
-            // if no requirements are stored in the database, take the default data from the inputfield default configuration
-            $requirements = $passwordModule->requirements;
-        } else {
-            $requirements = $passwordField->requirements;
-        }
-        if (!in_array('none', $requirements)) {
-
-            // create array of positive look ahead for all options of the password as defined in the backend
-            $regex_requirements = [
-                'letter' => '(?=.*[A-Za-z])', // at least 1 letter (upper and lowercase)
-                'lower' => '(?=.*[a-z])', // at least 1 lower case letter
-                'upper' => '(?=.*[A-Z])', // at least 1 upper case letter
-                'digit' => '(?=.*\d)', // at least 1 number
-                'other' => '(?=.*\W)' // at least 1 non-word character
-            ];
-
-            $regex_parameters = [];
-            foreach ($regex_requirements as $key => $look_ahead) {
-                if (in_array($key, $requirements)) {
-                    $regex_parameters[$key] = $look_ahead;
-                }
-            }
-
-            // get the default min length value as set in the input field if present
-            if ($passwordField->minlength) {
-                $length = (string)$passwordField->minlength;
-            } else {
-                // get the default value from the module
-                $length = (string)$passwordModule->minlength;
-            }
-
-            // Concatenate all look ahead to working regex string and return it
-            return implode('', $regex_parameters) . '.\{' . $length . ',128\}$';
-        }
-        return null;
-    }
-
-    /**
-     * Method to add the pattern attribute to the input tag for password syntax
-     * @return void
-     * @throws WireException
-     * @throws WirePermissionException
-     */
-    protected function addHTML5meetsPasswordConditions(): void
-    {
-        if (!is_null($this->createPasswordRegex())) {
-            $this->setAttribute('pattern', $this->createPasswordRegex());
-        }
-    }
-
-    /**
-     * Remove the password syntax pattern, if validator for the password requirements is no longer present
-     * @return void
-     */
-    protected function removeHTML5meetsPasswordConditions(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute pattern for a date in the given format to the input tag
-     * Validator rule: dateformat
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5dateFormat(array $value): void
-    {
-        $format = strtolower($value[0]);
-
-        $dateformats = [
-            'dd.mm.yyyy' => '(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}',
-            'yyyy.mm.dd' => '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])',
-            'mm/dd/yyyy' => '(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d'
-        ];
-        if (array_key_exists($format, $dateformats)) {
-            $this->setAttribute('pattern ', $dateformats[$format]);
-            $label = $this->getLabel()->getText();
-            $this->setAttribute('title',
-                sprintf($this->_('%s should only contain a valid date in the format %s'), $label, $format));
-        }
-
-    }
-
-    /**
-     * Remove attribute pattern for a date in the given format from the input tag
-     * Validator rule: dateFormat
-     * @return void
-     */
-    protected function removeHTML5dateFormat(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute pattern for a regex to the input tag
-     * Validator rule: regex
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5regex(array $value): void
-    {
-        $pattern = str_replace('$', '', $value[0]); // remove $
-        $pattern = str_replace('i', '', $pattern); // remove i
-        $pattern = str_replace('/', '', $pattern); // remove /
-
-        $this->setAttribute('pattern ', $pattern);
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s contains an invalid value'), $label));
-    }
-
-    /**
-     * Remove attribute pattern regex from the input tag
-     * Validator rule: regex
-     * @return void
-     */
-    protected function removeHTML5regex(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute pattern for exact equal string to the input tag
-     * Validator rule: exactValue
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5exactValue(array $value): void
-    {
-        $this->setAttribute('pattern ', $value[0]);
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should contain the exact value %s'), $label, $value[0]));
-    }
-
-    /**
-     * Remove attribute pattern exact equal string from the input tag
-     * Validator rule: exactValue
-     * @return void
-     */
-    protected function removeHTML5exactValue(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-
-    /**
-     * Add HTML5 attribute pattern for different string to the input tag
-     * Validator rule: differentValue
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5differentValue(array $value): void
-    {
-        $this->setAttribute('pattern', '((?!' . $value[0] . ').)*');
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title', sprintf($this->_('%s should not contain the value %s'), $label, $value[0]));
-    }
-
-    /**
-     * Remove attribute pattern different string from the input tag
-     * Validator rule: differentValue
-     * @return void
-     */
-    protected function removeHTML5differentValue(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute pattern for different file extensions to the input tag
-     * Validator rule: allowedFileExt
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5allowedFileExt(array $value): void
-    {
-        $accept_extensions = [];
-        // add dot in front of file extensions
-        if ($value) {
-            foreach ($value[0] as $ext) {
-                $accept_extensions[] = '.' . $ext;
-            }
-        }
-        $accept_extensions = implode(',', $accept_extensions);
-        $this->setAttribute('accept',
-            $accept_extensions); // this is not for the validation - it shows only allowed files in the dialog window!!
-    }
-
-    /**
-     * Remove attribute pattern different string from the input tag
-     * Validator rule: allowedFileExt
-     * @return void
-     */
-    protected function removeHTML5allowedFileExt(): void
-    {
-        $this->removeAttribute('accept');
-    }
-
-    /**
-     * Add HTML5 attribute max to the input tag
-     * Validator rule: dateBefore
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5dateBefore(array $value): void
-    {
-        $this->setAttribute('max', $value[0]);
-    }
-
-    /**
-     * Remove attribute max from the input tag
-     * Validator rule: dateBefore
-     * @return void
-     */
-    protected function removeHTML5dateBefore(): void
-    {
-        $this->removeAttribute('max');
-    }
-
-    /**
-     * Add HTML5 attribute min to the input tag
-     * Validator rule: dateAfter
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5dateAfter(array $value): void
-    {
-        $this->setAttribute('min', $value[0]);
-    }
-
-    /**
-     * Remove attribute max from the input tag
-     * Validator rule: dateBefore
-     * @return void
-     */
-    protected function removeHTML5dateAfter(): void
-    {
-        $this->removeAttribute('min');
-    }
-
-    /**
-     * Add HTML5 attribute pattern to the input tag
-     * Validator rule: week
-     * @return void
-     */
-    protected function addHTML5week(): void
-    {
-        // add pattern only if input type is not of week (fe. InputText)
-        if ($this->getAttribute('type') !== 'week') {
-            $this->setAttribute('pattern', '^\d{1,4}-[W](\d|[0-4]\d|5[0123])');
-        }
-        $label = $this->getLabel()->getText();
-        $this->setAttribute('title',
-            sprintf($this->_('%s should only contain a valid week in the format YYYY-Www'), $label));
-    }
-
-    /**
-     * Remove attribute pattern from the input tag
-     * Validator rule: week
-     * @return void
-     */
-    protected function removeHTML5week(): void
-    {
-        if ($this->getAttribute('type') !== 'week') {
-            $this->removeAttribute('pattern');
-        }
-    }
-
-    /**
-     * Add HTML5 attribute pattern to the input tag
-     * Validator rule: date
-     * @return void
-     */
-    protected function addHTML5date(): void
-    {
-        // add pattern only if input type is not of week (fe. InputText)
-        if ($this->getAttribute('type') !== 'date') {
-            $this->setAttribute('pattern', '^\d{2}.\d{2}.\d{4}');
-            $label = $this->getLabel()->getText();
-            $this->setAttribute('title',
-                sprintf($this->_('%s should only contain a valid date in the format dd.MM.YYYY'), $label));
-        }
-    }
-
-    /**
-     * Remove attribute pattern from the input tag
-     * Validator rule: date
-     * @return void
-     */
-    protected function removeHTML5date(): void
-    {
-        if ($this->getAttribute('type') !== 'date') {
-            $this->removeAttribute('pattern');
-        }
-    }
-
-    /**
-     * Add HTML5 attribute pattern to the input tag
-     * Validator rule: contains
-     * @return void
-     */
     protected function addHTML5contains(): void
     {
-        $validators = $this->getRules();
-        $word = $validators['contains']['options'][0];
+        $word = $this->getRules()['contains']['options'][0] ?? null;
         if ($word) {
             $this->setAttribute('pattern', '\b' . $word . '\b');
-            $label = $this->getLabel()->getText();
-            $this->setAttribute('title',
-                sprintf($this->_('%s must contain the word %s'), $label, $word));
+            $this->setAttribute('title', sprintf($this->_('%s must contain the word %s'), $this->getLabel()->getText(), $word));
         }
     }
 
-    /**
-     * Remove attribute pattern from the input tag
-     * Validator rule: contains
-     * @return void
-     */
-    protected function removeHTML5contains(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute pattern to the input tag
-     * Validator rule: month
-     * @return void
-     */
     protected function addHTML5month(): void
     {
         if ($this->getAttribute('type') !== 'month') {
             $this->setAttribute('pattern', '^\d{4}-(0[1-9]|1[012])$');
-            $label = $this->getLabel()->getText();
-            $this->setAttribute('title',
-                sprintf($this->_('%s should only contain a valid month in the format YYYY-MM'), $label));
+            $this->setAttribute('title', sprintf($this->_('%s should only contain a valid month in the format YYYY-MM'), $this->getLabel()->getText()));
         }
     }
 
-    /**
-     * Remove attribute pattern from the input tag
-     * Validator rule: month
-     * @return void
-     */
     protected function removeHTML5month(): void
     {
         if ($this->getAttribute('type') !== 'month') {
@@ -2113,26 +980,14 @@ abstract class Inputfields extends Element
         }
     }
 
-    /**
-     * Add HTML5 attribute pattern for HEX code to the input tag
-     * Validator rule: checkHex
-     * @return void
-     */
     protected function addHTML5checkHex(): void
     {
         if ($this->getAttribute('type') !== 'color') {
             $this->setAttribute('pattern', '#([a-fA-F0-9]{3}){1,2}\b');
-            $label = $this->getLabel()->getText();
-            $this->setAttribute('title',
-                sprintf($this->_('%s should be a valid HEX code in the format #XXX or #XXXXXX'), $label));
+            $this->setAttribute('title', sprintf($this->_('%s should be a valid HEX code in the format #XXX or #XXXXXX'), $this->getLabel()->getText()));
         }
     }
 
-    /**
-     * Remove attribute pattern for HEX code validation from the input tag
-     * Validator rule: checkHex
-     * @return void
-     */
     protected function removeHTML5checkHex(): void
     {
         if ($this->getAttribute('type') !== 'color') {
@@ -2140,194 +995,189 @@ abstract class Inputfields extends Element
         }
     }
 
-    /**
-     * Internal method to set validator attributes to beforeDateField and afterDateField validators
-     * Both validators needs a similar setting of attributes
-     * @param array $value
-     * @param bool $before
-     * @return void
-     */
-    private function beforeAfter(array $value, bool $before): void
+    protected function addHTML5week(): void
     {
-        // normalize field name value
-        $fieldName = str_replace($this->getID() . '-', '', $value[0]);
-        $this->setAttribute('data-ff_field', $fieldName); // set name of the reference field
-        $attribute = ($before) ? 'max' : 'min';
-        $this->setAttribute('data-ff_attribute', $attribute);
-        $this->setAttribute('data-ff_id', $this->getID()); // get the pure ID of this field
-        // set the value of the reference field after form submission
-        if ($this->form_id_submitted) {
-            $date = $_REQUEST[$this->form_id_submitted . '-' . $value[0]];
-            if ($before) {
-                // subtract 1 day
-                $new_date = date('Y-m-d', strtotime($date . ' - 1 day'));
-            } else {
-                // add 1 day
-                $new_date = date('Y-m-d', strtotime($date . ' + 1 day'));
-            }
-            $this->setAttribute($attribute, $new_date);
+        if ($this->getAttribute('type') !== 'week') {
+            $this->setAttribute('pattern', '^\d{1,4}-[W](\d|[0-4]\d|5[0123])');
+        }
+        $this->setAttribute('title', sprintf($this->_('%s should only contain a valid week in the format YYYY-Www'), $this->getLabel()->getText()));
+    }
+
+    protected function removeHTML5week(): void
+    {
+        if ($this->getAttribute('type') !== 'week') {
+            $this->removeAttribute('pattern');
+        }
+    }
+
+    protected function addHTML5date(): void
+    {
+        if ($this->getAttribute('type') !== 'date') {
+            $this->setAttribute('pattern', '^\d{2}.\d{2}.\d{4}');
+            $this->setAttribute('title', sprintf($this->_('%s should only contain a valid date in the format dd.MM.YYYY'), $this->getLabel()->getText()));
+        }
+    }
+
+    protected function removeHTML5date(): void
+    {
+        if ($this->getAttribute('type') !== 'date') {
+            $this->removeAttribute('pattern');
+        }
+    }
+
+    protected function addHTML5regex(array $v): void
+    {
+        $pattern = str_replace(['$', 'i', '/'], '', $v[0]);
+        $this->setAttribute('pattern ', $pattern);
+        $this->setAttribute('title', sprintf($this->_('%s contains an invalid value'), $this->getLabel()->getText()));
+    }
+
+    protected function addHTML5exactValue(array $v): void
+    {
+        $this->setAttribute('pattern ', $v[0]);
+        $this->setAttribute('title', sprintf($this->_('%s should contain the exact value %s'), $this->getLabel()->getText(), $v[0]));
+    }
+
+    protected function addHTML5differentValue(array $v): void
+    {
+        $this->setAttribute('pattern', '((?!' . $v[0] . ').)*');
+        $this->setAttribute('title', sprintf($this->_('%s should not contain the value %s'), $this->getLabel()->getText(), $v[0]));
+    }
+
+    protected function addHTML5allowedFileExt(array $v): void
+    {
+        $extensions = $v ? array_map(fn($e) => '.' . $e, $v[0]) : [];
+        $this->setAttribute('accept', implode(',', $extensions));
+    }
+
+    protected function addHTML5dateBefore(array $v): void  { $this->setAttribute('max', $v[0]); }
+    protected function addHTML5dateAfter(array $v): void   { $this->setAttribute('min', $v[0]); }
+
+    protected function addHTML5dateFormat(array $v): void
+    {
+        $format = strtolower($v[0]);
+        $dateformats = [
+            'dd.mm.yyyy' => '(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}',
+            'yyyy.mm.dd' => '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])',
+            'mm/dd/yyyy' => '(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d',
+        ];
+        if (isset($dateformats[$format])) {
+            $this->setAttribute('pattern ', $dateformats[$format]);
+            $this->setAttribute('title', sprintf($this->_('%s should only contain a valid date in the format %s'), $this->getLabel()->getText(), $format));
         }
     }
 
     /**
-     * Add HTML5 attribute max to the input tag
-     * Validator rule: dateBeforeField
-     * @param array $value
-     * @return void
+     * @throws WireException
+     * @throws WirePermissionException
      */
-    protected function addHTML5dateBeforeField(array $value): void
+    public function createPasswordRegex(): string|null
+    {
+        $passwordModule = $this->wire('modules')->get('InputfieldPassword');
+        $passwordField  = $this->wire('fields')->get('pass');
+        $requirements   = $passwordField->requirements ?: $passwordModule->requirements;
+
+        if (in_array('none', $requirements)) {
+            return null;
+        }
+
+        $lookAheads = [
+            'letter' => '(?=.*[A-Za-z])',
+            'lower'  => '(?=.*[a-z])',
+            'upper'  => '(?=.*[A-Z])',
+            'digit'  => '(?=.*\d)',
+            'other'  => '(?=.*\W)',
+        ];
+
+        $parts  = array_filter($lookAheads, fn($k) => in_array($k, $requirements), ARRAY_FILTER_USE_KEY);
+        $length = (string) ($passwordField->minlength ?: $passwordModule->minlength);
+
+        return implode('', $parts) . '.\{' . $length . ',128\}$';
+    }
+
+    /**
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function addHTML5meetsPasswordConditions(): void
+    {
+        $regex = $this->createPasswordRegex();
+        if ($regex !== null) {
+            $this->setAttribute('pattern', $regex);
+        }
+    }
+
+    private function beforeAfter(array $value, bool $before): void
+    {
+        $fieldName = str_replace($this->getID() . '-', '', $value[0]);
+        $attribute = $before ? 'max' : 'min';
+
+        $this->setAttribute('data-ff_field', $fieldName);
+        $this->setAttribute('data-ff_attribute', $attribute);
+        $this->setAttribute('data-ff_id', $this->getID());
+
+        if ($this->form_id_submitted) {
+            $date     = $_REQUEST[$this->form_id_submitted . '-' . $value[0]];
+            $modifier = $before ? '- 1 day' : '+ 1 day';
+            $this->setAttribute($attribute, date('Y-m-d', strtotime($date . ' ' . $modifier)));
+        }
+    }
+
+    protected function addHTML5dateBeforeField(array $v): void
     {
         $this->setAttribute('data-ff_validator', 'dateBeforeField');
-        $this->beforeAfter($value, true);
+        $this->beforeAfter($v, true);
     }
 
-    /**
-     * Remove attribute max from the input tag
-     * Validator rule: dateBeforeField
-     * @return void
-     */
-    protected function removeHTML5dateBeforeField(): void
-    {
-        $this->removeAttribute('max');
-    }
-
-    /**
-     * Add HTML5 attribute max to the input tag
-     * Validator rule: dateAfterField
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5dateAfterField(array $value): void
+    protected function addHTML5dateAfterField(array $v): void
     {
         $this->setAttribute('data-ff_validator', 'dateAfterField');
-        $this->beforeAfter($value, false);
+        $this->beforeAfter($v, false);
     }
-
-    /**
-     * Remove attribute min from the input tag
-     * Validator rule: dateAfterField
-     * @return void
-     */
-    protected function removeHTML5dateAfterField(): void
-    {
-        $this->removeAttribute('min');
-    }
-
 
     private function withinOutside(array $value, string $type): void
     {
-        // normalize field name value
         $fieldName = str_replace($this->getID() . '-', '', $value[0]);
-        $this->setAttribute('data-ff_field', $fieldName); // get name of the reference field
-        $this->setAttribute('data-ff_days', (string)$value[1]);
-        $this->setAttribute('data-ff_attribute', ($value[1] > 0) ? 'min' : 'max');
+
+        $this->setAttribute('data-ff_field', $fieldName);
+        $this->setAttribute('data-ff_days', (string) $value[1]);
+        $this->setAttribute('data-ff_attribute', $value[1] > 0 ? 'min' : 'max');
         $this->setAttribute('data-ff_validator', $type);
-        $this->setAttribute('data-ff_id', $this->getID()); // get the pure ID of this field
-        // set the value of the reference field after form submission
+        $this->setAttribute('data-ff_id', $this->getID());
+
         if ($this->form_id_submitted) {
-            if ($type == 'withinOutside') {
-                $this->setAttribute('min', $_REQUEST[$this->form_id_submitted . '-' . $value[0]]);
-                // calculate the new date
-                $this->setAttribute('max', $_REQUEST[$this->form_id_submitted . '-' . $value[0]]);
+            $ref = $_REQUEST[$this->form_id_submitted . '-' . $value[0]];
+            if ($type === 'withinOutside') {
+                $this->setAttribute('min', $ref);
+                $this->setAttribute('max', $ref);
             } else {
-                if ($value[1] > 0) {
-                    $this->setAttribute('min', $_REQUEST[$this->form_id_submitted . '-' . $value[0]]);
-                } else {
-                    $this->setAttribute('max', $_REQUEST[$this->form_id_submitted . '-' . $value[0]]);
-                }
+                $this->setAttribute($value[1] > 0 ? 'min' : 'max', $ref);
             }
         }
     }
 
-    /**
-     * Add HTML5 attribute min and max to the input tag
-     * Validator rule: dateWithinDaysRange (min - max)
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5dateWithinDaysRange(array $value): void
-    {
-        $this->withinOutside($value, 'dateWithinDaysRange');
-    }
+    protected function addHTML5dateWithinDaysRange(array $v): void   { $this->withinOutside($v, 'dateWithinDaysRange'); }
+    protected function addHTML5dateOutsideOfDaysRange(array $v): void { $this->withinOutside($v, 'dateOutsideOfDaysRange'); }
 
-    /**
-     * Remove attribute min and max from the input tag
-     * Validator rule: dateWithinDaysRange
-     * @return void
-     */
     protected function removeHTML5dateWithinDaysRange(): void
     {
         $this->removeAttribute('min');
         $this->removeAttribute('max');
     }
 
-    /**
-     * Add HTML5 attribute min and max to the input tag
-     * Validator rule: dateOutsideOfDaysRange (min - max)
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5dateOutsideOfDaysRange(array $value): void
-    {
-        $this->withinOutside($value, 'dateOutsideOfDaysRange');
-    }
-
-    /**
-     * Remove attribute min and max from the input tag
-     * Validator rule: dateOutsideOfDaysRange
-     * @return void
-     */
     protected function removeHTML5dateOutsideOfDaysRange(): void
     {
         $this->removeAttribute('min');
         $this->removeAttribute('max');
     }
 
-    /**
-     * Add HTML5 attribute pattern to the input tag for checking if value does not contain letters
-     * Validator rule: noLetters
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5noLetters(): void
+    protected function addHTML5requiredIfEmpty(array $v): void
     {
-        $this->setAttribute('pattern', '[^a-zA-ZäöüÖÄÜ]+');
-        $label = $this->getLabel()->getText();
-        if (!$label) $label = $this->_('This field');
-        $this->setAttribute('title',
-            sprintf($this->_('%s contains letters, but they are not allowed'), $label));
-    }
-
-    /**
-     * Remove attribute pattern from the input tag
-     * Validator rule: noLetters
-     * @return void
-     */
-    protected function removeHTML5noLetters(): void
-    {
-        $this->removeAttribute('pattern');
-    }
-
-    /**
-     * Add HTML5 attribute required to the input tag if conditional field contains a value
-     * Validator rule: requiredIf
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5requiredIfEmpty(array $value): void
-    {
-        // normalize field name value
-        $fieldName = str_replace($this->getID() . '-', '', $value[0]);
-        $this->setAttribute('data-ff_field', $fieldName);
+        $this->setAttribute('data-ff_field', str_replace($this->getID() . '-', '', $v[0]));
         $this->setAttribute('data-ff_attribute', 'ff-required');
         $this->setAttribute('data-ff_validator', 'requiredIfEmpty');
     }
 
-    /**
-     * Remove certain data-attributes from input field
-     * Validator rule: requiredIf
-     * @return void
-     */
     protected function removeHTML5requiredIfEmpty(): void
     {
         $this->removeAttribute('data-ff_field');
@@ -2335,73 +1185,25 @@ abstract class Inputfields extends Element
         $this->removeAttribute('data-ff_validator');
     }
 
-    /**
-     * Add HTML5 attribute required to the input tag if conditional field contains a specific value
-     * Validator rule: requiredIfEqual
-     * @param array $value
-     * @return void
-     */
-    protected function addHTML5requiredIfEqual(array $value): void
+    protected function addHTML5requiredIfEqual(array $v): void
     {
-        // normalize field name value
-        $fieldName = str_replace($this->getID() . '-', '', $value[0]);
-        $this->setAttribute('data-ff_field', $fieldName);
+        $this->setAttribute('data-ff_field', str_replace($this->getID() . '-', '', $v[0]));
         $this->setAttribute('data-ff_attribute', 'ff-required');
         $this->setAttribute('data-ff_validator', 'requiredIfEqual');
 
-        if (array_key_exists(1, $value) && str_contains($value[1], '|')) {
-            if (!array_key_exists(2, $value)) {
-                $operator = 'OR';
-            } else {
-                $operator = ($value[2]) ? 'AND' : 'OR';
+        if (isset($v[1])) {
+            if (str_contains($v[1], '|')) {
+                $operator = isset($v[2]) ? ($v[2] ? 'AND' : 'OR') : 'OR';
+                $this->setAttribute('data-ff_operator', $operator);
             }
-            $this->setAttribute('data-ff_operator', $operator);
+            $this->setAttribute('data-ff_equal', $v[1]);
         }
-        if (array_key_exists(1, $value)) {
-            $this->setAttribute('data-ff_equal', $value[1]);
-        }
-
     }
 
-    /**
-     * Remove certain data-attributes from input field
-     * Validator rule: requiredIfEqual
-     * @return void
-     */
     protected function removeHTML5requiredIfEqual(): void
     {
         $this->removeAttribute('data-ff_field');
         $this->removeAttribute('data-ff_attribute');
         $this->removeAttribute('data-ff_validator');
     }
-
-    /**
-     * Method to enable/disable the usage of area attributes for better accessibility
-     * @param bool $ariaAttr
-     * @return $this
-     */
-    public function useAriaAttributes(bool $ariaAttr): self
-    {
-        $this->useAriaAttr = $ariaAttr;
-        return $this;
-    }
-
-    /**
-     * Set various Aria attributes for the input element
-     * @return void
-     */
-    protected function addAriaAttributes(): void
-    {
-        if ($this->useAriaAttr) {
-
-            // aria describedby for description
-            if ($this->getDescription()->getText()) $this->setAttribute('aria-describedby', $this->getID() . '-desc');
-
-            // aria describedby for notes
-            if ($this->getNotes()->getText()) $this->setAttribute('aria-describedby', $this->getID() . '-notes');
-
-        }
-
-    }
-
 }
