@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: FieldsetClose.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 class FieldsetClose extends Element
@@ -20,7 +21,7 @@ class FieldsetClose extends Element
         $this->setTag('fieldset');
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }
