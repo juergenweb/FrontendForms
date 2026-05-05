@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: InputCheckbox.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 use Exception;
@@ -36,13 +37,9 @@ class InputCheckbox extends InputRadioCheckbox
      */
     public function setChecked(): self
     {
-        $shouldCheck = !$this->getServerMethod()
-            || isset($_POST[$this->getAttribute('name')]);
-
-        if ($shouldCheck) {
+        if (!$this->getServerMethod() || isset($_POST[$this->getAttribute('name')])) {
             $this->setAttribute('checked');
         }
-
         return $this;
     }
 
@@ -54,16 +51,9 @@ class InputCheckbox extends InputRadioCheckbox
     public function ___renderInputCheckbox(): string
     {
         $value = $this->getAttribute('value');
-        $default = (array)$this->getDefaultValue();
-        $post = $this->getPostValue();
 
-        $isChecked =
-            in_array($value, $default, true) ||
-            (
-            is_array($post)
-                ? in_array($value, $post, true)
-                : $post === $value
-            );
+        $isChecked = in_array($value, (array) $this->getDefaultValue(), strict: true)
+            || in_array($value, (array) $this->getPostValue(), strict: true);
 
         if ($isChecked) {
             $this->setAttribute('checked');
