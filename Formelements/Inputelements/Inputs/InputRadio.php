@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: InputRadio.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 use Exception;
@@ -35,12 +36,13 @@ class InputRadio extends InputRadioCheckbox
      */
     public function ___renderInputRadio(): string
     {
-        if (in_array($this->getAttribute('value'), $this->getDefaultValue())) {
+        $value = $this->getAttribute('value');
+        $postValue = $this->getPostValue();
+
+        if (in_array($value, $this->getDefaultValue()) || ($value && $postValue === $value)) {
             $this->setAttribute('checked');
         }
-        if (($this->hasAttribute('value')) && ($this->getPostValue() === $this->getAttribute('value'))) {
-            $this->setAttribute('checked');
-        }
+
         return $this->renderInput();
     }
 
