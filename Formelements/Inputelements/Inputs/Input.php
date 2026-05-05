@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: Input.php
  * Created: 03.07.2022
+ * Checked with Claude AI 05.05.26
  */
 
 use Exception;
