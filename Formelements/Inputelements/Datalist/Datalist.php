@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: Datalist.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 05.05.26
  */
 
 use Exception;
@@ -52,25 +53,23 @@ class Datalist extends InputText
      */
     public function ___renderDatalist(): string
     {
-        $out = '';
-
-        if ($this->options) {
-            $options = '';
-
-            foreach ($this->options as $option) {
-
-                if ($option->hasAttribute('selected') && (!$this->hasAttribute('value'))) {
-                    $this->setAttribute('value', $option->getAttribute('value'));
-                    $option->removeAttribute('selected'); //data list option has no selected attribute
-                }
-                $options .= $option->render();
-
-            }
-            // create and append datalist container
-            $this->append('<datalist id="' . 'datalist-' . $this->listID . '">' . $options . '</datalist>');
-            $out = $this->renderInput();
+        if (empty($this->options)) {
+            return '';
         }
-        return $out;
+
+        $options = '';
+
+        foreach ($this->options as $option) {
+            if ($option->hasAttribute('selected') && !$this->hasAttribute('value')) {
+                $this->setAttribute('value', $option->getAttribute('value'));
+                $option->removeAttribute('selected');
+            }
+            $options .= $option->render();
+        }
+
+        $this->append('<datalist id="datalist-' . $this->listID . '">' . $options . '</datalist>');
+
+        return $this->renderInput();
     }
 
 }
