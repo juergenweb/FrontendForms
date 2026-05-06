@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: RequiredTextHint.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 06.05.26
  */
 
 use ProcessWire\WireException;
@@ -22,7 +23,7 @@ class RequiredTextHint extends TextElements
      * @throws WireException
      * @throws WirePermissionException
      */
-    public function __construct($id = null)
+    public function __construct(?string $id = null)
     {
         parent::__construct($id);
         $this->setTag('p');
