@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: Username.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 06.05.26
  */
 
 use Exception;
@@ -33,8 +34,11 @@ class Username extends InputText
         $this->setSanitizer('pageName');
         $this->setRule('required');
         $this->setRule('usernameSyntax');
-        if($this->wire('user')->isLoggedin())
-            $this->setDefaultValue($this->wire('user')->name);
+
+        $user = $this->wire('user');
+        if ($user->isLoggedin()) {
+            $this->setDefaultValue($user->name);
+        }
     }
 
     /**
