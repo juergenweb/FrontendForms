@@ -383,6 +383,13 @@ $allowedFileExt->setDescription('Validator to check if the file is of one of the
 $allowedFileExt->setNotes('Valid extensions: jpg, doc');
 $form->add($allowedFileExt);
 
+$forbiddenFileExt = new \FrontendForms\InputFile('forbiddenFileExt');
+$forbiddenFileExt->setLabel('Validator forbiddenFileExt');
+$forbiddenFileExt->setRule('forbiddenFileExt', ['jpg']);
+$forbiddenFileExt->setDescription('Validator to check if the file is not one of the forbidden extensions');
+$forbiddenFileExt->setNotes('Forbidden extensions: jpg, doc');
+$form->add($forbiddenFileExt);
+
 $uniqueFileName = new \FrontendForms\InputFile('uniqueFilename');
 $uniqueFileName->setLabel('Validator uniqueFilenameInDir');
 $uniqueFileName->setRule('uniqueFilenameInDir');
