@@ -11,6 +11,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: Wrapper.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 06.05.26
  */
 
 use ProcessWire\WireException;
@@ -38,7 +39,7 @@ class Wrapper extends Tag
         return $this->renderNonSelfclosingTag($this->getTag());
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }
