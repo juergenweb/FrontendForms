@@ -40,6 +40,13 @@ $iban->setRule('checkIban');
 $iban->setDescription('Validator to check if the value contains a valid IBAN code');
 $form->add($iban);
 
+$allowedFileSize = new \FrontendForms\InputFile('allowedFileSize');
+$allowedFileSize->setLabel('Validator allowedFileSize');
+$allowedFileSize->setRule('allowedFileSize', '1 MB');
+$allowedFileSize->setDescription('Validator to check if the file is not larger than allowed');
+$allowedFileSize->setNotes('Allowed filesize: 1 MB');
+$form->add($allowedFileSize);
+
 $uniqueEmail = new \FrontendForms\InputText('uniqueemail');
 $uniqueEmail->setLabel('Unique email');
 $uniqueEmail->setRule('uniqueEmail');
