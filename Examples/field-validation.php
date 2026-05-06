@@ -378,7 +378,7 @@ $form->add($differentValue);
 
 $allowedFileExt = new \FrontendForms\InputFile('allowedFileExt');
 $allowedFileExt->setLabel('Validator allowedFileExt');
-$allowedFileExt->setRule('allowedFileExt', ['.jpg', '.doc']);
+$allowedFileExt->setRule('allowedFileExt', ['jpg', 'doc']);
 $allowedFileExt->setDescription('Validator to check if the file is of one of the allowed extensions');
 $allowedFileExt->setNotes('Valid extensions: jpg, doc');
 $form->add($allowedFileExt);
