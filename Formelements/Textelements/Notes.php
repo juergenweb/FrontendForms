@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: Notes.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 06.05.26
  */
 
 use ProcessWire\WireException;
@@ -23,7 +24,7 @@ class Notes extends TextElements
      * @throws WireException
      * @throws WirePermissionException
      */
-    public function __construct($id = null)
+    public function __construct(?string $id = null)
     {
         parent::__construct($id);
         $this->setCSSClass('notesClass');
