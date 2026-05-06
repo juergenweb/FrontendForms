@@ -11,6 +11,7 @@
      * https://github.com/juergenweb
      * File name: Description.php
      * Created: 03.07.2022
+     * Optimized via Claude AI 05.05.26
      */
 
     use ProcessWire\WireException;
@@ -25,7 +26,7 @@
          * @throws WireException
          * @throws WirePermissionException
          */
-        public function __construct($id = null)
+        public function __construct(?string $id = null)
         {
             parent::__construct($id);
             $this->setCSSClass('descriptionClass');
@@ -38,7 +39,7 @@
          */
         public function setPosition(string $pos): self
         {
-            if (in_array($pos, ['beforeLabel', 'afterLabel', 'afterInput'])) {
+            if (in_array($pos, ['beforeLabel', 'afterLabel', 'afterInput'], strict: true)) {
                 $this->desc_position = $pos; // set new position property
                 $this->setAttribute('class', $pos . '-desc'); // add new position class
             }
