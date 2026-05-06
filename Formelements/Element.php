@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: Element.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 06.05.26
  */
 
 use ProcessWire\WireException;
@@ -21,6 +22,7 @@ abstract class Element extends Tag
     protected array|null $conditions = null; // string containing the conditions as json string
     protected bool $contains_conditions = false; // bool value if conditions are used on this input field
     protected string|null $conditionContainerClass = null;
+
     /**
      * @param string|null $id
      * @throws WireException
@@ -50,7 +52,7 @@ abstract class Element extends Tag
      */
     public function setConditionContainerClass(string $class): void
     {
-        if(!str_starts_with($class, '.')) $class = '.' . $class;
+        if (!str_starts_with($class, '.')) $class = '.' . $class;
         $this->conditionContainerClass = $class;
     }
 
@@ -58,7 +60,7 @@ abstract class Element extends Tag
      * Get the condition container if set (or null)
      * @return string|null
      */
-    public function getConditionContainerClass(): ?string
+    public function getConditionContainerClass(): string|null
     {
         return $this->conditionContainerClass;
     }
@@ -94,35 +96,27 @@ abstract class Element extends Tag
      */
     protected function get_mf_conditional_rules(string $action, array $rules, string $logic = 'or', string $container = '.fieldwrapper'): void
     {
-        $rule = array(
+        $this->conditions = [
             'container' => $container,
             'action' => $action,
             'rules' => $rules,
             'logic' => $logic,
-        );
-        // a fieldwrapper is always necessary in this case to show or hide an element if it is a child of the Inputfield class
-        if (is_subclass_of($this, 'FrontendForms\Inputfields')) {
+        ];
+
+        if (is_subclass_of($this, Inputfields::class)) {
             $this->useFieldWrapper(true);
-            $this->getFieldWrapper()->setAttribute('class', 'fieldwrapper'); // important
+            $this->getFieldWrapper()->setAttribute('class', 'fieldwrapper');
         } else {
-            // add a wrapper element for showing and hiding
-            if(str_starts_with($container, '.')){
-                $attribute = 'class';
-                $value = ltrim($container, '.');
-            } else if (str_starts_with($container, '#')){
-                $attribute = 'id';
-                $value = ltrim($container, '#');
-            } else {
-                $attribute = 'class';
-                $value = $container;
-            }
+            [$attribute, $value] = match (true) {
+                str_starts_with($container, '.') => ['class', ltrim($container, '.')],
+                str_starts_with($container, '#') => ['id', ltrim($container, '#')],
+                default => ['class', $container],
+            };
             $this->wrap()->setAttribute($attribute, $value);
         }
-        $this->conditions = $rule;
+
         $this->contains_conditions = true;
-
     }
-
 
 
     /**
@@ -168,7 +162,7 @@ abstract class Element extends Tag
      * @param string $container
      * @return void
      */
-    public function enableIf(array$rules, string $logic = 'or', string $container = '.fieldwrapper'): void
+    public function enableIf(array $rules, string $logic = 'or', string $container = '.fieldwrapper'): void
     {
         $this->get_mf_conditional_rules('enable', $rules, $logic, $container);
         // add disabled attribute to input field
