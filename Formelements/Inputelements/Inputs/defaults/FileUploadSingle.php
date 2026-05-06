@@ -9,7 +9,8 @@ namespace FrontendForms;
  * Created by Jürgen K.
  * https://github.com/juergenweb 
  * File name: FileUpload.php
- * Created: 15.02.2023 
+ * Created: 15.02.2023
+ * Optimized via Claude AI 06.05.26
  */
 
 use Exception;
