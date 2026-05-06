@@ -22,6 +22,12 @@ $form->setMaxAttempts(0);
 $form->setMinTime(0);
 $form->setMaxTime(0);
 
+$safePassword = new \FrontendForms\InputText('safepassword');
+$safePassword->setLabel('Safe Password');
+$safePassword->setRule('safePassword');
+$safePassword->setDescription('Validator to check if password is not on the list of the forbidden passwords');
+$form->add($safePassword);
+
 $required = new \FrontendForms\InputText('required');
 $required->setLabel('Validator required');
 $required->setRule('required');
