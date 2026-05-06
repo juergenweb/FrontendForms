@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: Name.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 06.05.26
  */
 
 use Exception;
