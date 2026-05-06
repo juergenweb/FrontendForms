@@ -67,12 +67,15 @@ class Link extends TextElements
      */
     public function setPageLink(Page $page): self
     {
+
         $this->setUrl($page->url);
         $page->of(true); // turn output formatting on the get a title string and not a LanguagesPageFieldValue
         $this->setLinkText($page->title);
         $this->setAttribute('title', $this->_('To the page') . ': ' . $page->title);
         // check if SEO Maestro is installed and check if page should be indexed
         $seo = Form::getSeoMaestro();
+
+
         if ($seo) {
             $fieldName = $seo->name;
             $seo = $page->$fieldName;
@@ -109,7 +112,8 @@ class Link extends TextElements
 
         $this->setUrl($url);
 
-        return parent::render();
+        return parent::___render();
+
     }
 
     /**
