@@ -10,6 +10,7 @@
      * https://github.com/juergenweb
      * File name: Password.php
      * Created: 03.07.2022
+     * Optimized via Claude AI 06.05.26
      */
 
     use Exception;
@@ -40,7 +41,6 @@
          */
         public function ___renderPassword(): string
         {
-
             return parent::renderInputPassword();
         }
 
