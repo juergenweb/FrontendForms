@@ -41,6 +41,12 @@ $hex->setDescription('Validator to check field contains a valid HEX color code')
 $hex->setNotes('Valid value: #666 or #666666, invalid value: #1548');
 $form->add($hex);
 
+$uniqueUsername = new \FrontendForms\InputText('uniqueusername');
+$uniqueUsername->setLabel('Unique username');
+$uniqueUsername->setRule('uniqueUsername');
+$uniqueUsername->setDescription('Validator to check if username is unique');
+$form->add($uniqueUsername);
+
 $password = new \FrontendForms\InputText('password');
 $password->setLabel('Password conditions');
 $password->setRule('meetsPasswordConditions');
