@@ -10,7 +10,10 @@
      * https://github.com/juergenweb
      * File name: Phone.php
      * Created: 17.04.2024
+     * Optimized via Claude AI 06.05.26
      */
+
+    use Exception;
 
     class Phone extends InputTel
     {
