@@ -10,6 +10,7 @@
      * https://github.com/juergenweb
      * File name: Successmessage.php
      * Created: 17.05.2024
+     * Optimized via Claude AI 06.05.26
      */
 
     use ProcessWire\WireException;
@@ -23,7 +24,7 @@
          * @throws WireException
          * @throws WirePermissionException
          */
-        public function __construct($id = null)
+        public function __construct(?string $id = null)
         {
             parent::__construct($id);
             $this->setCSSClass('success_messageClass');
