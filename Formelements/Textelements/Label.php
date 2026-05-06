@@ -10,6 +10,7 @@
      * https://github.com/juergenweb
      * File name: Label.php
      * Created: 03.07.2022
+     * Optimized via Claude AI 06.05.26
      */
 
     use ProcessWire\WireException;
@@ -26,7 +27,7 @@
          * @throws WireException
          * @throws WirePermissionException
          */
-        public function __construct($id = null)
+        public function __construct(?string $id = null)
         {
             parent::__construct($id);
             $this->enableAsterisk = $this->frontendforms['input_showasterisk']; // from global settings
@@ -50,20 +51,21 @@
          */
         public function render(): string
         {
+            if (!$this->getText()) {
+                return '';
+            }
 
             $content = $this->getText();
-            if($this->getText()){
-                if ($this->getRequired()) {
-                    $this->setCSSClass('label_requiredClass');
-                    if ($this->enableAsterisk) {
-                        $content .= ($this->frontendforms['input_showasterisk']) ? $this->renderAsterisk() : '';
-                    }
 
+            if ($this->required) {
+                $this->setCSSClass('label_requiredClass');
+                if ($this->enableAsterisk && $this->frontendforms['input_showasterisk']) {
+                    $content .= $this->renderAsterisk();
                 }
-                $this->setContent($content);
-                return parent::___render();
             }
-            return '';
+
+            $this->setContent($content);
+            return parent::render();
         }
 
         /**
