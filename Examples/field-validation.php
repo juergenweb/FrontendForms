@@ -34,6 +34,12 @@ $iban->setRule('checkIban');
 $iban->setDescription('Validator to check if the value contains a valid IBAN code');
 $form->add($iban);
 
+$uniqueEmail = new \FrontendForms\InputText('uniqueemail');
+$uniqueEmail->setLabel('Unique email');
+$uniqueEmail->setRule('uniqueEmail');
+$uniqueEmail->setDescription('Validator to check if email is unique');
+$form->add($uniqueEmail);
+
 $hex = new \FrontendForms\InputText('hex');
 $hex->setLabel('Validator checkHex');
 $hex->setRule('checkHex');
