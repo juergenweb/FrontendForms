@@ -41,6 +41,12 @@ $hex->setDescription('Validator to check field contains a valid HEX color code')
 $hex->setNotes('Valid value: #666 or #666666, invalid value: #1548');
 $form->add($hex);
 
+$password = new \FrontendForms\InputText('password');
+$password->setLabel('Password conditions');
+$password->setRule('meetsPasswordConditions');
+$password->setDescription('Validator to check if password meets the conditions set in the backend');
+$form->add($password);
+
 $checkboxmultiarray = new \FrontendForms\InputCheckboxMultiple('multicheckbox');
 $checkboxmultiarray->setLabel('Please select checkbox 1 and 3');
 $checkboxmultiarray->setDescription('Validator to check if checkbox 1 and 3 of a multicheckbox field are checked');
