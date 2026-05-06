@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: Link.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 06.05.26
  */
 
 use ProcessWire\Page;
@@ -32,7 +33,7 @@ class Link extends TextElements
      * @throws WireException
      * @throws WirePermissionException
      */
-    public function __construct($id = null)
+    public function __construct(?string $id = null)
     {
         parent::__construct($id);
         $this->setTag('a');
@@ -89,17 +90,26 @@ class Link extends TextElements
      */
     public function ___render(): string
     {
-        if (!$this->getLinkText() && $this->getUrl()) {
-            $this->setLinkText($this->getUrl());
-        }
-        if ($this->getQueryString()) {
-            $this->setUrl($this->getUrl() . '?' . $this->getQueryString());
-        }
-        if ($this->getAnchor()) {
-            $this->setUrl($this->getUrl() . '#' . $this->getAnchor());
+
+        $url = $this->getUrl();
+
+        if (!$this->getLinkText() && $url) {
+            $this->setLinkText($url);
         }
 
-        return parent::___render();
+        $querySting = $this->getQueryString();
+        $anchor = $this->getAnchor();
+
+        if ($querySting) {
+            $url .= '?' . $querySting;
+        }
+        if ($anchor) {
+            $url .= '#' . $anchor;
+        }
+
+        $this->setUrl($url);
+
+        return parent::render();
     }
 
     /**
@@ -158,7 +168,7 @@ class Link extends TextElements
      */
     public function getQueryString(): string
     {
-        return implode('&',$this->queryString);
+        return implode('&', $this->queryString);
     }
 
     /**
