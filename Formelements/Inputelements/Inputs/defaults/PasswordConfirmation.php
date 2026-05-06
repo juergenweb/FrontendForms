@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: PasswordConfirmation.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 06.05.26
  */
 
 use Exception;
@@ -23,17 +24,18 @@ class PasswordConfirmation extends InputPassword
 {
 
     /**
-     * @param string $id -> the id of the password confirmation field
-     * @param string $passwordfieldName -> the name of the password field to check against
+     * @param string $id
+     * @param string $passwordFieldName
+     * @throws Exception
      * @throws WireException
      * @throws WirePermissionException
      */
-    public function __construct(string $id, string $passwordfieldName)
+    public function __construct(string $id, string $passwordFieldName)
     {
         parent::__construct($id);
-        $this->setLabel($this->_('Password Confirmation')); // set default label
-        $this->setRule('required'); // a confirmation field is required by default
-        $this->setRule('equals', $passwordfieldName);
+        $this->setLabel($this->_('Password Confirmation'));
+        $this->setRule('required');
+        $this->setRule('equals', $passwordFieldName);
         $this->setRule('lengthMin', $this->minLength);
         $this->setRule('lengthMax', '128');
         $this->showPasswordRequirements(false);
