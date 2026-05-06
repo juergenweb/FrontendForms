@@ -11,11 +11,12 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: Tag.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 06.05.26
  */
 
 
 use ProcessWire\FrontendForms;
-use ProcessWire\Wire as Wire;
+use ProcessWire\Wire;
 use ProcessWire\WireException;
 use ProcessWire\WirePermissionException;
 
@@ -87,10 +88,7 @@ abstract class Tag extends Wire
     {
         parent::__construct();
 
-        //  set the property values from the configuration settings from DB and sanitize it
-        foreach ($this->wire('modules')->getConfig('FrontendForms') as $key => $value) {
-            $this->frontendforms[$key] = $value;
-        }
+        $this->frontendforms = $this->wire('modules')->getConfig('FrontendForms');
 
         $this->uploadPath = $this->wire('config')->paths->siteModules . 'FrontendForms/temp_uploads/';
         // Extract values from configuration arrays to single properties of type bool
@@ -102,7 +100,7 @@ abstract class Tag extends Wire
         // set the default path to the custom CSS files directory under site/assets/...
         $customframeworkpath = $this->wire('config')->paths->assets .'files/FrontendForms/frameworks/';
 
-        if(array_key_exists('input_customframeworkpath', $this->frontendforms) && ($this->frontendforms['input_customframeworkpath'] != '')){
+        if (!empty($this->frontendforms['input_customframeworkpath'] ?? '')) {
             $customframeworkpath = $this->frontendforms['input_customframeworkpath'];
         }
         // load the json file from CSSClass directory
@@ -147,7 +145,7 @@ abstract class Tag extends Wire
      * Only for dev purposes
      * @param string|array|object $str
      */
-    public static function pre(mixed $str)
+    public static function pre(mixed $str): void
     {
         echo "<pre>";
         print_r($str);
@@ -180,11 +178,7 @@ abstract class Tag extends Wire
      */
     public function getAttribute(string $attributeName): mixed
     {
-        $key = $this->sanitizeAttributeName($attributeName);
-        if (array_key_exists($key, $this->getAttributes())) {
-            return $this->getAttributes()[$key];
-        }
-        return null;
+        return $this->attributes[$this->sanitizeAttributeName($attributeName)] ?? null;
     }
 
     /**
@@ -233,6 +227,7 @@ abstract class Tag extends Wire
     public function setAttribute(string $key, mixed $value = null): self
     {
         $key = $this->sanitizeAttributeName($key);
+
         // value must be string, array or null
         if (!is_null($value)) {
             // convert numbers to string
@@ -242,8 +237,11 @@ abstract class Tag extends Wire
             if ((!is_string($value)) && (!is_array($value))) {
                 return $this;
             }
+
             if (in_array($this->className(), self::MULTIVALCLASSES)) {
+
                 if (in_array($key, self::MULTIVALUEATTR)) {
+
                     if (is_string($value)) {
                         // check if string contains whitespace between the words (fe class1 class2)
                         if ($value == trim($value) && str_contains($value, ' ')) {
@@ -274,21 +272,23 @@ abstract class Tag extends Wire
             if (in_array($key, self::MULTIVALUEATTR)) {
 
                 //get all values from this attributes
-                $oldValues = $this->getAttributes()[$key] ?? [];
+                $oldValues = $this->attributes[$key] ?? [];
+
                 if (is_string($value)) {
-                    $value = [$value];
+                    // if it is a string with empty spaces - create array out of i
+                    $value = explode(' ', $value);
                 }
                 $multiValues = array_unique(array_merge($oldValues, $value));
-                $this->attributes = array_merge($this->getAttributes(), [$key => $multiValues]);
+                $this->attributes[$key] = $multiValues;
 
             } else {
-                $this->attributes = array_merge($this->getAttributes(), [$key => $value]);
+                $this->attributes[$key] = $value;
             }
         } else {
             // boolean attributes
             if ((str_starts_with($key, 'data-uk-')) || (str_starts_with($key, 'uk-')) || (in_array($key,
                     self::BOOLEANATTR))) {
-                $this->attributes = array_merge($this->getAttributes(), [$key => $key]);
+                $this->attributes[$key] = $key;
             }
         }
         return $this;
@@ -301,10 +301,7 @@ abstract class Tag extends Wire
      */
     public function removeAttribute(string $attributeName): self
     {
-        $name = $this->sanitizeAttributeName($attributeName);
-        $attributes = $this->getAttributes();
-        unset($attributes[$name]);
-        $this->attributes = $attributes;
+        unset($this->attributes[$this->sanitizeAttributeName($attributeName)]);
         return $this;
     }
 
@@ -410,7 +407,16 @@ abstract class Tag extends Wire
      */
     public function removeAttributeValue(string $attributeName, ?string $attributeValue = null): self
     {
+        if (!$attributeValue) {
+            return $this;
+        }
+
         $key = $this->sanitizeAttributeName($attributeName);
+
+        if (!isset($this->attributes[$key])) {
+            return $this;
+        }
+
         if ($attributeValue) {
             $value = trim($attributeValue);
             // check if the attribute exists in the attributes array
@@ -480,47 +486,29 @@ abstract class Tag extends Wire
      */
     protected function attributesToString(bool $selfClosing = true): string
     {
-        $allAttributes = $this->getAttributes();
+        $allAttributes = $this->attributes;
 
-        //remove value attribute from attributes array if self-closing tag
-        if ((!$selfClosing) && ($this->getTag() != 'option')) {
+        if (!$selfClosing && $this->tag !== 'option') {
             unset($allAttributes['value']);
         }
-        $out = '';
+
         $attributes = [];
-        if (count($allAttributes)) {
-            foreach ($allAttributes as $name => $value) {
-                if (is_array($value)) {
 
-
-                    // if value is assoc array than chain the values without whitespace as separator
-                    if ($this->isAssoc($value)) {
-                        $newArray = [];
-                        foreach ($value as $key => $val) {
-                            $newArray[] = $key . ':' . $val;
-                        }
-                        $value = implode(';', $newArray);
-                    } else {
-                        // if numeric add a whitespace as separator between the attribute values ( fe class, rel,..)
-                        $value = implode(' ', $value);
-                    }
-                }
-                if (in_array($value, self::BOOLEANATTR)) {
-                    if ($name != 'type') {
-                        $attributes[] = $value; // checked OK
-                    } else {
-                        // allow attribute value hidden on type=hidden
-                        $attributes[] = $name . '="' . $value . '"';
-                    }
-                } else {
-                    $attributes[] = $name . '="' . $value . '"';
-                }
+        foreach ($allAttributes as $name => $value) {
+            if (is_array($value)) {
+                $value = $this->isAssoc($value)
+                    ? implode(';', array_map(fn($k, $v) => "$k:$v", array_keys($value), $value))
+                    : implode(' ', $value);
             }
-            $out = ' ' . implode(' ', $attributes);
+
+            $attributes[] = in_array($value, self::BOOLEANATTR) && $name !== 'type'
+                ? $value
+                : $name . '="' . $value . '"';
         }
 
-        return $out;
+        return $attributes ? ' ' . implode(' ', $attributes) : '';
     }
+
 
     /**
      * Get the tag of an HTML element
@@ -565,18 +553,23 @@ abstract class Tag extends Wire
         string $tag,
         bool   $showNoContent = false,
         bool   $showAttributeValue = false
-    ): string
-    {
-        $out = '';
-        $show = match ($this->getContent()) {
-            null, '' => $showNoContent,
-            default => true,
+    ): string {
+        $show = match ($this->content) {
+            '', null => $showNoContent,
+            default  => true,
         };
-        if ($show) {
-            $out .= $this->prepend . '<' . $tag . $this->attributesToString($showAttributeValue) . '>' . $this->getContent() . '</' . $tag . '>' . $this->append;
+
+        if (!$show) {
+            return '';
         }
-        return $out;
+
+        return $this->prepend
+            . '<' . $tag . $this->attributesToString($showAttributeValue) . '>'
+            . $this->content
+            . '</' . $tag . '>'
+            . $this->append;
     }
+
 
     /**
      * Get the value of a content if present
@@ -591,7 +584,7 @@ abstract class Tag extends Wire
      * Set the value of the content between to open and closing tag
      * @param string|null $content
      */
-    public function setContent(?string $content)
+    public function setContent(?string $content): void
     {
         if (!is_null($content)) {
             $this->content = $content;
