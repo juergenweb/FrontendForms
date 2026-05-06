@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace FrontendForms;
+
 /*
  * Class for creating a language select element
  * Contains all languages installed on the site
@@ -9,11 +11,9 @@ declare(strict_types=1);
  * Created by Jürgen K.
  * https://github.com/juergenweb 
  * File name: Language.php
- * Created: 06.03.2023 
+ * Created: 06.03.2023
+ * Optimized via Claude AI 06.05.26
  */
-
-
-namespace FrontendForms;
 
 use ProcessWire\LanguagesPageFieldValue;
 use ProcessWire\WireException;
@@ -34,26 +34,21 @@ class Language extends Select
     {
         parent::__construct($id);
 
-        // get the current user language
         $this->user_lang_id = $this->user->language->id;
         $this->setLabel($this->_('Language'));
 
-        // create all language options
         $languageIDs = [];
         foreach ($this->wire('languages') as $lang) {
             $languageIDs[] = $lang->id;
-            if($lang->title instanceof LanguagesPageFieldValue) {
-                $title = $lang->title->getLanguageValue($this->user_lang_id );
-            } else {
-                $title = $lang->title;
-            }
+            $title = $lang->title instanceof LanguagesPageFieldValue
+                ? $lang->title->getLanguageValue($this->user_lang_id)
+                : $lang->title;
             $this->addOption($title, (string)$lang->id);
         }
 
         $this->setRule('required')->setCustomFieldName($this->_('Language'));
         $this->setRule('integer');
         $this->setRule('In', $languageIDs);
-
     }
 
     /**
@@ -61,7 +56,7 @@ class Language extends Select
      * @param int $id
      * @return $this
      */
-    public function setFixedLanguageID(int $id):self
+    public function setFixedLanguageID(int $id): self
     {
         $this->fixed_lang_id = $id;
         return $this;
@@ -75,10 +70,8 @@ class Language extends Select
      */
     public function renderLanguage(): string
     {
-        if(count($this->wire('languages')) > 1){
-
-            $value = (is_null($this->fixed_lang_id)) ? $this->user_lang_id : $this->fixed_lang_id;
-            $this->setDefaultValue($value);
+        if (count($this->wire('languages')) > 1) {
+            $this->setDefaultValue($this->fixed_lang_id ?? $this->user_lang_id);
             return parent::renderSelect();
         }
         return '';
