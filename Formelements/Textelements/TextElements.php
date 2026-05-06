@@ -10,6 +10,7 @@ namespace FrontendForms;
  * https://github.com/juergenweb
  * File name: TextElements.php
  * Created: 03.07.2022
+ * Optimized via Claude AI 06.05.26
  */
 
 use ProcessWire\WireException;
@@ -27,7 +28,6 @@ class TextElements extends Element
     public function __construct(?string $id = null)
     {
         parent::__construct($id);
-        //$this->setTag('p'); // default tag is paragraph - can be overwritten
     }
 
     /**
@@ -49,7 +49,7 @@ class TextElements extends Element
         return $this->getContent();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }
@@ -60,12 +60,14 @@ class TextElements extends Element
      */
     public function ___render(): string
     {
+        $rendered = $this->renderNonSelfclosingTag($this->getTag());
 
         if ($this->wrapper) {
-            $this->wrapper->setContent($this->renderNonSelfclosingTag($this->getTag()));
+            $this->wrapper->setContent($rendered);
             return $this->wrapper->render();
         }
-        return $this->renderNonSelfclosingTag($this->getTag());
+
+        return $rendered;
     }
 
 }
