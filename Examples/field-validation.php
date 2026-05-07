@@ -280,6 +280,12 @@ $requiredIfEqual->setRule('requiredIfEqual' ,'listcontains', 'word1|word2');
 $requiredIfEqual->setDescription('Validator to check if it is not empty if a specific value was selected in the multiple select field "listcontains"');
 $form->add($requiredIfEqual);
 
+$requiredIfNotEmpty = new \FrontendForms\InputText('requiredIfNotEmpty');
+$requiredIfNotEmpty->setLabel('Validator requiredIfNotEmpty');
+$requiredIfNotEmpty->setRule('requiredIfNotEmpty' ,'listcontains');
+$requiredIfNotEmpty->setDescription('Validator to check if this field has a value if a value was selected in the multiple select field "listcontains".');
+$form->add($requiredIfNotEmpty);
+
 
 $time = new \FrontendForms\InputText('time');
 $time->setLabel('Validator time');
