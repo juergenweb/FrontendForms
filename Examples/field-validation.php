@@ -46,6 +46,12 @@ $maxTotalFileSizeZipUncompressed->setRule('maxTotalFileSizeZipUncompressed', '1 
 $maxTotalFileSizeZipUncompressed->setDescription('Validator to check if an uncompressed ZIP folder is not larger than 1 MB in this case.');
 $form->add($maxTotalFileSizeZipUncompressed);
 
+$maxAllowedFileSizeOfFileInZipFolder = new \FrontendForms\InputFile('maxAllowedFileSizeOfFileInZipFolder');
+$maxAllowedFileSizeOfFileInZipFolder->setLabel('Validator maxAllowedFileSizeOfFileInZipFolder');
+$maxAllowedFileSizeOfFileInZipFolder->setRule('maxAllowedFileSizeOfFileInZipFolder', '1 MB');
+$maxAllowedFileSizeOfFileInZipFolder->setDescription('Validator to check all files inside a ZIP folder are not larger than 1 MB in this case.');
+$form->add($maxAllowedFileSizeOfFileInZipFolder);
+
 $uniqueStringValueOfPWField = new \FrontendForms\InputText('uniqueStringValueOfPWField');
 $uniqueStringValueOfPWField->setLabel('Validator uniqueStringValueOfPWField');
 $uniqueStringValueOfPWField->setRule('uniqueStringValueOfPWField' ,'title');
