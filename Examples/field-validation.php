@@ -28,6 +28,12 @@ $safePassword->setRule('safePassword');
 $safePassword->setDescription('Validator to check if password is not on the list of the forbidden passwords');
 $form->add($safePassword);
 
+$maxDepthOfZipFolders = new \FrontendForms\InputFile('maxDepthOfZipFolders');
+$maxDepthOfZipFolders->setLabel('Validator maxDepthOfZipFolders');
+$maxDepthOfZipFolders->setRule('maxDepthOfZipFolders', 2);
+$maxDepthOfZipFolders->setDescription('Validator to check a ZIP folder has not ore than 2 sublevels in depth in this case.');
+$form->add($maxDepthOfZipFolders);
+
 $minFilesInZIPFolder = new \FrontendForms\InputFile('minFilesInZIPFolder');
 $minFilesInZIPFolder->setLabel('Validator minFilesInZIPFolder');
 $minFilesInZIPFolder->setRule('minFilesInZIPFolder', 5);
