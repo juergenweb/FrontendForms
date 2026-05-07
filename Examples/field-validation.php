@@ -67,6 +67,12 @@ $allowedFileNumber->setRule('allowedFileNumber', 2);
 $allowedFileNumber->setDescription('Validator to check if a there are no more files uploaded than allowed.');
 $form->add($allowedFileNumber);
 
+$allowedTotalFileSize = new \FrontendForms\InputFile('allowedTotalFileSize');
+$allowedTotalFileSize->setLabel('Validator allowedTotalFileSize');
+$allowedTotalFileSize->setRule('allowedTotalFileSize', '1 MB');
+$allowedTotalFileSize->setDescription('Validator to check if the sum of the filesizes of all files uploaded is not higher than allowed.');
+$form->add($allowedTotalFileSize);
+
 $uniqueEmail = new \FrontendForms\InputText('uniqueemail');
 $uniqueEmail->setLabel('Unique email');
 $uniqueEmail->setRule('uniqueEmail');
