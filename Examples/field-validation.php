@@ -286,6 +286,12 @@ $requiredIfNotEmpty->setRule('requiredIfNotEmpty' ,'listcontains');
 $requiredIfNotEmpty->setDescription('Validator to check if this field has a value if a value was selected in the multiple select field "listcontains".');
 $form->add($requiredIfNotEmpty);
 
+$requiredIfEmpty = new \FrontendForms\InputText('requiredIfEmpty');
+$requiredIfEmpty->setLabel('Validator requiredIfEmpty');
+$requiredIfEmpty->setRule('requiredIfEmpty' ,'listcontains');
+$requiredIfEmpty->setDescription('Validator to check if this field has a value if the multiple select field "listcontains" is empty.');
+$form->add($requiredIfEmpty);
+
 
 $time = new \FrontendForms\InputText('time');
 $time->setLabel('Validator time');
