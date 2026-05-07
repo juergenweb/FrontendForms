@@ -61,6 +61,12 @@ $allowedFileSize->setDescription('Validator to check if the file is not larger t
 $allowedFileSize->setNotes('Allowed filesize: 1 MB');
 $form->add($allowedFileSize);
 
+$allowedFileNumber = new \FrontendForms\InputFile('allowedFileNumber');
+$allowedFileNumber->setLabel('Validator allowedFileNumber');
+$allowedFileNumber->setRule('allowedFileNumber', 2);
+$allowedFileNumber->setDescription('Validator to check if a there are no more files uploaded than allowed.');
+$form->add($allowedFileNumber);
+
 $uniqueEmail = new \FrontendForms\InputText('uniqueemail');
 $uniqueEmail->setLabel('Unique email');
 $uniqueEmail->setRule('uniqueEmail');
