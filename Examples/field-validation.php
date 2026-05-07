@@ -41,6 +41,13 @@ $firstAndLastname->setDescription('Validator to Check international first and la
 $firstAndLastname->setNotes('Valid value: John Doo, invalid value: John1 Mayer');
 $form->add($firstAndLastname);
 
+$checkBic = new \FrontendForms\InputText('checkBic');
+$checkBic->setLabel('Validator checkBic');
+$checkBic->setRule('checkBic');
+$checkBic->setDescription('Validator to check if the value contains a valid BIC code');
+$checkBic->setNotes('Valid value: HVFCUSUGU3I, invalid value: HVFCFLUGU3I');
+$form->add($checkBic);
+
 $iban = new \FrontendForms\InputText('iban');
 $iban->setLabel('Validator iban');
 $iban->setRule('checkIban');
