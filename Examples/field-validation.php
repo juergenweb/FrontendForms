@@ -28,6 +28,13 @@ $safePassword->setRule('safePassword');
 $safePassword->setDescription('Validator to check if password is not on the list of the forbidden passwords');
 $form->add($safePassword);
 
+$noLetters = new \FrontendForms\InputText('noLetters');
+$noLetters->setLabel('Validator noLetters');
+$noLetters->setRule('noLetters');
+$noLetters->setDescription('Validator to check if a string does not contain letters');
+$noLetters->setNotes('Valid value: 12345, invalid value: 124ABD');
+$form->add($noLetters);
+
 $required = new \FrontendForms\InputText('required');
 $required->setLabel('Validator required');
 $required->setRule('required');
