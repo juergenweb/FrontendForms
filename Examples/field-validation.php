@@ -34,6 +34,13 @@ $required->setRule('required');
 $required->setDescription('Validator to check field is not empty');
 $form->add($required);
 
+$firstAndLastname = new \FrontendForms\InputText('firstAndLastname');
+$firstAndLastname->setLabel('Validator firstAndLastname');
+$firstAndLastname->setRule('firstAndLastname');
+$firstAndLastname->setDescription('Validator to Check international first and last name');
+$firstAndLastname->setNotes('Valid value: John Doo, invalid value: John1 Mayer');
+$form->add($firstAndLastname);
+
 $iban = new \FrontendForms\InputText('iban');
 $iban->setLabel('Validator iban');
 $iban->setRule('checkIban');
