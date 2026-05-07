@@ -274,6 +274,12 @@ $listcontains->setDescription('Validator to check if the array value contains a 
 $listcontains->setNotes('Valid value: word1, invalid value: word2');
 $form->add($listcontains);
 
+$requiredIfEqual = new \FrontendForms\InputText('requiredIfEqual');
+$requiredIfEqual->setLabel('Validator requiredIfEqual');
+$requiredIfEqual->setRule('requiredIfEqual' ,'listcontains', 'word1|word2');
+$requiredIfEqual->setDescription('Validator to check if it is not empty if a specific value was selected in the multiple select field "listcontains"');
+$form->add($requiredIfEqual);
+
 
 $time = new \FrontendForms\InputText('time');
 $time->setLabel('Validator time');
