@@ -34,6 +34,12 @@ $minFilesInZIPFolder->setRule('minFilesInZIPFolder', 5);
 $minFilesInZIPFolder->setDescription('Validator to check if a ZIP folder contains at least the number of 5 files in this case');
 $form->add($minFilesInZIPFolder);
 
+$maxFilesInZIPFolder = new \FrontendForms\InputFile('maxFilesInZIPFolder');
+$maxFilesInZIPFolder->setLabel('Validator maxFilesInZIPFolder');
+$maxFilesInZIPFolder->setRule('maxFilesInZIPFolder', 5);
+$maxFilesInZIPFolder->setDescription('Validator to check if a ZIP folder does not contain more of 5 files in this case');
+$form->add($maxFilesInZIPFolder);
+
 $uniqueStringValueOfPWField = new \FrontendForms\InputText('uniqueStringValueOfPWField');
 $uniqueStringValueOfPWField->setLabel('Validator uniqueStringValueOfPWField');
 $uniqueStringValueOfPWField->setRule('uniqueStringValueOfPWField' ,'title');
