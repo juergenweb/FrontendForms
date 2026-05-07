@@ -35,6 +35,13 @@ $noLetters->setDescription('Validator to check if a string does not contain lett
 $noLetters->setNotes('Valid value: 12345, invalid value: 124ABD');
 $form->add($noLetters);
 
+$noNumbers = new \FrontendForms\InputText('noNumbers');
+$noNumbers->setLabel('Validator noNumbers');
+$noNumbers->setRule('noNumbers');
+$noNumbers->setDescription('Validator to check if a string does not contain numbers');
+$noNumbers->setNotes('Valid value: ABCDE, invalid value: 124ABD');
+$form->add($noNumbers);
+
 $required = new \FrontendForms\InputText('required');
 $required->setLabel('Validator required');
 $required->setRule('required');
