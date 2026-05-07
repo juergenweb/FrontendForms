@@ -28,6 +28,13 @@ $safePassword->setRule('safePassword');
 $safePassword->setDescription('Validator to check if password is not on the list of the forbidden passwords');
 $form->add($safePassword);
 
+$uniqueStringValueOfPWField = new \FrontendForms\InputText('uniqueStringValueOfPWField');
+$uniqueStringValueOfPWField->setLabel('Validator uniqueStringValueOfPWField');
+$uniqueStringValueOfPWField->setRule('uniqueStringValueOfPWField' ,'title');
+$uniqueStringValueOfPWField->setDescription('Validator to check if the value entered in this field is stored inside a PW field');
+$uniqueStringValueOfPWField->setDescription('You can check for example if a headline inside the field title is the same value as entered inside this field.');
+$form->add($uniqueStringValueOfPWField);
+
 $noLetters = new \FrontendForms\InputText('noLetters');
 $noLetters->setLabel('Validator noLetters');
 $noLetters->setRule('noLetters');
