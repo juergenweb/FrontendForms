@@ -28,6 +28,12 @@ $safePassword->setRule('safePassword');
 $safePassword->setDescription('Validator to check if password is not on the list of the forbidden passwords');
 $form->add($safePassword);
 
+$fileRequired = new \FrontendForms\InputFile('fileRequired');
+$fileRequired->setLabel('Validator fileRequired');
+$fileRequired->setRule('fileRequired');
+$fileRequired->setDescription('Validator to check if a file is uploaded.');
+$form->add($fileRequired);
+
 $required = new \FrontendForms\InputText('required');
 $required->setLabel('Validator required');
 $required->setRule('required');
