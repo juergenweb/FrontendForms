@@ -28,6 +28,12 @@ $safePassword->setRule('safePassword');
 $safePassword->setDescription('Validator to check if password is not on the list of the forbidden passwords');
 $form->add($safePassword);
 
+$minFilesInZIPFolder = new \FrontendForms\InputFile('minFilesInZIPFolder');
+$minFilesInZIPFolder->setLabel('Validator minFilesInZIPFolder');
+$minFilesInZIPFolder->setRule('minFilesInZIPFolder', 5);
+$minFilesInZIPFolder->setDescription('Validator to check if a ZIP folder contains at least the number of 5 files in this case');
+$form->add($minFilesInZIPFolder);
+
 $uniqueStringValueOfPWField = new \FrontendForms\InputText('uniqueStringValueOfPWField');
 $uniqueStringValueOfPWField->setLabel('Validator uniqueStringValueOfPWField');
 $uniqueStringValueOfPWField->setRule('uniqueStringValueOfPWField' ,'title');
