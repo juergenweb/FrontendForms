@@ -249,13 +249,13 @@ abstract class Inputfields extends Element
                 $notes[$validator] = ['text' => sprintf($this->_('The maximum allowed folder/directory depth in a ZIP file is %s'), $variables[0]), 'value' => $variables[0]];
                 break;
             case 'allowedFileTypesInZipFolder':
-                $notes[$validator] = ['text' => sprintf($this->_('ZIP files may only contain the following file types: %s'), $variables[0]), 'value' => $variables[0]];
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP files may only contain the following file types: %s'), implode(', ', $variables[0])), 'value' => $variables[0]];
                 break;
             case 'maxAllowedFileSizeOfFileInZipFolder':
                 $notes[$validator] = ['text' => sprintf($this->_('ZIP files may only contain files which are not larger than %s'), $variables[0]), 'value' => $variables[0]];
                 break;
             case 'notAllowedFileTypesInZipFolder':
-                $notes[$validator] = ['text' => sprintf($this->_('ZIP files may not contain files of the following file types: %s'), $variables[0]), 'value' => $variables[0]];
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP files may not contain files of the following file types: %s'), implode(', ', $variables[0])), 'value' => $variables[0]];
                 break;
             case 'allowedFileSize':
                 $notes[$validator] = ['text' => sprintf($this->_('Please do not upload files larger than %s'), wireBytesStr($variables[0])), 'value' => $variables[0]];
@@ -1184,6 +1184,7 @@ abstract class Inputfields extends Element
         $this->removeAttribute('data-ff_attribute');
         $this->removeAttribute('data-ff_validator');
     }
+
 
     protected function addHTML5requiredIfEqual(array $v): void
     {
