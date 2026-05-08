@@ -350,6 +350,7 @@ class Form extends CustomRules
 
     }
 
+
     /**
      * Disable the internal jump to the form container after form submission
      * @param bool $prevent
@@ -379,6 +380,7 @@ class Form extends CustomRules
                 }
             }
         }
+       
         return $result;
     }
 
@@ -524,10 +526,9 @@ class Form extends CustomRules
      */
     public function setAjaxMessage(string $ajaxmsg): void
     {
-        if ($ajaxmsg === '') {
-            $ajaxmsg = $this->_('Please be patient... the form will be validated!');
-        }
-        $this->frontendforms['input_ajaxMsg'] = trim($ajaxmsg);
+        $this->frontendforms['input_ajaxMsg'] = trim(
+            $ajaxmsg !== '' ? $ajaxmsg : $this->_('Please be patient... the form will be validated!')
+        );
     }
 
     /**
@@ -633,8 +634,9 @@ class Form extends CustomRules
      */
     public function setCaptchaPosition(string $ref_field_name, string $pos = 'after'): self
     {
-        $pos = (in_array($pos, ['before', 'after'])) ? $pos : 'after'; // only before and after is allowed
-        $this->captchaPosition = [$ref_field_name => $pos];
+        $this->captchaPosition = [
+            $ref_field_name => in_array($pos, ['before', 'after'], true) ? $pos : 'after'
+        ];
         return $this;
     }
 
@@ -644,12 +646,14 @@ class Form extends CustomRules
      */
     protected function getCaptchaPosition(): array|null
     {
-        if ($this->captchaPosition) {
-            // check if a field with the given name exists inside the form object, otherwise return null
-            if (!$this->getFormelementByName(array_key_first($this->captchaPosition)))
+        if (!empty($this->captchaPosition) && is_array($this->captchaPosition)) {
+            $firstKey = array_key_first($this->captchaPosition);
+            if (!$this->getFormelementByName($firstKey)) {
                 return null;
+            }
         }
-        return $this->captchaPosition;
+
+        return $this->captchaPosition ?: null;
     }
 
     /**
@@ -719,9 +723,11 @@ class Form extends CustomRules
      */
     public function setDescPosition(string $pos): self
     {
-        if (in_array($pos, ['beforeLabel', 'afterLabel', 'afterInput'])) {
-            $this->general_desc_position = $pos; // set new position property
-        }
+        $this->general_desc_position = match($pos) {
+            'beforeLabel', 'afterLabel', 'afterInput' => $pos,
+            default => throw new \InvalidArgumentException("Invalid description position: {$pos}"),
+        };
+
         return $this;
     }
 
@@ -2393,6 +2399,7 @@ class Form extends CustomRules
     {
 
         $files = $this->getUploadedFilesForValidation($fieldname, false);
+
         if(is_null($files)) return null;
         $zipFiles = [];
         foreach ($files as $key => $file) {
@@ -2402,6 +2409,7 @@ class Form extends CustomRules
         }
         if($zipFiles){
             if($flatArray){
+
                 return $this->flattenArray($zipFiles);
             } else {
                 return $zipFiles;
@@ -2884,6 +2892,7 @@ class Form extends CustomRules
 
                                 foreach ($_FILES as $fieldname => $data) {
 
+                                    // multi-upload field
                                     if (is_array($data['name'])) {
 
                                         if (count(array_filter($data['name']))) {
@@ -2904,11 +2913,12 @@ class Form extends CustomRules
                                                     $validation_files[$fieldname][$file['name']] = $zip_files;
                                                 } else {
                                                     $validation_files[$fieldname][$file['name']] = $path . $file['name'];
+
                                                 }
                                             }
                                         }
                                     } else {
-
+                                        // single upload field
                                         if ($data['name']) {
 
                                             // create a new temp dir for each upload field
@@ -2925,7 +2935,7 @@ class Form extends CustomRules
                                                 $validation_files[$fieldname][$data['name']] = $zip_files;
 
                                             } else {
-                                                $validation_files[$fieldname][$file['name']] = $path . $file['name'];
+                                                $validation_files[$fieldname][$data['name']] = $path . $data['name'];
                                             }
                                         }
                                     }
