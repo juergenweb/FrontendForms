@@ -1174,8 +1174,12 @@ class Form extends CustomRules
 
                 $this->setMailPlaceholder('body', $body);
                 $mail->bodyHTML($body);
-                $mail->body($body);
-
+                if ($mail->bodyHTML && !$mail->body) {
+                    // derive a plain-text alternative from HTML, never mirror HTML into body
+                    $mail->body($mail->htmlToText($body));
+                } else {
+                    $mail->body($body);
+                }
             }
             if ($this->wire('session')->get('templateloaded') != '1') {
                 $this->includeMailTemplate($mail); // include/use mail template if set
