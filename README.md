@@ -1907,21 +1907,21 @@ For more detailed explanation on each validation rule click the link at the vali
 | [allowedFileExt](#allowedFileExt)  | Checks if an uploaded file is of one of the allowed extensions                                               |
 | [forbiddenFileExt](#forbiddenFileExt)  | Checks if an uploaded file is of one of the forbidden extensions                                             |
 | [phpIniFilesize](#phpIniFilesize)  | Checks if an uploaded file is not larger than the allowed filesize as declared in the php.ini file           |
-| [allowedFileNumber](#allowedfilenumber) | Limit the number of files inside a file upload multiple field
-| [allowedTotalFileSize](#allowedtotalfilesize) | Set a total max file size limit for all files inside a file upload field
+| [allowedFileNumber](#allowedfilenumber) | Limit the number of files inside a file upload multiple field|
+| [allowedTotalFileSize](#allowedtotalfilesize) | Set a total max file size limit for all files inside a file upload field|
 
 ### Validation rules for ZIP files
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
-| [maxFilesInZIPFolder](#maxfilesinzipfolder) | Checks if the number of files inside a ZIP folder is not higher than allowed
-| [minFilesInZIPFolder](#minfilesinzipfolder) | This validator validates the minimum required number of files inside a ZIP folder
-| [maxTotalFileSizeZipUncompressed](#maxtotalfilesizezipuncompressed) | Verifies that the uncompressed filesize of all files in an uploaded ZIP folder does not exceed the total file size limit
-| [requiredFileNamesInZip](#requiredfilenamesinzip) | Validate if a Zip file contains specific files
-| [maxNumberOfZipFolders](#maxnumberofzipfolders) | Validate the maximum number of ZIP files uploaded inside an upload field
-| [maxDepthOfZipFolders](#maxdepthofzipfolders) | Validates that a ZIP folder does not contain more sub-dir levels than allowed in the hierarchy
-| [allowedFileTypesInZipFolder](#allowedfiletypesinzipfolder) | Validate if all files inside a ZIP folder are of the allowed type
-| [notAllowedFileTypesInZipFolder](#notallowedfiletypesinzipfolder) | Validate if all files inside a ZIP folder are NOT of a specific type
-| [maxAllowedFileSizeOfFileInZipFolder](#notallowedfiletypesinzipfolder) | Validate the max. filesize of an individual file inside a ZIP folder
+| [maxFilesInZIPFolder](#maxfilesinzipfolder) | Checks if the number of files inside a ZIP folder is not higher than allowed|
+| [minFilesInZIPFolder](#minfilesinzipfolder) | This validator validates the minimum required number of files inside a ZIP folder|
+| [maxTotalFileSizeZipUncompressed](#maxtotalfilesizezipuncompressed) | Verifies that the uncompressed filesize of all files in an uploaded ZIP folder does not exceed the total file size limit|
+| [requiredFileNamesInZip](#requiredfilenamesinzip) | Validate if a Zip file contains specific files|
+| [maxNumberOfZipFolders](#maxnumberofzipfolders) | Validate the maximum number of ZIP files uploaded inside an upload field|
+| [maxDepthOfZipFolders](#maxdepthofzipfolders) | Validates that a ZIP folder does not contain more sub-dir levels than allowed in the hierarchy|
+| [allowedFileTypesInZipFolder](#allowedfiletypesinzipfolder) | Validate if all files inside a ZIP folder are of the allowed type|
+| [notAllowedFileTypesInZipFolder](#notallowedfiletypesinzipfolder) | Validate if all files inside a ZIP folder are NOT of a specific type|
+| [maxAllowedFileSizeOfFileInZipFolder](#notallowedfiletypesinzipfolder) | Validate the max. filesize of an individual file inside a ZIP folder|
 
 ### Validation rules for finance
 | Validation rule name  | Explanation                                                                                                  |
@@ -1932,7 +1932,7 @@ For more detailed explanation on each validation rule click the link at the vali
 ### Validation rules for SPAM
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
-| [checkContentForSpam](#checkcontentforspam) | Validator to check if a text has characteristics of a SPAM text
+| [checkContentForSpam](#checkcontentforspam) | Validator to check if a text has characteristics of a SPAM text|
 
 ### Miscellaneous Validation rules for
 | Validation rule name  | Explanation                                                                                                  |
@@ -1944,12 +1944,12 @@ For more detailed explanation on each validation rule click the link at the vali
 | [checkHex](#checkHex)  | Checks if the entered value is a valid HEX color code                                                        |
 | [compareTexts](#compareTexts)  | Checks if a text entered in an inputfield is present in an array of texts.  |
 | [cyrillicname](#cyrillicname)  | Checks if a name entered in an inputfield is in the correct format of a cyrillic name.  |
-| [noLetters](#noletters) | Check if a string does not contain any letters and German Umlauts
-| [noNumbers](#nonumbers) | Check if a string does not contain any number at all
-| [requiredIfEqual](#requiredifequal) | Checks if a field is not empty if a conditional field is not empty too and has a specific value
-| [requiredIfEmpty](#requiredifempty) | Checks if a field is not empty if aconditional field is empty
-| [requiredIfNotEmpty](#requiredifnotempty) | Checks if a field is not empty if a conditional field is not empty too
-| [uniqueStringValueOfPWField](#uniquestringvalueofpwfield) | Checks if a specific string value is stored inside the DB of a specific ProcessWire field
+| [noLetters](#noletters) | Check if a string does not contain any letters and German Umlauts|
+| [noNumbers](#nonumbers) | Check if a string does not contain any number at all|
+| [requiredIfEqual](#requiredifequal) | Checks if a field is not empty if a conditional field is not empty too and has a specific value|
+| [requiredIfEmpty](#requiredifempty) | Checks if a field is not empty if aconditional field is empty|
+| [requiredIfNotEmpty](#requiredifnotempty) | Checks if a field is not empty if a conditional field is not empty too|
+| [uniqueStringValueOfPWField](#uniquestringvalueofpwfield) | Checks if a specific string value is stored inside the DB of a specific ProcessWire field|
 
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
