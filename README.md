@@ -1869,17 +1869,19 @@ $field->setRule('allowedFileSize', '10 MB', ['defaultnotes' => false]); // add d
 Not every validation rule adds a notes text by default - take a look at your form and you will see where notes texts are added. If so, you can use these possibility to remove the automatically added notes text if you want.
 
 
-### Table of all custom validation rules for better overview:
+### List of all custom validation rules for better overview:
 
-For more detailed explanation on each validation rule click the link at the validation rule name. Here is the list of all custom validation types. Click the one you are interested in:
+Here is the list of all custom validation types. Click the one you are interested in:
 
-* [User validation](#validation-rules-for-users)
-* [Dates validation](#validation-rules-for-dates)
-* [File upload validation](#validation-rules-for-file-uploads)
-* [ZIP file validation](#validation-rules-for-zip-files)
-* [Financial validation](#validation-rules-for-finance)
-* [Spam validation](#validation-rules-for-spam)
-* [Miscellaneous validation](#miscellaneous-validation)
+* [User validation](#validation-rules-for-users): Contains all user specific validation rules
+* [Dates validation](#validation-rules-for-dates): Contains all validation rules for dates validation
+* [File upload validation](#validation-rules-for-file-uploads): Contains all rules than can be used with file upload fields
+* [ZIP file validation](#validation-rules-for-zip-files): Special validation rules only for validating ZIP files
+* [Financial validation](#validation-rules-for-finance): Contains all validation rules for financial data
+* [Spam validation](#validation-rules-for-spam): Contains all rules for detecting SPAM content
+* [Miscellaneous validation](#miscellaneous-validation): All rules that does not fit in one of the other categories
+
+For a more detailed explanation of each validation rule, click on the link next to the validation rule name in the corresponding table.
 
 #### Validation rules for users
 
