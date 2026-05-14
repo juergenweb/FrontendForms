@@ -1946,7 +1946,7 @@ Has to be added to the password field; checks if password and username matches. 
 First parameter: validation name / Second parameter: the field name of username field
 
 ```php
-$field->setRule('matchUsername', 'myemailfieldname');
+$field->setRule('matchUsername', 'myusernamefieldname');
 ```
 
 ### meetsPasswordConditions
