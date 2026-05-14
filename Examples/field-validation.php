@@ -22,6 +22,13 @@ $form->setMaxAttempts(0);
 $form->setMinTime(0);
 $form->setMaxTime(0);
 
+$usernamesyntax = new \FrontendForms\InputText('usernamesyntax');
+$usernamesyntax->setLabel('Validator usernameSyntax');
+$usernamesyntax->setRule('usernameSyntax');
+$usernamesyntax->setDescription('Validator to check if a username does not contain not allowed characters');
+$usernamesyntax->setNotes('Valid value: tom123, invalid value: $max');
+$form->add($usernamesyntax);
+
 $safePassword = new \FrontendForms\InputText('safepassword');
 $safePassword->setLabel('Safe Password');
 $safePassword->setRule('safePassword');
