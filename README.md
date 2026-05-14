@@ -1883,6 +1883,9 @@ For more detailed explanation on each validation rule click the link at the vali
 | [uniqueEmail](#uniqueEmail)  | Checks if an email address is used by another user or not                                                    |
 | [checkPasswordOfUser](#checkPasswordOfUser)  | This validation rule is for logged-in users only. Checks if entered password is the same as stored in the DB |
 | [matchEmail](#matchEmail)  | Checks if a email and password match (for login)                                                             |
+| ---------------------------------------------------------------------------------------------------------------------------|
+| Test 
+| ------------- |--------------------------------------------------------------------------------------------------------------|
 | [isBooleanAndTrue](#isBooleanAndTruel)  | Check if a value is from type boolean and true (no really applicable for form values)                        |
 | [isBooleanAndFalse](#isBooleanAndFalse)  | Check if a value is from type boolean and false (no really applicable for form values)                       |
 | [isBooleanAndFalse](#isBooleanAndFalse)  | Check if a value is from type boolean and false (no really applicable for form values)                       |
