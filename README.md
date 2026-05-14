@@ -1873,53 +1873,46 @@ Not every validation rule adds a notes text by default - take a look at your for
 
 For more detailed explanation on each validation rule click the link at the validation rule name
 
+#### Validation rules for users
 
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
 | [uniqueUsername](#uniqueusername)  | Checks if a username is used by another user or not                                                          |
 | [matchUsername](#matchUsername)  | Checks if a username and password match (for login)                                                          |
-| [meetsPasswordConditions](#meetsPasswordConditions)  | Checks if password meets the required conditions set in the backend                                          |
+| [meetsPasswordConditions](#meetsPasswordConditions)  | Checks if password meets the required conditions set in the backend                      |
 | [usernameSyntax](#usernameSyntax)  | Checks if the entered username contains the allowed characters                                               |
 | [uniqueEmail](#uniqueEmail)  | Checks if an email address is used by another user or not                                                    |
 | [checkPasswordOfUser](#checkPasswordOfUser)  | This validation rule is for logged-in users only. Checks if entered password is the same as stored in the DB |
 | [matchEmail](#matchEmail)  | Checks if a email and password match (for login)                                                             |
-| ---------------------------------------------------------------------------------------------------------------------------|
-| Test 
-| ------------- |--------------------------------------------------------------------------------------------------------------|
-| [isBooleanAndTrue](#isBooleanAndTruel)  | Check if a value is from type boolean and true (no really applicable for form values)                        |
-| [isBooleanAndFalse](#isBooleanAndFalse)  | Check if a value is from type boolean and false (no really applicable for form values)                       |
-| [isBooleanAndFalse](#isBooleanAndFalse)  | Check if a value is from type boolean and false (no really applicable for form values)                       |
-| [exactValue](#exactValue)  | Check if a value entered is exact the same value given as second parameter                                   |
-| [differentValue](#differentValue)  | Check if a value entered different than the value given as second parameter                                  |
 | [checkTfaCode](#checkTfaCode)  | Check if a value entered is the correct Tfa-Code sent by the TfaEmail module (only for internal usage)       |
 | [differentPassword](#differentPassword)  | Checks if the password entered is different from the old password stored inside the database                 |
 | [safePassword](#safePassword)  | Checks if a password entered against the blacklist of forbidden passwords                                    |
+
+#### Validation rules for dates
+
+| Validation rule name  | Explanation                                                                                                  |
+| ------------- |--------------------------------------------------------------------------------------------------------------|
+| [week](#week)  | Checks if the entered value is in the correct format of a week. The syntax should be YYYY-Www (fe 2023-W09)  |
+| [month](#month)  | Checks if the entered value is in the correct format of a month. The syntax should be YYYY-MM (fe 2023-09)   |                             
+| [dateBeforeField](#datebeforefield)  | Checks if the entered date is before a given date set in another field                                       |
+| [dateAfterField](#dateafterfield)  | Checks if the entered date is after a given date set in another field                                        |
+| [dateWithinDaysRange](#datewithindaysrange)  | Checks if the entered date is within a given time range in days starting from a date set in another field     |
+| [dateOutsideOfDaysRange](#dateoutsideofdaysrange)  | Checks if the entered date is outside a given time range in days starting from a date set in another field    |
+
+### Validation rules for file uploads
+| Validation rule name  | Explanation                                                                                                  |
+| ------------- |--------------------------------------------------------------------------------------------------------------|
 | [allowedFileSize](#safePassword)  | Checks if an uploaded file is not larger than the allowed filesize                                           |
 | [noErrorOnUpload](#noErrorOnUpload)  | Checks if an error occurs during the upload of a file                                                        |
 | [allowedFileExt](#allowedFileExt)  | Checks if an uploaded file is of one of the allowed extensions                                               |
 | [forbiddenFileExt](#forbiddenFileExt)  | Checks if an uploaded file is of one of the forbidden extensions                                             |
 | [phpIniFilesize](#phpIniFilesize)  | Checks if an uploaded file is not larger than the allowed filesize as declared in the php.ini file           |
-| [week](#week)  | Checks if the entered value is in the correct format of a week. The syntax should be YYYY-Www (fe 2023-W09)  |
-| [month](#month)  | Checks if the entered value is in the correct format of a month. The syntax should be YYYY-MM (fe 2023-09)   |
-| [checkHex](#checkHex)  | Checks if the entered value is a valid HEX color code                                                        |
-| [dateBeforeField](#datebeforefield)  | Checks if the entered date is before a given date set in another field                                       |
-| [dateAfterField](#dateafterfield)  | Checks if the entered date is after a given date set in another field                                        |
-| [dateWithinDaysRange](#datewithindaysrange)  | Checks if the entered date is within a given time range in days starting from a date set in another field     |
-| [dateOutsideOfDaysRange](#dateoutsideofdaysrange)  | Checks if the entered date is outside a given time range in days starting from a date set in another field    |
-| [firstAndLastname](#firstandlastname)  | Checks if first and lastname contains only allowed characters    |
-| [uniqueFilenameInDir](#uniquefilenameindir)  | Checks if a newly uploaded file has the same filename as a file inside the destination directory  |
-| [compareTexts](#compareTexts)  | Checks if a text entered in an inputfield is present in an array of texts.  |
-| [checkIban](#checkiban)  | Checks if an IBAN entered in an inputfield is in the correct format.  |
-| [checkBic](#checkbic)  | Checks if a BIC entered in an inputfield is in the correct format.  |
-| [cyrillicname](#cyrillicname)  | Checks if a name entered in an inputfield is in the correct format of a cyrillic name.  |
 | [allowedFileNumber](#allowedfilenumber) | Limit the number of files inside a file upload multiple field
 | [allowedTotalFileSize](#allowedtotalfilesize) | Set a total max file size limit for all files inside a file upload field
-| [noLetters](#noletters) | Check if a string does not contain any letters and German Umlauts
-| [noNumbers](#nonumbers) | Check if a string does not contain any number at all
-| [requiredIfEqual](#requiredifequal) | Checks if a field is not empty if a conditional field is not empty too and has a specific value
-| [requiredIfEmpty](#requiredifempty) | Checks if a field is not empty if aconditional field is empty
-| [requiredIfNotEmpty](#requiredifnotempty) | Checks if a field is not empty if a conditional field is not empty too
-| [uniqueStringValueOfPWField](#uniquestringvalueofpwfield) | Checks if a specific string value is stored inside the DB of a specific ProcessWire field
+
+### Validation rules for ZIP files
+| Validation rule name  | Explanation                                                                                                  |
+| ------------- |--------------------------------------------------------------------------------------------------------------|
 | [maxFilesInZIPFolder](#maxfilesinzipfolder) | Checks if the number of files inside a ZIP folder is not higher than allowed
 | [minFilesInZIPFolder](#minfilesinzipfolder) | This validator validates the minimum required number of files inside a ZIP folder
 | [maxTotalFileSizeZipUncompressed](#maxtotalfilesizezipuncompressed) | Verifies that the uncompressed filesize of all files in an uploaded ZIP folder does not exceed the total file size limit
@@ -1929,7 +1922,35 @@ For more detailed explanation on each validation rule click the link at the vali
 | [allowedFileTypesInZipFolder](#allowedfiletypesinzipfolder) | Validate if all files inside a ZIP folder are of the allowed type
 | [notAllowedFileTypesInZipFolder](#notallowedfiletypesinzipfolder) | Validate if all files inside a ZIP folder are NOT of a specific type
 | [maxAllowedFileSizeOfFileInZipFolder](#notallowedfiletypesinzipfolder) | Validate the max. filesize of an individual file inside a ZIP folder
+
+### Validation rules for finance
+| Validation rule name  | Explanation                                                                                                  |
+| ------------- |--------------------------------------------------------------------------------------------------------------|
+| [checkIban](#checkiban)  | Checks if an IBAN entered in an inputfield is in the correct format.  |
+| [checkBic](#checkbic)  | Checks if a BIC entered in an inputfield is in the correct format.  |
+
+### Validation rules for SPAM
+| Validation rule name  | Explanation                                                                                                  |
+| ------------- |--------------------------------------------------------------------------------------------------------------|
 | [checkContentForSpam](#checkcontentforspam) | Validator to check if a text has characteristics of a SPAM text
+
+### Miscellaneous Validation rules for
+| Validation rule name  | Explanation                                                                                                  |
+| ------------- |--------------------------------------------------------------------------------------------------------------|
+| [isBooleanAndTrue](#isBooleanAndTruel)  | Check if a value is from type boolean and true (no really applicable for form values)                        |
+| [isBooleanAndFalse](#isBooleanAndFalse)  | Check if a value is from type boolean and false (no really applicable for form values)                       |
+| [exactValue](#exactValue)  | Check if a value entered is exact the same value given as second parameter                                   |
+| [differentValue](#differentValue)  | Check if a value entered different than the value given as second parameter                                  |
+| [checkHex](#checkHex)  | Checks if the entered value is a valid HEX color code                                                        |
+| [compareTexts](#compareTexts)  | Checks if a text entered in an inputfield is present in an array of texts.  |
+| [cyrillicname](#cyrillicname)  | Checks if a name entered in an inputfield is in the correct format of a cyrillic name.  |
+| [noLetters](#noletters) | Check if a string does not contain any letters and German Umlauts
+| [noNumbers](#nonumbers) | Check if a string does not contain any number at all
+| [requiredIfEqual](#requiredifequal) | Checks if a field is not empty if a conditional field is not empty too and has a specific value
+| [requiredIfEmpty](#requiredifempty) | Checks if a field is not empty if aconditional field is empty
+| [requiredIfNotEmpty](#requiredifnotempty) | Checks if a field is not empty if a conditional field is not empty too
+| [uniqueStringValueOfPWField](#uniquestringvalueofpwfield) | Checks if a specific string value is stored inside the DB of a specific ProcessWire field
+
 
 Afterwards, you will find a more detailed description of all custom rules and their usage:
 
