@@ -1871,7 +1871,17 @@ Not every validation rule adds a notes text by default - take a look at your for
 
 ### Table of all custom validation rules for better overview:
 
-For more detailed explanation on each validation rule click the link at the validation rule name
+For more detailed explanation on each validation rule click the link at the validation rule name. Here is the list of all custom validation types. Click the one you are interested in:
+
+* [User validation](#validation-rules-for-users)
+* [Dates validation](#validation-rules-for-dates)
+* [File upload validation](#validation-rules-for-file-uploads)
+* [ZIP file validation](#validation-rules-for-zip-files)
+* [Financial validation](#validation-rules-for-finance)
+* [Spam validation](#validation-rules-for-spam)
+* [Miscellaneous validation](#miscellaneous-validation-rules)
+
+* 
 
 #### Validation rules for users
 
@@ -1934,7 +1944,7 @@ For more detailed explanation on each validation rule click the link at the vali
 | ------------- |--------------------------------------------------------------------------------------------------------------|
 | [checkContentForSpam](#checkcontentforspam) | Validator to check if a text has characteristics of a SPAM text|
 
-### Miscellaneous Validation rules for
+### Miscellaneous validation
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
 | [isBooleanAndTrue](#isBooleanAndTruel)  | Check if a value is from type boolean and true (no really applicable for form values)                        |
