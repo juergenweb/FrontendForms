@@ -1879,9 +1879,7 @@ For more detailed explanation on each validation rule click the link at the vali
 * [ZIP file validation](#validation-rules-for-zip-files)
 * [Financial validation](#validation-rules-for-finance)
 * [Spam validation](#validation-rules-for-spam)
-* [Miscellaneous validation](#miscellaneous-validation-rules)
-
-* 
+* [Miscellaneous validation](#miscellaneous-validation)
 
 #### Validation rules for users
 
