@@ -1873,7 +1873,10 @@ Not every validation rule adds a notes text by default - take a look at your for
 
 Here is the list of all custom validation types. Click the one you are interested in:
 
-* [User validation](#validation-rules-for-users): Contains all user specific validation rules
+* [Username validation](#validation-rules-for-usernames): Contains all userame specific validation rules
+* [Password validation](#validation-rules-for-passwords): Contains all password specific validation rules
+* [Login validation](#validation-rules-for-login): Contains all rules specific to login processes
+* [Email validation](#validation-rules-for-email-addresses): Contains all rules specific to email addresses
 * [Dates validation](#validation-rules-for-dates): Contains all validation rules for dates validation
 * [File upload validation](#validation-rules-for-file-uploads): Contains all rules than can be used with file upload fields
 * [ZIP file validation](#validation-rules-for-zip-files): Special validation rules only for validating ZIP files
