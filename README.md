@@ -1883,7 +1883,7 @@ Here is the list of all custom validation types. Click the one you are intereste
 
 For a more detailed explanation of each validation rule, click on the link next to the validation rule name in the corresponding table.
 
-#### Validation rules for users
+#### Validation rules for usernames
 
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
