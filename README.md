@@ -1907,7 +1907,8 @@ For a more detailed explanation of each validation rule, click on the link next 
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
 | [matchUsername](#matchUsername)  | Checks if username and password match (for login forms)                                                          |
-| [matchEmail](#matchEmail)  | Checks if a email and password match (for login forms)                                                             |             | [checkTfaCode](#checkTfaCode)  | Check if a value entered is the correct Tfa-Code sent by the TfaEmail module (only for internal usage)       |
+| [matchEmail](#matchEmail)  | Checks if a email and password match (for login forms)                                                             |  
+| [checkTfaCode](#checkTfaCode)  | Check if a value entered is the correct Tfa-Code sent by the TfaEmail module (only for internal usage)       |
 
 #### Validation rules for email addresses
 
