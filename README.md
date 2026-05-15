@@ -1888,15 +1888,30 @@ For a more detailed explanation of each validation rule, click on the link next 
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
 | [uniqueUsername](#uniqueusername)  | Checks wether a username is used by another user or not                                                          |
-| [matchUsername](#matchUsername)  | Checks if username and password match (for login forms)                                                          |
-| [matchEmail](#matchEmail)  | Checks if a email and password match (for login forms)                                                             |
+| [usernameSyntax](#usernameSyntax)  | Checks if the entered username contains the allowed characters for usernames                                            |
+
+#### Validation rules for passwords
+
+| Validation rule name  | Explanation                                                                                                  |
+| ------------- |--------------------------------------------------------------------------------------------------------------|
 | [meetsPasswordConditions](#meetsPasswordConditions)  | Checks if a password entered meets the required conditions set in the backend                      |
-| [usernameSyntax](#usernameSyntax)  | Checks if the entered username contains the allowed characters for usernames                                              |
-| [uniqueEmail](#uniqueEmail)  | Checks wether an email address is used by another user or not                                                    |
 | [checkPasswordOfUser](#checkPasswordOfUser)  | This validation rule is for logged-in users only. Checks if entered password is the same as stored in the DB |
-| [checkTfaCode](#checkTfaCode)  | Check if a value entered is the correct Tfa-Code sent by the TfaEmail module (only for internal usage)       |
 | [differentPassword](#differentPassword)  | Checks if the password entered is different from the old password stored inside the database                 |
 | [safePassword](#safePassword)  | Checks if a password entered is not on the blacklist of forbidden passwords                                    |
+
+#### Validation rules for login
+
+| Validation rule name  | Explanation                                                                                                  |
+| ------------- |--------------------------------------------------------------------------------------------------------------|
+| [matchUsername](#matchUsername)  | Checks if username and password match (for login forms)                                                          |
+| [matchEmail](#matchEmail)  | Checks if a email and password match (for login forms)                                                             |             | [checkTfaCode](#checkTfaCode)  | Check if a value entered is the correct Tfa-Code sent by the TfaEmail module (only for internal usage)       |
+
+#### Validation rules for email addresses
+
+| Validation rule name  | Explanation                                                                                                  |
+| ------------- |--------------------------------------------------------------------------------------------------------------|
+| [uniqueEmail](#uniqueEmail)  | Checks wether an email address is used by another user or not                                                    |
+
 
 #### Validation rules for dates
 
