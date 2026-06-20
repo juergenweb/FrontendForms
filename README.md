@@ -2473,7 +2473,7 @@ field->setRule('maxTotalFileSizeZipUncompressed', '10 MB'); // The maximum total
 
 ### requiredFileNamesInZip
 
-Validate if a Zip file contains specific files. If the at least one of the files is not present inside the ZIP folder, the validation fails.
+Validate if a Zip file contains specific files. If the at least one of the files is not present inside the ZIP folder, the validation fails. Just note: This validation rule does not take care of files inside nested ZIPs.
 
 ```php
 field->setRule('requiredFileNamesInZip', ['testfile1.jpg', 'image1.png']); // Enter the names of the required files as an array
