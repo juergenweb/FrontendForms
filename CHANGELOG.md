@@ -2018,3 +2018,11 @@ Thanks to digitalbricks for reporting this issue and providing a solution too.
 This new validator is very powerful and can check if a text contains suspicious elements inside a text (fe more than 2 links, stop words, a lot of uppercase letter words and so on). It is designed to be used with text fields.
 
 You will find a detailed explanation [here](https://github.com/juergenweb/FrontendForms#checkcontentforspam)
+
+## [2.3.17] 2026-047-26
+
+**XSS attack issue fixed**
+
+The method attributesToString() contained a possibility to add Javascript code for XSS attacks. This is fixed now. 
+
+Important: If you are using the module FrontendContact too, you have to update it to the latest version too.
