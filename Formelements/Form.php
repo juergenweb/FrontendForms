@@ -4170,7 +4170,7 @@ class Form extends CustomRules
                         }
 
                         $conditions = json_encode($conditions);
-                        $element->setAttribute('data-conditional-rules', htmlspecialchars($conditions));
+                        $element->setAttribute('data-conditional-rules', $conditions);
 
                     }
 
