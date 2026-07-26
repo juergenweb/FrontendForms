@@ -497,13 +497,13 @@ abstract class Tag extends Wire
         foreach ($allAttributes as $name => $value) {
             if (is_array($value)) {
                 $value = $this->isAssoc($value)
-                    ? implode(';', array_map(fn($k, $v) => "$k:$v", array_keys($value), $value))
+                    ? implode(';', array_map(fn ($k, $v) => "$k:$v", array_keys($value), $value))
                     : implode(' ', $value);
             }
 
             $attributes[] = in_array($value, self::BOOLEANATTR) && $name !== 'type'
                 ? $value
-                : $name . '="' . $value . '"';
+                : $name . '="' . htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8') . '"';
         }
 
         return $attributes ? ' ' . implode(' ', $attributes) : '';
