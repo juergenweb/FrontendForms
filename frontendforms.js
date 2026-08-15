@@ -315,7 +315,23 @@ function handleFileUploads() {
                     // Add event listener for delete
                     fileBlock.querySelector(".file-delete").addEventListener("click", (e) => deleteFileBlock(e, fileBlock, dt, fieluploadField));
 
-                    // Add file to DataTransfer object
+                    // Add file to DataTransfer object - for a
+                    // single-file field, clear any files already
+                    // added in a previous loop iteration first, so
+                    // only the last file of this selection ends up
+                    // in dt.files (and therefore in this.files once
+                    // reassigned below), matching the single visible
+                    // file block left in fileList above. Without
+                    // this, dt would accumulate every file from
+                    // this.files regardless of the multiple
+                    // attribute, and this.files = dt.files at the
+                    // end of this handler would then reintroduce
+                    // all of them into the input's own files list -
+                    // even for a field that never allowed multiple
+                    // selection in the first place.
+                    if (!multiple) {
+                        dt.items.clear();
+                    }
                     dt.items.add(file);
                 }
 
@@ -323,7 +339,10 @@ function handleFileUploads() {
 
                 // compare allowed total filesize and file sizes of all selected files
                 if (allowedTotalFileSize !== 0 && totalFileSize > allowedTotalFileSize) {
-                    notesAllowedTotalFileSizeElement.className += invalidTotalFileSizeNotesClass;
+
+                    if (notesAllowedTotalFileSizeElement) {
+                        notesAllowedTotalFileSizeElement.className += invalidTotalFileSizeNotesClass;
+                    }
 
                     if (totalSizeDiv) {
                         totalSizeDiv.className += invalidTotalFileSizeNotesClass;
