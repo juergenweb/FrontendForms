@@ -2026,3 +2026,8 @@ You will find a detailed explanation [here](https://github.com/juergenweb/Fronte
 The method attributesToString() contained a possibility to add Javascript code for XSS attacks. This is fixed now. 
 
 Important: If you are using the module FrontendContact too, you have to update it to the latest version too.
+
+## [2.3.18] 2026-08-15
+
+**Bug in single upload field JS fixed**
+There was a but displaying the text next to single upload fields. This has been fixed now.
