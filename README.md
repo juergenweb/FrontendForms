@@ -1897,7 +1897,7 @@ For a more detailed explanation of each validation rule, click on the link next 
 
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
-| [meetsPasswordConditions](#meetsPasswordConditions)  | Checks if a password entered meets the required conditions set in the backend                      |
+| [meetsPasswordConditions](#meetsPasswordConditions)  | Checks if a password entered meets the required conditions set in the backend <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20password%20fields-orange)|
 | [checkPasswordOfUser](#checkPasswordOfUser)  | This validation rule is for logged-in users only. Checks if entered password is the same as stored in the DB |
 | [differentPassword](#differentPassword)  | Checks if the password entered is different from the old password stored inside the database                 |
 | [safePassword](#safePassword)  | Checks if a password entered is not on the blacklist of forbidden passwords                                    |
@@ -1921,8 +1921,8 @@ For a more detailed explanation of each validation rule, click on the link next 
 
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
-| [week](#week)  | Checks if the entered value is in the correct format of a week. The syntax should be YYYY-Www (fe 2023-W09)  |
-| [month](#month)  | Checks if the entered value is in the correct format of a month. The syntax should be YYYY-MM (fe 2023-09)   |                             
+| [week](#week)  | Checks if the entered value is in the correct format of a week. The syntax should be YYYY-Www (fe 2023-W09)  <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20week%20fields-orange)|
+| [month](#month)  | Checks if the entered value is in the correct format of a month. The syntax should be YYYY-MM (fe 2023-09)   <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20month%20fields-orange)|                             
 | [dateBeforeField](#datebeforefield)  | Checks if the entered date is before a given date set in another field                                       |
 | [dateAfterField](#dateafterfield)  | Checks if the entered date is after a given date set in another field                                        |
 | [dateWithinDaysRange](#datewithindaysrange)  | Checks if the entered date is within a given time range in days starting from a date set in another field     |
@@ -1958,7 +1958,7 @@ For a more detailed explanation of each validation rule, click on the link next 
 | [requiredFileNamesInZip](#requiredFileNamesInZip) | Checks that all required file names are present inside the ZIP archive |
 | [maxNumberOfZipFolders](#maxNumberOfZipFolders) | Checks if the number of uploaded ZIP archives exceeds the allowed maximum |
 | [maxDepthOfZipFolders](#maxDepthOfZipFolders) | Validates ZIP archive hierarchy depth |
-| [allowedFileExtensionsInZipFolder](#allowedFileExtensionsInZipFolder) (alias for previousallowedFileTypesInZipFolder) | Validates allowed file extensions inside ZIP archives |
+| [allowedFileExtensionsInZipFolder](#allowedFileExtensionsInZipFolder) (alias for previous allowedFileTypesInZipFolder) | Validates allowed file extensions inside ZIP archives |
 | [forbiddenFileExtensionsInZipFolder](#forbiddenFileExtensionsInZipFolder) (alias for previous notAllowedFileTypesInZipFolder) | Validates that no forbidden file extensions are present inside ZIP archives|
 | [maxAllowedFileSizeOfFileInZipFolder](#maxAllowedFileSizeOfFileInZipFolder) | Validates the maximum allowed file size of files inside ZIP archives |
 
@@ -1983,7 +1983,7 @@ For a more detailed explanation of each validation rule, click on the link next 
 | [checkHex](#checkHex)  | Checks if the entered value is a valid HEX color code                                                        |
 | [compareTexts](#compareTexts)  | Checks if a text entered in an inputfield is present in an array of texts.  |
 | [cyrillicname](#cyrillicname)  | Checks if a name entered in an inputfield is in the correct format of a cyrillic name.  |
-| [noLetters](#noletters) | Check if a string does not contain any letters and German Umlauts|
+| [noLetters](#noletters) | Check if a string does not contain any letters and German Umlauts <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20phone%20fields-orange)|
 | [noNumbers](#nonumbers) | Check if a string does not contain any number at all|
 | [requiredIfEqual](#requiredifequal) | Checks if a field is not empty if a conditional field is not empty too and has a specific value|
 | [requiredIfEmpty](#requiredifempty) | Checks if a field is not empty if aconditional field is empty|
