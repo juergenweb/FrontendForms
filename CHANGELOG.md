@@ -2031,3 +2031,13 @@ Important: If you are using the module FrontendContact too, you have to update i
 
 **Bug in single upload field JS fixed**
 There was a but displaying the text next to single upload fields. This has been fixed now.
+
+## [3.0.0] 2026-08-26
+
+**Update to version 3**
+
+The new version of FrontendForms has been completely reworked with the help of AI. Security vulnerabilities have been fixed, bugs have been resolved, and new features have been added. The entire structure has also been redesigned to make the code more organized, scalable, and easier to maintain.
+
+This was therefore not a typical refactoring, but almost a complete rewrite of the entire module. More than 1,700 unit tests were also created with the help of AI to help ensure the functionality of the entire module. 
+
+Please note that you will need to redo some translations in the backend because some of the translatable strings have changed.
