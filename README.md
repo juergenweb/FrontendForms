@@ -1931,26 +1931,36 @@ For a more detailed explanation of each validation rule, click on the link next 
 ### Validation rules for file uploads
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
-| [allowedFileSize](#safePassword)  | Checks if an uploaded file is not larger than the allowed filesize                                           |
-| [noErrorOnUpload](#noErrorOnUpload)  | Checks if an error occurs during the upload of a file                                                        |
-| [allowedFileExt](#allowedFileExt)  | Checks if an uploaded file is of one of the allowed extensions                                               |
-| [forbiddenFileExt](#forbiddenFileExt)  | Checks if an uploaded file is of one of the forbidden extensions                                             |
-| [phpIniFilesize](#phpIniFilesize)  | Checks if an uploaded file is not larger than the allowed filesize as declared in the php.ini file           |
-| [allowedFileNumber](#allowedfilenumber) | Limit the number of files inside a file upload multiple field|
-| [allowedTotalFileSize](#allowedtotalfilesize) | Set a total max file size limit for all files inside a file upload field|
+| [phpIniUploadMaxFileSize](#phpIniUploadMaxFileSize) | Checks that upload_max_filesize (max size of a single file) is not exceeded |
+| [phpIniPostMaxFileSize](# phpIniPostMaxFileSize) | Checks that post_max_size (max total size of all uploaded files) is not exceeded |
+| [maxTotalFileSize](#maxTotalFileSize) (alias for previous allowedTotalFileSize) | Checks that the total size of all uploaded files does not exceed a configured limit |
+| [maxSingleFileSize](#maxSingleFileSize) (alias for previous allowedFileSize) | Checks that no single file exceeds a configured size limit (does not check files inside a ZIP archive) |
+| [noErrorOnUpload](#noErrorOnUpload) | Verifies that no error occurred during the upload |
+| [allowedMimeTypes](#allowedMimeTypes) | Verifies that all uploaded files have an allowed MIME type |
+| [forbiddenMimeTypes](#forbiddenMimeTypes) | Verifies that no uploaded file has a forbidden MIME type |
+| [allowedFileExt](#allowedFileExt) | Verifies that all uploaded files have an allowed file extension |
+| [forbiddenFileExt](#forbiddenFileExt) | Verifies that no uploaded file has a forbidden file extension |
+| [maxFileNumber](#maxFileNumber) (alias of previous allowedFileNumber) | Verifies that no more files than allowed are uploaded |
+| [minFileNumber](#minFileNumber) | Verifies that at least the required minimum number of files is uploaded |
+| [matchingExtMimeType](#matchingExtMimeType) | Security check: verifies that MIME type, file extension, and magic bytes all match |
+| [fileRequired](#fileRequired) | Special "required" validator for file upload fields |
+| [noEmptyFiles](#noEmptyFiles) | Rejects empty files (zero bytes) from the upload |
+| [minImageDimensions](#minImageDimensions) | Validates that all uploaded images meet a minimum width and height |
+| [aspectRatio](#aspectRatio) | Validates that all uploaded images match one of the allowed aspect ratios |
+| [uniqueFilenameInDir](#uniqueFilenameInDir) | Checks that an uploaded file's name is unique inside the upload destination directory |
 
 ### Validation rules for ZIP files
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
-| [maxFilesInZIPFolder](#maxfilesinzipfolder) | Checks if the number of files inside a ZIP folder is not higher than allowed|
-| [minFilesInZIPFolder](#minfilesinzipfolder) | This validator validates the minimum required number of files inside a ZIP folder|
-| [maxTotalFileSizeZipUncompressed](#maxtotalfilesizezipuncompressed) | Verifies that the uncompressed filesize of all files in an uploaded ZIP folder does not exceed the total file size limit|
-| [requiredFileNamesInZip](#requiredfilenamesinzip) | Validate if a Zip file contains specific files|
-| [maxNumberOfZipFolders](#maxnumberofzipfolders) | Validate the maximum number of ZIP files uploaded inside an upload field|
-| [maxDepthOfZipFolders](#maxdepthofzipfolders) | Validates that a ZIP folder does not contain more sub-dir levels than allowed in the hierarchy|
-| [allowedFileTypesInZipFolder](#allowedfiletypesinzipfolder) | Validate if all files inside a ZIP folder are of the allowed type|
-| [notAllowedFileTypesInZipFolder](#notallowedfiletypesinzipfolder) | Validate if all files inside a ZIP folder are NOT of a specific type|
-| [maxAllowedFileSizeOfFileInZipFolder](#notallowedfiletypesinzipfolder) | Validate the max. filesize of an individual file inside a ZIP folder|
+| [maxFilesInZIPFolder](#maxFilesInZIPFolder) | Checks if the maximum number of files inside a ZIP archive is not exceeded |
+| [minFilesInZIPFolder](#minFilesInZIPFolder) | Checks if the minimum number of files inside a ZIP archive is reached |
+| [maxTotalFileSizeZipUncompressed](#maxTotalFileSizeZipUncompressed) | Checks that the total uncompressed size of files inside a ZIP archive does not exceed the allowed limit |
+| [requiredFileNamesInZip](#requiredFileNamesInZip) | Checks that all required file names are present inside the ZIP archive |
+| [maxNumberOfZipFolders](#maxNumberOfZipFolders) | Checks if the number of uploaded ZIP archives exceeds the allowed maximum |
+| [maxDepthOfZipFolders](#maxDepthOfZipFolders) | Validates ZIP archive hierarchy depth |
+| [allowedFileExtensionsInZipFolder](#allowedFileExtensionsInZipFolder) (alias for previousallowedFileTypesInZipFolder) | Validates allowed file extensions inside ZIP archives |
+| [forbiddenFileExtensionsInZipFolder](#forbiddenFileExtensionsInZipFolder) (alias for previous notAllowedFileTypesInZipFolder) | Validates that no forbidden file extensions are present inside ZIP archives|
+| [maxAllowedFileSizeOfFileInZipFolder](#maxAllowedFileSizeOfFileInZipFolder) | Validates the maximum allowed file size of files inside ZIP archives |
 
 ### Validation rules for finance
 | Validation rule name  | Explanation                                                                                                  |
