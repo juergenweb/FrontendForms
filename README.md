@@ -1893,6 +1893,24 @@ For a more detailed explanation of each validation rule, click on the link next 
 | [uniqueUsername](#uniqueusername)  | Checks wether a username is used by another user or not                                                          |
 | [usernameSyntax](#usernameSyntax)  | Checks if the entered username contains the allowed characters for usernames                                            |
 
+### uniqueUsername
+Checks if a username is used by another user or not - useful for user registration form. Returns false if username is in use, otherwise false.
+
+Parameter: validation name
+
+```php
+$field->setRule('uniqueUsername');
+```
+
+### usernameSyntax
+Checks if the entered username only contains a-z0-9-_.@ characters - useful for registration or profile form. Returns true if username contains only allowed characters, otherwise false.
+
+Parameter: validation name
+
+```php
+$field->setRule('usernameSyntax');
+```
+
 #### Validation rules for passwords
 
 | Validation rule name  | Explanation                                                                                                  |
@@ -1902,6 +1920,47 @@ For a more detailed explanation of each validation rule, click on the link next 
 | [differentPassword](#differentPassword)  | Checks if the password entered is different from the old password stored inside the database                 |
 | [safePassword](#safePassword)  | Checks if a password entered is not on the blacklist of forbidden passwords                                    |
 
+### meetsPasswordConditions
+Has to be added to the password field; checks if password meets the required conditions set in the backend - useful for registration form.
+Returns true if entered password meets the requirements, otherwise false
+
+Parameter: validation name
+
+```php
+$field->setRule('meetsPasswordConditions');
+```
+### checkPasswordOfUser
+This validation rule is for logged-in users only. Idea: If you want to change your password you have to enter the old password before.
+And for that reason I have created this rule. So this rule is for a password field where you have to enter the current password for security reasons - useful for the profile form. Returns true if the password entered by the logged in user ist correct, otherwise false.
+
+First parameter: validation name / Second parameter: The user object
+
+```php
+$field->setRule('checkPasswordOfUser', $user);
+```
+### differentPassword
+This validation checks if the password is different from the old password stored inside the database.
+Useful if a user wants to change his password, and you have a password field for the old password and the new one.
+So it compares the 2 fields that the value in the old password field is not the same as in the new one. Returns true if new password is different to the old one, otherwise false.
+
+First parameter: validation name / Second parameter: field name of the password field
+
+```php
+$field->setRule('differentPassword' 'mypasswordfield');
+```
+
+
+### safePassword
+This validation checks if the password is not on the blacklist, which contains the 100 most common passwords.
+This validator is added to password fields by default, so no need to add it manually.
+This validator is useful, if you offer a user registration on your site. Returns true, if password is not on the password blacklist, otherwise false.
+
+Parameter: validation name
+
+```php
+$field->setRule('safePassword');
+```
+
 #### Validation rules for login
 
 | Validation rule name  | Explanation                                                                                                  |
@@ -1910,12 +1969,45 @@ For a more detailed explanation of each validation rule, click on the link next 
 | [matchEmail](#matchEmail)  | Checks if a email and password match (for login forms)                                                             |  
 | [checkTfaCode](#checkTfaCode)  | Check if a value entered is the correct Tfa-Code sent by the TfaEmail module (only for internal usage)       |
 
+### matchUsername
+This is intended to be used on login forms where you login with username and password.
+Has to be added to the password field; checks if password and username matches. Returns true if username and password match, otherwise false.
+
+First parameter: validation name / Second parameter: the field name of username field
+
+```php
+$field->setRule('matchUsername', 'myusernamefieldname');
+```
+### matchEmail
+This is intended to be used on login forms where you login with email and password.
+Has to be added to the password field; checks if password and email matches.
+It is the same validation as matchUsername, but in this case you can use email and password for the login. Returns true if email and password match, otherwise false.
+
+First parameter: validation name / Second parameter: the field name of the email field
+
+```php
+$field->setRule('matchEmail', 'myemailfieldname');
+```
+### checkTfaCode
+This is a special method for the login process if you are using TfaEmail component. It checks if the code sent by the
+TfaEmail module is correct. This validator is not intended to be for normal field validation. Returns true, if TFA code is correct, otherwise false.
+
+
 #### Validation rules for email addresses
 
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
 | [uniqueEmail](#uniqueEmail)  | Checks wether an email address is used by another user or not                                                    |
 
+### uniqueEmail
+Checks if an email address is used by another user or not - useful for registration and profile form. Has to be added
+to an email field. Returns true if this email is not used by another user, otherwise false.
+
+Parameter: validation name
+
+```php
+$field->setRule('uniqueEmail');
+```
 
 #### Validation rules for dates
 
@@ -1927,6 +2019,78 @@ For a more detailed explanation of each validation rule, click on the link next 
 | [dateAfterField](#dateafterfield)  | Checks if the entered date is after a given date set in another field                                        |
 | [dateWithinDaysRange](#datewithindaysrange)  | Checks if the entered date is within a given time range in days starting from a date set in another field     |
 | [dateOutsideOfDaysRange](#dateoutsideofdaysrange)  | Checks if the entered date is outside a given time range in days starting from a date set in another field    |
+
+### week
+This validation checks if the entered value is in the correct format of a week.
+The syntax should be YYYY-Www. The first 4 digits are the year followed by a hyphen an a W and the week of the number. The 12th week in 2023 should be written as followed: 2023-W12. Returns true if the week is written in the correct syntax, otherwise false.
+
+Parameter: validation name
+
+```php
+$field->setRule('week');
+```
+
+### month
+This validation checks if the entered value is in the correct format of a month.
+The syntax should be YYYY-MM. The first 4 digits are the year followed by a hyphen and the week of the number. The 12th month in 2023 should be written as followed: 2023-12. Returns true if the month is written in the correct syntax, otherwise false.
+
+Parameter: validation name
+
+```php
+$field->setRule('month');
+```
+### dateBeforeField
+This is the same rule as dateBefore with the only difference that the value of the date will be taken from another form
+field.
+
+Parameter: name of the reference field that contains the date
+
+```php
+$field->setRule('dateBeforeField', 'date');
+```
+
+Explanation: The field that contains the date has the name attribute "date" in this case and is a another field inside the form.
+Fe a user has entered the date 2023-05-15, this validator checks if the value entered in THIS field is before 2023-05-15.
+If it is so, the validator returns true, otherwise false.
+So you can check if a date entered in THIS field is before a date entered inside ANOTHER field of the form.
+
+### dateAfterField
+This is the opposition of the validator explained before.
+
+Parameter: name of the reference field that contains the date
+
+```php
+$field->setRule('dateAfterField', 'date');
+```
+
+### dateWithinDaysRange
+This is a very special validation rule, which will check if a date is within a given time range in days after another date
+as set inside another field.
+In other words: you have another date field inside your form, where the user enters a date (fe 2023-05-15).
+Now you can enter a time range in days (fe 7 days). This time range starts from the date entered inside the other field +
+7 days.
+In this example the time range starts from 2023-05-15 and ends at 2023-05-22 (7 days).
+This validator checks, if a date entere in THIS field is within the time range of the 7 days. If it is so, it will return
+true, otherwise false.
+
+First parameter: name of the reference field that contains the date / time range in days
+
+A positive days value (7) means a time range in the future: from 2023-05-15 to 2023-05-22 (7 days)
+A negative days value (-7) means a time range in the past:  from 2023-05-08 to 2023-05-15 (-7 days)
+
+```php
+$field->setRule('dateWithinDaysRange', 'date' 7);
+```
+
+### dateOutsideOfDaysRange
+This is pretty the same validation rule as the one before, but it does not check if the date is WITHIN the time range, it 
+will check if the date is OUTSIDE (before or after) the given time range.
+
+First parameter: name of the reference field that contains the date / time range in days
+
+```php
+$field->setRule('dateOutsideOfDaysRange', 'date' 7);
+```
 
 ### Validation rules for file uploads
 | Validation rule name  | Explanation                                                                                                  |
@@ -2221,10 +2385,98 @@ $field->setRule('maxAllowedFileSizeOfFileInZipFolder', '1 MB', 'deepScan'); // C
 | [checkIban](#checkiban)  | Checks if an IBAN entered in an inputfield is in the correct format.  |
 | [checkBic](#checkbic)  | Checks if a BIC entered in an inputfield is in the correct format.  |
 
+### checkIban
+This validator checks only if the syntax of an IBAN entered is correct, but it does not check if the IBAN really exists.
+
+```php
+$field->setRule('checkIban');
+```
+
+### checkBic
+This validator checks only if the syntax of a BIC entered is correct, but it does not check if the BIC really exists.
+
+```php
+$field->setRule('checkBic');
+```
+
 ### Validation rules for SPAM
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
 | [checkContentForSpam](#checkcontentforspam) | Validator to check if a text has characteristics of a SPAM text|
+
+### checkContentForSpam
+
+This is a very powerful validator to check if a text has characteristics of a SPAM text. By default it tests for the following characteristics:
+
+* Presence of STOP/SPAM words
+* Capital letters of over 50%
+* More than 2 Links inside the text
+* Repeated usage of special characters ($,!,# and ?)
+* Excessive usage of exclamation signs in a row
+* Short text with less then 50 characters and with verious suspicious keywords in it
+
+Each characteristic found adds a certain number of points to the SPAM value, and when the limit is reached, the validator returns *false*.
+By default, the treshold is set to 50 (average), but you can increase or decrease the treshold (described in detail later).
+
+#### 1. STOP words
+These are special terms, such as *Viagra, Bitcoin, insurance* etc., which are often used in SPAM mails. The list of suspicious words used to check is from the following GitHub page: [https://github.com/splorp/wordpress-comment-blocklist/blob/master/blacklist.txt](https://github.com/splorp/wordpress-comment-blocklist/blob/master/blacklist.txt).
+
+This list contains more than 60,000 STOP words and is downloaded once a month to FrontendForms to always get the latest STOP words. You don't have to do anything.
+
+The text is analyzed to see if one or more of the words on the list appear in the text. Each word found increases the SPAM score by 20 points.
+
+If you want to disable this check please enter the following value to the second parameter of validation rule: *stopwords*
+
+#### 2. Custom STOP words
+This is the same check as the first "STOP words" check, but in this case you can search the text for your own custom STOP words. Under *Measure 8* in the SPAM section of the module configuration, you can enter your custom words in a textarea field.
+
+Each custom STOP word found in the text increases the SPAM score by 15.
+
+If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *customstopwords*
+
+#### 3. Capital letters 
+Spam text often contains uppercase words of over 50% of the total text (for example, "THIS IS AMAZING, CLICK NOW"). This check checks for more than 50% capital letters in the text, and then increases the SPAM score by 15.
+
+If you want to disable this check please enter the following value to the second parameter of validation rule: *capitalletters*
+
+#### 4. Links 
+Spam texts often contain links to a website or a landing page. This check checks if there are more than 2 links in the text and then increases the SPAM score by 20.
+
+If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *links*
+
+#### 4. Repeated special characters 
+Spam texts often include the following repeating characters: *!!, ##, $$, ??* (for example "BUY NOW!!! LIMITED OFFER!!! $$$"). This check takes a look if there are repeating characters inside the text present and increases the SPAM score by 10.
+
+If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *repeatedchars*
+
+#### 5. Excessive exclamation marks usage 
+Spam texts often contain several exclamation marks "*!!!!! *" in a row. This check checks if there are more than 5 exclamation signs in a row in the text, and then increments the SPAM score by 10.
+
+If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *exclamations*
+
+#### 6. Short texts with suspicious keywords 
+Spam texts are often short and include keywords (for example *"Free money now!!!"*). If the text is shorter than 50 characters and includes SPAM words then the SPAM score will be increased by 10
+
+If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *length*
+
+#### Practical usage
+
+This validator accepts 2 parameters:
+
+* Treshold: An integer between 0 and 100. 0 means that everything is allowed (not strict), and 100 means very strict. By default, a value of 50 is set. You can select a value between 0 and 100 to set the sensitivity. The higher the value, the more likely it is that a text will be identified as SPAM. Sometimes it may be that the value has been set too high and non-SPAM texts are inadvertently identified as SPAM. This simply has to be tried out in practice, which value is suitable. There is no ideal value.
+* Exclusion array: You can add an array that contains all the names of the checks that you don't want to run
+
+```php
+field->setRule('checkContentForSpam', 30, ['stopwords', 'links']); // first parameter (treshold/sensitivity) ist set to 30 and the following tests are disabled: testing for stop words and testing for links
+```
+
+The default usage is without these 2 parameters:
+
+```php
+field->setRule('checkContentForSpam'); // this is the default usage including all test for SPAM with the default treshold/sensitivity of 50
+```
+
+This validation rule makes only sense for text fields, especially for textarea fields. 
 
 ### Miscellaneous validation
 | Validation rule name  | Explanation                                                                                                  |
@@ -2235,6 +2487,7 @@ $field->setRule('maxAllowedFileSizeOfFileInZipFolder', '1 MB', 'deepScan'); // C
 | [differentValue](#differentValue)  | Check if a value entered different than the value given as second parameter                                  |
 | [checkHex](#checkHex)  | Checks if the entered value is a valid HEX color code                                                        |
 | [compareTexts](#compareTexts)  | Checks if a text entered in an inputfield is present in an array of texts.  |
+| [firstAndLastname](#firstAndLastname)  | Validate that a name (first name, last name) contains only allowed letters, spaces, hyphens, apostrophes, and dots. |
 | [cyrillicname](#cyrillicname)  | Checks if a name entered in an inputfield is in the correct format of a cyrillic name.  |
 | [noLetters](#noletters) | Check if a string does not contain any letters and German Umlauts <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20phone%20fields-orange)|
 | [noNumbers](#nonumbers) | Check if a string does not contain any number at all|
@@ -2244,76 +2497,6 @@ $field->setRule('maxAllowedFileSizeOfFileInZipFolder', '1 MB', 'deepScan'); // C
 | [uniqueStringValueOfPWField](#uniquestringvalueofpwfield) | Checks if a specific string value is stored inside the DB of a specific ProcessWire field|
 
 
-Afterwards, you will find a more detailed description of all custom rules and their usage:
-
-### uniqueUsername
-Checks if a username is used by another user or not - useful for user registration form. Returns false if username is in use, otherwise false.
-
-Parameter: validation name
-
-```php
-$field->setRule('uniqueUsername');
-```
-
-### matchUsername
-This is intended to be used on login forms where you login with username and password.
-Has to be added to the password field; checks if password and username matches. Returns true if username and password match, otherwise false.
-
-First parameter: validation name / Second parameter: the field name of username field
-
-```php
-$field->setRule('matchUsername', 'myusernamefieldname');
-```
-
-### meetsPasswordConditions
-Has to be added to the password field; checks if password meets the required conditions set in the backend - useful for registration form.
-Returns true if entered password meets the requirements, otherwise false
-
-Parameter: validation name
-
-```php
-$field->setRule('meetsPasswordConditions');
-```
-
-### usernameSyntax
-Checks if the entered username only contains a-z0-9-_.@ characters - useful for registration or profile form. Returns true if username contains only allowed characters, otherwise false.
-
-Parameter: validation name
-
-```php
-$field->setRule('usernameSyntax');
-```
-
-### uniqueEmail
-Checks if an email address is used by another user or not - useful for registration and profile form. Has to be added
-to an email field. Returns true if this email is not used by another user, otherwise false.
-
-Parameter: validation name
-
-```php
-$field->setRule('uniqueEmail');
-```
-
-### checkPasswordOfUser
-This validation rule is for logged-in users only. Idea: If you want to change your password you have to enter the old password before.
-And for that reason I have created this rule. So this rule is for a password field where you have to enter the current password for security reasons - useful for the profile form. Returns true if the password entered by the logged in user ist correct, otherwise false.
-
-First parameter: validation name / Second parameter: The user object
-
-```php
-$field->setRule('checkPasswordOfUser', $user);
-```
-
-### matchEmail
-This is intended to be used on login forms where you login with email and password.
-Has to be added to the password field; checks if password and email matches.
-It is the same validation as matchUsername, but in this case you can use email and password for the login. Returns true if email and password match, otherwise false.
-
-First parameter: validation name / Second parameter: the field name of the email field
-
-```php
-$field->setRule('matchEmail', 'myemailfieldname');
-```
 
 ### isBooleanAndTrue
 You can check if a value is from type boolean and true. Returns true if value is boolean true, otherwise false.
@@ -2351,52 +2534,6 @@ First parameter: validation name / Second parameter: the value that the field ca
 $field->setRule('differentValue', 'myvalue');
 ```
 
-### checkTfaCode
-This is a special method for the login process if you are using TfaEmail component. It checks if the code sent by the
-TfaEmail module is correct. This validator is not intended to be for normal field validation. Returns true, if TFA code is correct, otherwise false.
-
-### differentPassword
-This validation checks if the password is different from the old password stored inside the database.
-Useful if a user wants to change his password, and you have a password field for the old password and the new one.
-So it compares the 2 fields that the value in the old password field is not the same as in the new one. Returns true if new password is different to the old one, otherwise false.
-
-First parameter: validation name / Second parameter: field name of the password field
-
-```php
-$field->setRule('differentPassword' 'mypasswordfield');
-```
-
-### safePassword
-This validation checks if the password is not on the blacklist, which contains the 100 most common passwords.
-This validator is added to password fields by default, so no need to add it manually.
-This validator is useful, if you offer a user registration on your site. Returns true, if password is not on the password blacklist, otherwise false.
-
-Parameter: validation name
-
-```php
-$field->setRule('safePassword');
-```
-
-### week
-This validation checks if the entered value is in the correct format of a week.
-The syntax should be YYYY-Www. The first 4 digits are the year followed by a hyphen an a W and the week of the number. The 12th week in 2023 should be written as followed: 2023-W12. Returns true if the week is written in the correct syntax, otherwise false.
-
-Parameter: validation name
-
-```php
-$field->setRule('week');
-```
-
-### month
-This validation checks if the entered value is in the correct format of a month.
-The syntax should be YYYY-MM. The first 4 digits are the year followed by a hyphen and the week of the number. The 12th month in 2023 should be written as followed: 2023-12. Returns true if the month is written in the correct syntax, otherwise false.
-
-Parameter: validation name
-
-```php
-$field->setRule('month');
-```
-
 ### checkHex
 This validation checks if the entered value is a valid HEX color code.
 The syntax should be #XXX or #XXXXXX. Returns true if the HEX code is in the correct syntax, otherwise false.
@@ -2407,66 +2544,7 @@ Parameter: validation name
 $field->setRule('checkHex');
 ```
 
-### dateBeforeField
-This is the same rule as dateBefore with the only difference that the value of the date will be taken from another form
-field.
 
-Parameter: name of the reference field that contains the date
-
-```php
-$field->setRule('dateBeforeField', 'date');
-```
-
-Explanation: The field that contains the date has the name attribute "date" in this case and is a another field inside the form.
-Fe a user has entered the date 2023-05-15, this validator checks if the value entered in THIS field is before 2023-05-15.
-If it is so, the validator returns true, otherwise false.
-So you can check if a date entered in THIS field is before a date entered inside ANOTHER field of the form.
-
-### dateAfterField
-This is the opposition of the validator explained before.
-
-Parameter: name of the reference field that contains the date
-
-```php
-$field->setRule('dateAfterField', 'date');
-```
-
-### dateWithinDaysRange
-This is a very special validation rule, which will check if a date is within a given time range in days after another date
-as set inside another field.
-In other words: you have another date field inside your form, where the user enters a date (fe 2023-05-15).
-Now you can enter a time range in days (fe 7 days). This time range starts from the date entered inside the other field +
-7 days.
-In this example the time range starts from 2023-05-15 and ends at 2023-05-22 (7 days).
-This validator checks, if a date entere in THIS field is within the time range of the 7 days. If it is so, it will return
-true, otherwise false.
-
-First parameter: name of the reference field that contains the date / time range in days
-
-A positive days value (7) means a time range in the future: from 2023-05-15 to 2023-05-22 (7 days)
-A negative days value (-7) means a time range in the past:  from 2023-05-08 to 2023-05-15 (-7 days)
-
-```php
-$field->setRule('dateWithinDaysRange', 'date' 7);
-```
-
-### dateOutsideOfDaysRange
-This is pretty the same validation rule as the one before, but it does not check if the date is WITHIN the time range, it 
-will check if the date is OUTSIDE (before or after) the given time range.
-
-First parameter: name of the reference field that contains the date / time range in days
-
-```php
-$field->setRule('dateOutsideOfDaysRange', 'date' 7);
-```
-
-### firstAndLastname
-Checks first and lastname according to international syntax based on https://regexpattern.com/international-first-last-names/.
-The regex contains only allowed characters for international names. You can use it to check first, middle or lastname or all together at once. This name check should be usable around the world. If not, let me know.
-
-```php
-$field->setRule('firstAndLastname');
-```
 
 
 
@@ -2484,19 +2562,15 @@ $field->setRule('compareTexts', ['green','is green', 'has color green']);
 ```
 You need to add all the texts or text snippets as an array to the validator. The value entered will be compared to these texts and returns true if a match was found, otherwise false.
 
-### checkIban
-This validator checks only if the syntax of an IBAN entered is correct, but it does not check if the IBAN really exists.
+### firstAndLastname
+Checks first and lastname according to international syntax based on https://regexpattern.com/international-first-last-names/.
+The regex contains only allowed characters for international names. You can use it to check first, middle or lastname or all together at once. This name check should be usable around the world. If not, let me know.
 
 ```php
-$field->setRule('checkIban');
+$field->setRule('firstAndLastname');
 ```
 
-### checkBic
-This validator checks only if the syntax of a BIC entered is correct, but it does not check if the BIC really exists.
 
-```php
-$field->setRule('checkBic');
-```
 ### cyrillicName
 This validator checks if a name entered has the correct syntax of a cyrillic name (validation rule provided by [Andy](https://processwire.com/talk/profile/2948-andy/) from the support forum).
 
@@ -2597,79 +2671,6 @@ field->setRule('uniqueStringValueOfPWField', 'myname', ['user','template1','temp
 Please note: The search is case insensitive, because ProcessWire selectors do not support case sensitive search options.
 
 
-### checkContentForSpam
-
-This is a very powerful validator to check if a text has characteristics of a SPAM text. By default it tests for the following characteristics:
-
-* Presence of STOP/SPAM words
-* Capital letters of over 50%
-* More than 2 Links inside the text
-* Repeated usage of special characters ($,!,# and ?)
-* Excessive usage of exclamation signs in a row
-* Short text with less then 50 characters and with verious suspicious keywords in it
-
-Each characteristic found adds a certain number of points to the SPAM value, and when the limit is reached, the validator returns *false*.
-By default, the treshold is set to 50 (average), but you can increase or decrease the treshold (described in detail later).
-
-#### 1. STOP words
-These are special terms, such as *Viagra, Bitcoin, insurance* etc., which are often used in SPAM mails. The list of suspicious words used to check is from the following GitHub page: [https://github.com/splorp/wordpress-comment-blocklist/blob/master/blacklist.txt](https://github.com/splorp/wordpress-comment-blocklist/blob/master/blacklist.txt).
-
-This list contains more than 60,000 STOP words and is downloaded once a month to FrontendForms to always get the latest STOP words. You don't have to do anything.
-
-The text is analyzed to see if one or more of the words on the list appear in the text. Each word found increases the SPAM score by 20 points.
-
-If you want to disable this check please enter the following value to the second parameter of validation rule: *stopwords*
-
-#### 2. Custom STOP words
-This is the same check as the first "STOP words" check, but in this case you can search the text for your own custom STOP words. Under *Measure 8* in the SPAM section of the module configuration, you can enter your custom words in a textarea field.
-
-Each custom STOP word found in the text increases the SPAM score by 15.
-
-If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *customstopwords*
-
-#### 3. Capital letters 
-Spam text often contains uppercase words of over 50% of the total text (for example, "THIS IS AMAZING, CLICK NOW"). This check checks for more than 50% capital letters in the text, and then increases the SPAM score by 15.
-
-If you want to disable this check please enter the following value to the second parameter of validation rule: *capitalletters*
-
-#### 4. Links 
-Spam texts often contain links to a website or a landing page. This check checks if there are more than 2 links in the text and then increases the SPAM score by 20.
-
-If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *links*
-
-#### 4. Repeated special characters 
-Spam texts often include the following repeating characters: *!!, ##, $$, ??* (for example "BUY NOW!!! LIMITED OFFER!!! $$$"). This check takes a look if there are repeating characters inside the text present and increases the SPAM score by 10.
-
-If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *repeatedchars*
-
-#### 5. Excessive exclamation marks usage 
-Spam texts often contain several exclamation marks "*!!!!! *" in a row. This check checks if there are more than 5 exclamation signs in a row in the text, and then increments the SPAM score by 10.
-
-If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *exclamations*
-
-#### 6. Short texts with suspicious keywords 
-Spam texts are often short and include keywords (for example *"Free money now!!!"*). If the text is shorter than 50 characters and includes SPAM words then the SPAM score will be increased by 10
-
-If you want to disable the check for this test please enter the following value to the second parameter of validation rule: *length*
-
-#### Practical usage
-
-This validator accepts 2 parameters:
-
-* Treshold: An integer between 0 and 100. 0 means that everything is allowed (not strict), and 100 means very strict. By default, a value of 50 is set. You can select a value between 0 and 100 to set the sensitivity. The higher the value, the more likely it is that a text will be identified as SPAM. Sometimes it may be that the value has been set too high and non-SPAM texts are inadvertently identified as SPAM. This simply has to be tried out in practice, which value is suitable. There is no ideal value.
-* Exclusion array: You can add an array that contains all the names of the checks that you don't want to run
-
-```php
-field->setRule('checkContentForSpam', 30, ['stopwords', 'links']); // first parameter (treshold/sensitivity) ist set to 30 and the following tests are disabled: testing for stop words and testing for links
-```
-
-The default usage is without these 2 parameters:
-
-```php
-field->setRule('checkContentForSpam'); // this is the default usage including all test for SPAM with the default treshold/sensitivity of 50
-```
-
-This validation rule makes only sense for text fields, especially for textarea fields. 
 
 
 ## Create your own custom validation rules
