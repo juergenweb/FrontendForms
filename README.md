@@ -2138,6 +2138,83 @@ You can use as many validators to a field as you need.
 | [forbiddenFileExtensionsInZipFolder](#forbiddenFileExtensionsInZipFolder) (alias for previous notAllowedFileTypesInZipFolder) | Validates that no forbidden file extensions are present inside ZIP archives|
 | [maxAllowedFileSizeOfFileInZipFolder](#maxAllowedFileSizeOfFileInZipFolder) | Validates the maximum allowed file size of files inside ZIP archives |
 
+### maxFilesInZIPFolder
+
+Validate that the number of files inside each uploaded ZIP archive meets the configured minimum. Pass "deepScan" as $params[1] to count files inside nested ZIPs as well. Fields without a ZIP upload are treated as valid.
+
+```php
+$field->setRule('maxFilesInZIPFolder', 10); // The maximum number of files allowed in a ZIP folder is 10 in this case
+$field->setRule('maxFilesInZIPFolder', 10, 'deepScan'); // This will count the files inside nested ZIPs too
+```
+
+### minFilesInZIPFolder
+
+Validate that the number of files inside each uploaded ZIP archive meets the configured minimum. Pass "deepScan" as $params[1] to count files inside nested ZIPs as well. Fields without a ZIP upload are treated as valid.
+
+```php
+$field->setRule('minFilesInZIPFolder', 3); // The minimum number of files required in a ZIP folder is 3 in this case
+$field->setRule('minFilesInZIPFolder', 3, 'deepScan'); // This will count the files inside nested ZIPs too
+```
+
+### maxTotalFileSizeZipUncompressed
+
+Validate that the total uncompressed size of each uploaded ZIP archive does not exceed the configured limit (e.g. "50M", "1G"). Fields without a ZIP upload are treated as valid.
+
+```php
+$field->setRule('maxTotalFileSizeZipUncompressed', '10 MB'); // The maximum total filesize uncompressed in a ZIP folder is 10 MB in this case
+```
+
+### requiredFileNamesInZip
+
+Validate that all required file names (including extension) are present inside every uploaded ZIP archive. Fields without a ZIP upload are treated as valid. Please note: This validation rule searches for filenames inside nested ZIPs (ZIP inside ZIP) too.
+
+```php
+$field->setRule('requiredFileNamesInZip', ['testfile1.jpg', 'image1.png']); // Enter the names of the required files as an array (including the extension)
+```
+
+### maxNumberOfZipFolders
+
+Validates the maximum number of ZIP files uploaded inside an upload field. This validation rule only makes sense on multi-upload fields. With this validation rule you can restrict the number of ZIP files that can be uploaded by a multi-upload field.
+
+```php
+$field->setRule('maxNumberOfZipFolders', 2); // Enter the number of ZIP folders. In this case it is only allowed to upload max. 2 ZIP files.
+```
+
+### maxDepthOfZipFolders
+
+Validate that the folder nesting depth inside uploaded ZIP archives does not exceed the configured maximum. Fields without a ZIP upload are treated as valid.
+
+```php
+$field->setRule('maxDepthOfZipFolders', 2); // Enter the depth number of ZIP folders. In this case the maximum allowed folder/directory depth in a ZIP folder is 2.
+```
+
+### allowedFileExtensionsInZipFolder
+
+Validate that every file extension found inside uploaded ZIP archives is on the allowed list. Pass "deepScan" as $params[1] to check nested ZIPs too.Fields without a ZIP upload are treated as valid.
+
+```php
+$field->setRule('allowedFileTypesInZipFolder', ['jpg', 'png']); // Enter the allowed file types as an array. In this case only file types of jpg and png are allowed to be inside a ZIP folder
+$field->setRule('allowedFileTypesInZipFolder', ['jpg', 'png'], 'deepScan'); // check files inside nested ZIPs too
+```
+
+### forbiddenFileExtensionsInZipFolder
+
+Validate that no forbidden file extension appears inside uploaded ZIP archives. Pass "deepScan" as $params[1] to check nested ZIPs too. Fields without a ZIP upload are treated as valid. This validator is the opposite of the previous one.
+
+```php
+$field->setRule('forbiddenFileTypesInZipFolder', ['exe']); // Enter the forbidden file types as an array. In this case file types of exe are not allowed to be inside a ZIP folder
+$field->setRule('forbiddenFileTypesInZipFolder', ['jpg', 'png'], 'deepScan'); // Check files inside nested ZIPs too
+```
+
+### maxAllowedFileSizeOfFileInZipFolder
+
+Validate that no individual file inside uploaded ZIP archives exceeds the configured size limit (e.g. "10M"). Pass "deepScan" as $params[1] to check files in nested ZIPs too. Fields without a ZIP upload are treated as valid.
+
+```php
+$field->setRule('maxAllowedFileSizeOfFileInZipFolder', '1 MB'); // In this case a single file inside the ZIP folder is not allowed to exceed the max. filesize of 1 MB
+$field->setRule('maxAllowedFileSizeOfFileInZipFolder', '1 MB', 'deepScan'); // Check files inside nested ZIPs too
+```
+
 ### Validation rules for finance
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
@@ -2519,77 +2596,6 @@ field->setRule('uniqueStringValueOfPWField', 'myname', ['user','template1','temp
 
 Please note: The search is case insensitive, because ProcessWire selectors do not support case sensitive search options.
 
-### maxFilesInZIPFolder
-
-This validator checks the number of files in each uploaded ZIP folder. If the number of files is higher than the allowed number, validation fails.
-
-```php
-field->setRule('maxFilesInZIPFolder', 10); // The maximum number of files allowed in a ZIP folder is 10 in this case
-```
-
-### minFilesInZIPFolder
-
-This validator validates the minimum required number of files inside a ZIP folder. If the number of files is lower than the required number, validation fails.
-
-```php
-field->setRule('minFilesInZIPFolder', 3); // The maximum number of files allowed in a ZIP folder is 3 in this case
-```
-
-### maxTotalFileSizeZipUncompressed
-
-Verifies that the uncompressed filesize of all files in an uploaded ZIP folder does not exceed the total file size limit. If the total filesize inside a ZIP folder uncompressed is higher than the allowed maximum filesize, validation fails.
-
-```php
-field->setRule('maxTotalFileSizeZipUncompressed', '10 MB'); // The maximum total filesize uncompressed in a ZIP folder is 10 MB in this case
-```
-
-### requiredFileNamesInZip
-
-Validate if a Zip file contains files with a specific name. If at least one of the files is not present inside the ZIP folder, the validation fails. Please note: This validation rule searches for filenames inside nested ZIPs (ZIP inside ZIP) too.
-
-```php
-field->setRule('requiredFileNamesInZip', ['testfile1.jpg', 'image1.png']); // Enter the names of the required files as an array
-```
-
-### maxNumberOfZipFolders
-
-Validate the maximum number of ZIP files uploaded inside an upload field. This validation rule does only make sense on multi-upload fields. With this validation rule you can restrict the number of ZIP files that can be uploaded by a multi-upload field
-
-```php
-field->setRule('maxNumberOfZipFolders', 2); // Enter the number of ZIP folders. In this case it is only allowed to upload max. 2 ZIP files.
-```
-
-### maxDepthOfZipFolders
-
-Validate that a ZIP folder does not contain more sub-dir levels than allowed in the hierarchy.
-
-```php
-field->setRule('maxDepthOfZipFolders', 2); // Enter the depth number of of ZIP folders. In this case the maximum allowed folder/directory depth in a ZIP file is 2.
-```
-
-### allowedFileTypesInZipFolder
-
-Validate if all files inside a ZIP folder are of the allowed type.
-
-```php
-field->setRule('allowedFileTypesInZipFolder', ['jpg', 'png']); // Enter the allowed file types as an array. In this case only file types of jpg and png are allowed to be inside a ZIP folder
-```
-
-### notAllowedFileTypesInZipFolder
-
-Validate if all files inside a ZIP folder are NOT of a specific type. This validator is the opposite of the previous one.
-
-```php
-field->setRule('notAllowedFileTypesInZipFolder', ['exe']); // Enter the forbidden file types as an array. In this case file types of exe are not allowed to be inside a ZIP folder
-```
-
-### maxAllowedFileSizeOfFileInZipFolder
-
-Validate the max. filesize of an individual file inside a ZIP folder.
-
-```php
-field->setRule('maxAllowedFileSizeOfFileInZipFolder', '1 MB'); // In this case a single file inside the ZIP folder is not allowed to exeed the max. filesize of 1 MB
-```
 
 ### checkContentForSpam
 
