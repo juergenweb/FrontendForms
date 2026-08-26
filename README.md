@@ -420,6 +420,19 @@ the form would be submitted twice. In this case the submission will be stopped b
 be redirected to the form page itself.
 The double-submission check can be set manually (enable/disable) if necessary by using the [useDoubleFormSubmissionCheck()](#usedoubleformsubmissioncheck) method.
 
+## Another security feature: Re-render/re-encode images to prevent malicious code inside images
+
+### Known Attack Patterns in “Malicious Images”
+
+Polyglot files: A file that is simultaneously a valid image and valid code (e.g., a GIF with <?php ... ?> code appended to the end). Image viewers only read the file up to the logical end of the image, while a PHP interpreter could still execute the appended code if the file is ever interpreted as a .php file.
+
+Metadata injection: Malicious code hidden in the EXIF comment fields of a JPEG. This is harmless as long as the file is only displayed as an image, but can become dangerous if a server mistakenly processes it using include().
+
+SVG files: SVG is XML-based and can contain <script> tags. If an SVG file is opened directly in a browser (rather than being embedded using <img>, for example via a direct link), embedded JavaScript can be executed.
+
+Re-render/re-encode the image (load the image and then save it as a new JPEG/PNG using GD or Imagick). This is the most effective single measure, as only the actual pixel data is retained. Any embedded code or manipulated metadata is automatically discarded, regardless of what you are specifically looking for.
+
+So, every uploaded image will be re-rendered by default to remove potentially malicious code. However, this does not apply to images contained within ZIP archives.
 
 ## General methods
 General methods are methods that can be used on each object: form, input field, label, description, notes, wrappers, fieldset,...
