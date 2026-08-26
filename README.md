@@ -1931,8 +1931,7 @@ For a more detailed explanation of each validation rule, click on the link next 
 ### Validation rules for file uploads
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
-| [phpIniUploadMaxFileSize](#phpIniUploadMaxFileSize) | Checks that upload_max_filesize (max size of a single file) is not exceeded ![Notice](https://img.shields.io/badge/Please%20note-Translations%20may%20need%20updating-orange)
- |
+| [phpIniUploadMaxFileSize](#phpIniUploadMaxFileSize) | Checks that upload_max_filesize (max size of a single file) is not exceeded ![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20updating-orange)|
 | [phpIniPostMaxFileSize](#phpIniPostMaxFileSize) | Checks that post_max_size (max total size of all uploaded files) is not exceeded |
 | [maxTotalFileSize](#maxTotalFileSize) (alias for previous allowedTotalFileSize) | Checks that the total size of all uploaded files does not exceed a configured limit |
 | [maxSingleFileSize](#maxSingleFileSize) (alias for previous allowedFileSize) | Checks that no single file exceeds a configured size limit (does not check files inside a ZIP archive) |
