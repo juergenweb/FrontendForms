@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -17,7 +18,6 @@ use ProcessWire\WirePermissionException;
 
 class InputWrapper extends Wrapper
 {
-
     /**
      * @throws WireException
      * @throws WirePermissionException
@@ -30,4 +30,3 @@ class InputWrapper extends Wrapper
     }
 
 }
-

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -17,11 +18,10 @@ use Exception;
 use ProcessWire\WireException;
 
 /**
- * This is the base class for creating input elements
+ * Class with pre-defined values for creating a username input field
  */
 class Username extends InputText
 {
-
     /**
      * @param string $id
      * @throws WireException

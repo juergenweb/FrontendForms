@@ -1,0 +1,53 @@
+# EditorConfig helps maintain consistent coding styles across different
+# editors/IDEs and contributors. See https://editorconfig.org
+root = true
+
+# Defaults for all files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# PHP - PSR-12 uses 4-space indentation
+[*.php]
+indent_style = space
+indent_size = 4
+
+# ProcessWire module files are plain PHP under a different extension
+[*.module]
+indent_style = space
+indent_size = 4
+
+# JavaScript/CSS - matches the 4-space style already used in
+# frontendforms-frontend.js / frontendforms-backend.js
+[*.{js,css}]
+indent_style = space
+indent_size = 4
+
+# Minified/generated files - not hand-edited, don't enforce style on them
+[*.min.{js,css}]
+insert_final_newline = false
+trim_trailing_whitespace = false
+
+# JSON (framework class definitions, language files, composer.json, ...)
+[*.json]
+indent_style = space
+indent_size = 4
+
+# YAML, if ever added (e.g. CI workflow files)
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Markdown - trailing whitespace can be meaningful (line breaks), so don't
+# trim it there
+[*.md]
+trim_trailing_whitespace = false
+
+# Batch/translation CSV files - don't alter their line endings, since
+# some translation tools expect a specific format
+[*.csv]
+insert_final_newline = false

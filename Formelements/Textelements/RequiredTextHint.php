@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -18,7 +19,6 @@ use ProcessWire\WirePermissionException;
 
 class RequiredTextHint extends TextElements
 {
-
     /**
      * @throws WireException
      * @throws WirePermissionException

@@ -447,6 +447,11 @@ class Validator
      */
     protected function validateListContains($field, $value, $params)
     {
+        // Value not present at all (e.g. no checkbox selected) -> list can't contain the required item
+        if (!is_array($value)) {
+            return false;
+        }
+
         $forceAsAssociative = false;
         if (isset($params[2])) {
             $forceAsAssociative = (bool) $params[2];
@@ -1589,6 +1594,9 @@ class Validator
     }
 
     private function isAssociativeArray($input){
+        if(is_null($input)){
+            return false;
+        }
         //array contains at least one key that's not an can not be cast to an integer
         return count(array_filter(array_keys($input), 'is_string')) > 0;
     }

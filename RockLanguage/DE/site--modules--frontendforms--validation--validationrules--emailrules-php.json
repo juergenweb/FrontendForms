@@ -1,0 +1,9 @@
+{
+    "file": "site\/modules\/FrontendForms\/Validation\/ValidationRules\/EmailRules.php",
+    "textdomain": "site--modules--frontendforms--validation--validationrules--emailrules-php",
+    "translations": {
+        "64a2d51e07ddaa3c7891c4eb0a04b57e": {
+            "text": "darf nicht bereits vorhanden sein."
+        }
+    }
+}

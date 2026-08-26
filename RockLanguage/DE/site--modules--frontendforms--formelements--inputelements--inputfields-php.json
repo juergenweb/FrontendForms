@@ -92,9 +92,6 @@
         "289e04d80d8c7b4d9c26acf2a8366ea0": {
             "text": "Die maximal erlaubte Ordner-\/Verzeichnistiefe in einer ZIP-Datei betr\u00e4gt %s"
         },
-        "3686e07c08d00173bc8c21eb3929ad3c": {
-            "text": "ZIP-Dateien d\u00fcrfen nur die folgenden Dateitypen enthalten: %s"
-        },
         "6a04bb2130627555c413868486fd4132": {
             "text": "ZIP-Dateien k\u00f6nnen nur Dateien enthalten, deren Dateigr\u00f6\u00dfe nicht %s \u00fcberschreitet"
         },
@@ -118,6 +115,9 @@
         },
         "e578185cfdb5bb878f5b48f7901848d2": {
             "text": "%s muss das Wort %s enthalten"
+        },
+        "df0fc2bb94d191c9cd93d5890ad8efc6": {
+            "text": "ZIP-Dateien d\u00fcrfen nur die folgenden Dateitypen enthalten: %s"
         }
     }
 }

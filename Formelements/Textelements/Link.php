@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -22,7 +23,6 @@ use ProcessWire\WirePermissionException;
  */
 class Link extends TextElements
 {
-
     protected string $url = '';
     protected string $anchor = '';
     protected array $queryString = []; // array that can contain multiple querystrings
@@ -72,9 +72,9 @@ class Link extends TextElements
         $page->of(true); // turn output formatting on the get a title string and not a LanguagesPageFieldValue
         $this->setLinkText($page->title);
         $this->setAttribute('title', $this->_('To the page') . ': ' . $page->title);
-        // check if SEO Maestro is installed and check if page should be indexed
-        $seo = Form::getSeoMaestro();
 
+        // check if SEO Maestro is installed and check if page should be indexed
+        $seo = FormHelper::getSeoMaestro();
 
         if ($seo) {
             $fieldName = $seo->name;
@@ -120,14 +120,14 @@ class Link extends TextElements
      * Set the parameter (anchor or querystring) of a link
      * @param string $get
      * @param string $parameterValue
-     * @return $this
+     * @return string
      */
     protected function setGetParameter(string $get, string $parameterValue): string
     {
         $parameterValue = trim($parameterValue);
         // remove prefix if present
         if (str_starts_with($parameterValue, $get)) {
-            $parameterValue = ltrim($parameterValue, $get);
+            $parameterValue = substr($parameterValue, strlen($get));
         }
         return $parameterValue;
     }

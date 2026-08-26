@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -17,16 +18,17 @@ namespace FrontendForms;
 
 class PrivacyText extends TextElements
 {
-
     protected int|null $policyPageId = null;
     protected string $privacy = '';
     protected bool $linkExists = false;
     protected Link $policyLink;
+    protected string $textTemplate = ''; // the original "%s" placeholder template, kept separate from $text so repeated render() calls always substitute into the untouched original
 
     public function __construct(?string $id = 'privacy-text')
     {
         parent::__construct($id);
-        $this->setText($this->_('By submitting this form you agree to our %s.'));
+        $this->textTemplate = $this->_('By submitting this form you agree to our %s.');
+        $this->setText($this->textTemplate);
         $this->privacy = $this->_('Terms of use and Privacy Policy');
         $this->setAttribute('class', 'privacy-text');
         $this->frontendforms['input_privacypageselect'] ??= 'int';
@@ -71,7 +73,7 @@ class PrivacyText extends TextElements
     public function ___render(): string
     {
         $rendered = $this->renderPolicyLink();
-        $this->setText(sprintf($this->getText(), $rendered !== '' ? $rendered : $this->privacy));
+        $this->setText(sprintf($this->textTemplate, $rendered !== '' ? $rendered : $this->privacy));
         return parent::___render();
     }
 

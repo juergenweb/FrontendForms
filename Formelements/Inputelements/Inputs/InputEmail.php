@@ -26,7 +26,7 @@ class InputEmail extends InputText
     {
         parent::__construct($id);
         $this->setAttribute('type', 'email');
-        //set default validators
+        //set default Validation
         $this->setRule('email');
         $this->setRule('emailDNS');
     }

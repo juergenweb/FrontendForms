@@ -1,0 +1,30 @@
+{
+    "file": "site\/modules\/FrontendForms\/Validation\/ValidationRules\/TextRules.php",
+    "textdomain": "site--modules--frontendforms--validation--validationrules--textrules-php",
+    "translations": {
+        "3bfd649d64d7881e876082ba4296ea72": {
+            "text": "enth\u00e4lt nicht den erwarteten Wert."
+        },
+        "1b3b26005f85ec26d26c406e2d604a55": {
+            "text": "unterscheidet sich nicht vom vorgegebenen Wert."
+        },
+        "f0b8295b9f9bd13d9312262cd70f1365": {
+            "text": "enh\u00e4lt nicht die richtige Antwort."
+        },
+        "49b2b559e1b6ea96f3508dc155023d48": {
+            "text": "enth\u00e4lt Zeichen, die nicht erlaubt sind. Ein kyrillischer Name kann nur Klein- und Gro\u00dfbuchstaben (\u0430-\u044f) sowie Bindestriche enthalten, aber keine Leerzeichen."
+        },
+        "81528df11236c294939dc2d6ef6a07b6": {
+            "text": "enth\u00e4lt Buchstaben, diese sind aber nicht erlaubt."
+        },
+        "f72b05ac0a4658c473ef8b455ecf0dbb": {
+            "text": "enh\u00e4lt mindestesn 1 Zahl, aber das ist nicht erlaubt."
+        },
+        "09e1d1816564a23aa73ff34af0abad3b": {
+            "text": "wird bereits verwendet. Bitte geben Sie einen anderen Wert ein."
+        },
+        "05e894f197ba11a9fa4ccacbaa54bea6": {
+            "text": "enth\u00e4lt Zeichen , welche in Namen nicht erlaubt sind"
+        }
+    }
+}

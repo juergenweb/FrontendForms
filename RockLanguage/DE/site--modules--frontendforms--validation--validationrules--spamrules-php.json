@@ -1,0 +1,15 @@
+{
+    "file": "site\/modules\/FrontendForms\/Validation\/ValidationRules\/SpamRules.php",
+    "textdomain": "site--modules--frontendforms--validation--validationrules--spamrules-php",
+    "translations": {
+        "af92de2a50e167d82fb0feec58d0a749": {
+            "text": "enth\u00e4lt Inhalte, die wie Spam wirken. Bitte vermeiden Sie mehr als 2 Links, Texte mit weniger als 50 Zeichen, \u00fcberm\u00e4\u00dfige Verwendung von Gro\u00dfbuchstaben, h\u00e4ufig verwendete Spam-Schl\u00fcsselw\u00f6rter oder mehrere aufeinanderfolgende Ausrufezeichen (z. B. !!!!!)."
+        },
+        "2f7e4c69803bcbdc44e9404b3e3ac19b": {
+            "text": "ist nicht richtig."
+        },
+        "71e137b3ec4762c80863167ec01f71cb": {
+            "text": "wurde nicht richtig gel\u00f6st."
+        }
+    }
+}

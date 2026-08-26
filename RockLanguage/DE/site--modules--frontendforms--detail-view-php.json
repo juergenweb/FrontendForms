@@ -11,14 +11,17 @@
         "59716c97497eb9694541f7c3d37b1a4d": {
             "text": "Land"
         },
-        "f447ac856e7e72435904956e3b15f433": {
-            "text": "Region"
-        },
         "57d056ed0984166336b7879c2af3657f": {
             "text": "Stadt"
         },
         "ac598c39fd0d78fb3eff40b3a5b5cbbd": {
             "text": "Es tut uns leid, aber ip-api.com hat keine Informationen \u00fcber diese IP-Adresse."
+        },
+        "f205af72fc73d929c2b095bb1f05b692": {
+            "text": "Ung\u00fcltige IP-Adresse."
+        },
+        "f447ac856e7e72435904956e3b15f433": {
+            "text": "="
         }
     }
 }

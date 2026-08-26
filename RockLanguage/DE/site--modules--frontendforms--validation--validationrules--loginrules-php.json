@@ -1,0 +1,15 @@
+{
+    "file": "site\/modules\/FrontendForms\/Validation\/ValidationRules\/LoginRules.php",
+    "textdomain": "site--modules--frontendforms--validation--validationrules--loginrules-php",
+    "translations": {
+        "0692f1d96297b3d3ebb476ecb909b71f": {
+            "text": "und Benutzername stimmen nicht \u00fcberein."
+        },
+        "c557836813d5c70d5972372d2a7a9ed4": {
+            "text": "und E-Mail stimmen nicht \u00fcberein."
+        },
+        "2f7e4c69803bcbdc44e9404b3e3ac19b": {
+            "text": "ist nicht korrekt."
+        }
+    }
+}

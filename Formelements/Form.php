@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -31,71 +32,53 @@ use ProcessWire\WireException;
 use ProcessWire\WireMail;
 use ProcessWire\WirePermissionException;
 use Valitron\Validator;
+
 use function ProcessWire\_n;
 use function ProcessWire\wire as wire;
 use function ProcessWire\wireClassName;
 use function ProcessWire\wireMail;
 use function ProcessWire\wirePopulateStringTags;
 
-class Form extends CustomRules
+class Form extends Tag
 {
-
     /* constants */
-    const FORMMETHODS = ['get', 'post']; // array that holds allowed action methods (get, post)
+    public const FORMMETHODS = ['get', 'post']; // array that holds allowed action methods (get, post)
 
     /* properties */
     protected string|int|bool $preventJumpToForm = false;
     protected string|int $load_time = ''; // the time, when the form was loaded
     protected array $storedFiles = []; // array that holds all files (including overwritten filenames)
-    protected array $validation_files = []; // array that holds all extracted and single files for file validations
     protected string $doubleSubmission = ''; // value hold by the double form submission session
     protected string $defaultRequiredTextPosition = 'top'; // the default required text position
-    protected string $doNotReply = ''; // Text for do not reply to automatically generated emails
     protected array $formElements = []; //array that contains all elements of a form element as objects
     protected array $formErrors = []; // holds the array containing all form errors after submission
-    protected array $values = []; // array of all form values (key = name of the inputfield)
+    protected FormValueStore $valueStore; // collects and exposes submitted form values
+    protected FormElementsFinder $elementsFinder; // searches/filters/counts entries in $formElements
     protected bool $showForm = true; // show the form on the page
+    protected bool $ipCheckPassed = true; // result of the one-time IP blacklist check done in the constructor
     protected string $visitorIP = ''; // the IP of the visitor who is visiting this page
-    protected string $captchaCategory = ''; // the category of the captcha (text or image)
     protected string $langAppendix = ''; // string, which will be appended to multi-lang config fields inside the db
     protected string|int $useDoubleFormSubmissionCheck = 1; // Enable checking of multiple submissions
     protected string|int|bool $useCSRFProtection = 1; // Enable/disable CSRF-Protection
     protected string $general_desc_position = 'afterInput'; // The position of the input field description -> beforeLabel, afterLabel or afterInput
-    protected string $captcha_value = '';
     protected bool $preventGetFileUploadWarning = false;
 
-    // properties for the simple question Captcha
+    // NOTE: $question and $answers below are legacy properties that are never assigned
+    // anywhere in this class (dead code carried over from before the question_array/
+    // CaptchaManager refactor). Left untouched here since they are outside the scope
+    // of the CAPTCHA extraction - candidates for removal in a follow-up cleanup.
     protected string|null $question = ''; // the question as string
     protected array|null $answers = []; // all acceptable answers as an array
-    protected array|null $captchaPosition = null; // array that holds the reference field as the key and the position as value
-    protected string|null $captchaSuccessMsg = ''; // set a success message for the captcha field
-    protected string|null $captchaErrorMsg = ''; // overwrite the default error message for the CAPTCHA validation
-    protected string|null $captchaRequiredErrorMsg = ''; // overwrite the default error message for the CAPTCHA required validation
-    protected string|null $captchaNotes = ''; // notes text for the Captcha
-    protected string|null $captchaDescription = ''; // description text for the Captcha
-    protected string|null $captchaDescriptionPosition = ''; // description position for the Captcha
-    protected string|null $captchaPlaceholder = ''; // set a placeholder for the Captcha input
-    protected int|null $random_question = null;
-    protected array|null $random_question_array = null;
-    protected array|null $question_array = [];
-    protected bool $removeCaptchaLabel = false;
-    protected bool $useCaptchaLabelAsPlaceholder = false;
-    protected bool $showValueOnSameQuestionAgain = false;
-    protected InputText|InputRadioMultiple|InputCheckbox|null $captchafield;
+
     protected string|int|bool $useAriaAttributes = true; // use accessibility attributes
     // Mail properties - only needed if FrontendForms will be used to send emails
-    protected array $mailPlaceholder = []; // associative array for usage in emails (['placeholdername' => 'text',...])
+    protected MailPlaceholderRegistry $mailPlaceholders; // holds placeholder values for use in emails
+    protected MailTemplateRenderer $mailTemplateRenderer; // renders the HTML email template and preheader
     protected string $defaultDateFormat = 'Y-m-d'; // the default format for date strings
     protected string $defaultTimeFormat = 'H:i a'; // the default format for time strings
     protected string $receiverAddress = ''; // the email address of the receiver of the mails
     protected string $mail_subject = ''; // the subject for a mail sent after form validation
-    protected string $emailTemplatesDirPath = ''; // the path to the email templates directory
-    protected string $emailCustomTemplatesDirPath = ''; // the path to the email custom templates directory
-    protected string $emailTemplate = ''; // the filename of the email template including the extension (fe. template.html)
-    protected string $emailTemplatePath = ''; // the path to the body template
-    protected string $emailCustomTemplatePath = ''; // the path to the custom body template
-    protected array $uploaded_files = []; // array which holds all currently uploaded files with the path as value
-    protected int|null $mail_language_id = null; // property for setting the language for mail templates manually
+    protected FileUploadHandler $fileUploadHandler; // handles storage of validated uploaded files
     protected int|null $site_language_id = null; // internal property containing the current site language
     protected string|int|null|bool $submitAjax = 0; // whether to submit the form via Ajax (1) or not (0)
     protected string|null $ajaxRedirect = null; // redirect to this URL after a valid form has been submitted - only for Ajax submission
@@ -109,25 +92,14 @@ class Form extends CustomRules
     protected string $msgtag = 'p'; // set the default global tag for the message elements (success and error message)
     protected string|null $segments = null;
     protected string|null|bool|int $stopHoneypotRotation = false; // Honeypotfield will be positioned randomly (false) or stays at the top of the form (true)
-    protected array $steps = []; // array containing the steps of a multi-step form
 
     protected array $formFieldConditions = [];
+
 
     /**
      * Multi-step form
      */
-    protected bool $showStepsOf = true; // show step x of y text on each step or not
-    protected bool $showStepsProgressbar = true; // show the progressbar on top of the multi-step form
-    protected int|string $totalStepsNumber = 0; // the amount of total steps
-    protected bool $firstStep = false;
-    protected bool $lastStep = false;
-    protected object|null $firstElement = null;
-    protected object|null $lastElement = null;
-    protected int $currentStepNumber = 1;
-    protected string $customProgressbar = '';
-
-    protected string $lastStepListText = '';
-    protected array $lastStepElements = [];
+    protected MultiStepController $stepController; // coordinates multi-step form state and slicing
     protected string $modulePath = '';
 
     /* objects */
@@ -138,12 +110,11 @@ class Form extends CustomRules
     protected User $user; // the user, who views the form (the page)
     protected Language $userLang; // the language object of the user/visitor
 
-    protected object $captcha; // the captcha object
-    protected Progressbar $stepsProgressbar; // the progressbar for multi-steps forms
-
+    protected CaptchaManager $captchaManager; // coordinates CAPTCHA type, config, question pool and field
+    protected CaptchaQuestionRepository $captchaQuestionRepository; // loads CAPTCHA questions from the database
     protected Progressbar $ajaxProgressbar; // the progressbar for AJAX form submission
 
-
+    //protected CustomRules $customRules;
     /**
      * Every form must have an id. You can set it custom via the constructor - otherwise a random ID will be
      * generated. The id will be taken for further automatic id generation of the input fields
@@ -155,29 +126,56 @@ class Form extends CustomRules
 
         $this->load_time = time(); // set the load time
 
-        // set the path to the template folder for the email templates
-        $this->emailTemplatesDirPath = $this->wire('config')->paths->siteModules . 'FrontendForms/email_templates/';
-        // set the path to the custom template folder for the email templates
-        $this->emailCustomTemplatesDirPath = $this->wire('config')->paths->site . 'frontendforms-custom-templates/';
+        $this->initMailCollaborators();
+        $this->initUserAndLanguage();
+        $this->initAjaxConfig();
+        $this->initPageAndLanguageSupport();
+        $this->initCollaborators($id);
+        $this->initSecurityAndCoreAttributes($id);
+        $this->initElementTags();
+        $this->initProgressbarStyling();
+        $this->initPlaceholdersAndCaptchaHooks();
+        $this->initPageJsCssFlags();
 
+        $this->modulePath = $this->wire('config')->paths->siteModules . 'FrontendForms/';
+
+        new CustomRules($this);
+    }
+
+    /**
+     * Set up the mail placeholder registry and the mail template renderer,
+     * including the email template path taken from the module configuration.
+     * @return void
+     */
+    private function initMailCollaborators(): void
+    {
+        $this->mailPlaceholders = new MailPlaceholderRegistry();
+        $this->mailTemplateRenderer = new MailTemplateRenderer($this, $this->mailPlaceholders);
         // set the path to the email template from the module config
-        if ($this->frontendforms['input_emailTemplate'] != 'none') {
-            $this->emailTemplate = $this->frontendforms['input_emailTemplate']; // set filename
-            $this->emailTemplatePath = $this->emailTemplatesDirPath . $this->emailTemplate; // set file path
-            $this->emailCustomTemplatePath = $this->emailCustomTemplatesDirPath . $this->emailTemplate; // set file path
-        }
+        $this->mailTemplateRenderer->init($this->frontendforms['input_emailTemplate']);
+    }
 
+    /**
+     * Set the current user and (if multi-language is active) the current site language id.
+     * @return void
+     */
+    private function initUserAndLanguage(): void
+    {
         // set the current user
         $this->user = $this->wire('user');
 
         if ($this->wire('languages')) {
-            // set the current site language as language for mails
-            $this->mail_language_id = $this->user->language->id;
-
             // set the id of the current site language
             $this->site_language_id = $this->user->language->id;
         }
+    }
 
+    /**
+     * Apply the Ajax submission and Ajax progressbar visibility settings from the module configuration.
+     * @return void
+     */
+    private function initAjaxConfig(): void
+    {
         // set Ajax form submission according to the configuration settings
         if (array_key_exists('input_ajaxformsubmission', $this->frontendforms)) {
             $this->setSubmitWithAjax((int)$this->frontendforms['input_ajaxformsubmission']);
@@ -188,7 +186,15 @@ class Form extends CustomRules
             $this->showProgressbar = !(($this->frontendforms['input_hideProgressBar'] == '1'));
         }
         $this->showProgressbar($this->showProgressbar);
+    }
 
+    /**
+     * Set the current page and, if the LanguageSupport module is installed and a
+     * language is active for the visitor, the language object plus its db field appendix.
+     * @return void
+     */
+    private function initPageAndLanguageSupport(): void
+    {
         // set the current page
         $this->page = $this->wire('page');
 
@@ -197,17 +203,44 @@ class Form extends CustomRules
             $this->userLang = $this->user->language; // the language object
         }
         $this->setLangAppendix(); // set the appendix for multi-language module configuration fields (fe. __1012)
+    }
 
-        // instantiate all objects first
+    /**
+     * Instantiate the UI helper objects and the domain collaborator objects
+     * (CAPTCHA, file upload, multi-step, and value store handling).
+     * @param string $id
+     * @return void
+     */
+    private function initCollaborators(string $id): void
+    {
         $this->alert = new Alert();
         $this->requiredHint = new RequiredTextHint();
         $this->formElementsWrapper = new Wrapper();
-        $this->stepsProgressbar = new Progressbar($id . '-steps-progress');
         $this->ajaxProgressbar = new Progressbar($id . '-form-submission-ajax');
+        $this->stepController = new MultiStepController($this, $id);
+        $this->captchaManager = new CaptchaManager($this);
+        $this->captchaQuestionRepository = new CaptchaQuestionRepository(
+            $this->wire('pages'),
+            $this->wire('languages'),
+            $this->wire('user')
+        );
+        $this->fileUploadHandler = new FileUploadHandler($this);
+        $this->valueStore = new FormValueStore($this);
+        $this->elementsFinder = new FormElementsFinder($this->formElements);
+    }
 
+    /**
+     * Run the one-time IP blacklist check and set up the core form attributes
+     * (method, action, id, name, HTML5 validation, CSS classes, messages,
+     * security/timing settings, CAPTCHA type, and the default upload path).
+     * @param string $id
+     * @return void
+     */
+    private function initSecurityAndCoreAttributes(string $id): void
+    {
         // set default properties
         $this->visitorIP = $this->wire('session')->getIP();
-        $this->showForm = $this->allowFormViewByIP(); // show or hide the form depending on the IP ban
+        $this->runIpBanCheck();
         $this->setAttribute('method', 'post'); // default is post
         // take care about url segments if enabled
         $this->segments = ($this->wire('input')->urlSegmentStr(true)) ?? '';
@@ -223,10 +256,14 @@ class Form extends CustomRules
         $this->setSuccessMsg($this->getLangValueOfConfigField('input_alertSuccessText'));
         $this->setErrorMsg($this->getLangValueOfConfigField('input_alertErrorText'));
         $this->setRequiredTextPosition($this->frontendforms['input_requiredHintPosition']); // set the position for the required text
-        $this->getFormElementsWrapper()->setAttribute('id',
-            $this->getAttribute('id') . '-formelementswrapper'); // add id
-        $this->getFormElementsWrapper()->setAttribute('class',
-            $this->frontendforms['input_wrapperFormElementsCSSClass']); // add CSS class to the wrapper element
+        $this->getFormElementsWrapper()->setAttribute(
+            'id',
+            $this->getAttribute('id') . '-formelementswrapper'
+        ); // add id
+        $this->getFormElementsWrapper()->setAttribute(
+            'class',
+            $this->frontendforms['input_wrapperFormElementsCSSClass']
+        ); // add CSS class to the wrapper element
         $this->useDoubleFormSubmissionCheck($this->useDoubleFormSubmissionCheck);
         $this->setRequiredText($this->getLangValueOfConfigField('input_requiredText'));
         $this->logFailedAttempts($this->frontendforms['input_logFailedAttempts']); // enable or disable the logging of blocked visitor's IP depending on config settings
@@ -242,9 +279,15 @@ class Form extends CustomRules
             $ajaxMsg = $this->getLangValueOfConfigField('input_ajaxMsg');
         }
         $this->setAjaxMessage($ajaxMsg);
+    }
 
-        // Global tags for label, description,...
-
+    /**
+     * Set the global HTML tags used for labels, descriptions, notes, and messages,
+     * taking module-configured overrides (or CSS-framework-specific defaults) into account.
+     * @return void
+     */
+    private function initElementTags(): void
+    {
         // 1) Label
         $labelTag = (!empty($this->frontendforms['input_global_label_tag'])) ? $this->frontendforms['input_global_label_tag'] : 'label';
         $this->setLabelTag($labelTag);
@@ -260,19 +303,29 @@ class Form extends CustomRules
 
         // 4) Messages
         $defaultMsgTag = 'p';
-        if ($this->frontendforms['input_framework'] === 'bootstrap5.json')
+        if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
             $defaultMsgTag = 'div';
-        if ($this->frontendforms['input_framework'] === 'pico2.json')
+        }
+        if ($this->frontendforms['input_framework'] === 'pico2.json') {
             $defaultMsgTag = 'small';
+        }
         $messagesTag = (!empty($this->frontendforms['input_global_msg_tag'])) ? $this->frontendforms['input_global_msg_tag'] : $defaultMsgTag;
         $this->setMessageTag($messagesTag);
+    }
 
+    /**
+     * Apply the CSS/tag/attribute styling for the steps progressbar and the Ajax progressbar,
+     * adapting to the Bootstrap 5 framework where applicable.
+     * @return void
+     */
+    private function initProgressbarStyling(): void
+    {
         // 5) Steps-Progressbar
-        $this->stepsProgressbar->setCSSClass('progressbarClass');
+        $this->stepController->getProgressbar()->setCSSClass('progressbarClass');
         if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
-            $this->stepsProgressbar->setTag('div');
-            $this->stepsProgressbar->setAttribute('role', 'progressbar');
-            $this->stepsProgressbar->prepend('<div class="progress mb-4">')->append('</div>');
+            $this->stepController->getProgressbar()->setTag('div');
+            $this->stepController->getProgressbar()->setAttribute('role', 'progressbar');
+            $this->stepController->getProgressbar()->prepend('<div class="progress mb-4">')->append('</div>');
         }
 
         // 5) Ajax-Progressbar
@@ -283,29 +336,42 @@ class Form extends CustomRules
         if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
             $this->ajaxProgressbar->setAttribute('class', 'progress');
         }
+    }
 
-        // Global text for auto-generated emails
-        $this->doNotReply = $this->_('This email was generated automatically. So please do not reply to this email.');
-
+    /**
+     * Create the general mail placeholders, apply the global description position
+     * (including the CAPTCHA description position default), register the mail
+     * template hooks, and load the CAPTCHA question pool.
+     * @return void
+     */
+    private function initPlaceholdersAndCaptchaHooks(): void
+    {
         // create and set all general placeholder variables
         $this->createGeneralPlaceholders();
 
         // set global description position according to the module configuration
-
         if (array_key_exists('input_descPosition', $this->frontendforms)) {
             $this->general_desc_position = $this->frontendforms['input_descPosition'];
             // set the global description position for the CAPTCHA description position as default value
-            $this->captchaDescriptionPosition = $this->general_desc_position;
+            $this->captchaManager->config()->descriptionPosition = $this->general_desc_position;
         }
 
         // add a hook method to render mail templates before sending the mail
-        $this->addHookBefore('WireMail::send', $this, 'renderTemplate');
+        $this->addHookBefore('WireMail::send', $this->mailTemplateRenderer, 'renderTemplate');
         // add a hook method after sending the mail to remove the session variable "templateloaded"
-        $this->addHookAfter('WireMail::send', $this, 'removeTemplateSession');
+        $this->addHookAfter('WireMail::send', $this->mailTemplateRenderer, 'removeTemplateSession');
 
         // create the questions array for the simple text CAPTCHA
-        $this->question_array = $this->getCaptchaQuestions();
+        $this->captchaManager->addQuestions($this->captchaQuestionRepository->getAll());
+    }
 
+    /**
+     * Register this form's JS/CSS loading flags and field-condition/form-id bookkeeping
+     * on the current page object, so the module's page-render hooks can pick them up.
+     * @return void
+     */
+    private function initPageJsCssFlags(): void
+    {
         // set default values for loading JS from the module config
         $useJS = $useCSS = '1';
         if (isset($this->frontendforms['input_removeJS']) && ($this->frontendforms['input_removeJS'] != '')) {
@@ -334,8 +400,9 @@ class Form extends CustomRules
         }
 
         // set default value for field conditions to false if it was not set before
-        if (!isset($this->page->field_conditions))
+        if (!isset($this->page->field_conditions)) {
             $this->page->field_conditions = false;
+        }
 
         // add this form to the property ff_forms of the page array, which contains the id of all forms of this page
         if (isset($this->page->ff_forms)) {
@@ -345,10 +412,8 @@ class Form extends CustomRules
         } else {
             $this->page->ff_forms = [$this->getID()];
         }
-
-        $this->modulePath = $this->wire('config')->paths->siteModules . 'FrontendForms/';
-
     }
+
 
 
     /**
@@ -369,19 +434,7 @@ class Form extends CustomRules
      */
     public function getStepValues(int|null $stepNumber = null): array
     {
-        $result = [];
-        $values = $this->wire('session')->get($this->getID() . '-values');
-        if ($values) {
-            if ($stepNumber === null) {
-                $result = $values;
-            } else {
-                if (array_key_exists($stepNumber, $values)) {
-                    $result = $values[$stepNumber];
-                }
-            }
-        }
-       
-        return $result;
+        return $this->stepController->getStepValues($stepNumber);
     }
 
     /**
@@ -392,22 +445,7 @@ class Form extends CustomRules
      */
     public function getStepValueByName(string $name): ?string
     {
-
-        // check first if $name contains the form id
-        if (!str_starts_with($name, $this->getID())) {
-            // add the id to the beginning first
-            $name = str_replace($name, $this->getID() . '-' . $name, $name);
-        }
-
-        // find the given array key $name inside the session array
-        foreach ($this->getStepValues() as $step => $values) {
-            foreach ($values as $value) {
-                if (array_key_exists($name, $values)) {
-                    return $values[$name];
-                }
-            }
-        }
-        return null;
+        return $this->stepController->getStepValueByName($name);
     }
 
     /**
@@ -418,7 +456,7 @@ class Form extends CustomRules
      */
     public function setCustomProgressbar(string $customProgressbar): self
     {
-        $this->customProgressbar = trim($customProgressbar);
+        $this->stepController->setCustomProgressbar($customProgressbar);
         return $this;
     }
 
@@ -428,7 +466,7 @@ class Form extends CustomRules
      */
     public function getCurrentStepNumber(): int
     {
-        return $this->currentStepNumber;
+        return $this->stepController->getCurrentStepNumber();
     }
 
     /**
@@ -437,7 +475,7 @@ class Form extends CustomRules
      */
     public function getTotalSteps(): int
     {
-        return $this->totalStepsNumber;
+        return $this->stepController->getTotalSteps();
     }
 
     /**
@@ -446,7 +484,7 @@ class Form extends CustomRules
      */
     public function getStepsProgressbar(): Progressbar
     {
-        return $this->stepsProgressbar;
+        return $this->stepController->getProgressbar();
     }
 
     /**
@@ -456,7 +494,7 @@ class Form extends CustomRules
      */
     public function showStepOf(bool $showStep = true): self
     {
-        $this->showStepsOf = $showStep;
+        $this->stepController->setShowStepsOf($showStep);
         return $this;
     }
 
@@ -467,7 +505,7 @@ class Form extends CustomRules
      */
     public function showStepsProgressbar(bool $showStepProgressbar = true): self
     {
-        $this->showStepsProgressbar = $showStepProgressbar;
+        $this->stepController->setShowStepsProgressbar($showStepProgressbar);
         return $this;
     }
 
@@ -581,25 +619,9 @@ class Form extends CustomRules
      */
     public function setSecurityQuestion(string|null $question, array|null $answers, array $options = []): self
     {
-
-        // add question sign if it is not present in the question
         if (!is_null($question)) {
-            if (substr($question, -1) != '?') {
-                $question = $question . '?';
-            }
+            $this->captchaManager->addQuestion($question, $answers ?? [], $options);
         }
-
-        // add this question to the question array
-        $array = [
-            'question' => $question,
-            'answers' => $answers
-        ];
-        if ($options) {
-            foreach ($options as $k => $v) {
-                $array[$k] = $v;
-            }
-        }
-        $this->question_array[] = array_filter($array);
         return $this;
     }
 
@@ -634,7 +656,7 @@ class Form extends CustomRules
      */
     public function setCaptchaPosition(string $ref_field_name, string $pos = 'after'): self
     {
-        $this->captchaPosition = [
+        $this->captchaManager->config()->position = [
             $ref_field_name => in_array($pos, ['before', 'after'], true) ? $pos : 'after'
         ];
         return $this;
@@ -646,14 +668,15 @@ class Form extends CustomRules
      */
     protected function getCaptchaPosition(): array|null
     {
-        if (!empty($this->captchaPosition) && is_array($this->captchaPosition)) {
-            $firstKey = array_key_first($this->captchaPosition);
+        $position = $this->captchaManager->config()->position;
+        if (!empty($position) && is_array($position)) {
+            $firstKey = array_key_first($position);
             if (!$this->getFormelementByName($firstKey)) {
                 return null;
             }
         }
 
-        return $this->captchaPosition ?: null;
+        return $position ?: null;
     }
 
     /**
@@ -663,7 +686,7 @@ class Form extends CustomRules
      */
     public function setCaptchaSuccessMsg(string $successmsg): self
     {
-        $this->captchaSuccessMsg = $successmsg;
+        $this->captchaManager->config()->successMsg = $successmsg;
         return $this;
     }
 
@@ -674,7 +697,7 @@ class Form extends CustomRules
      */
     public function setCaptchaPlaceholder(string $placeholder): self
     {
-        $this->captchaPlaceholder = $placeholder;
+        $this->captchaManager->config()->placeholder = $placeholder;
         return $this;
     }
 
@@ -686,8 +709,8 @@ class Form extends CustomRules
      */
     public function removeCaptchaLabel(bool $usePlaceholder = false): self
     {
-        $this->removeCaptchaLabel = true;
-        $this->useCaptchaLabelAsPlaceholder = $usePlaceholder;
+        $this->captchaManager->config()->removeLabel = true;
+        $this->captchaManager->config()->useLabelAsPlaceholder = $usePlaceholder;
         return $this;
     }
 
@@ -699,7 +722,7 @@ class Form extends CustomRules
      */
     public function showValueOnSameQuestionAgain(bool $show): self
     {
-        $this->showValueOnSameQuestionAgain = $show;
+        $this->captchaManager->config()->showValueOnSameQuestionAgain = $show;
         return $this;
     }
 
@@ -744,39 +767,38 @@ class Form extends CustomRules
     {
 
         // if $class is null, set WireMail() object by default
-        if (is_null($class))
+        if (is_null($class)) {
             return new WireMail();
+        }
 
         // just to play safe - check if the given module is installed first
-        if (!$this->wire('modules')->getModuleID($class))
+        if (!$this->wire('modules')->getModuleID($class)) {
             return new WireMail();
+        }
 
         // create a new instance of the given module
         switch ($class) {
-            case('WireMailPostmark'):
-            case('WireMailPostmarkApp'):
+            case ('WireMailPostmark'):
+            case ('WireMailPostmarkApp'):
                 return $this->wire('mail')->new();
                 break;
-            case('WireMailSmtp'):
-                return wireMail();
-            case('WireMailPHPMailer'):
-                return wire("modules")->get("WireMailPHPMailer");
+            case ('WireMailSmtp'):
+                return $this->wire('mail')->new();
+            case ('WireMailPHPMailer'):
+                return $this->wire("modules")->get("WireMailPHPMailer");
             default:
                 return new WireMail();
         }
     }
 
     /**
-     * Get all files that were uploaded
-     * @param bool $extracted - if set to true, then you will get all ZIP files extracted too from the temp folder
-     * Please note: In case of extracted files, the filenames are raw and not sanitzied
+     * Get all files that were uploaded and stored after successful validation
      * @return array
      *
      */
-    public function getUploadedFiles(bool $extracted = false): array
+    public function getUploadedFiles(): array
     {
-        if($extracted) return $this->validation_files;
-        return $this->uploaded_files;
+        return $this->fileUploadHandler->getUploadedFiles();
     }
 
     /**
@@ -802,7 +824,7 @@ class Form extends CustomRules
      */
     public function getHTML5Validation(): bool
     {
-        return $this->frontendforms['input_html5_validation'];
+        return (bool) $this->frontendforms['input_html5_validation'];
     }
 
     /**
@@ -869,7 +891,7 @@ class Form extends CustomRules
      */
     public function useDoubleFormSubmissionCheck(int|string|bool $useDoubleFormSubmissionCheck): void
     {
-        $useDoubleFormSubmissionCheck = $this->sanitizeValueToInt($useDoubleFormSubmissionCheck); // sanitize to int
+        $useDoubleFormSubmissionCheck = FormHelper::sanitizeValueToInt($useDoubleFormSubmissionCheck); // sanitize to int
 
         $this->useDoubleFormSubmissionCheck = $useDoubleFormSubmissionCheck; // set the property
         if ($useDoubleFormSubmissionCheck) {
@@ -893,9 +915,13 @@ class Form extends CustomRules
      */
     public function useCSRFProtection(int|string|bool $csrf): void
     {
-        $this->useCSRFProtection = $this->sanitizeValueToInt($csrf);
+        $this->useCSRFProtection = FormHelper::sanitizeValueToInt($csrf);
     }
 
+    /**
+     * Get whether CSRF protection is currently enabled for this form
+     * @return bool
+     */
     public function getCSRFProtection(): bool
     {
         return (bool)$this->useCSRFProtection;
@@ -1003,11 +1029,27 @@ class Form extends CustomRules
      * Special general methods for sending emails
      */
 
-    public static function checkForPath(string $pathfilename): bool
+    /**
+     * @deprecated Use FormHelper::createQueryCode() instead. Kept as a thin
+     * forwarding method for backward compatibility with external code
+     * still calling Form::createQueryCode().
+     * @param int $charLength - the length of the random string - default is 100
+     * @return string - returns a slug version of the generated random string that can be used inside an url
+     */
+    public static function createQueryCode(int $charLength = 100): string
     {
-        $pathInfo = pathinfo($pathfilename);
-        if ($pathInfo['dirname'] !== '.') return true;
-        return false;
+        return FormHelper::createQueryCode($charLength);
+    }
+
+    /**
+     * @deprecated Use FormHelper::getSeoMaestro() instead. Kept as a thin
+     * forwarding method for backward compatibility with external code
+     * still calling Form::getSeoMaestro().
+     * @return Field|null
+     */
+    public static function getSeoMaestro(): ?Field
+    {
+        return FormHelper::getSeoMaestro();
     }
 
     /**
@@ -1021,91 +1063,7 @@ class Form extends CustomRules
      */
     protected function includeMailTemplate(Module|Wire|WireArray|WireData $mail): void
     {
-        // set email_template property if it was not set before
-        if (!$mail->email_template) {
-            $mail->email_template = $this->frontendforms['input_emailTemplate'];
-        }
-
-        // check if email template is set
-        if ($mail->email_template != 'none') {
-            // set body as placeholder
-            if ($mail->email_template == 'inherit') {
-                // use the value from the FrontendForms module configuration
-                $mail->email_template = $this->frontendforms['input_emailTemplate'];
-            }
-            if ($mail->email_template != 'none') {
-
-                // check if template name or template path has been added
-                if (self::checkForPath($mail->email_template)) {
-                    $this->emailTemplatesDirPath = $this->emailCustomTemplatesDirPath = '';
-                }
-
-                if ($this->wire('files')->exists($this->emailTemplatesDirPath . $mail->email_template)) {
-                    $body = $this->loadTemplate($this->emailTemplatesDirPath . $mail->email_template);
-                } else if ($this->wire('files')->exists($this->emailCustomTemplatesDirPath . $mail->email_template)) {
-                    $body = $this->loadTemplate($this->emailCustomTemplatesDirPath . $mail->email_template);
-                } else {
-                    throw new Exception(sprintf('Mail could not be sent, because the mail template with the name %s does not exist.',
-                        $mail->email_template));
-                }
-
-                // add pre-header text (if present) right after the opening body tag
-                if ($mail->title) {
-                    $doc = new DOMDocument();
-                    $doc->loadHTML($body);
-                    $bodyTags = $doc->getElementsByTagName('body');
-                    if ($bodyTags->length > 0) {
-                        $bodyElement = $bodyTags->item(0);
-                        $preheader = $doc->createElement('div', $mail->title . $this->getLitmusHack());
-                        $preheader->setAttribute('style', $this->getPreheaderStyle());
-                        $bodyElement->insertBefore($preheader, $bodyElement->firstChild);
-                        $body = $doc->saveHTML();
-                    }
-                }
-
-                // if bodyHTML is set, set a body placeholder by default out of the content
-                switch ($mail->className()) {
-                    case('WireMailPHPMailer'):
-                        $this->setMailPlaceholder('body', $mail->Body);
-                        break;
-                    default:
-                        // default WireMail class used
-                        $this->setMailPlaceholder('body', $mail->bodyHTML);
-                }
-
-                // render [[BODY]] placeholder if it is present and convert all placeholders inside it
-                if ($this->getMailPlaceholder('body')) {
-                    $bodyPlaceholder = $this->getMailPlaceholder('body');
-                    $bodyPlaceholder = wirePopulateStringTags($bodyPlaceholder, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
-                    $this->setMailPlaceholder('body', $bodyPlaceholder);
-                }
-
-                $body = wirePopulateStringTags($body, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
-                // set the result as the bodyHTML of the email
-
-
-                // if bodyHTML is set, set a body placeholder by default out of the content
-                switch ($mail->className()) {
-                    case('WireMailPHPMailer'):
-                        $mail->Body = $body;
-                        break;
-                    default:
-                        // default WireMail class used
-                        $mail->bodyHTML($body);
-                }
-            }
-        } else {
-            // add invisible div with email pre-header to the top of the email body
-            switch ($mail->className()) {
-                case('WireMailPHPMailer'):
-                    $mail->Body = $this->generateEmailPreHeader($mail) . $mail->Body;
-                    break;
-                default:
-                    // default WireMail class used
-                    $mail->bodyHTML($this->generateEmailPreHeader($mail) . $mail->bodyHTML);
-            }
-
-        }
+        $this->mailTemplateRenderer->includeMailTemplate($mail, $this->frontendforms['input_emailTemplate']);
     }
 
     /**
@@ -1130,7 +1088,7 @@ class Form extends CustomRules
         $fields = [];
         if ($this->hasFileUploadField()) {
             foreach ($this->formElements as $uploadfield) {
-                if (($uploadfield instanceof InputFile) || (is_subclass_of($uploadfield, 'InputFile'))) {
+                if ($uploadfield instanceof InputFile) {
                     $fields[] = $uploadfield;
                 }
             }
@@ -1149,56 +1107,7 @@ class Form extends CustomRules
 
     public function renderTemplate(HookEvent $event): Module|Wire|WireArray|WireData
     {
-        $mail = $event->object;
-
-        // do not add a template if the template is set to "none"
-        if ($mail->email_template !== 'none') {
-
-            // set the placeholder for the title if present
-            $this->setMailPlaceholder('title', $mail->title);
-
-            // set the placeholder for the body
-            if (($mail->bodyHTML) || ($mail->bodyHtml) || ($mail->body)) {
-
-                // set HTML as preferred value
-                if ($mail->bodyHTML) {
-                    $content = $mail->bodyHTML;
-                } else if ($mail->bodyHtml) {
-                    $content = $mail->bodyHtml;
-                } else {
-                    $content = $mail->body;
-                }
-
-                $body = wirePopulateStringTags($content, $this->getMailPlaceholders(),
-                    ['tagOpen' => '[[', 'tagClose' => ']]']);
-
-                $this->setMailPlaceholder('body', $body);
-                $mail->bodyHTML($body);
-                if ($mail->bodyHTML && !$mail->body) {
-                    // derive a plain-text alternative from HTML, never mirror HTML into body
-                    $mail->body($mail->htmlToText($body));
-                } else {
-                    $mail->body($body);
-                }
-            }
-            if ($this->wire('session')->get('templateloaded') != '1') {
-                $this->includeMailTemplate($mail); // include/use mail template if set
-                $this->wire('session')->set('templateloaded', '1');
-            }
-        } else {
-            // populate Placeholders even if no template is used to send emails
-            switch ($mail->className()) {
-                case('WireMailPHPMailer'):
-                    $mail->Body = wirePopulateStringTags($mail->bodyHTML, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']);
-                    break;
-                default:
-                    // default WireMail class used
-                    $mail->bodyHTML(wirePopulateStringTags($mail->bodyHTML, $this->getMailPlaceholders(), ['tagOpen' => '[[', 'tagClose' => ']]']));
-            }
-
-        }
-
-        return $mail;
+        return $this->mailTemplateRenderer->renderTemplate($event);
     }
 
     /**
@@ -1210,13 +1119,7 @@ class Form extends CustomRules
      */
     public static function setBody($mail, string|null $body, string $mailModule): void
     {
-        if (is_null($body)) $body = '';
-        // add support for WireMailPHPMailer - has a different name for the bodyHTML property
-        if ($mailModule === 'WireMailPHPMailer') {
-            $mail->Body = $body;
-        } else {
-            $mail->bodyHTML($body);
-        }
+        MailTemplateRenderer::setBody($mail, $body, $mailModule);
     }
 
     /**
@@ -1226,7 +1129,7 @@ class Form extends CustomRules
      */
     public function removeTemplateSession(): void
     {
-        $this->wire('session')->remove('templateloaded');
+        $this->mailTemplateRenderer->removeTemplateSession();
     }
 
     /**
@@ -1236,11 +1139,7 @@ class Form extends CustomRules
      */
     protected function loadTemplate(string $templatePath): string
     {
-        ob_start();
-        include($templatePath);
-        $var = ob_get_contents();
-        ob_end_clean();
-        return $var;
+        return $this->mailTemplateRenderer->loadTemplate($templatePath);
     }
 
     /**
@@ -1292,7 +1191,15 @@ class Form extends CustomRules
             $langID = '';
         }
         $fieldName = 'input_dateformat' . $langID;
-        $format = $this->frontendforms[$fieldName] ?? $this->defaultDateFormat;
+        // fall back to the plain, default-language value (not just straight
+        // to the hardcoded default) if no language-specific override
+        // exists - otherwise, on a multi-language-enabled site where only
+        // the plain "input_dateformat" was ever configured (no per-language
+        // override), the admin's configured format would be skipped
+        // entirely in favor of the hardcoded 'Y-m-d' fallback.
+        $format = $this->frontendforms[$fieldName]
+            ?? $this->frontendforms['input_dateformat']
+            ?? $this->defaultDateFormat;
         return $this->wire('datetime')->date($format, $dateTime);
     }
 
@@ -1313,7 +1220,10 @@ class Form extends CustomRules
             $langID = '';
         }
         $fieldName = 'input_timeformat' . $langID;
-        $format = $this->frontendforms[$fieldName] ?? $this->defaultTimeFormat;
+        // same reasoning as getDate() above
+        $format = $this->frontendforms[$fieldName]
+            ?? $this->frontendforms['input_timeformat']
+            ?? $this->defaultTimeFormat;
         return $this->wire('datetime')->date($format, $dateTime);
     }
 
@@ -1337,29 +1247,7 @@ class Form extends CustomRules
      */
     public function setMailPlaceholder(string $placeholderName, string|array|null $placeholderValue): self
     {
-
-        if (!is_null($placeholderValue)) {
-            $placeholderName = strtoupper(trim($placeholderName));
-            if (is_array($placeholderValue)) {
-                // check if the array is multidimensional like multiple file uploads
-                if (count($placeholderValue) == count($placeholderValue, COUNT_RECURSIVE)) {
-                    // one-dimensional: convert the array of values to comma separated string
-                    $placeholderValue = implode(', ', $placeholderValue);
-                } else {
-                    $file_names = [];
-                    // multi-dimensional $_FILES array
-                    foreach ($placeholderValue as $file) {
-                        // adding all file names to the array - independent if the name exists or not
-                        $file_names[] = $file['name'];
-                    }
-                    // clean the array by removing empty array elements
-                    $placeholderValue = implode(',', array_filter($file_names));
-                }
-            }
-            // trim and merge it to the mailPlaceholder array
-            $this->mailPlaceholder = array_merge($this->getMailPlaceholders(),
-                [$placeholderName => trim($placeholderValue)]);
-        }
+        $this->mailPlaceholders->set($placeholderName, $placeholderValue);
         return $this;
     }
 
@@ -1370,10 +1258,7 @@ class Form extends CustomRules
      */
     public function removePlaceholder(string $placeholderName): void
     {
-        $key = strtoupper(trim($placeholderName));
-        if (array_key_exists($key, $this->getMailPlaceholders())) {
-            unset($this->getMailPlaceholders()[$key]);
-        }
+        $this->mailPlaceholders->remove($placeholderName);
     }
 
     /**
@@ -1383,7 +1268,7 @@ class Form extends CustomRules
      */
     public function getMailPlaceholders(): array
     {
-        return $this->mailPlaceholder;
+        return $this->mailPlaceholders->all();
     }
 
     /**
@@ -1393,13 +1278,12 @@ class Form extends CustomRules
      */
     public function getMailPlaceholder(string $placeholderName): string
     {
-        $content = '';
-        $placeholderName = strtoupper($placeholderName);
-        if (array_key_exists($placeholderName, $this->mailPlaceholder)) {
-            $content = $this->mailPlaceholder[$placeholderName];
-        }
-        return $content;
+        return $this->mailPlaceholders->get($placeholderName);
     }
+
+
+
+
 
     /**
      * Get all included classes of the form fields
@@ -1408,11 +1292,7 @@ class Form extends CustomRules
      */
     protected function getFormFieldClasses(): array
     {
-        $classes = [];
-        foreach ($this->formElements as $fieldObject) {
-            $classes[] = $fieldObject->className();
-        }
-        return $classes;
+        return $this->elementsFinder->getFormFieldClasses();
     }
 
     /**
@@ -1422,9 +1302,98 @@ class Form extends CustomRules
      */
     public function formfieldExists(string $fieldName): bool
     {
-        $fieldName = (trim($fieldName));
-        return (in_array(strtolower($fieldName), array_map("strtolower", $this->getFormFieldClasses())));
+        return $this->elementsFinder->formfieldExists($fieldName);
     }
+
+    /**
+     * Get a specific element of the form by entering the name of the element as parameter
+     * With this method you can grab and manipulate a specific element
+     * @param string $name - the name attribute of the element (fe email)
+     * @param boolean $checkPrefix - true to check if form id is added for inputfield name or false to ignore this
+     * @return object|bool - the form element object or false if not found
+     */
+    public function getFormelementByName(string $name, bool $checkPrefix = true): object|bool
+    {
+        if ($checkPrefix) {
+            $name = $this->createElementName($name);
+        }
+        return $this->elementsFinder->getFormelementByName($name);
+    }
+
+    /**
+     * Get the position of a certain form element inside the form elements array
+     * This returns the number of the key
+     * @param $element
+     * @return int|string|void
+     */
+    public function getFormElementsPosition($element)
+    {
+        return $this->elementsFinder->getFormElementsPosition($element);
+    }
+
+    /**
+     * Get all elements of the form that are an object of a specific class
+     * Returns an array containing all objects of the given class (e.g., all Button elements)
+     * @param string $class
+     * @return array
+     */
+    public function getFormElementsByClass(string $class): array
+    {
+        return $this->elementsFinder->getFormElementsByClass($class);
+    }
+
+    /**
+     * Count how many elements of a given class are present in the form
+     * @param string $className
+     * @return int
+     */
+    public function formContainsElementByClass(string $className): int
+    {
+        return $this->elementsFinder->formContainsElementByClass($className);
+    }
+
+    /**
+     * If there are multiple instances of a given class, remove all except the last one
+     * This is useful if only one instance is allowed, but there are multiple instances
+     * Returns the key of the last item, which will not be deleted (unset)
+     * @param string $className
+     * @return int|null
+     */
+    public function removeMultipleEntriesByClass(string $className): null|int
+    {
+        return $this->elementsFinder->removeMultipleEntriesByClass($className);
+    }
+
+    /**
+     * Get all form element objects of a given class as an array
+     * @param string $className
+     * @return array
+     */
+    public function getElementsbyClass(string $className): array
+    {
+        return $this->elementsFinder->getElementsbyClass($className);
+    }
+
+    /**
+     * Get the position of a certain element inside the formElements array by its name
+     * @param string $nameAttribute
+     * @return int|string
+     */
+    public function getElementPositionByName(string $nameAttribute)
+    {
+        return $this->elementsFinder->getElementPositionByName($nameAttribute);
+    }
+
+    /**
+     * Return the names of all input fields inside a form as an array
+     * @return array
+     */
+    public function getNamesOfInputFields(): array
+    {
+        return $this->elementsFinder->getNamesOfInputFields();
+    }
+
+
 
     /**
      * Output the value of multilang fields from the module configuration
@@ -1437,8 +1406,7 @@ class Form extends CustomRules
         string     $fieldName,
         array|null $modulConfig = null,
         int|null   $lang_id = null
-    ): string
-    {
+    ): string {
         $modulConfig = (is_null($modulConfig)) ? $this->frontendforms : $modulConfig;
         $langAppendix = (is_null($lang_id)) ? $this->langAppendix : '__' . $lang_id;
         $fieldNameLang = $fieldName . $langAppendix;
@@ -1449,31 +1417,6 @@ class Form extends CustomRules
     }
 
     /**
-     * Method to sanitize string, integer or boolean value to integer value 1 and 0
-     * This is necessary, because configuration values of checkboxes are stored as integers in the db
-     * @param string|int|bool $value
-     * @return int
-     */
-    protected function sanitizeValueToInt(string|int|bool $value): int
-    {
-        if (is_string($value)) {
-            if ($value !== '') {
-                return 1;
-            }
-            return 0;
-        } else {
-            if (is_int($value)) {
-                if ($value >= 1) {
-                    return 1;
-                }
-                return 0;
-            } else {
-                return (int)$value;
-            }
-        }
-    }
-
-    /**
      * Set a custom upload path for uploaded files
      * If no path is selected, then the files will be stored inside the dir of this page in site/assets/files
      * @param string $path_to_folder
@@ -1481,7 +1424,7 @@ class Form extends CustomRules
      */
     public function setUploadPath(string $path_to_folder): self
     {
-        $this->uploadPath = trim($path_to_folder);
+        $this->fileUploadHandler->setUploadPath($path_to_folder);
         return $this;
     }
 
@@ -1491,7 +1434,30 @@ class Form extends CustomRules
      */
     public function getUploadPath(): string
     {
-        return $this->uploadPath;
+        return $this->fileUploadHandler->getUploadPath();
+    }
+
+    /**
+     * Run (or re-run) the IP blacklist check and store its result in
+     * $this->ipCheckPassed / $this->showForm.
+     *
+     * Called once from the constructor, and again from useIPBan() /
+     * testIPBan() - both of those methods change an input the check
+     * depends on (whether the ban is enabled, or the visitor IP being
+     * simulated) after construction, so without re-running the check
+     * here, calling either method would silently have no effect on the
+     * already-computed result from construction time.
+     * @return void
+     */
+    private function runIpBanCheck(): void
+    {
+        $ipBlacklistGuard = new IPBlacklistGuard($this->wire('input')->post, $this, $this->alert);
+        $this->ipCheckPassed = $ipBlacklistGuard->check(
+            (bool) $this->frontendforms['input_useIPBan'],
+            $this->frontendforms['input_preventIPs'],
+            $this->visitorIP
+        ); // show or hide the form depending on the IP ban
+        $this->showForm = $this->ipCheckPassed;
     }
 
     /**
@@ -1505,6 +1471,10 @@ class Form extends CustomRules
     {
         if (filter_var($ip, FILTER_VALIDATE_IP)) {
             $this->visitorIP = $ip;
+            // re-run the check with the simulated IP - otherwise this
+            // method would silently have no effect, since the check
+            // already ran once in the constructor with the real visitor IP
+            $this->runIpBanCheck();
         } else {
             throw new Exception(sprintf($this->_('%s is not a valid IP address.'), $ip));
         }
@@ -1517,7 +1487,11 @@ class Form extends CustomRules
      */
     public function useIPBan(int|string|bool $enabled): void
     {
-        $this->frontendforms['input_useIPBan'] = $this->sanitizeValueToInt($enabled);
+        $this->frontendforms['input_useIPBan'] = FormHelper::sanitizeValueToInt($enabled);
+        // re-run the check with the updated setting - otherwise this
+        // method would silently have no effect, since the check already
+        // ran once in the constructor with the config-default setting
+        $this->runIpBanCheck();
     }
 
     /**
@@ -1528,11 +1502,7 @@ class Form extends CustomRules
     protected function setCaptchaType(string $captchaType): void
     {
         $this->frontendforms['input_captchaType'] = $captchaType;
-        if ($this->frontendforms['input_captchaType'] !== 'none') {
-            $this->setCaptchaCategory($captchaType); //
-            $this->captcha = AbstractCaptchaFactory::make($this->getCaptchaCategory(),
-                $this->frontendforms['input_captchaType']);
-        }
+        $this->captchaManager->setType($captchaType);
     }
 
     /**
@@ -1557,10 +1527,12 @@ class Form extends CustomRules
      * Set the captcha category (text, image) depending on the captcha type
      * @param string $captchaType
      * @return void
+     * @deprecated The category is now set internally by CaptchaManager::setType(). Kept only
+     * for backward compatibility in case external code calls it directly.
      */
     protected function setCaptchaCategory(string $captchaType): void
     {
-        $this->captchaCategory = AbstractCaptchaFactory::getCaptchaTypeFromClass($captchaType);
+        $this->captchaManager->config()->category = AbstractCaptchaFactory::getCaptchaTypeFromClass($captchaType);
     }
 
     /**
@@ -1569,7 +1541,7 @@ class Form extends CustomRules
      */
     public function getCaptchaCategory(): string
     {
-        return $this->captchaCategory;
+        return $this->captchaManager->config()->category;
     }
 
     /**
@@ -1578,41 +1550,7 @@ class Form extends CustomRules
      */
     protected function getCaptcha(): object|null
     {
-        return $this->captcha;
-    }
-
-    /**
-     * Check if the visitor is on the blacklist or not
-     * @return bool - true if the visitor is not on the blacklist
-     */
-    protected function allowFormViewByIP(): bool
-    {
-        if (!$this->frontendforms['input_useIPBan']) {
-            return true;
-        }
-        if ($this->frontendforms['input_preventIPs'] === '') {
-            return true;
-        }
-        $ipaddresses = $this->newLineToArray($this->frontendforms['input_preventIPs']);
-        return !in_array($this->visitorIP, $ipaddresses);
-    }
-
-    /**
-     * Convert the values of a textbox to an array
-     * Will be needed for the list of banned IP in the module configuration
-     * @param string|null $textarea - the value of the textarea field
-     * @return array
-     */
-    protected function newLineToArray(string|null $textarea = null): array
-    {
-        $final_array = [];
-        if (!is_null($textarea)) {
-            $textarea_array = array_map('trim', explode("\n", $textarea)); // remove extra spaces from each array value
-            foreach ($textarea_array as $textarea_arr) {
-                $final_array[] = trim($textarea_arr);
-            }
-        }
-        return $final_array;
+        return $this->captchaManager->getCaptchaObject();
     }
 
     /**
@@ -1624,7 +1562,16 @@ class Form extends CustomRules
      */
     public function logFailedAttempts(string|bool|int $logFailedAttempts): void
     {
-        $this->frontendforms['input_logFailedAttempts'] = $this->sanitizeValueToInt($logFailedAttempts);
+        $this->frontendforms['input_logFailedAttempts'] = FormHelper::sanitizeValueToInt($logFailedAttempts);
+    }
+
+    /**
+     * Whether logging of blocked visitor's IP is enabled for this form
+     * @return bool
+     */
+    public function getLogFailedAttempts(): bool
+    {
+        return (bool) ($this->frontendforms['input_logFailedAttempts'] ?? false);
     }
 
     /**
@@ -1635,11 +1582,7 @@ class Form extends CustomRules
      */
     public function getValuesAsString(bool $showButtonValues = false): string
     {
-        $postData = $this->flattenMixedArray($this->getValues($showButtonValues));
-        $dataAttributes = array_map(function ($value, $key) {
-            return $key . '=' . $value;
-        }, array_values($postData), array_keys($postData));
-        return implode(', ', $dataAttributes);
+        return $this->valueStore->getValuesAsString($showButtonValues);
     }
 
     /**
@@ -1731,7 +1674,7 @@ class Form extends CustomRules
      */
     public function useFormElementsWrapper(int|string|bool $useFormElementsWrapper): Wrapper
     {
-        $useFormElementsWrapper = $this->sanitizeValueToInt($useFormElementsWrapper); // sanitize to int
+        $useFormElementsWrapper = FormHelper::sanitizeValueToInt($useFormElementsWrapper); // sanitize to int
         $this->frontendforms['input_wrapperFormElements'] = $useFormElementsWrapper;
         return $this->formElementsWrapper;
     }
@@ -1756,7 +1699,7 @@ class Form extends CustomRules
 
         if ($successMsg === '' || $successMsg === true) {
             $successMsg = $this->_('Thank you for your message.');
-        } else if ($successMsg === false) {
+        } elseif ($successMsg === false) {
             $successMsg = '';
         }
         $this->frontendforms['input_alertSuccessText'] = trim($successMsg);
@@ -1769,7 +1712,7 @@ class Form extends CustomRules
      */
     public function setCaptchaErrorMsg(string $errormsg): self
     {
-        $this->captchaErrorMsg = $errormsg;
+        $this->captchaManager->config()->errorMsg = $errormsg;
         return $this;
     }
 
@@ -1780,7 +1723,7 @@ class Form extends CustomRules
      */
     public function setCaptchaRequiredErrorMsg(string $errormsg): self
     {
-        $this->captchaRequiredErrorMsg = $errormsg;
+        $this->captchaManager->config()->requiredErrorMsg = $errormsg;
         return $this;
     }
 
@@ -1791,7 +1734,7 @@ class Form extends CustomRules
      */
     public function setCaptchaNotes(string $notes): self
     {
-        $this->captchaNotes = $notes;
+        $this->captchaManager->config()->notes = $notes;
         return $this;
     }
 
@@ -1802,7 +1745,7 @@ class Form extends CustomRules
      */
     public function setCaptchaDescription(string $desc): self
     {
-        $this->captchaDescription = $desc;
+        $this->captchaManager->config()->description = $desc;
         return $this;
     }
 
@@ -1815,7 +1758,7 @@ class Form extends CustomRules
     public function setCaptchaDescriptionPosition(string $pos): self
     {
         if (in_array($pos, ['beforeLabel', 'afterLabel', 'afterInput'])) {
-            $this->captchaDescriptionPosition = $pos; // set new position property
+            $this->captchaManager->config()->descriptionPosition = $pos; // set new position property
         }
         return $this;
     }
@@ -1831,55 +1774,6 @@ class Form extends CustomRules
     }
 
     /**
-     * Take a random question for the CAPTCHA out of an array of several questions
-     * @param array $questions
-     * @return void
-     * @throws WireException
-     */
-    protected function getRandomQuestion(array $questions): void
-    {
-        if ($questions) {
-            // check if the chosen CAPTCHA type is the simple question CAPTCHA
-            if ($this->getCaptchaType() == 'SimpleQuestionCaptcha') {
-
-                $random_question = array_rand($questions);
-                $random_question_array = $questions[$random_question];
-
-                // only set a random question if at least the question and the answer keys are present
-                if ($random_question_array['question'] && $random_question_array['answers']) {
-                    // only set a random question if question is a string and the answers is an array
-                    if (is_string($random_question_array['question']) && is_array($random_question_array['answers'])) {
-                        $this->setSecurityQuestion($random_question_array['question'], $random_question_array['answers']);
-
-                        $question_array_array['question'] = $random_question_array['question'];
-                        $question_array_array['answers'] = $random_question_array['answers'];
-                        // unset the question and the answer keys from the array
-                        unset($random_question_array['question']);
-                        unset($random_question_array['answers']);
-                        // unset values that will be displayed only after post
-                        unset($random_question_array['successMsg']);
-                        unset($random_question_array['errorMsg']);
-
-                        // set additional properties if present
-                        foreach ($random_question_array as $name => $value) {
-                            $methodName = 'setCaptcha' . ucfirst($name);
-                            if (method_exists($this, $methodName)) {
-                                $this->$methodName($value);
-                            }
-                        }
-
-                    }
-                }
-
-                $this->random_question = $random_question; // returns integer
-                $this->random_question_array = $random_question_array;
-                $this->question_array = $questions;
-
-            }
-        }
-    }
-
-    /**
      * Set the error message if errors occur after form submission
      * Can be used to overwrite the default error message or to disable the output of a success message
      * @param string|bool $errorMsg : Entering an empty string or false will disable the output of the error message
@@ -1890,28 +1784,13 @@ class Form extends CustomRules
         if ($errorMsg === '' || $errorMsg === true) {
 
             $errorMsg = $this->_('Sorry, some errors occur. Please check your inputs once more.');
-        } else if ($errorMsg === false) {
+        } elseif ($errorMsg === false) {
             $errorMsg = '';
         }
         $this->frontendforms['input_alertErrorText'] = trim($errorMsg);
     }
 
-    /**
-     * Static method to check if SeoMaestro is installed or not
-     * returns the SeoMaestro object on true, otherwise null
-     * @return Field|null
-     */
-    public static function getSeoMaestro(): ?Field
-    {
-        if (wire('modules')->isInstalled("SeoMaestro")) {
-            // grab seo maestro input field
-            $seoField = wire('fields')->find('type=FieldtypeSeoMaestro');
-            if ($seoField) {
-                return $seoField->first();
-            }
-        }
-        return null;
-    }
+
 
     /**
      * Get the value of a specific formfield after form submission by its name
@@ -1923,21 +1802,7 @@ class Form extends CustomRules
      */
     public function getValue(string $name): string|array|null
     {
-        $name = $this->createElementName(trim($name));
-        if ($this->getValues()) {
-            // first check if the name exists
-            if (isset($this->getValues()[$name])) {
-                return $this->getValues()[$name];
-            } else {
-                if (isset($this->getValues()[$this->getID() . '-' . $name])) {
-                    // check if name including form id prefix exists
-                    return $this->getValues()[$this->getID() . '-' . $name];
-                }
-            }
-            return null;
-        }
-
-        return null;
+        return $this->valueStore->getValue($name);
     }
 
     /**
@@ -1945,7 +1810,7 @@ class Form extends CustomRules
      * @param string $name - the name attribute of the element
      * @return string - returns the name attribute including the form id as prefix
      */
-    private function createElementName(string $name): string
+    public function createElementName(string $name): string
     {
         $name = trim($name);
         $formID = $this->getID();
@@ -1964,73 +1829,7 @@ class Form extends CustomRules
      */
     public function getValues(bool $buttonValue = false): array|null
     {
-
-        // add button elements to inputfields if set
-        $elements = $this->getNamesOfInputFields();
-
-        foreach ($this->getFormElementsByClass('Button') as $button) {
-            if ($button->hasAttribute('value')) {
-                if ($button->hasAttribute('name')) {
-                    if ($buttonValue) {
-                        $elements[] = $button->getAttribute('name');
-                    }
-                }
-            }
-        }
-
-        $values = [];
-
-        $method = strtolower($this->getAttribute('method'));
-
-        foreach ($elements as $key) {
-
-            // remove [] from name attribute if present
-            $key = str_replace('[]', '', $key);
-
-            // check if inputfield is a file upload field
-            $formElement = $this->getFormelementByName($key);
-            if ($formElement instanceof InputFile) {
-
-                $multiplefiles = [];
-                if ($this->storedFiles) {
-                    $pathFileArray = $this->storedFiles;
-                    $filesArray = [];
-                    foreach ($pathFileArray as $path) {
-                        // output only the basename without the whole path
-                        $value = $this->wire('sanitizer')->filename(pathinfo($path, PATHINFO_BASENAME), true);
-                        $filesArray[] = strtolower($value);
-                    }
-
-                    $values[$key] = $filesArray;
-                } else {
-                    if ($method == 'post') {
-                        $files = $_FILES[$key]['name'];
-                    } else {
-                        $files = $_GET[$key];
-                        //throw new Exception('GET request and file uploads does not work. Please use POST request instead if you want to use upload files.');
-                    }
-                    if (is_array($files)) {
-                        // multiple upload field
-                        foreach ($files as $filename) {
-                            $multiplefiles[] = strtolower($this->wire('sanitizer')->filename($filename, true));
-                        }
-                        $values[$key] = $multiplefiles;
-                    } else {
-                        // single upload field
-                        $value = $this->wire('sanitizer')->filename($files, true);
-                        $values[$key] = strtolower($value);
-                    }
-
-                }
-
-            } else {
-                if (array_key_exists($key, $this->values)) {
-                    $values[$key] = $this->values[$key];
-                }
-            }
-        }
-
-        return $values; // array
+        return $this->valueStore->getValues($buttonValue);
     }
 
     /**
@@ -2041,14 +1840,7 @@ class Form extends CustomRules
      */
     public function getValuesWithLabels(bool $buttonValue = false): array
     {
-        $values = [];
-        $elements = $this->getValues($buttonValue);
-        foreach ($elements as $name => $value) {
-            $formElement = $this->getFormelementByName($name);
-            $label = $formElement->getLabel()->getContent();
-            $values[$name] = ['label' => $label, 'value' => $value];
-        }
-        return $values;
+        return $this->valueStore->getValuesWithLabels($buttonValue);
     }
 
     /**
@@ -2061,62 +1853,19 @@ class Form extends CustomRules
     }
 
     /**
-     * Get a specific element of the form by entering the name of the element as parameter
-     * With this method you can grab and manipulate a specific element
-     * @param string $name - the name attribute of the element (fe email)
-     * @param boolean $checkPrefix - true to check if form id is added for inputfield name or false to ignore this
-     * @return object|bool - the form element object or false if not found
-     */
-    public function getFormelementByName(string $name, bool $checkPrefix = true): object|bool
-    {
-        //check if id of the form was added as prefix of the element name
-        if ($checkPrefix) {
-            $name = $this->createElementName($name);
-        }
-        return current(array_filter($this->formElements, function ($e) use ($name) {
-            return $e->getAttribute('name') == $name;
-        }));
-    }
-
-    /**
-     * Get the position of a certain form element inside the form elements array
-     * This returns the number of the key
-     * @param $element
-     * @return int|string|void
-     */
-    public function getFormElementsPosition($element)
-    {
-        $name = $element->getAttribute('name');
-        $formFields = $this->getFormelements();
-        foreach ($formFields as $key => $formField) {
-            if ($formField->getAttribute('name') == $name) {
-                return $key;
-            }
-        }
-    }
-
-    /**
-     * Get all elements of the form that are an object of a specific class
-     * Returns an array containing all objects of the given class (e.g., all Button elements)
-     * @param string $class
+     * Get the array of stored files (including overwritten filenames), if any.
      * @return array
      */
-    public function getFormElementsByClass(string $class): array
+    public function getStoredFiles(): array
     {
-        // remove namespace first if set
-        if (str_contains($class, '\\'))
-            $class = substr(strrchr($class, '\\'), 1);
-
-        $items = [];
-        foreach ($this->formElements as $element) {
-
-            $className = substr(strrchr(get_class($element), '\\'), 1);
-            if ($className == $class) {
-                $items[] = $element;
-            }
-        }
-        return $items;
+        return $this->storedFiles;
     }
+
+
+
+
+
+
 
     /**
      * Overwrite the global setting for the required text position on per form base
@@ -2145,118 +1894,12 @@ class Form extends CustomRules
      */
     public function useHoneypot(int|string|bool $honeypot): void
     {
-        $this->frontendforms['input_useHoneypot'] = $this->sanitizeValueToInt($honeypot);
+        $this->frontendforms['input_useHoneypot'] = FormHelper::sanitizeValueToInt($honeypot);
     }
 
-    /**
-     * Method to rearrange the multiple files array $_FILES
-     * @param array $file_post
-     * @return array
-     */
-    private function reArrayFiles(array $file_post): array
-    {
-        $file_ary = array();
-        if ($file_post['error'] != 4) {
-            $file_count = count($file_post['name']);
-            $file_keys = array_keys($file_post);
-            for ($i = 0; $i < $file_count; $i++) {
-                foreach ($file_keys as $key) {
-                    $file_ary[$i][$key] = $file_post[$key][$i];
-                }
-            }
-        }
-        return $file_ary;
-    }
 
-    /**
-     * Internal method to store uploaded files via InputFile field in the chosen folder
-     * @param array $formElements
-     * @return array
-     * @throws WireException
-     */
-    private function storeUploadedFiles(array $formElements): array
-    {
-        $uploaded_files = [];
-        if ($_FILES) {
-            // create directory if it does not exist
-            $this->wire('files')->mkdir($this->uploadPath);
-            // get all upload fields inside the form
-            foreach ($formElements as $element) {
 
-                if (($element instanceof InputFile) || (is_subclass_of($element, 'InputFile'))) {
-                    $fieldName = $element->getAttribute('name'); // the name of the upload field
 
-                    if ($element->getMultiple()) {
-                        // multiple files
-                        if (array_key_exists($fieldName, $_FILES)) {
-                            $files = $this->reArrayFiles($_FILES[$fieldName]);
-                            foreach ($files as $file) {
-                                if ($file['error'] == 0) {
-                                    // sanitize file name and convert it to lowercase to prevent problems on certain servers
-                                    $filename = $this->wire('sanitizer')->filename($file['name'], true);
-                                    $target_file = $this->uploadPath . strtolower($filename);
-                                    $uploaded_files[] = $target_file;
-                                    move_uploaded_file($file['tmp_name'], $target_file);
-                                }
-                            }
-                        }
-                    } else {
-                        // single file
-                        $file = $_FILES[$fieldName];
-                        if ($file['error'] == 0) {
-                            // sanitize file name and convert it to lowercase to prevent problems on certain servers
-                            $filename = $this->wire('sanitizer')->filename(basename($file['name']), true);
-                            $target_file = $this->uploadPath . strtolower($filename);
-                            $uploaded_files[] = $target_file;
-                            move_uploaded_file($file['tmp_name'], $target_file);
-                        }
-                    }
-                }
-            }
-        }
-        return $uploaded_files;
-    }
-
-    /**
-     * Convert the complicated $_FILES array to a simpler one
-     * @param array $files
-     * @return array
-     */
-    protected function simplifyMultiFileArray(array $files = []): array
-    {
-        $sFiles = [];
-        if (is_array($files) && $files['error'] != '4') {
-            foreach ($files as $key => $file) {
-                foreach ($file as $index => $attr) {
-                    $sFiles[$index][$key] = $attr;
-                }
-            }
-        }
-        return $sFiles;
-    }
-
-    /**
-     * Internal method to put required rule always on the first place of validation
-     * Checking if value is present is always logical the first step before checking for other things
-     * @param array $rules
-     * @return array
-     */
-    protected function putRequiredOnTop(array $rules): array
-    {
-        if (count($rules) > 1) {
-            if (array_key_exists('required', $rules)) {
-                if (array_key_exists('fileRequired', $rules)) {
-                    $rules = ['fileRequired' => $rules['fileRequired']] + $rules;
-                } else {
-                    $rules = ['required' => $rules['required']] + $rules;
-                }
-            }
-            if (array_key_exists('fileRequired', $rules)) {
-                $rules = ['fileRequired' => $rules['fileRequired']] + $rules;
-            }
-        }
-        return $rules;
-    }
 
     /**
      * Method to set the form method (get or post)
@@ -2275,151 +1918,13 @@ class Form extends CustomRules
 
     /**
      * Get all slices which contain the form elements of each step
-     * @param bool $submitButton
-     * @param bool $resetButton
+     * @param Button|ResetButton|null $submitButton
+     * @param Button|ResetButton|null $resetButton
      * @return array
      */
-    protected function getSlices(Button|RestButton|null $submitButton = null, Button|RestButton|null $resetButton = null): array
+    protected function getSlices(Button|ResetButton|null $submitButton = null, Button|ResetButton|null $resetButton = null): array
     {
-
-        // add step on first position (= position 0) if not present
-        if ($this->steps && $this->steps[0]['position'] !== 0) {
-            array_unshift($this->steps, ['position' => 0]);
-        }
-        $stepsPositions = [];
-
-        foreach ($this->steps as $key => $step) {
-            $stepsPositions[$key] = $step['position'];
-        }
-
-        $slices = [];
-
-        foreach ($stepsPositions as $key => $stepPosition) {
-            $start = $stepPosition;
-            if ($key < array_key_last($stepsPositions)) {
-                $end = $stepsPositions[$key + 1] - 1;
-            } else {
-                // last step
-                $start = 0;
-
-                // number of buttons
-                $subtract = 1;
-                if ($submitButton) $subtract = $subtract + 1;
-                if ($resetButton) $subtract = $subtract + 1;
-
-                $end = count($this->getFormElements()) - $subtract;
-            }
-            $slices[$key + 1] = ['start' => $start, 'end' => $end];
-        }
-
-        return $slices;
-    }
-
-    /**
-     * Extract nested and unnested ZIP files to a give location
-     * Will be used to validate files inside a ZIP file
-     * @param string $zipFile
-     * @param string $destination
-     * @return false|void
-     * @throws Exception
-     */
-    protected function extractZipArchive(string $zipFile, string $destination)
-    {
-        // run only if ZipArchive class exists
-        if (!class_exists('ZipArchive')) {
-            $this->wire('files')->unlink($zipFile);
-            return false;
-        }
-
-        if (!$this->wire('files')->exists($zipFile)) {
-            throw new Exception("ZIP-file not found: $zipFile");
-        }
-
-        // Create destination directory if it does not exist
-        if (!is_dir($destination)) {
-            $this->wire('files')->mkdir($destination, true);
-        }
-
-        $zip = new \ZipArchive();
-
-        if ($zip->open($zipFile) === TRUE) {
-            $zip->extractTo($destination);
-            $zip->close();
-        } else {
-            throw new Exception("ZIP-file could not be opened: $zipFile");
-        }
-
-        // Optionally delete ZIP file
-        $this->wire('files')->unlink($zipFile);
-
-        // Search destination folder for further ZIP-files
-        $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($destination, RecursiveDirectoryIterator::SKIP_DOTS)
-        );
-
-        foreach ($files as $file) {
-            if (strtolower($file->getExtension()) === 'zip') {
-                $nestedZip = $file->getPathname();
-                $nestedDestination = $file->getPath() . DIRECTORY_SEPARATOR . pathinfo($file->getFilename(), PATHINFO_FILENAME);
-
-                // Extract ZIP-files
-                self::extractZipArchive($nestedZip, $nestedDestination);
-
-                // Optional: delete nested ZIP after unzipping
-                $this->wire('files')->unlink($nestedZip);
-            }
-        }
-
-    }
-
-    /**
-     * Get all uploaded files for doing some validations
-     * @return array|null - returns all file paths as a numeric array
-     */
-    public function getUploadedFilesForValidation(string $fieldname, bool $flatArray = true): ?array
-    {
-        // sanitize fieldname to use form id as prefix if not present
-        if(!str_starts_with($fieldname, $this->getID())){
-            $fieldname = $this->getID().'-'.$fieldname;
-        }
-        if(array_key_exists($fieldname, $this->validation_files)){
-            if($flatArray){
-                return $this->flattenArray($this->validation_files[$fieldname]);
-            } else {
-                return $this->validation_files[$fieldname];
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Return all uploaded files, which are inside a ZIP folder
-     * All other files will be ignored
-     * This method is especially for validation of files inside a ZIP folder
-     * @param string $fieldname
-     * @return array|null - returns all file paths as a numeric array
-     */
-    public function getUploadedZipFilesForValidation(string $fieldname, bool $flatArray = true): ?array
-    {
-
-        $files = $this->getUploadedFilesForValidation($fieldname, false);
-
-        if(is_null($files)) return null;
-        $zipFiles = [];
-        foreach ($files as $key => $file) {
-            if(pathinfo($key, PATHINFO_EXTENSION) === 'zip'){
-                $zipFiles[$key] = $file;
-            }
-        }
-        if($zipFiles){
-            if($flatArray){
-
-                return $this->flattenArray($zipFiles);
-            } else {
-                return $zipFiles;
-            }
-        }
-        return null;
+        return $this->stepController->getSlices($submitButton, $resetButton);
     }
 
     /**
@@ -2433,7 +1938,7 @@ class Form extends CustomRules
     {
 
         // if it is a multi-step form -> remove all not used form elements from each step
-        if ($this->steps) {
+        if ($this->stepController->hasSteps()) {
 
             // add a special data-set attribute to mulit-step forms
             $this->setAttribute('data-multistep', 'true');
@@ -2499,27 +2004,27 @@ class Form extends CustomRules
 
                 $stepNumber = explode('=', $action)[1];
                 $stepNumber = $this->wire('sanitizer')->int($stepNumber, ['min' => 0, 'max' => count($slices) + 1]);
-                $this->currentStepNumber = $stepNumber;
+                $this->stepController->setCurrentStepNumber($stepNumber);
 
                 if (count($slices) == $stepNumber) {
-                    $this->lastStep = true;
+                    $this->stepController->setLastStep(true);
                 }
                 if ($stepNumber == 1) {
-                    $this->firstStep = true;
+                    $this->stepController->setFirstStep(true);
                 }
 
                 // set form action with query string
                 $this->setAttribute('action', $this->wire('input')->url(['withQueryString' => true]));
 
             } else {
-                $this->firstStep = true;
+                $this->stepController->setFirstStep(true);
             }
 
             // get total number of steps
-            $this->totalStepsNumber = count($slices);
+            $this->stepController->setTotalSteps(count($slices));
 
             // cut the array after the last step
-            $fields = array_slice($this->formElements, 0, ($slices[$this->totalStepsNumber - 1]['end']) + 1);
+            $fields = array_slice($this->formElements, 0, ($slices[$this->stepController->getTotalSteps() - 1]['end']) + 1);
 
             // get the first and last input field and ignore all others (fieldset, markup,..)
             $inputFields = [];
@@ -2527,7 +2032,7 @@ class Form extends CustomRules
             foreach ($fields as $key => $field) {
 
                 if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
-                    if ($this->lastStep) {
+                    if ($this->stepController->isLastStep()) {
                         if (!$field->getRemoveFromLastStep()) {
                             $inputFields[$key] = $field;
                         }
@@ -2538,24 +2043,24 @@ class Form extends CustomRules
                 }
             }
 
-            $this->firstElement = reset($inputFields);
-            $this->lastElement = end($inputFields);
+            $this->stepController->setFirstElement(reset($inputFields));
+            $this->stepController->setLastElement(end($inputFields));
 
             // slice the array
-            $slice = $slices[$this->currentStepNumber];
+            $slice = $slices[$this->stepController->getCurrentStepNumber()];
             $offSet = $slice['start'];
             $length = $slice['end'] - $slice['start'];
             $formElements = array_slice($this->getFormElements(), $offSet, $length + 1);
 
             // add the previous button on all steps except the first one
-            if (!$this->firstStep) {
+            if (!$this->stepController->isFirstStep()) {
                 $prevButton = new Button('prev');
                 $prevButton->setAttribute('value', $this->_('Previous'));
                 $prevButton->setAttribute('type', 'button');
                 $prevButton->setAttribute('class', 'ff-prev-button');
 
                 $anchor = ($this->preventJumpToForm) ? '' : '#' . $this->getID() . '-allwrapper';
-                $location = $this->page->url . '?' . $this->getID() . '-step=' . ($this->currentStepNumber - 1) . $anchor;
+                $location = $this->page->url . '?' . $this->getID() . '-step=' . ($this->stepController->getCurrentStepNumber() - 1) . $anchor;
                 $prevButton->setAttribute('data-prev', $location);
                 $prevButton->setAttribute('data-formid', $this->getID());
                 $formElements[] = $prevButton;
@@ -2572,16 +2077,16 @@ class Form extends CustomRules
             $this->formElements = $formElements;
 
 
-            $lastElementKey = $this->getSlices()[$this->totalStepsNumber - 1]['end'];
+            $lastElementKey = $this->getSlices()[$this->stepController->getTotalSteps() - 1]['end'];
 
-            if (!$this->lastStep) { // all steps except the last
+            if (!$this->stepController->isLastStep()) { // all steps except the last
 
                 // remove CAPTCHA on all steps (except the last)
                 $this->disableCaptcha();
 
                 // set redirect URL to the next step
                 $anchor = ($this->preventJumpToForm) ? '' : '#' . $this->getID() . '-allwrapper';
-                $redirectUrl = $this->page->url . '?' . $this->getID() . '-step=' . ($this->currentStepNumber + 1) . $anchor;
+                $redirectUrl = $this->page->url . '?' . $this->getID() . '-step=' . ($this->stepController->getCurrentStepNumber() + 1) . $anchor;
                 $this->setRedirectURL($redirectUrl);
 
                 // set the submit button text to "next" (except on the last step)
@@ -2617,7 +2122,7 @@ class Form extends CustomRules
                     }
                 }
 
-                $this->lastStepElements = $lastStepElements;
+                $this->stepController->setLastStepElements($lastStepElements);
             }
 
             /*****
@@ -2631,7 +2136,7 @@ class Form extends CustomRules
             // loop through all session values from this step and add the values to the appropriate form fields
             if ($formValues) {
 
-                if ($this->lastStep) {
+                if ($this->stepController->isLastStep()) {
 
                     if ($_POST) {
                         $values = $_POST;
@@ -2648,8 +2153,8 @@ class Form extends CustomRules
                     if ($_POST) {
                         $stepValues = $_POST;
                     } else {
-                        if (array_key_exists($this->currentStepNumber, $formValues)) {
-                            $stepValues = $formValues[$this->currentStepNumber];
+                        if (array_key_exists($this->stepController->getCurrentStepNumber(), $formValues)) {
+                            $stepValues = $formValues[$this->stepController->getCurrentStepNumber()];
                         }
                     }
                 }
@@ -2669,7 +2174,7 @@ class Form extends CustomRules
 
                                 foreach ($field->getOptions() as $option) {
                                     if (is_array($value)) {
-                                        if (in_array($option->getAttribute('value'), $value)) {
+                                        if (in_array($option->getAttribute('value'), $value, true)) {
                                             if ($field->className() === 'SelectMultiple') {
                                                 $option->setAttribute('selected', 'selected');
                                             } else {
@@ -2677,7 +2182,7 @@ class Form extends CustomRules
                                             }
                                         }
                                     } else {
-                                        if ($option->getAttribute('value') == $value) {
+                                        if ($option->getAttribute('value') === $value) {
                                             if ($field->className() === 'SelectMultiple') {
                                                 $option->setAttribute('selected', 'selected');
                                             } else {
@@ -2693,13 +2198,21 @@ class Form extends CustomRules
                                 if ($field->className() === 'Select') {
                                     if (array_key_exists($field->getAttribute('name'), $stepValues)) {
                                         foreach ($field->getOptions() as $option) {
-                                            if ($option->getAttribute('value') == $stepValues[$field->getAttribute('name')]) {
+                                            if ($option->getAttribute('value') === $stepValues[$field->getAttribute('name')]) {
                                                 $option->setAttribute('selected', 'selected');
                                             }
                                         };
                                     }
                                 } else {
-                                    if (array_key_exists($field->getAttribute('name'), $stepValues)) {
+                                    // compare the actual value, not just whether the name
+                                    // exists - matters when multiple InputCheckbox/InputRadio
+                                    // fields share the same name (e.g. a manually built radio
+                                    // group), where only the one matching the stored value
+                                    // should be marked checked.
+                                    if (
+                                        array_key_exists($field->getAttribute('name'), $stepValues)
+                                        && $field->getAttribute('value') === $stepValues[$field->getAttribute('name')]
+                                    ) {
                                         $field->setAttribute('checked', 'checked');
                                     }
                                 }
@@ -2716,8 +2229,9 @@ class Form extends CustomRules
         }
 
         // Add the multi-question array for the simple question CAPTCHA
-        if ($this->question_array)
-            $this->getRandomQuestion($this->question_array);
+        if ($this->captchaManager->hasQuestions()) {
+            $this->captchaManager->pickRandomQuestion();
+        }
 
         // set WireInput array depth to 2 because auf multiple file uploads
         $this->wire('config')->wireInputArrayDepth = 2;
@@ -2733,7 +2247,7 @@ class Form extends CustomRules
                 if (!empty($_FILES)) {
                     if ($field->hasAttribute('multiple')) {
                         // convert $_FILES array to a simpler one
-                        $input[$name] = $this->simplifyMultiFileArray($_FILES[$name]);
+                        $input[$name] = FormHelper::simplifyMultiFileArray($_FILES[$name]);
                     } else {
                         $input[$name] = $_FILES[$name];
                     }
@@ -2742,561 +2256,528 @@ class Form extends CustomRules
         }
 
         // instantiate the Captcha field if set
-        $useCaptcha = ($this->getCaptchaType() !== 'none');
+        $useCaptcha = $this->captchaManager->isActive();
 
         if ($useCaptcha) {
-
-            // create the input field first
-            $this->captchafield = $this->getCaptcha()->createCaptchaInputField($this->getID());
-
-            // check if multi question -> if yes, add the question as label to the CAPTCHA
-            if (($this->getCaptchaType() == 'SimpleQuestionCaptcha') && $this->question_array) {
-                $current_question = $this->question_array[$this->random_question];
-                $this->captchafield->setLabel($current_question['question']);
-            }
-
-            // add placeholder attribute if present
-            if ($this->captchaPlaceholder && ($this->captchafield instanceof InputText))
-                $this->captchafield->setAttribute('placeholder', $this->captchaPlaceholder);
-
-            // add notes to the captcha input field if set
-            if ($this->captchaNotes) $this->captchafield->setNotes($this->captchaNotes);
-
-            // add description and position to the captcha input field if set
-            if ($this->captchaDescription) $this->captchafield->setDescription($this->captchaDescription)->setPosition($this->captchaDescriptionPosition);
-
-            if ($this->captchaRequiredErrorMsg) {
-                $this->captchafield->setRule('required')->setCustomMessage($this->captchaRequiredErrorMsg);
-            } else {
-                if ($this->getCaptchaType() == 'SliderCaptcha') {
-                    $checkboxID = $this->getID() . '-' . $this->captchafield->getID();
-                    // workaround for checked checkox with empty string as value
-                    // will be needed for the required validator to work properly in this case
-                    if (!is_null($input->$checkboxID) && ($input->$checkboxID == '')) {
-                        $input->set($checkboxID, '1');
-                    }
-                    $this->captchafield->setRule('required')->setCustomMessage($this->_('Please verify that you are a human and not a bot.'));
-                } else {
-                    $this->captchafield->setRule('required')->setCustomMessage($this->_('Please fill out the security question.'));
-                }
-            }
-
+            $this->captchaManager->buildField($this->getID(), $input);
         }
 
-        // instantiates the FormValidation object
-        $validation = new FormValidation($input, $this, $this->alert);
-        // 1) check if this form was submitted and no other form on the same page
-        if ($validation->thisFormSubmitted()) {
-            // add a validation class to the form after it was submitted
-            $this->setCSSClass('formClassValidated'); // add the CSS class
-            // 2) check if form was submitted in time range
-            if ($validation->checkTimeDiff($formElements)) {
-                // 3) check if max attempts were reached
-                if ($validation->checkMaxAttempts($this->wire('session')->attempts)) {
-                    // 4) check for double form submission
-                    if ($validation->checkDoubleFormSubmission($this, $this->useDoubleFormSubmissionCheck)) {
-                        // 5) Check for CSRF attack
-                        if ($validation->checkCSRFAttack($this->getCSRFProtection(), $this->getAttribute('method'))) {
-                            /* START PROCESSING THE FORM */
-
-                            //add honeypotfield to the array because it will be rendered afterwards
-                            if ($this->frontendforms['input_useHoneypot']) {
-                                $formElements[] = $this->createHoneypot();
-                            }
-                            //add captcha to the array because it will be rendered afterwards
-                            if ($useCaptcha) {
-
-                                // special treatment for SimpleQuestionCaptcha
-                                if (wireClassName($this->captcha) === 'SimpleQuestionCaptcha') {
-                                    // add custom answers if present
-                                    if ($this->answers)
-                                        $this->getCaptcha()->setCaptchaValidValue($this->answers);
-
-                                    // set the appropriate validator
-                                    if ($this->getCaptcha()->getCaptchaValidValue()) {
-
-                                        $validValue = $this->getCaptcha()->getCaptchaValidValue();
-
-                                        // overwrite the default value with the one from the session for random question if present
-                                        if (array_key_exists($this->getID() . '-random_key', $_POST)) {
-                                            $prev_question = $this->question_array[$_POST[$this->getID() . '-random_key']];
-                                            $validValue = $prev_question['answers'];
-                                            if (array_key_exists('errorMsg', $prev_question)) {
-                                                // set the custom error message
-                                                $errormsg = $prev_question['errorMsg'];
-                                                // set the valid values from the session
-
-                                            } else {
-                                                $errormsg = $this->captchaErrorMsg ?? $this->_('The answer is wrong!');
-                                            }
-                                        } else {
-                                            $errormsg = $this->captchaErrorMsg ?? $this->_('The answer is wrong!');
-                                        }
-
-                                        $this->captchafield->setRule('compareTexts', $validValue)->setCustomMessage($errormsg);
-                                    }
-
-                                }
-
-                                if ($this->getCaptchaType() == 'SliderCaptcha') {
-
-                                    // add the servers side validation of the slider CAPTCHA
-                                    $this->captchafield->setRule('checkSliderCaptcha', $input[$this->getID() . '-xPos'], $input[$this->getID() . '-yPos'], $this->getID())->setCustomMessage($this->_('The Slider-Captcha was not solved correctly.'));
-                                }
-
-                                $formElements[] = $this->captchafield;
-                            }
-
-                            // Get only input field for user inputs (no fieldsets, buttons,..)
-                            $formElements = $validation->getRealInputFields($formElements);
-
-                            // Run sanitizer on all POST values first
-                            $sanitizedValues = [];
-
-                            foreach ($formElements as $element) {
-
-                                // remove all form elements which have the disabled attribute, because they do not send values
-                                if (!$element->hasAttribute('disabled')) {
-                                    if ($element instanceof InputFile) {
-                                        $file_upload_name = $element->getAttribute('name');
-                                        if (array_key_exists($file_upload_name, $_FILES)) {
-                                            if ($element->getMultiple()) {
-                                                $sanitizedValues[$file_upload_name] = $this->reArrayFiles($_FILES[$file_upload_name]);
-                                            } else {
-                                                $sanitizedValues[$file_upload_name] = [$_FILES[$file_upload_name]];
-                                            }
-                                        }
-                                    } else {
-                                        $sanitizedValues[$element->getAttribute('name')] = $validation->sanitizePostValue($element);
-
-                                    }
-                                } else {
-                                    // remove all validation rules from this element
-                                    $element->removeAllRules();
-                                }
-
-                                // check if the field is inside the POST array
-                                // if not (e.g., field is disabled), then remove all validation rules, because no user input can be entered
-                                if ($element instanceof InputFile) {
-                                    $fieldValue = $_FILES; // files are not inside the post array
-                                } else {
-                                    $fieldValue = $this->wire('input')->post($this->getID() . '-' . $element->getID());
-                                }
-
-                                if (is_null($fieldValue) && (!$element instanceof InputCheckbox) && (!$element instanceof InputCheckboxMultiple) && (!$element instanceof InputRadioMultiple)) { // exclude checkboxes because they are allowed to have no value
-                                    $element->removeAllRules();
-                                }
-
-                            }
-
-                            // start loading all files into a temp dir for later validation purposes
-                            // all ZIP files will be extracted to be able to validate the content of the compressed folder
-                            $validation_files = [];
-                            if ($_FILES) {
-
-                                foreach ($_FILES as $fieldname => $data) {
-
-                                    // multi-upload field
-                                    if (is_array($data['name'])) {
-
-                                        if (count(array_filter($data['name']))) {
-
-                                            // create a new temp dir for each upload field
-                                            $tempDir = $this->wire('files')->tempDir();
-                                            $path = $tempDir->get();
-
-                                            // multiple upload field
-                                            $files = $this->reArrayFiles($_FILES[$fieldname]);
-                                            foreach ($files as $file) {
-                                                $this->wire('files')->copy($file['tmp_name'], $path . $file['name']);
-
-                                                // extract if ZIP
-                                                if ($file['type'] == 'application/x-zip-compressed') {
-                                                    $this->extractZipArchive($path . $file['name'], $path . pathinfo($file['name'], PATHINFO_FILENAME) . '/');
-                                                    $zip_files = $this->wire('files')->find($path . pathinfo($file['name'], PATHINFO_FILENAME) . '/');
-                                                    $validation_files[$fieldname][$file['name']] = $zip_files;
-                                                } else {
-                                                    $validation_files[$fieldname][$file['name']] = $path . $file['name'];
-
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        // single upload field
-                                        if ($data['name']) {
-
-                                            // create a new temp dir for each upload field
-                                            $tempDir = $this->wire('files')->tempDir();
-                                            $path = $tempDir->get();
-
-                                            // single upload field
-                                            $this->wire('files')->copy($data['tmp_name'], $path . $data['name']);
-
-                                            if ($data['type'] == 'application/x-zip-compressed') {
-
-                                                $this->extractZipArchive($path . $data['name'], $path . pathinfo($data['name'], PATHINFO_FILENAME) . '/');
-                                                $zip_files = $this->wire('files')->find($path . pathinfo($data['name'], PATHINFO_FILENAME) . '/');
-                                                $validation_files[$fieldname][$data['name']] = $zip_files;
-
-                                            } else {
-                                                $validation_files[$fieldname][$data['name']] = $path . $data['name'];
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            $this->validation_files = $validation_files;
-
-                            // end of temp dir operation
-
-                            $v = new Validator($sanitizedValues);
-
-                            foreach ($formElements as $element) {
-                                // run validation only if there is at least one validation rule set
-                                if (count($element->getRules()) > 0) {
-
-                                    $addRequiredFileValidation = false;
-                                    // check if field is file upload field and has required validator added
-                                    if ($element instanceof InputFile) {
-                                        if (array_key_exists('required', $element->getRules())) {
-                                            // add fileRequired validator if it is not present
-                                            if (!array_key_exists('fileRequired', $element->getRules())) {
-                                                $element->setRule('fileRequired');
-                                                $addRequiredFileValidation = true;
-                                            }
-                                        }
-                                    }
-                                    // add required validation to be the first
-                                    $rules = $this->putRequiredOnTop($element->getRules());
-
-                                    $cl = [];
-                                    foreach ($rules as $validatorName => $parameters) {
-
-                                        $v->rule($validatorName, $element->getAttribute('name'), ...$parameters['options']);
-                                        // Add custom error message text if present
-                                        if (isset($parameters['customMsg'])) {
-                                            $v->message($parameters['customMsg']);
-                                        } else {
-                                            // check if field has fileRequired validation
-                                            if ($addRequiredFileValidation && $validatorName == 'fileRequired') {
-                                                // check if required validator has a custom error message added
-                                                if (array_key_exists('customMsg', $rules['required'])) {
-                                                    $v->message($rules['required']['customMsg']);
-                                                }
-                                            }
-                                        }
-
-                                        if (isset($parameters['customFieldName'])) {
-                                            $v->label($parameters['customFieldName']);
-                                            $cl[] = $parameters['customFieldName'];
-                                        } else {
-                                            if ($element->getLabel()->getText()) {
-                                                // use the label if present, otherwise use the name attribute
-                                                if (!count($cl))
-                                                    $v->label($element->getLabel()->getText());
-                                            }
-                                        }
-
-                                    }
-                                }
-
-                                // add honeypot validation if honeypot field is included
-                                if ($this->frontendforms['input_useHoneypot']) {
-                                    if ($element->getAttribute('name') == $this->createElementName('seca')) {
-                                        $v->rule('length', $element->getAttribute('name'),
-                                            0)->message($this->_('Please do not fill out this field'));
-                                    }
-                                }
-
-                                // add captcha validation if captcha field is included
-                                if ($useCaptcha) {
-
-                                    if ($element->getAttribute('name') == $this->createElementName('captcha')) {
-
-                                        // exclude this CAPTCHA types from using the checkCaptcha rule
-                                        $nonCheckCaptchaTypes = ['SimpleQuestionCaptcha'];
-                                        if (!in_array($this->getCaptchaType(), $nonCheckCaptchaTypes)) {
-                                            // check if the custom error message has been set
-                                            if ($this->captchaErrorMsg) {
-                                                $v->rule('checkCaptcha', $element->getAttribute('name'),
-                                                    $this->wire('session')->get('captcha_' . $this->getID()))->message($this->captchaErrorMsg);
-                                            } else {
-                                                $v->rule('checkCaptcha', $element->getAttribute('name'),
-                                                    $this->wire('session')->get('captcha_' . $this->getID()))->label($this->_('The CAPTCHA'));
-                                            }
-                                        }
-                                    }
-                                }
-                                $this->setValues();
-
-                            }
-
-                            if ($v->validate()) {
-
-                                $this->validated = '1';
-
-                                $this->alert->setAttribute('data-ffsuccess', 'true');
-                                $this->alert->setAttribute('data-formid', $this->getID());
-                                $this->alert->setAttribute('id', $this->getID() . '-alert');
-                                $this->alert->setCSSClass('alert_successClass');
-                                $this->alert->setText($this->getSuccessMsg());
-                                $this->wire('session')->remove('attempts');
-                                $this->wire('session')->remove('submitted');
-                                // remove attempt session
-                                $this->wire('session')->remove('doubleSubmission-' . $this->getID());
-                                // remove the session for checking for double form submission
-                                $this->showForm = false;
-                                // check if files were uploaded and store them inside the chosen folder
-                                $this->uploaded_files = $this->storeUploadedFiles($formElements);
-                                // remove session added by matchUser or matchEmail validation rule if present
-                                $this->wire('session')->remove($this->getAttribute('id') . '-email');
-                                $this->wire('session')->remove($this->getAttribute('id') . '-username');
-
-                                // finally, add the files including the overwritten filenames to the array
-                                if ($this->storedFiles) {
-                                    $this->uploaded_files = $this->storedFiles;
-                                }
-
-                                /***********************************
-                                 * check if it is a multi-step form
-                                 * ********************************/
-                                if ($this->steps) {
-                                    if (!$this->lastStep) { // run if it is not the final step
-
-                                        // 1) save all values inside a session
-
-                                        if ($this->wire('session')->get($this->getID() . '-values')) {
-                                            // remove the old values from the array
-                                            unset($formValues[$this->currentStepNumber]);
-                                            $newValues = [$this->currentStepNumber => $this->getValues()];
-                                            // add new values to the array
-                                            $values = array_replace($formValues, $newValues);
-                                            $this->wire('session')->set($this->getID() . '-values', $values);
-                                        } else {
-                                            // session does not exist -> set session for the first time
-                                            $this->wire('session')->set($this->getID() . '-values', [$this->currentStepNumber => $this->getValues()]);
-                                        }
-                                        return false; // set to false to prevent the execution of the code inside the isValid() method
-                                    } else {
-                                        // last step: remove the session
-                                        $this->wire('session')->remove($this->getID() . '-values');
-                                    }
-                                }
-                                /*** Multi-step form end */
-
-                                return true;
-
-
-                            } else {
-                                // set error alert
-                                $this->wire('session')->set('errors', '1');
-                                $this->formErrors = $v->errors();
-
-                                // set data-attribute for validation status for later usage with JS
-                                $this->setAttribute('data-valid', 'false');
-
-                                // check if a CAPTCHA is enabled
-                                if ($this->getCaptchaType() != 'none') {
-
-                                    $captchaName = $this->getID() . '-captcha';
-                                    // if Captcha value was valid -> add it to the captcha_value property
-                                    if ($this->getCaptchaType() === 'SimpleQuestionCaptcha') {
-
-                                        if (!array_key_exists($captchaName, $this->formErrors)) {
-                                            // captcha was valid
-
-                                            // check if it is multi-question
-                                            if (array_key_exists($this->getID() . '-random_key', $_POST)) {
-
-                                                $prev_question = $this->question_array[$_POST[$this->getID() . '-random_key']];
-                                                if (array_key_exists('successMsg', $prev_question)) {
-                                                    $this->captchafield->setSuccessMessage($prev_question['successMsg']);
-                                                } else {
-                                                    // output the global success message if set
-                                                    $this->captchafield->setSuccessMessage($this->captchaSuccessMsg);
-                                                }
-
-                                                // check if the current question is the same as before -> otherwise remove the CAPTCHA value on multi question CAPTCHA
-                                                if ($this->showValueOnSameQuestionAgain) {
-                                                    // question is not the same as before -> delete the value
-                                                    if ($prev_question['question'] != $this->question) {
-                                                        $this->captchafield->setAttribute('value', '');
-                                                    }
-                                                } else {// false
-                                                    $this->captchafield->setAttribute('value', '');
-                                                }
-
-                                            } else {
-                                                // single question CAPTCHA
-                                                // add the value back to this field on success if there is only a single question set (not an array)
-                                                $this->captchafield->setAttribute('value', $_POST[$this->getID() . '-captcha']);
-                                                $this->captchafield->setSuccessMessage($this->captchaSuccessMsg);
-
-                                            }
-
-                                        } else {
-                                            // entered CAPTCHA value was wrong
-                                            $this->captchafield->setAttribute('value', '');
-                                        }
-                                    } else {
-                                        // all other CAPTCHA types
-                                        if (!array_key_exists($captchaName, $this->formErrors)) {
-                                            $this->captchafield->setSuccessMessage($this->captchaSuccessMsg);
-                                        }
-                                        // CAPTCHA value will be deleted in any way
-                                        $this->captchafield->setAttribute('value', '');
-                                    }
-                                }
-
-                                $this->alert->setAttribute('id', $this->getID() . '-alert');
-                                $this->alert->setCSSClass('alert_dangerClass');
-                                $this->alert->setText($this->getErrorMsg());
-
-                                // add a max attempts warning message to the error message
-                                if ($this->getMaxAttempts() && isset($this->wire('session')->attempts)) {
-
-                                    $attemptDiff = $this->getMaxAttempts() - $this->wire('session')->attempts;
-
-                                    if ($attemptDiff <= 3) {
-                                        $plural = $this->_('attempts');
-                                        $singular = $this->_('attempt');
-                                        $attempts = $this->_n($singular, $plural, $attemptDiff);
-                                        $attemptWarningText = '<br>' . sprintf($this->_('You have %s %s left until you will be blocked due to security reasons.'),
-                                                $attemptDiff, $attempts);
-                                        $this->alert->setText($this->alert->getText() . $attemptWarningText);
-                                    }
-                                }
-
-                                // create session for max attempts if set, otherwise add 1 attempt.
-                                //this session contains the number of failed attempts and will be increased by 1 on each failed attempt
-
-                                // set the submitted session to 1, which means the form is submitted at least 1 time
-                                $this->wire('session')->submitted = 1;
-
-                                if ($this->getMaxAttempts()) {
-
-                                    $this->wire('session')->attempts += 1; // increase session on each invalid attempt
-
-                                    if (($this->getMaxAttempts() - $this->wire('session')->attempts) == 0) {
-                                        $this->alert->setCSSClass('alert_warningClass');
-                                        $this->alert->setText(sprintf($this->_('This is failed attempt number %s. This is your last attempt to send the form. After that you will be blocked due to security reasons.'),
-                                            ($this->wire('session')->attempts)));
-                                    }
-                                } else {
-                                    // remove the session for attempts if set to 0
-                                    $this->wire('session')->remove('attempts');
-                                }
-                                return false;
-                            }
-                            /* END PROCESSING THE FORM */
-                        }
-                        // CSRF attack
-                        die();
-                        // live a great life and die() gracefully.
-                    }
-                    //double form submission
-                    return false;
-                }
-                //max attempts were reached
-                return false;
-            }
-            // submission time was too short or to long
+        // instantiates the FormSecurity object
+        $validation = new FormSecurity($input, $this, $this->alert);
+        $honeypotGuard = new HoneypotGuard($input, $this, $this->alert);
+        $refererGuard = new RefererGuard($input, $this, $this->alert);
+
+        if (!$this->passesSubmissionGuards($validation, $refererGuard, $formElements)) {
             return false;
         }
-        // this form was not submitted
-        return false;
+
+        /* START PROCESSING THE FORM */
+
+        //add honeypotfield to the array because it will be rendered afterwards
+        if ($this->frontendforms['input_useHoneypot']) {
+            $formElements[] = $honeypotGuard->createField(
+                $this->createElementName(HoneypotGuard::FIELD_NAME),
+                $this->useInputWrapper,
+                $this->useFieldWrapper
+            );
+        }
+        //add captcha to the array because it will be rendered afterwards
+        if ($useCaptcha) {
+
+            // special treatment for SimpleQuestionCaptcha
+            if (wireClassName($this->captchaManager->getCaptchaObject()) === 'SimpleQuestionCaptcha') {
+                // add custom answers if present
+                if ($this->answers) {
+                    $this->getCaptcha()->setCaptchaValidValue($this->answers);
+                }
+
+                // set the appropriate validator
+                if ($this->getCaptcha()->getCaptchaValidValue()) {
+
+                    $validValue = $this->getCaptcha()->getCaptchaValidValue();
+
+                    // overwrite the default value with the one from the session for random question if present
+                    if (array_key_exists($this->getID() . '-random_key', $_POST)) {
+                        $questionPool = $this->captchaManager->getQuestionPool();
+                        $randomKey = $_POST[$this->getID() . '-random_key'];
+                        if (array_key_exists($randomKey, $questionPool)) {
+                            $prev_question = $questionPool[$randomKey];
+                            $validValue = $prev_question['answers'];
+                            if (array_key_exists('errorMsg', $prev_question)) {
+                                // set the custom error message
+                                $errormsg = ($prev_question['errorMsg'] !== '') ? $prev_question['errorMsg'] : $this->_('The answer is wrong!');
+                                // set the valid values from the session
+                            } else {
+                                $errormsg = $this->captchaManager->config()->errorMsg ?? $this->_('The answer is wrong!');
+                            }
+                        } else {
+                            // an invalid/tampered random_key must never result in an empty
+                            // comparison list, since validateTextComparison() treats an empty
+                            // list as an automatic pass - fail closed with a value that can
+                            // never match a real submitted answer instead
+                            $validValue = [uniqid('invalid-random-key-', true)];
+                            $errormsg = $this->_('The answer is wrong!');
+                        }
+                    } else {
+                        $errormsg = ($this->captchaManager->config()->errorMsg !== '') ? $this->captchaManager->config()->errorMsg : $this->_('The answer is wrong!');
+                    }
+                    $this->captchaManager->getField()->setRule('compareTexts', $validValue)->setCustomMessage($errormsg);
+                }
+
+            }
+
+            if ($this->getCaptchaType() === 'SliderCaptcha') {
+
+                // add the servers side validation of the slider CAPTCHA
+                $this->captchaManager->getField()->setRule('checkSliderCaptcha', $input[$this->getID() . '-xPos'], $input[$this->getID() . '-yPos'], $this->getID())->setCustomMessage($this->_('The Slider-Captcha was not solved correctly.'));
+            }
+
+            $formElements[] = $this->captchaManager->getField();
+        }
+
+        // Get only input field for user inputs (no fieldsets, buttons,..)
+        $formElements = $validation->getRealInputFields($formElements);
+
+        // Run sanitizer on all POST values first
+        $sanitizedValues = [];
+
+        foreach ($formElements as $element) {
+
+            // remove all form elements which have the disabled attribute, because they do not send values
+            if (!$element->hasAttribute('disabled')) {
+                if ($element instanceof InputFile) {
+                    $file_upload_name = $element->getAttribute('name');
+                    if (array_key_exists($file_upload_name, $_FILES)) {
+                        if ($element->getMultiple()) {
+                            $sanitizedValues[$file_upload_name] = $this->fileUploadHandler->reArrayFiles($_FILES[$file_upload_name]);
+                        } else {
+                            $sanitizedValues[$file_upload_name] = [$_FILES[$file_upload_name]];
+                        }
+                    }
+                } else {
+                    $sanitizedValues[$element->getAttribute('name')] = $validation->sanitizePostValue($element);
+
+                }
+            } else {
+                // remove all validation rules from this element
+                $element->removeAllRules();
+            }
+
+            // check if the field is inside the POST array
+            // if not (e.g., field is disabled), then remove all validation rules, because no user input can be entered
+            if ($element instanceof InputFile) {
+                $fieldValue = $_FILES; // files are not inside the post array
+            } else {
+                $fieldValue = $this->wire('input')->post($this->getID() . '-' . $element->getID());
+            }
+
+            if (is_null($fieldValue) && (!$element instanceof InputCheckbox) && (!$element instanceof InputCheckboxMultiple) && (!$element instanceof InputRadio) && (!$element instanceof InputRadioMultiple)) { // exclude checkboxes and radios because they are allowed to have no value
+                $element->removeAllRules();
+            }
+
+        }
+
+        // NOTE: file/ZIP content validation (allowed extensions, size limits, ZIP depth,
+        // forbidden extensions, etc.) is handled by FileLogic/ZipLogic, which read directly
+        // from $_FILES via FileHelper. No temp-dir preparation is needed here anymore.
+
+        $v = new Validator($sanitizedValues);
+
+
+        foreach ($formElements as $element) {
+            // run validation only if there is at least one validation rule set
+            if (count($element->getRules()) > 0) {
+
+                $addRequiredFileValidation = false;
+                // check if field is file upload field and has required validator added
+                if ($element instanceof InputFile) {
+                    if (array_key_exists('required', $element->getRules())) {
+                        // add fileRequired validator if it is not present
+                        if (!array_key_exists('fileRequired', $element->getRules())) {
+                            $element->setRule('fileRequired');
+                            $addRequiredFileValidation = true;
+                        }
+                    }
+                }
+                // add required validation to be the first
+                $rules = FormHelper::putRequiredOnTop($element->getRules());
+                $cl = [];
+                foreach ($rules as $validatorName => $parameters) {
+
+                    $v->rule($validatorName, $element->getAttribute('name'), ...$parameters['options']);
+
+                    // Add custom error message text if present
+                    if (isset($parameters['customMsg'])) {
+                        $v->message($parameters['customMsg']);
+                    } else {
+                        // check if field has fileRequired validation
+                        if ($addRequiredFileValidation && $validatorName == 'fileRequired') {
+                            // check if required validator has a custom error message added
+                            if (array_key_exists('customMsg', $rules['required'])) {
+                                $v->message($rules['required']['customMsg']);
+                            }
+                        }
+                    }
+
+                    if (isset($parameters['customFieldName'])) {
+                        $v->label($parameters['customFieldName']);
+                        $cl[] = $parameters['customFieldName'];
+                    } else {
+                        if ($element->getLabel()->getText()) {
+                            // use the label if present, otherwise use the name attribute
+                            if (!count($cl)) {
+                                $v->label($element->getLabel()->getText());
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            // add honeypot validation if honeypot field is included
+            if ($this->frontendforms['input_useHoneypot']) {
+                if ($element->getAttribute('name') === $this->createElementName(HoneypotGuard::FIELD_NAME)) {
+                    $v->rule(
+                        'length',
+                        $element->getAttribute('name'),
+                        0
+                    )->message($honeypotGuard->getMessage());
+                }
+            }
+
+            // add captcha validation if captcha field is included
+            if ($useCaptcha) {
+
+                if ($element->getAttribute('name') == $this->createElementName('captcha')) {
+
+                    // exclude this CAPTCHA types from using the checkCaptcha rule
+                    $nonCheckCaptchaTypes = ['SimpleQuestionCaptcha'];
+
+                    if (!in_array($this->getCaptchaType(), $nonCheckCaptchaTypes)) {
+                        // check if the custom error message has been set
+                        if ($this->captchaManager->config()->errorMsg) {
+                            $v->rule(
+                                'checkCaptcha',
+                                $element->getAttribute('name'),
+                                $this->wire('session')->get('captcha_' . $this->getID())
+                            )->message($this->captchaManager->config()->errorMsg);
+                        } else {
+                            $v->rule(
+                                'checkCaptcha',
+                                $element->getAttribute('name'),
+                                $this->wire('session')->get('captcha_' . $this->getID())
+                            )->label($this->_('The CAPTCHA'));
+                        }
+                    }
+                }
+            }
+        }
+
+        $this->valueStore->setValues();
+
+        // re-sync the "{fieldname}value" mail placeholders with the now-
+        // populated, actually submitted values - add() only sets them once
+        // at form-build time, before any submitted value exists on the
+        // field, so they need to be refreshed here (right before a
+        // success/error email might be sent) to actually reflect what the
+        // visitor submitted. Same checkbox/radio exclusion as in add().
+        foreach ($formElements as $element) {
+            if (!is_subclass_of($element, 'FrontendForms\Inputfields')) {
+                continue;
+            }
+            $elementClassName = $element->className();
+            if (
+                $elementClassName === 'InputCheckbox'
+                || is_subclass_of($element, 'FrontendForms\InputCheckbox')
+                || $elementClassName === 'InputRadio'
+                || is_subclass_of($element, 'FrontendForms\InputRadio')
+                || $element instanceof InputFile
+            ) {
+                continue;
+            }
+            $fieldValue = $element->getAttribute('value');
+            if (is_array($fieldValue)) {
+                $fieldValue = implode(',', $fieldValue);
+            }
+            $this->setMailPlaceholder(
+                $element->getAttribute('name') . 'value',
+                (string) $fieldValue
+            );
+        }
+
+        if ($v->validate()) {
+
+            $this->validated = '1';
+
+            $this->alert->setAttribute('data-ffsuccess', 'true');
+            $this->alert->setAttribute('data-formid', $this->getID());
+            $this->alert->setAttribute('id', $this->getID() . '-alert');
+            $this->alert->setCSSClass('alert_successClass');
+            $this->alert->setText($this->getSuccessMsg());
+            $this->wire('session')->remove('attempts');
+            $this->wire('session')->remove('submitted');
+            // remove attempt session
+            $this->wire('session')->remove('doubleSubmission-' . $this->getID());
+            // remove the session for checking for double form submission
+            $this->showForm = false;
+            // check if files were uploaded and store them inside the chosen folder
+            $this->fileUploadHandler->storeUploadedFiles($formElements);
+            // remove session added by matchUser or matchEmail validation rule if present
+            $this->wire('session')->remove($this->getAttribute('id') . '-email');
+            $this->wire('session')->remove($this->getAttribute('id') . '-username');
+
+            // finally, add the files including the overwritten filenames to the array
+            if ($this->storedFiles) {
+                $this->fileUploadHandler->setUploadedFiles($this->storedFiles);
+            }
+
+            /***********************************
+             * check if it is a multi-step form
+             * ********************************/
+            if ($this->stepController->hasSteps()) {
+                if (!$this->stepController->isLastStep()) { // run if it is not the final step
+
+                    // 1) save all values inside a session
+
+                    if ($this->wire('session')->get($this->getID() . '-values')) {
+                        // remove the old values from the array
+                        unset($formValues[$this->stepController->getCurrentStepNumber()]);
+                        $newValues = [$this->stepController->getCurrentStepNumber() => $this->getValues()];
+                        // add new values to the array
+                        $values = array_replace($formValues, $newValues);
+                        $this->wire('session')->set($this->getID() . '-values', $values);
+                    } else {
+                        // session does not exist -> set session for the first time
+                        $this->wire('session')->set($this->getID() . '-values', [$this->stepController->getCurrentStepNumber() => $this->getValues()]);
+                    }
+                    return false; // set to false to prevent the execution of the code inside the isValid() method
+                } else {
+                    // last step: remove the session
+                    $this->wire('session')->remove($this->getID() . '-values');
+                }
+            }
+            /*** Multi-step form end */
+
+            return true;
+
+
+        } else {
+            // set error alert
+            $this->wire('session')->set('errors', '1');
+            $this->formErrors = $v->errors();
+
+            // set data-attribute for validation status for later usage with JS
+            $this->setAttribute('data-valid', 'false');
+
+            // check if a CAPTCHA is enabled
+            if ($this->getCaptchaType() != 'none') {
+
+                $captchaName = $this->getID() . '-captcha';
+                // if Captcha value was valid -> add it to the captcha_value property
+                if ($this->getCaptchaType() === 'SimpleQuestionCaptcha') {
+
+                    if (!array_key_exists($captchaName, $this->formErrors)) {
+                        // captcha was valid
+
+                        // check if it is multi-question
+                        if (array_key_exists($this->getID() . '-random_key', $_POST)) {
+
+                            $questionPool = $this->captchaManager->getQuestionPool();
+                            $randomKey = $_POST[$this->getID() . '-random_key'];
+                            $prev_question = $questionPool[$randomKey] ?? [];
+                            if (array_key_exists('successMsg', $prev_question)) {
+                                $this->captchaManager->getField()->setSuccessMessage($prev_question['successMsg']);
+                            } else {
+                                // output the global success message if set
+                                $this->captchaManager->getField()->setSuccessMessage($this->captchaManager->config()->successMsg);
+                            }
+
+                            // check if the current question is the same as before -> otherwise remove the CAPTCHA value on multi question CAPTCHA
+                            if ($this->captchaManager->config()->showValueOnSameQuestionAgain) {
+                                // question is not the same as before -> delete the value
+                                if ($prev_question['question'] != $this->question) {
+                                    $this->captchaManager->getField()->setAttribute('value', '');
+                                }
+                            } else {// false
+                                $this->captchaManager->getField()->setAttribute('value', '');
+                            }
+
+                        } else {
+                            // single question CAPTCHA
+                            // add the value back to this field on success if there is only a single question set (not an array)
+                            $this->captchaManager->getField()->setAttribute('value', $_POST[$this->getID() . '-captcha']);
+                            $this->captchaManager->getField()->setSuccessMessage($this->captchaManager->config()->successMsg);
+
+                        }
+
+                    } else {
+                        // entered CAPTCHA value was wrong
+                        $this->captchaManager->getField()->setAttribute('value', '');
+                    }
+                } else {
+                    // all other CAPTCHA types
+                    if (!array_key_exists($captchaName, $this->formErrors)) {
+                        $this->captchaManager->getField()->setSuccessMessage($this->captchaManager->config()->successMsg);
+                    }
+                    // CAPTCHA value will be deleted in any way
+                    $this->captchaManager->getField()->setAttribute('value', '');
+                }
+            }
+
+            $this->alert->setAttribute('id', $this->getID() . '-alert');
+            $this->alert->setCSSClass('alert_dangerClass');
+            $this->alert->setText($this->getErrorMsg());
+
+            // add a max attempts warning message to the error message
+            if ($this->getMaxAttempts() && isset($this->wire('session')->attempts)) {
+
+                $attemptDiff = $this->getMaxAttempts() - $this->wire('session')->attempts;
+
+                if ($attemptDiff <= 3) {
+                    $plural = $this->_('attempts');
+                    $singular = $this->_('attempt');
+                    $attempts = $this->_n($singular, $plural, $attemptDiff);
+                    $attemptWarningText = '<br>' . sprintf(
+                            $this->_('You have %s %s left until you will be blocked due to security reasons.'),
+                            $attemptDiff,
+                            $attempts
+                        );
+                    $this->alert->setText($this->alert->getText() . $attemptWarningText);
+                }
+            }
+
+            // create session for max attempts if set, otherwise add 1 attempt.
+            //this session contains the number of failed attempts and will be increased by 1 on each failed attempt
+
+            // set the submitted session to 1, which means the form is submitted at least 1 time
+            $this->wire('session')->submitted = 1;
+
+            if ($this->getMaxAttempts()) {
+
+                $this->wire('session')->attempts += 1; // increase session on each invalid attempt
+
+                if (($this->getMaxAttempts() - $this->wire('session')->attempts) == 0) {
+                    $this->alert->setCSSClass('alert_warningClass');
+                    $this->alert->setText(sprintf(
+                        $this->_('This is failed attempt number %s. This is your last attempt to send the form. After that you will be blocked due to security reasons.'),
+                        ($this->wire('session')->attempts)
+                    ));
+                }
+            } else {
+                // remove the session for attempts if set to 0
+                $this->wire('session')->remove('attempts');
+            }
+            return false;
+        }
+
+        /* END PROCESSING THE FORM */
     }
 
     /**
-     * Create a honeypot field for spam protection
-     * @return InputText
+     * Check whether the current request passes all guards required before the form
+     * submission may be processed.
+     *
+     * The guards are checked in order: the form was actually submitted (and no other
+     * form on the same page), the submission happened within the allowed time window,
+     * the maximum number of attempts was not exceeded, no double submission is
+     * detected, the CSRF token is valid, and the Referer header (if present) points
+     * to this host.
+     *
+     * CSRF and Referer failures terminate the request via die(), matching the
+     * original behaviour, rather than returning false, since these are treated as
+     * active attacks rather than ordinary invalid submissions.
+     *
+     * @param FormSecurity $validation The form security helper running the checks.
+     * @param RefererGuard $refererGuard The Referer-header guard (defense in depth on top of CSRF).
+     * @param array $formElements The form elements used for the submission time-window check.
+     * @return bool True if every guard passed and processing may continue.
+     * @throws WireException
      */
-    private function createHoneypot(): InputText
-    {
-        $honeypot = new InputText('seca');
-        $honeypot->setAttribute('name', $this->createElementName('seca'));
-        $honeypot->setLabel($this->_('Please do not fill out this field'))->setAttribute('class', 'seca');
-        // Remove or add wrappers depending on settings
-        $honeypot->useInputWrapper($this->useInputWrapper);
-        $honeypot->useFieldWrapper($this->useFieldWrapper);
-        $honeypot->getFieldWrapper()->setAttribute('class', 'seca');
-        $honeypot->getInputWrapper()->setAttribute('class', 'seca');
-        $honeypot->setAttributes(['class' => 'seca', 'tabindex' => '-1']);
-        return $honeypot;
+    private function passesSubmissionGuards(
+        FormSecurity $validation,
+        RefererGuard $refererGuard,
+        array $formElements
+    ): bool {
+        // 1) check if this form was submitted and no other form on the same page
+        if (!$validation->thisFormSubmitted()) {
+            return false;
+        }
+        // add a validation class to the form after it was submitted
+        $this->setCSSClass('formClassValidated'); // add the CSS class
+
+        // 2) check if form was submitted in time range
+        if (!$validation->checkTimeDiff($formElements)) {
+            return false;
+        }
+
+        // 3) check if max attempts were reached
+        if (!$validation->checkMaxAttempts($this->wire('session')->attempts)) {
+            return false;
+        }
+
+        // 4) check for double form submission
+        if (!$validation->checkDoubleFormSubmission($this, $this->useDoubleFormSubmissionCheck)) {
+            return false;
+        }
+
+        // 5) Check for CSRF attack
+        if (!$validation->checkCSRFAttack($this->getCSRFProtection(), $this->getAttribute('method'))) {
+            // CSRF attack
+            die();
+            // live a great life and die() gracefully.
+        }
+
+        // 6) Defense-in-depth check on top of CSRF: reject only if the
+        // Referer header is present but points to a different host
+        if (!$refererGuard->check()) {
+            die();
+        }
+
+        return true;
     }
 
     /**
      * Add the input wrapper to all fields of this form in general
+     *
+     * Also applies this setting to fields that were already added via
+     * add() before this call - unless a field received its own explicit
+     * setting via a direct useInputWrapper() call on that field, in which
+     * case the field's own choice is respected and left untouched.
+     *
      * @param bool $useInputWrapper
      * @return void
      */
     public function useInputWrapper(bool $useInputWrapper): void
     {
         $this->useInputWrapper = $useInputWrapper;
+
+        foreach ($this->formElements as $field) {
+            if (is_subclass_of($field, 'FrontendForms\Inputfields') && !$field->isInputWrapperExplicitlySet()) {
+                $field->setInputWrapperFromForm($useInputWrapper);
+            }
+        }
     }
 
     /**
      * Add the field wrapper to all fields of this form in general
+     *
+     * Also applies this setting to fields that were already added via
+     * add() before this call - unless a field received its own explicit
+     * setting via a direct useFieldWrapper() call on that field, in which
+     * case the field's own choice is respected and left untouched.
+     *
      * @param bool $useFieldWrapper
      * @return void
      */
     public function useFieldWrapper(bool $useFieldWrapper): void
     {
         $this->useFieldWrapper = $useFieldWrapper;
-    }
 
-    /**
-     * Internal method to add all form values to the values' array
-     * All sanitizers applied to an input element will be used before they will be added to the array
-     * @return void
-     * @throws WireException
-     */
-    private function setValues(): void
-    {
-        $method = strtolower($this->getAttribute('method'));
-
-        $post_values = $this->wire('input')->$method;
-        // get buttons
-        foreach ($this->getFormElementsByClass('Button') as $button) {
-            if ($button->hasAttribute('value')) {
-                if ($button->hasAttribute('name')) {
-                    $post_values[$button->getAttribute('name')] = $button->getAttribute('value');
-                }
+        foreach ($this->formElements as $field) {
+            if (is_subclass_of($field, 'FrontendForms\Inputfields') && !$field->isFieldWrapperExplicitlySet()) {
+                $field->setFieldWrapperFromForm($useFieldWrapper);
             }
         }
-
-        $values = [];
-        foreach ($post_values as $name => $value) {
-
-            // grab formelement by its name attribute
-            $element = $this->getFormelementByName($name);
-
-            if ($element) {
-
-                // Run all sanitizer methods over the value
-                if (method_exists($element, 'getSanitizers')) {
-                    $sanitizers = $element->getSanitizers();
-                    foreach ($sanitizers as $sanitizer) {
-                        $value = $element->wire('sanitizer')->$sanitizer($post_values->$name);
-                    }
-                } else {
-                    $value = $post_values->$name;
-                }
-            } else {
-                // no element exists -> get the value directly from the POST array
-                $value = $post_values->$name;
-
-            }
-            $values[$name] = $value;
-
-            // set all form values to a placeholder
-            $fieldName = str_replace($this->getID() . '-', '', $name) . 'value';
-
-            $this->setMailPlaceholder($fieldName, $value);
-
-        }
-
-        $this->values = $values;
     }
 
     /**
@@ -3323,7 +2804,7 @@ class Form extends CustomRules
      */
     public function getMaxAttempts(): int
     {
-        return $this->frontendforms['input_maxAttempts'];
+        return (int) $this->frontendforms['input_maxAttempts'];
     }
 
     /**
@@ -3389,80 +2870,13 @@ class Form extends CustomRules
         return $this->redirectURL;
     }
 
-    /**
-     * Check if the form contains an element from the given class
-     * @param string $className
-     * @return int -> the number of fields found
-     */
-    public function formContainsElementByClass(string $className): int
-    {
-        //$className = wireClassNamespace($className, true); // leads to problem with Phalcon framework
-        $className = '\\FrontendForms\\' . $className;
-        $number = (count(array_filter($this->formElements, function ($entry) use ($className) {
-            return ($entry instanceof $className);
-        })));
-        return $number;
-    }
 
-    /**
-     * If there are multiple instances of a given class, remove all except the last one
-     * This is useful if only one instance is allowed, but there are multiple instances
-     * Returns the key of the last item, which will not be deleted (unset)
-     * @param string $className
-     * @return int|null
-     */
-    public function removeMultipleEntriesByClass(string $className): null|int
-    {
-        // there are too many PrivacyText elements, only one is allowed per form -> remove all except the last one
-        $elements = $this->getElementsbyClass($className);
-        $k = null;
-        if ($elements) {
-            foreach ($elements as $key => $e) {
-                if ($key !== array_key_last($elements)) {
-                    unset($this->formElements[key($e)]);
-                } else {
-                    $k = key($e);
-                }
-            }
-        }
-        return $k;
-    }
 
-    /**
-     * Get all form element objects of a given class as an array
-     * @param string $className
-     * @return array
-     */
-    public function getElementsbyClass(string $className): array
-    {
-        $elements = [];
-        if ($this->formContainsElementByClass($className)) {
-            //$className = wireClassNamespace($className, true); // leads to problem with Phalcon framework
-            $className = '\\FrontendForms\\' . $className;
-            $elements[] = array_filter($this->formElements, function ($entry) use ($className) {
-                return ($entry instanceof $className);
-            });
-        }
-        return $elements;
-    }
 
-    /**
-     * Move an array item from one to another position
-     * @param array $array
-     * @param $key
-     * @param int $order
-     * @return void
-     * @throws Exception
-     */
-    protected function repositionArrayElement(array &$array, $key, int $order): void
-    {
-        if (($a = array_search($key, array_keys($array))) === false) {
-            throw new Exception("The $key cannot be found in the given array.");
-        }
-        $p1 = array_splice($array, $a, 1);
-        $p2 = array_splice($array, 0, $order);
-        $array = array_merge($p2, $p1, $array);
-    }
+
+
+
+
 
     /**
      * Change the tag of an given element
@@ -3481,21 +2895,339 @@ class Form extends CustomRules
         }
     }
 
+
+
     /**
-     * Get the position of a certain element inside the formElements array by its name
-     * @param string $nameAttribute
-     * @return int|string
+     * Insert the CAPTCHA field into the formElements array at the correct
+     * position (right before the submit button, or a custom position if
+     * one was set via the API), and set up SimpleQuestionCaptcha-specific
+     * warnings (missing question/answers), label-as-placeholder, and
+     * label-removal config.
+     * @param int $refKey - the array key of the first Button element, used as the default insertion point
+     * @param int $firstButtonPos - the current position of the first Button element
+     * @return int - the (possibly updated) position of the first Button element, needed by later positioning steps
      */
-    public function getElementPositionByName(string $nameAttribute)
+    private function insertCaptchaField(int $refKey, int $firstButtonPos): int
     {
-        // find the object inside the array by its name
-        $positon = 0;
-        foreach ($this->formElements as $pos => $element) {
-            if ($element->getAttribute('name') === $nameAttribute) {
-                return $pos;
+        if ($this->getCaptchaType() != 'none') {
+
+            // position in the form fields array to insert
+            $captchaPosition = $refKey;
+
+            if (wireClassName($this->captchaManager->getCaptchaObject()) === 'SimpleQuestionCaptcha') {
+
+                // add custom question as label if present
+                if ($this->question) {
+                    $this->captchaManager->getField()->setLabel($this->question);
+                }
+
+                // check if a question and accepted answers have been set
+                $missing_msg = [];
+                // output a warning message if question for question CAPTCHA is missing
+                if (!$this->captchaManager->getField()->getLabel()->getText()) {
+                    $missing_msg[] = $this->_('You have not added a question for your question CAPTCHA!');
+                }
+                // output a warning message if answers for question CAPTCHA are missing
+                if (!$this->getCaptcha()->getCaptchaValidValue()) {
+                    $missing_msg[] = $this->_('You have not added some answers for your question CAPTCHA!');
+                }
+
+                if ($missing_msg) {
+                    $missing_msg[] = $this->_('If you do not correct this error, you cannot use the simple question CAPTCHA and the Captcha will not be displayed.');
+                    $missingtext = implode('<br>', $missing_msg);
+                    $this->alert->setCSSClass('alert_warningClass');
+                    $this->alert->setText($missingtext);
+                }
+
+            }
+
+            // add the Captcha to the form array if everything is ok
+            if (((wireClassName($this->captchaManager->getCaptchaObject()) === 'SimpleQuestionCaptcha') && (!$missing_msg)) || (wireClassName($this->captchaManager->getCaptchaObject()) !== 'SimpleQuestionCaptcha')) {
+
+                // insert the captcha input field after the last input field
+                $this->formElements = array_merge(
+                    array_slice($this->formElements, 0, $captchaPosition),
+                    array($this->captchaManager->getField()),
+                    array_slice($this->formElements, $captchaPosition)
+                );
+
+                // re-index the formElements array
+                $this->formElements = array_values($this->formElements);
+
+            }
+
+            // remove label and set it as placeholder if set
+            if ($this->captchaManager->config()->useLabelAsPlaceholder && ($this->captchaManager->getField() instanceof InputText)) {
+                $this->captchaManager->getField()->setAttribute('placeholder', $this->captchaManager->getField()->getLabel()->getText());
+                $this->captchaManager->getField()->setLabel(''); // remove the label tag
+            }
+            // remove Label if set
+            if ($this->captchaManager->config()->removeLabel) {
+                $this->captchaManager->getField()->setLabel('');
+            }
+
+            // get the position of the first button element
+            if ($this->getElementsbyClass('Button')) {
+
+                $firstButtonPos = key($this->getElementsbyClass('Button')[0]);
+
+                // change the position of the CAPTCHA if position change was set via API
+                $customizeCaptchaPosition = $this->getCaptchaPosition();
+
+                if (($this->getCaptchaType() != 'none') && ($customizeCaptchaPosition)) {
+
+                    // get the position of the reference field inside the field object array
+                    $ref_field_name = array_key_first($customizeCaptchaPosition);
+
+                    foreach ($this->formElements as $key => $element) {
+                        if ($this->getID() . '-' . $ref_field_name == $element->getAttribute('name')) {
+                            $ref_position = $key;
+                        }
+                    }
+
+                    // add correction for the "before" position if the reference object is the last item in the array
+                    $before_pos = ($ref_position != array_key_last($this->formElements)) ? $ref_position : $ref_position - 1;
+
+                    $new_pos = (reset($customizeCaptchaPosition) === 'before') ? $before_pos : $ref_position + 1;
+                    FormHelper::repositionArrayElement($this->formElements, $captchaPosition, $new_pos);
+                }
+            }
+
+        } else {
+            // no Captcha is used
+            if ($this->getElementsbyClass('Button')) {
+                $firstButtonPos = key($this->getElementsbyClass('Button')[0]);
             }
         }
-        return $positon;
+
+        return $firstButtonPos;
+    }
+
+    /**
+     * Create and add all the hidden fields a form needs for its own
+     * internal bookkeeping: an optional Ajax-redirect URL, the slider
+     * CAPTCHA's x/y position placeholders, the CSRF token, the
+     * double-submission token, the form id (to detect which form on the
+     * page was submitted), the encrypted load timestamp (for min/max time
+     * checks), and the random question-pool key for question CAPTCHAs.
+     * @param string $tokenName
+     * @param string $tokenValue
+     * @return void
+     */
+    private function createHiddenFormFields(string $tokenName, string $tokenValue): void
+    {
+        // create hidden Ajax redirect input if set
+        // this value can be grabbed afterwards via JavaScript to make a JS redirect
+        if ($this->getSubmitWithAjax()) {
+            if ($this->ajaxRedirect) {
+                $ajaxredirectField = new InputHidden('ajax_redirect');
+                $url = $this->ajaxRedirect;
+                if ($this->preventJumpToForm) {
+                    // remove internal anchor
+                    $url = explode("#", $url);
+                    $url = $url[0];
+                }
+                $ajaxredirectField->setAttribute('value', $url);
+                $this->add($ajaxredirectField);
+            }
+        }
+
+        // only for the slider captcha -> add hidden fields for the x and y position
+        if ($this->getCaptchaType() === 'SliderCaptcha') {
+
+            $hiddenFieldX = new InputHidden('xPos');
+            $hiddenFieldX->setAttribute('name', 'xPos');
+            $hiddenFieldX->setAttribute('value', '-1');
+            $this->add($hiddenFieldX);
+
+            $hiddenFieldY = new InputHidden('yPos');
+            $hiddenFieldY->setAttribute('name', 'yPos');
+            $hiddenFieldY->setAttribute('value', '-1');
+            $this->add($hiddenFieldY);
+
+        }
+
+        //create CSRF hidden field and add it to the form at the end
+        $hiddenField = new InputHidden('post_token');
+        $hiddenField->setAttribute('name', $tokenName);
+        $hiddenField->setAttribute('value', $tokenValue);
+        $this->add($hiddenField);
+
+        //create hidden field to prevent double form submission if it was not disabled
+        if ($this->useDoubleFormSubmissionCheck) {
+            $hiddenField2 = new InputHidden('doubleSubmission_token');
+            $hiddenField2->setAttribute('name', 'doubleSubmission_token');
+            $hiddenField2->setAttribute('value', $this->doubleSubmission);
+            $this->add($hiddenField2);
+        }
+
+        //create hidden field to send form id to check if this form was submitted
+        //this is only there for the case if other forms are present on the same page
+        $hiddenField3 = new InputHidden('form_id');
+        $hiddenField3->setAttribute('name', 'form_id');
+        $hiddenField3->setAttribute('value', $this->getID());
+        $this->add($hiddenField3);
+
+        //create hidden field to send the timestamp (encoded) when the form was loaded
+        if (($this->getMinTime()) || $this->getMaxTime()) {
+            $hiddenField4 = new InputHidden('load_time');
+            $hiddenField4->setAttribute('value', FormHelper::encryptDecrypt((string) $this->load_time));
+            $this->add($hiddenField4);
+        }
+
+        // if a random question array is set, add the random item key to this field
+        if (!is_null($this->captchaManager->getCurrentQuestionIndex())) {
+            $hiddenField5 = new InputHidden('random_key');
+            $hiddenField5->setAttribute('value', $this->captchaManager->getCurrentQuestionIndex());
+            $this->add($hiddenField5);
+        }
+    }
+
+    /**
+     * Build and inject the final-step summary table row markup (with an
+     * edit link to jump back to the step where the field was filled out)
+     * for one form element, when displaying the last step of a multi-step
+     * form's review screen.
+     * @param object $element
+     * @param int $key
+     * @param int $firstStep
+     * @param int $lastStep
+     * @return void
+     */
+    private function renderFinalStepTableRow(object $element, int $key, int $firstStep, int $lastStep): void
+    {
+        $name = $element->getAttribute('name');
+
+        $values = [];
+
+        if (!$_POST) {
+
+            // set final values from session
+            $finalValues = $this->wire('session')->get($this->getID() . '-values');
+
+            foreach ($finalValues as $fv) {
+
+                foreach ($fv as $name => $v) {
+                    if (is_array($v)) {
+                        $values[$name] = implode(', ', $fv[$name]);
+                    } else {
+                        $values[$name] = $v;
+                    }
+                }
+            };
+
+        } else {
+            foreach ($_POST as $name => $v) {
+                if (is_array($v)) {
+                    $values[$name] = implode(', ', $_POST[$name]);
+                } else {
+                    $values[$name] = $v;
+                }
+            }
+        }
+
+        if ($element->className() !== 'InputHidden' && $element->getAttribute('name') != $this->getID() . '-seca') {
+
+            // show/hide inputfield depending on, if there is an error or not
+            if (array_key_exists($element->getAttribute('name'), $this->formErrors)) {
+                $hideClass = '';
+            } else {
+                $hideClass = 'ff-final-list-hidden ';
+            }
+
+            /*
+             * Create the list
+             */
+            if ($key <= $lastStep) {
+
+                // table start
+                $markup = '';
+
+                if ($key === $firstStep) {
+
+                    $markup .= '<div class="' . $this->getCSSClass('responsiveTableClass') . '">';
+
+                    $tableStyling = [
+                        'none.json' => 'ff-table',
+                        'pico2.json' => 'ff-table',
+                        'uikit3.json' => 'uk-table-small uk-table-divider',
+                        'bootstrap5.json' => 'table-sm'
+                    ];
+
+                    if (array_key_exists($this->frontendforms['input_framework'], $tableStyling)) {
+                        $tableStyleClass = $tableStyling[$this->frontendforms['input_framework']];
+                    } else {
+                        $tableStyleClass = 'ff-table';
+                    }
+
+                    $markup .= '<table id="' . $this->getID() . '-final-step-table" class="' . $this->getCSSClass('tableClass') . ' ' . $tableStyleClass . ' final-list-table">';
+
+                }
+
+                $hideWrapperOpen = '<tr id="' . $element->getAttribute('id') . '-hidden-wrapper" class="ff-hidden-wrapper ' . $hideClass . '"><td colspan="3">';
+
+                $hideWrapperClose = '</td></tr>';
+                if ($this->formFieldConditions && array_key_exists($element->getAttribute('name'), $this->formFieldConditions)) {
+                    $hideWrapperClose = '</td></tr></tbody>';
+                }
+
+                // if field wrapper is disabled -> enable it for making the form element invisible
+                if (!$element->getUsageOfFieldWrapper()) {
+                    $element->useFieldWrapper(true);
+                }
+
+                // create edit link element
+                $editLink = '<td class="ff-final-list-edit ' . $this->getCSSClass('finaltableEditClass') . '">';
+                $editLink .= '<a id="' . $this->getID() . '-' . $element->getAttribute('id') . '-edit" class="ff-edit-link" href="#" rel="nofollow" data-element="' . $element->getAttribute('id') . '-hidden-wrapper"';
+                $editLink .= ' data-close="' . $this->_('close') . '"';
+                $editLink .= ' data-edit="' . $this->_('edit') . '"';
+                $editLink .= '>' . $this->_('edit') . '</a>';
+                $editLink .= '</td>';
+
+                if ($this->formFieldConditions && array_key_exists($element->getAttribute('name'), $this->formFieldConditions)) {
+                    $markup .= '<tbody id="' . $element->getAttribute('id') . '-tablebody" class="tbodywrapper">';
+                    // replace the default container class with the tbodywrapper class
+                    $element->setConditionContainerClass('tbodywrapper');
+                }
+
+                $markup .= '<tr id="' . $this->getID() . '-' . $this->getFormElementsPosition($element) . '">';
+                if ($element->getCustomListLabel()) {
+                    $labelText = $element->getCustomListLabel();
+                } else {
+                    $label = $element->getLabel();
+                    $labelText = $label->getText();
+                }
+                $markup .= '<td class="ff-final-list-label ' . $this->getCSSClass('finaltableLabelClass') . '">' . htmlspecialchars((string) $labelText, ENT_QUOTES, 'UTF-8') . '</td>';
+                if (array_key_exists($element->getAttribute('name'), $values)) {
+                    $valText = $values[$element->getAttribute('name')];
+                } else {
+                    $valText = '';
+                }
+
+                // special treatment for password fields - do not display passwords in plain text
+                if ($element->className() === 'InputPassword' || $element->getAttribute('type') === 'password') {
+                    if (array_key_exists($element->getAttribute('name'), $values)) {
+                        $valText = '';
+                        for ($i = 1; $i <= strlen($values[$element->getAttribute('name')]); $i++) {
+                            $valText .= '*';
+                        }
+                    } else {
+                        $valText = '';
+                    }
+                }
+
+                $markup .= '<td class="ff-final-list-value">' . htmlspecialchars((string) $valText, ENT_QUOTES, 'UTF-8') . '</td>';
+                $markup .= $editLink;
+
+                $markup .= '</tr>' . $hideWrapperOpen;
+
+                if ($key === $lastStep) {
+                    $hideWrapperClose .= '</table></div>';
+                }
+
+                $element->getFieldWrapper()->prepend($markup)->append($hideWrapperClose);
+            }
+        }
     }
 
     /**
@@ -3506,93 +3238,13 @@ class Form extends CustomRules
      */
     public function render(): string
     {
+        $this->redirectAfterValidationIfNeeded();
+        $this->applySliderCaptchaPageFlag();
 
-        // redirect after successful form validation if set
-        if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
-            $this->wire('session')->redirect($this->getRedirectURL());
-        }
-
-        // check if slider Captcha has been selected and was not disabled on per form base
-        if ($this->frontendforms['input_captchaType'] == 'SliderCaptcha') {
-            $this->page->sliderCaptcha = true;
-        }
-
-        $dataPrevent = ' data-preventjumptoform="false"';
-        if ($this->preventJumpToForm) {
-            $dataPrevent = ' data-preventjumptoform="true"';
-        }
-        $out = '<div id="' . $this->getID() . '-allwrapper"' . $dataPrevent . '>';
-
-        // if Ajax submit was selected, add an additional data attribute to the form tag
-        if ($this->getSubmitWithAjax()) {
-
-            // check if a user has JavaScript enabled, otherwise show a warning message inside an alert box
-            $warningAlert = new Alert();
-            $warningAlert->setCSSClass('alert_warningClass');
-            $warningAlert->prepend('<noscript>');
-            $warningAlert->append('</noscript>');
-            $warningAlert->setText($this->_('You do not have Javascript enabled. This could cause problems. Please enable Javascript to submit the form without any problems.'));
-            $out .= $warningAlert->render();
-
-            $this->setAttribute('data-submitajax', $this->getID());
-
-            // add special div container for Ajax form submission
-            $out .= '<div id="' . $this->getID() . '-ajax-wrapper" data-validated="' . $this->validated . '">';
-        }
-
-        // Check if the form contains file upload fields, then add enctype attribute
-        foreach ($this->formElements as $obj) {
-
-            // check if the field contains a field condition
-            if (($obj instanceof Element) && ($obj->containsConditions())) {
-                $this->page->field_conditions = true;
-                // add the condition to the formFieldsCondition rray
-                $this->formFieldConditions[$obj->getAttribute('name')] = $obj->getConditions();
-            }
-
-            if ($obj instanceof InputFile) {
-                $this->setAttribute('enctype', 'multipart/form-data');
-                // check if request method is set to get
-                $method = strtolower($this->getAttribute('method'));
-
-                if ($method === 'get') {
-                    if (!$this->getPreventGetFileUploadWarning()) {
-                        // create a warning alert to inform the dev
-                        $warningAlert = new Alert();
-                        $warningAlert->setCSSClass('alert_warningClass');
-                        $warningAlert->setText($this->_('Uploading files via GET request is not possible. Please use POST instead or remove the file upload field.'));
-                        $out .= $warningAlert->render();
-                    }
-                } else {
-                    if ($this->steps && !$this->lastStep) {
-                        // create a warning alert to inform the dev
-                        $warningAlert = new Alert();
-                        $warningAlert->setCSSClass('alert_warningClass');
-                        $warningAlert->setText($this->_('A file upload is only possible in the last step. Please move the file upload field(s) to the last step. Otherwise it would not work.'));
-                        $out .= $warningAlert->render();
-                    }
-                }
-
-            }
-
-            if (is_subclass_of($obj, 'FrontendForms\Inputfields')) {
-                // Label
-                $this->changeElementTag($obj->getLabel(), $this->labeltag);
-                $this->changeElementTag($obj->getDescription(), $this->desctag);
-                $this->changeElementTag($obj->getNotes(), $this->notestag);
-                $this->changeElementTag($obj->getErrorMessage(), $this->msgtag);
-                $this->changeElementTag($obj->getSuccessMessage(), $this->msgtag);
-
-            }
-        }
-
-        if (!$this->allowFormViewByIP()) {
-            $this->alert->setCSSClass('alert_warningClass');
-            $this->alert->setText(sprintf($this->_('We are sorry, but your IP address %s is on the list of forbidden IP addresses. Therefore the form will not be displayed. If you think your IP address is mistakenly on the list, please contact the administrator of the site.'),
-                $this->visitorIP));
-            // do not display form to banned visitors
-            $this->showForm = false;
-        }
+        $out = $this->initOutputWrapper();
+        $out = $this->appendAjaxWarningMarkup($out);
+        $out = $this->processFormElementsForRenderSetup($out);
+        $this->appendIpBlockedWarningIfNeeded();
 
         $out .= $this->prepend;
         $out .= $this->append;
@@ -3622,92 +3274,7 @@ class Form extends CustomRules
             $refKey = $firstButtonPos = key($buttons[0]);
 
             // add captcha field as last element before the button element
-            if ($this->getCaptchaType() != 'none') {
-
-                // position in the form fields array to insert
-                $captchaPosition = $refKey;
-
-                if (wireClassName($this->captcha) === 'SimpleQuestionCaptcha') {
-
-                    // add custom question as label if present
-                    if ($this->question)
-                        $this->captchafield->setLabel($this->question);
-
-                    // check if a question and accepted answers have been set
-                    $missing_msg = [];
-                    // output a warning message if question for question CAPTCHA is missing
-                    if (!$this->captchafield->getLabel()->getText()) {
-                        $missing_msg[] = $this->_('You have not added a question for your question CAPTCHA!');
-                    }
-                    // output a warning message if answers for question CAPTCHA are missing
-                    if (!$this->getCaptcha()->getCaptchaValidValue()) {
-                        $missing_msg[] = $this->_('You have not added some answers for your question CAPTCHA!');
-                    }
-
-                    if ($missing_msg) {
-                        $missing_msg[] = $this->_('If you do not correct this error, you cannot use the simple question CAPTCHA and the Captcha will not be displayed.');
-                        $missingtext = implode('<br>', $missing_msg);
-                        $this->alert->setCSSClass('alert_warningClass');
-                        $this->alert->setText($missingtext);
-                    }
-
-                }
-
-                // add the Captcha to the form array if everything is ok
-                if (((wireClassName($this->captcha) === 'SimpleQuestionCaptcha') && (!$missing_msg)) || (wireClassName($this->captcha) !== 'SimpleQuestionCaptcha')) {
-
-                    // insert the captcha input field after the last input field
-                    $this->formElements = array_merge(array_slice($this->formElements, 0, $captchaPosition),
-                        array($this->captchafield), array_slice($this->formElements, $captchaPosition));
-
-                    // re-index the formElements array
-                    $this->formElements = array_values($this->formElements);
-
-                }
-
-                // remove label and set it as placeholder if set
-                if ($this->useCaptchaLabelAsPlaceholder && ($this->captchafield instanceof InputText)) {
-                    $this->captchafield->setAttribute('placeholder', $this->captchafield->getLabel()->getText());
-                    $this->captchafield->setLabel(''); // remove the label tag
-                }
-                // remove Label if set
-                if ($this->removeCaptchaLabel) {
-                    $this->captchafield->setLabel('');
-                }
-
-                // get the position of the first button element
-                if ($this->getElementsbyClass('Button')) {
-
-                    $firstButtonPos = key($this->getElementsbyClass('Button')[0]);
-
-                    // change the position of the CAPTCHA if position change was set via API
-                    $customizeCaptchaPosition = $this->getCaptchaPosition();
-
-                    if (($this->getCaptchaType() != 'none') && ($customizeCaptchaPosition)) {
-
-                        // get the position of the reference field inside the field object array
-                        $ref_field_name = array_key_first($customizeCaptchaPosition);
-
-                        foreach ($this->formElements as $key => $element) {
-                            if ($this->getID() . '-' . $ref_field_name == $element->getAttribute('name')) {
-                                $ref_position = $key;
-                            }
-                        }
-
-                        // add correction for the "before" position if the reference object is the last item in the array
-                        $before_pos = ($ref_position != array_key_last($this->formElements)) ? $ref_position : $ref_position - 1;
-
-                        $new_pos = (reset($customizeCaptchaPosition) === 'before') ? $before_pos : $ref_position + 1;
-                        $this->repositionArrayElement($this->formElements, $captchaPosition, $new_pos);
-                    }
-                }
-
-            } else {
-                // no Captcha is used
-                if ($this->getElementsbyClass('Button')) {
-                    $firstButtonPos = key($this->getElementsbyClass('Button')[0]);
-                }
-            }
+            $firstButtonPos = $this->insertCaptchaField($refKey, $firstButtonPos);
 
             // sort the privacy elements that checkbox is before text, if both are used
             $privacyElements = [];
@@ -3724,10 +3291,10 @@ class Form extends CustomRules
                 sort($privacyElements);
                 $newPos = $firstButtonPos - 1;
 
-                $this->repositionArrayElement($this->formElements, $privacyElements[0], $newPos);
+                FormHelper::repositionArrayElement($this->formElements, $privacyElements[0], $newPos);
                 if (array_key_exists(1, $privacyElements)) {
                     $newPos = array_key_last($this->formElements) - 1;
-                    $this->repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
+                    FormHelper::repositionArrayElement($this->formElements, $privacyElements[1] - 1, $newPos);
                 }
             }
 
@@ -3735,7 +3302,7 @@ class Form extends CustomRules
             $inputfieldKeys = [];
 
             // only for the slider captcha
-            if ($this->getCaptchaType() == 'SliderCaptcha') {
+            if ($this->getCaptchaType() === 'SliderCaptcha') {
 
                 $xPos = (float)rand() / (float)getrandmax();
                 $yPos = (float)rand() / (float)getrandmax();
@@ -3744,8 +3311,8 @@ class Form extends CustomRules
                 $this->wire('session')->set($this->getID() . '-captcha_y', $yPos);
 
                 // add x and y positions as data attributes for JavaScript usage later on
-                $this->captchafield->setAttribute('data-x', $xPos);
-                $this->captchafield->setAttribute('data-y', $yPos);
+                $this->captchaManager->getField()->setAttribute('data-x', $xPos);
+                $this->captchaManager->getField()->setAttribute('data-y', $yPos);
             }
 
             foreach ($this->formElements as $key => $element) {
@@ -3762,91 +3329,26 @@ class Form extends CustomRules
 
             if (($this->frontendforms['input_useHoneypot']) && ($inputfieldKeys)) {
 
-                $honeypot = $this->createHoneypot();
+                $honeypotGuard = new HoneypotGuard($this->wire('input')->post, $this, $this->alert);
+
+                $honeypot = $honeypotGuard->createField(
+                    $this->createElementName(HoneypotGuard::FIELD_NAME),
+                    $this->useInputWrapper,
+                    $this->useFieldWrapper
+                );
 
                 // if it is multistep form - add additional markup to seca field for displaying the list table properly
-                if ($this->steps && $this->lastStep) {
-                    if (!$honeypot->getFieldWrapper()) {
+                if ($this->stepController->hasSteps() && $this->stepController->isLastStep()) {
+                    if (!$honeypot->getUsageOfFieldWrapper()) {
                         $honeypot->useFieldWrapper(true);
                     }
                     $honeypot->getFieldWrapper()->prepend('<tr>')->append('</tr>');
                 }
 
-                if ($this->stopHoneypotRotation) {
-                    // add honeypot field on the first position of the form
-                    array_unshift($this->formElements, $honeypot);
-                } else {
-                    // add honeypot on the random number field position
-                    shuffle($inputfieldKeys);
-                    array_splice($this->formElements, $inputfieldKeys[0], 0, [$honeypot]);
-                }
+                $honeypotGuard->insertIntoElements($this->formElements, $inputfieldKeys, $honeypot, (bool) $this->stopHoneypotRotation);
             }
 
-            // create hidden Ajax redirect input if set
-            // this value can be grabbed afterwards via JavaScript to make a JS redirect
-            if ($this->getSubmitWithAjax()) {
-                if ($this->ajaxRedirect) {
-                    $ajaxredirectField = new InputHidden('ajax_redirect');
-                    $url = $this->ajaxRedirect;
-                    if ($this->preventJumpToForm) {
-                        // remove internal anchor
-                        $url = explode("#", $url);
-                        $url = $url[0];
-                    }
-                    $ajaxredirectField->setAttribute('value', $url);
-                    $this->add($ajaxredirectField);
-                }
-            }
-
-            // only for the slider captcha -> add hidden fields for the x and y position
-            if ($this->getCaptchaType() == 'SliderCaptcha') {
-
-                $hiddenFieldX = new InputHidden('xPos');
-                $hiddenFieldX->setAttribute('name', 'xPos');
-                $hiddenFieldX->setAttribute('value', '-1');
-                $this->add($hiddenFieldX);
-
-                $hiddenFieldY = new InputHidden('yPos');
-                $hiddenFieldY->setAttribute('name', 'yPos');
-                $hiddenFieldY->setAttribute('value', '-1');
-                $this->add($hiddenFieldY);
-
-            }
-
-            //create CSRF hidden field and add it to the form at the end
-            $hiddenField = new InputHidden('post_token');
-            $hiddenField->setAttribute('name', $tokenName);
-            $hiddenField->setAttribute('value', $tokenValue);
-            $this->add($hiddenField);
-
-            //create hidden field to prevent double form submission if it was not disabled
-            if ($this->useDoubleFormSubmissionCheck) {
-                $hiddenField2 = new InputHidden('doubleSubmission_token');
-                $hiddenField2->setAttribute('name', 'doubleSubmission_token');
-                $hiddenField2->setAttribute('value', $this->doubleSubmission);
-                $this->add($hiddenField2);
-            }
-
-            //create hidden field to send form id to check if this form was submitted
-            //this is only there for the case if other forms are present on the same page
-            $hiddenField3 = new InputHidden('form_id');
-            $hiddenField3->setAttribute('name', 'form_id');
-            $hiddenField3->setAttribute('value', $this->getID());
-            $this->add($hiddenField3);
-
-            //create hidden field to send the timestamp (encoded) when the form was loaded
-            if (($this->getMinTime()) || $this->getMaxTime()) {
-                $hiddenField4 = new InputHidden('load_time');
-                $hiddenField4->setAttribute('value', self::encryptDecrypt((string)$this->load_time));
-                $this->add($hiddenField4);
-            }
-
-            // if a random question array is set, add the random item key to this field
-            if (!is_null($this->random_question)) {
-                $hiddenField5 = new InputHidden('random_key');
-                $hiddenField5->setAttribute('value', $this->random_question);
-                $this->add($hiddenField5);
-            }
+            $this->createHiddenFormFields($tokenName, $tokenValue);
 
             /* BLOCKING ALERTS */
             if ($this->wire('session')->get('blocked')) {
@@ -3860,26 +3362,34 @@ class Form extends CustomRules
                 }
             }
 
-            if ($this->steps) {
-                if ($this->showStepsOf) {
-                    $out .= '<p class="ff-steps-of">' . sprintf($this->_('Step %s of %s'), $this->currentStepNumber, (int)$this->totalStepsNumber) . '</p>';
+            // Don't show step-related UI (progressbar, "Step X of Y") once
+            // the form has been successfully submitted - $this->showForm
+            // is set to false right after successful validation (see
+            // ___isValid()), the same flag that already hides the actual
+            // form fields further below. Without this check here, the
+            // progressbar/step text would still render on the final step
+            // even after a successful submission, alongside the success
+            // message.
+            if ($this->stepController->hasSteps() && $this->showForm) {
+                if ($this->stepController->showsStepsOf()) {
+                    $out .= '<p class="ff-steps-of">' . sprintf($this->_('Step %s of %s'), $this->stepController->getCurrentStepNumber(), (int)$this->stepController->getTotalSteps()) . '</p>';
                 }
 
-                if ($this->customProgressbar === '') {
+                if ($this->stepController->getCustomProgressbar() === '') {
 
-                    if ($this->showStepsProgressbar) {
+                    if ($this->stepController->showsStepsProgressbar()) {
 
-                        $this->stepsProgressbar->setAttribute('max', count($this->getSlices()));
-                        $this->stepsProgressbar->setAttribute('value', $this->currentStepNumber);
+                        $this->stepController->getProgressbar()->setAttribute('max', count($this->getSlices()));
+                        $this->stepController->getProgressbar()->setAttribute('value', $this->stepController->getCurrentStepNumber());
                         if ($this->frontendforms['input_framework'] === 'bootstrap5.json') {
-                            $percent = round($this->currentStepNumber * 100 / count($this->getSlices()));
-                            $this->stepsProgressbar->setAttribute('style', 'width:' . $percent . '%');
+                            $percent = round($this->stepController->getCurrentStepNumber() * 100 / count($this->getSlices()));
+                            $this->stepController->getProgressbar()->setAttribute('style', 'width:' . $percent . '%');
                         }
-                        $out .= $this->stepsProgressbar->render();
+                        $out .= $this->stepController->getProgressbar()->render();
 
                     }
                 } else {
-                    $out .= $this->customProgressbar;
+                    $out .= $this->stepController->getCustomProgressbar();
                 }
             }
 
@@ -3899,17 +3409,17 @@ class Form extends CustomRules
                 $elementsClassNames = (array_map("get_class", $this->formElements));
                 $position = array_search('FrontendForms\Button', $elementsClassNames);
 
-                if ($this->steps) {
+                if ($this->stepController->hasSteps()) {
 
-                    if (!$this->firstStep) {
+                    if (!$this->stepController->isFirstStep()) {
 
                         // first check if user is allowed to enter this step
                         // A user can only enter the next step if the previous step is valid
 
-                        $formValues = $this->wire('session')->get($this->getID() . '-values');
+                        $formValues = $this->wire('session')->get($this->getID() . '-values') ?? [];
 
                         $key = $this->wire('input')->url(['withQueryString' => true]);
-                        if ($this->currentStepNumber == 2) {
+                        if ($this->stepController->getCurrentStepNumber() == 2) {
                             $key = '/';
                             // special treatment because first step can be reached with or without querystring
                             $keys = [
@@ -3929,13 +3439,13 @@ class Form extends CustomRules
                         if ($formValues) {
 
                             // check if the previous step number exists inside the formValues array -> otherwise redirect
-                            $prevStep = $this->currentStepNumber - 1;
+                            $prevStep = $this->stepController->getCurrentStepNumber() - 1;
                             if (!array_key_exists($prevStep, $formValues)) {
 
                                 // make redirect to the next step which should be filled out
                                 $nextStepToFillOut = array_key_last($formValues) + 1;
                                 $redirectURL = ($nextStepToFillOut === 1) ? $this->page->url : $this->page->url . '?' . $this->getID() . '-step=' . $nextStepToFillOut;
-                                //$this->wire('session')->redirect($redirectURL);
+                                $this->wire('session')->redirect($redirectURL);
                             }
                         } else {
                             // no form values exist -> so redirect to the first step
@@ -3943,10 +3453,10 @@ class Form extends CustomRules
                         }
                     }
 
-                    if ($this->lastStep) {
+                    if ($this->stepController->isLastStep()) {
 
-                        if ($this->lastStepListText) {
-                            $out .= $this->lastStepListText;
+                        if ($this->stepController->getLastStepListText()) {
+                            $out .= $this->stepController->getLastStepListText();
                         }
 
                         // remove all non inputfields from the form fields array inside the final list
@@ -3961,7 +3471,7 @@ class Form extends CustomRules
                         ];
 
 
-                        $lastElement = $this->lastStepElements[0];
+                        $lastElement = $this->stepController->getLastStepElements()[0];
                         $lastKey = (array_search($lastElement, $this->formElements)) - 1;
 
                         foreach ($this->formElements as $key => $element) {
@@ -3977,10 +3487,10 @@ class Form extends CustomRules
                         }
 
                         foreach ($cleanedFormElements as $key => $element) {
-                            if ($element->getAttribute('name') === $this->firstElement->getAttribute('name')) {
+                            if ($element->getAttribute('name') === $this->stepController->getFirstElement()->getAttribute('name')) {
                                 $firstStep = $key;
                             }
-                            if ($element->getAttribute('name') === $this->lastElement->getAttribute('name')) {
+                            if ($element->getAttribute('name') === $this->stepController->getLastElement()->getAttribute('name')) {
                                 $lastStep = $key;
                             }
                         }
@@ -3991,7 +3501,7 @@ class Form extends CustomRules
                 }
 
                 // collect all button elements inside the form
-                if ($this->steps) {
+                if ($this->stepController->hasSteps()) {
                     $buttons = [];
                     foreach ($this->formElements as $key => $element) {
                         if ($element->className() === 'Button') {
@@ -4005,141 +3515,8 @@ class Form extends CustomRules
                 foreach ($this->formElements as $key => $element) {
 
                     // check if it multi-step form
-                    if ($this->steps && $this->lastStep) {
-
-                        $name = $element->getAttribute('name');
-
-                        $values = [];
-
-                        if (!$_POST) {
-
-                            // set final values from session
-                            $finalValues = $this->wire('session')->get($this->getID() . '-values');
-
-                            foreach ($finalValues as $fv) {
-
-                                foreach ($fv as $name => $v) {
-                                    if (is_array($v)) {
-                                        $values[$name] = implode(', ', $fv[$name]);
-                                    } else {
-                                        $values[$name] = $v;
-                                    }
-                                }
-                            };
-
-                        } else {
-                            foreach ($_POST as $name => $v) {
-                                if (is_array($v)) {
-                                    $values[$name] = implode(', ', $_POST[$name]);
-                                } else {
-                                    $values[$name] = $v;
-                                }
-                            }
-                        }
-
-                        if ($element->className() !== 'InputHidden' && $element->getAttribute('name') != $this->getID() . '-seca') {
-
-                            // show/hide inputfield depending on, if there is an error or not
-                            if (array_key_exists($element->getAttribute('name'), $this->formErrors)) {
-                                $hideClass = '';
-                            } else {
-                                $hideClass = 'ff-final-list-hidden ';
-                            }
-
-                            /*
-                             * Create the list
-                             */
-                            if ($key <= $lastStep) {
-
-                                // table start
-                                $markup = '';
-
-                                if ($key === $firstStep) {
-
-                                    $markup .= '<div class="' . $this->getCSSClass('responsiveTableClass') . '">';
-
-                                    $tableStyling = [
-                                        'none.json' => 'ff-table',
-                                        'pico2.json' => 'ff-table',
-                                        'uikit3.json' => 'uk-table-small uk-table-divider',
-                                        'bootstrap5.json' => 'table-sm'
-                                    ];
-
-                                    if (array_key_exists($this->frontendforms['input_framework'], $tableStyling)) {
-                                        $tableStyleClass = $tableStyling[$this->frontendforms['input_framework']];
-                                    } else {
-                                        $tableStyleClass = 'ff-table';
-                                    }
-
-                                    $markup .= '<table id="' . $this->getID() . '-final-step-table" class="' . $this->getCSSClass('tableClass') . ' ' . $tableStyleClass . ' final-list-table">';
-
-                                }
-
-                                $hideWrapperOpen = '<tr id="' . $element->getAttribute('id') . '-hidden-wrapper" class="ff-hidden-wrapper ' . $hideClass . '"><td colspan="3">';
-
-                                $hideWrapperClose = '</td></tr>';
-                                if ($this->formFieldConditions && array_key_exists($element->getAttribute('name'), $this->formFieldConditions)) {
-                                    $hideWrapperClose = '</td></tr></tbody>';
-                                }
-
-                                // if field wrapper is disabled -> enable it for making the form element invisible
-                                if (!$element->getFieldWrapper()) {
-                                    $element->useFieldWrapper(true);
-                                }
-
-                                // create edit link element
-                                $editLink = '<td class="ff-final-list-edit ' . $this->getCSSClass('finaltableEditClass') . '">';
-                                $editLink .= '<a id="' . $this->getID() . '-' . $element->getAttribute('id') . '-edit" class="ff-edit-link" href="#" rel="nofollow" data-element="' . $element->getAttribute('id') . '-hidden-wrapper"';
-                                $editLink .= ' data-close="' . $this->_('close') . '"';
-                                $editLink .= ' data-edit="' . $this->_('edit') . '"';
-                                $editLink .= '>' . $this->_('edit') . '</a>';
-                                $editLink .= '</td>';
-
-                                if ($this->formFieldConditions && array_key_exists($element->getAttribute('name'), $this->formFieldConditions)) {
-                                    $markup .= '<tbody id="' . $element->getAttribute('id') . '-tablebody" class="tbodywrapper">';
-                                    // replace the default container class with the tbodywrapper class
-                                    $element->setConditionContainerClass('tbodywrapper');
-                                }
-
-                                $markup .= '<tr id="' . $this->getID() . '-' . $this->getFormElementsPosition($element) . '">';
-                                if ($element->getCustomListLabel()) {
-                                    $labelText = $element->getCustomListLabel();
-                                } else {
-                                    $label = $element->getLabel();
-                                    $labelText = $label->getText();
-                                }
-                                $markup .= '<td class="ff-final-list-label ' . $this->getCSSClass('finaltableLabelClass') . '">' . $labelText . '</td>';
-                                if (array_key_exists($element->getAttribute('name'), $values)) {
-                                    $valText = $values[$element->getAttribute('name')];
-                                } else {
-                                    $valText = '';
-                                }
-
-                                // special treatment for password fields - do not display passwords in plain text
-                                if ($element->className() == 'InputPassword' || $element->getAttribute('type') == 'password') {
-                                    if (array_key_exists($element->getAttribute('name'), $values)) {
-                                        $valText = '';
-                                        for ($i = 1; $i <= strlen($values[$element->getAttribute('name')]); $i++) {
-                                            $valText .= '*';
-                                        }
-                                    } else {
-                                        $valText = '';
-                                    }
-                                }
-
-                                $markup .= '<td class="ff-final-list-value">' . $valText . '</td>';
-                                $markup .= $editLink;
-
-                                $markup .= '</tr>' . $hideWrapperOpen;
-
-                                if ($key === $lastStep) {
-                                    $hideWrapperClose .= '</table></div>';
-                                }
-
-                                $element->getFieldWrapper()->prepend($markup)->append($hideWrapperClose);
-                            }
-
-                        }
+                    if ($this->stepController->hasSteps() && $this->stepController->isLastStep()) {
+                        $this->renderFinalStepTableRow($element, $key, $firstStep, $lastStep);
                     }
 
                     // check if field conditions have been set
@@ -4179,13 +3556,14 @@ class Form extends CustomRules
                     $element->setAttribute('id', $this->getID() . '-' . $oldId);
 
                     // change the name attribute of the CSRF field
-                    if ($element->getID() == $this->getID() . '-post_token') {
+                    if ($element->getID() === $this->getID() . '-post_token') {
                         $element->setAttribute('name', $tokenName);
                     }
 
                     // enable/disable usage of Aria attributes
-                    if (method_exists($element, 'useAttributes'))
+                    if (method_exists($element, 'useAriaAttributes')) {
                         $element->useAriaAttributes($this->useAriaAttributes);
+                    }
 
                     // Label and description (Only on input fields)
                     if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
@@ -4233,9 +3611,11 @@ class Form extends CustomRules
                         // create progressbar and info text for form submission
                         $submitInfo = $this->ajaxProgressbar->render() . '<div class="ajax-submission-text">' . $this->frontendforms['input_ajaxMsg'] . '</div>';
 
-                        if ($this->steps && $this->lastStep) {
+                        if ($this->stepController->hasSteps() && $this->stepController->isLastStep()) {
                             if ($element->getAttribute('name') == $firstButton) {
-                                $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo . '</div>';
+                                if ($this->showProgressbar) {
+                                    $formElements .= '<div id="' . $this->getID() . '-form-submission" class="progress-submission" style="display:none">' . $submitInfo . '</div>';
+                                }
                             }
                         } else {
                             if ($key === $position) { // add it only before the first button inside the form
@@ -4282,7 +3662,7 @@ class Form extends CustomRules
                     }
 
                     // add a button wrapper on multi-step form
-                    if ($this->steps && $element->getAttribute('name') === $firstButton) {
+                    if ($this->stepController->hasSteps() && $element->getAttribute('name') === $firstButton) {
                         $formElements .= '<div id="' . $this->getID() . '-button-wrapper" class="button-wrapper">';
                         // add additional class to submit button on last step
                         if ($element->hasAttribute('type') && $element->getAttribute('type') === 'submit') {
@@ -4298,7 +3678,7 @@ class Form extends CustomRules
 
                     $formElements .= $element->render() . PHP_EOL;
 
-                    if ($this->steps && $element->getAttribute('name') === $lastButton) {
+                    if ($this->stepController->hasSteps() && $element->getAttribute('name') === $lastButton) {
                         $formElements .= '</div>';
                     }
 
@@ -4329,6 +3709,167 @@ class Form extends CustomRules
     }
 
     /**
+     * Redirect the browser to the configured redirect URL if the form was
+     * just successfully validated (and Ajax submission is not in use, since
+     * that handles redirects on the client side instead).
+     * @return void
+     * @throws WireException
+     */
+    private function redirectAfterValidationIfNeeded(): void
+    {
+        if ($this->getRedirectURL() && $this->validated && !$this->getSubmitWithAjax()) {
+            $this->wire('session')->redirect($this->getRedirectURL());
+        }
+    }
+
+    /**
+     * Flag the current page as using the Slider CAPTCHA (read by the
+     * frontend JS/CSS loader) if that CAPTCHA type is configured.
+     * @return void
+     */
+    private function applySliderCaptchaPageFlag(): void
+    {
+        if ($this->frontendforms['input_captchaType'] == 'SliderCaptcha') {
+            $this->page->sliderCaptcha = true;
+        }
+    }
+
+    /**
+     * Build the opening "allwrapper" div that surrounds the whole rendered
+     * form, including the data-preventjumptoform attribute.
+     * @return string
+     */
+    private function initOutputWrapper(): string
+    {
+        $dataPrevent = ' data-preventjumptoform="false"';
+        if ($this->preventJumpToForm) {
+            $dataPrevent = ' data-preventjumptoform="true"';
+        }
+        return '<div id="' . $this->getID() . '-allwrapper"' . $dataPrevent . '>';
+    }
+
+    /**
+     * If Ajax submission is enabled, append the "JavaScript disabled"
+     * warning box and the Ajax wrapper div's opening tag to the given
+     * output string, and set the data-submitajax attribute on the form.
+     * @param string $out
+     * @return string
+     */
+    private function appendAjaxWarningMarkup(string $out): string
+    {
+        if ($this->getSubmitWithAjax()) {
+
+            // check if a user has JavaScript enabled, otherwise show a warning message inside an alert box
+            $warningAlert = new Alert();
+            $warningAlert->setCSSClass('alert_warningClass');
+            $warningAlert->prepend('<noscript>');
+            $warningAlert->append('</noscript>');
+            $warningAlert->setText($this->_('You do not have Javascript enabled. This could cause problems. Please enable Javascript to submit the form without any problems.'));
+            $out .= $warningAlert->render();
+
+            $this->setAttribute('data-submitajax', $this->getID());
+
+            // add special div container for Ajax form submission
+            $out .= '<div id="' . $this->getID() . '-ajax-wrapper" data-validated="' . $this->validated . '">';
+        }
+        return $out;
+    }
+
+    /**
+     * Walk all form elements once to: detect field conditions (and flag the
+     * page accordingly), detect file upload fields (setting the enctype
+     * attribute and appending GET-method / non-last-step warnings to the
+     * given output string), and normalize the label/description/notes/
+     * message tags of every Inputfields element.
+     * @param string $out
+     * @return string
+     */
+    private function processFormElementsForRenderSetup(string $out): string
+    {
+        foreach ($this->formElements as $obj) {
+
+            // check if the field contains a field condition
+            if (($obj instanceof Element) && ($obj->containsConditions())) {
+                $this->page->field_conditions = true;
+                // add the condition to the formFieldsCondition rray
+                $this->formFieldConditions[$obj->getAttribute('name')] = $obj->getConditions();
+            }
+
+            if ($obj instanceof InputFile) {
+                $this->setAttribute('enctype', 'multipart/form-data');
+                // check if request method is set to get
+                $method = strtolower($this->getAttribute('method'));
+
+                if ($method === 'get') {
+                    if (!$this->getPreventGetFileUploadWarning()) {
+                        // create a warning alert to inform the dev
+                        $warningAlert = new Alert();
+                        $warningAlert->setCSSClass('alert_warningClass');
+                        $warningAlert->setText($this->_('Uploading files via GET request is not possible. Please use POST instead or remove the file upload field.'));
+                        $out .= $warningAlert->render();
+                    }
+                } else {
+                    if ($this->stepController->hasSteps() && !$this->stepController->isLastStep()) {
+                        // create a warning alert to inform the dev
+                        $warningAlert = new Alert();
+                        $warningAlert->setCSSClass('alert_warningClass');
+                        $warningAlert->setText($this->_('A file upload is only possible in the last step. Please move the file upload field(s) to the last step. Otherwise it would not work.'));
+                        $out .= $warningAlert->render();
+                    }
+                }
+
+            }
+
+            if (is_subclass_of($obj, 'FrontendForms\Inputfields')) {
+                // Label
+                $this->changeElementTag($obj->getLabel(), $this->labeltag);
+                $this->changeElementTag($obj->getDescription(), $this->desctag);
+                $this->changeElementTag($obj->getNotes(), $this->notestag);
+                $this->changeElementTag($obj->getErrorMessage(), $this->msgtag);
+                $this->changeElementTag($obj->getSuccessMessage(), $this->msgtag);
+
+                // Fields like InputCheckboxMultiple/InputRadioMultiple create
+                // one separate sub-element (with its own, independent label)
+                // per option - those labels need the same tag change too,
+                // since they are not covered by $obj->getLabel() above.
+                if (method_exists($obj, 'getOptions')) {
+                    foreach ($obj->getOptions() as $option) {
+                        if (is_subclass_of($option, 'FrontendForms\Inputfields')) {
+                            $this->changeElementTag($option->getLabel(), $this->labeltag);
+                        }
+                    }
+                }
+
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * Set the "IP blocked" warning alert if the one-time IP blacklist check
+     * from the constructor failed.
+     *
+     * NOTE: this must use $this->ipCheckPassed (not $this->showForm),
+     * because showForm may have been set to false for an unrelated reason
+     * since then (e.g. hiding the form after a successful submission) -
+     * re-checking the blacklist here would just repeat the exact same
+     * lookup already done in the constructor.
+     * @return void
+     */
+    private function appendIpBlockedWarningIfNeeded(): void
+    {
+        if (!$this->ipCheckPassed) {
+            $this->alert->setCSSClass('alert_warningClass');
+            $this->alert->setText(sprintf(
+                $this->_('We are sorry, but your IP address %s is on the list of forbidden IP addresses. Therefore the form will not be displayed. If you think your IP address is mistakenly on the list, please contact the administrator of the site.'),
+                $this->visitorIP
+            ));
+            // do not display form to banned visitors
+            $this->showForm = false;
+        }
+    }
+
+    /**
      * Append a field object to the form
      * @param object $field - object of inputfield, fieldset, button, ...
      * @return void
@@ -4348,33 +3889,25 @@ class Form extends CustomRules
      * @return void
      * @throws Exception
      */
-    public
-    function add(
+    public function add(
         Markup|Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose    $field,
         Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose|null|bool $otherfield = null,
         bool                                                                 $add_before = false
-    ): void
-    {
+    ): void {
 
         // add or remove wrapper divs on each form element
         if (is_subclass_of($field, 'FrontendForms\Inputfields')) {
 
-            // check if the usage of inputwrapper is set on per field base
-            if (is_null($field->getUsageOfInputWrapper())) {
-                $useinputwrapper = $this->useInputWrapper;
-            } else {
-                $useinputwrapper = $field->getUsageOfInputWrapper();
+            // apply the form-level wrapper settings to the field, unless
+            // the field already received its own explicit setting via a
+            // direct useInputWrapper()/useFieldWrapper() call - in that
+            // case, the field's own choice is respected and left as-is.
+            if (!$field->isInputWrapperExplicitlySet()) {
+                $field->setInputWrapperFromForm($this->useInputWrapper);
             }
-
-            $field->useInputWrapper($useinputwrapper);
-
-            // check if the usage of fieldwrapper is set on per field base
-            if (is_null($field->getUsageOfFieldWrapper())) {
-                $usefieldwrapper = $this->useFieldWrapper;
-            } else {
-                $usefieldwrapper = $field->getUsageOfFieldWrapper();
+            if (!$field->isFieldWrapperExplicitlySet()) {
+                $field->setFieldWrapperFromForm($this->useFieldWrapper);
             }
-            $field->useFieldWrapper($usefieldwrapper);
 
             // create a placeholder for the label of this field
             $fieldname = $field->getAttribute('name');
@@ -4384,7 +3917,11 @@ class Form extends CustomRules
             $value = '';
             // special treatment for single checkbox and single radio - do not add the value by default to the placeholder
             if ($className !== 'InputCheckbox' && !is_subclass_of($field, 'FrontendForms\InputCheckbox') && $className !== 'InputRadio' && !is_subclass_of($field, 'FrontendForms\InputRadio')) {
-                $field->getAttribute('value');
+                $fieldValue = $field->getAttribute('value');
+                if (is_array($fieldValue)) {
+                    $fieldValue = implode(',', $fieldValue);
+                }
+                $value = (string) $fieldValue;
             }
             $this->setMailPlaceholder($fieldname . 'value', $value);
 
@@ -4396,11 +3933,10 @@ class Form extends CustomRules
             'Markup',
             'FieldsetOpen',
             'FieldsetClose',
-            'Markup',
             'Progressbar'
         ];
 
-        $className = $field->className($field);
+        $className = $field->className();
 
 
         if ((!is_subclass_of($field, 'FrontendForms\TextElements')) && !in_array($className, $elementsWithNoName)) {
@@ -4417,8 +3953,10 @@ class Form extends CustomRules
         if (!is_null($otherfield)) {
             // check if another field exists
             if (is_bool($otherfield)) {
-                throw new Exception("The reference field (argument 2) where you want to add this field before or after does not exist. Please check if you have written the name attribute correctly.",
-                    1);
+                throw new Exception(
+                    "The reference field (argument 2) where you want to add this field before or after does not exist. Please check if you have written the name attribute correctly.",
+                    1
+                );
             } else {
                 // check if the field with this id exists inside the formElements array
                 if ($this->getFormelementByName($otherfield->getAttribute('name'))) {
@@ -4436,15 +3974,20 @@ class Form extends CustomRules
                         if (!$add_before) { // add after
                             $ref_position = $ref_position + 1;
                         }
-                        $this->formElements = array_merge(array_slice($this->formElements, 0, $ref_position), [$field],
-                            array_slice($this->formElements, $ref_position));
+                        $this->formElements = array_merge(
+                            array_slice($this->formElements, 0, $ref_position),
+                            [$field],
+                            array_slice($this->formElements, $ref_position)
+                        );
                     }
                 }
             }
         } else {
             // no other element is present -> so add it to formElements array as next element
-            $this->formElements = array_merge($this->formElements,
-                [$field]); // array must be numeric for honeypot field
+            $this->formElements = array_merge(
+                $this->formElements,
+                [$field]
+            ); // array must be numeric for honeypot field
         }
 
     }
@@ -4460,12 +4003,10 @@ class Form extends CustomRules
      * @return void
      * @throws Exception
      */
-    public
-    function addBefore(
+    public function addBefore(
         Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose      $field,
         Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $before_field
-    ): void
-    {
+    ): void {
         // if a field is present inside the formelements array, remove it first
         if (($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))) {
             $this->remove($field);
@@ -4485,12 +4026,10 @@ class Form extends CustomRules
      * @return void
      * @throws Exception
      */
-    public
-    function addAfter(
+    public function addAfter(
         Inputfields|Textelements|Button|FieldsetOpen|FieldsetClose      $field,
         Inputfields|Textelements|FieldsetOpen|FieldsetClose|Button|bool $after_field
-    ): void
-    {
+    ): void {
         // if a field is present inside the formelements array, remove it first
         if (($field->getAttribute('name')) && ($this->getFormelementByName($field->getAttribute('name')))) {
             $this->remove($field);
@@ -4503,8 +4042,7 @@ class Form extends CustomRules
      * @param object $field
      * @return void
      */
-    public
-    function remove(object $field): void
+    public function remove(object $field): void
     {
         if (($key = array_search($field, $this->formElements)) !== false) {
             unset($this->formElements[$key]);
@@ -4519,10 +4057,9 @@ class Form extends CustomRules
      * Get the min time value
      * @return int
      */
-    public
-    function getMinTime(): int
+    public function getMinTime(): int
     {
-        return $this->frontendforms['input_minTime'];
+        return (int) $this->frontendforms['input_minTime'];
     }
 
     /**
@@ -4530,8 +4067,7 @@ class Form extends CustomRules
      * @param int $minTime
      * @return $this
      */
-    public
-    function setMinTime(int $minTime): self
+    public function setMinTime(int $minTime): self
     {
         $this->frontendforms['input_minTime'] = $minTime;
         return $this;
@@ -4541,10 +4077,9 @@ class Form extends CustomRules
      * Get the max time value
      * @return int
      */
-    protected
-    function getMaxTime(): int
+    protected function getMaxTime(): int
     {
-        return $this->frontendforms['input_maxTime'];
+        return (int) $this->frontendforms['input_maxTime'];
     }
 
     /**
@@ -4552,48 +4087,20 @@ class Form extends CustomRules
      * @param int $maxTime
      * @return $this
      */
-    public
-    function setMaxTime(int $maxTime): self
+    public function setMaxTime(int $maxTime): self
     {
         $this->frontendforms['input_maxTime'] = $maxTime;
         return $this;
     }
 
-    /** Static method to encrypt/decrypt a string according to the encryption settings
-     * @param string $string
-     * @param string $method
-     * @return string
-     */
-    public
-    static function encryptDecrypt(string $string, string $method = 'encrypt'): string
-    {
-        // encryption settings
-        $encrypt_method = 'AES-256-CBC';
-        $secret_key = 'd0a7e7997b6d5fcd55f4b5c32611b87cd923e88837b63bf2941ef819dc8ca282';
-        $secret_iv = '5fgf5HJ5g27';
-        $algo = 'sha256';
-        // user define secret key
-        $key = hash($algo, $secret_key);
-        $iv = substr(hash($algo, $secret_iv), 0, 16);
-        $methods = ['encrypt', 'decrypt'];
-        if (in_array($method, $methods)) {
-            if ($method === 'encrypt') {
-                $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
-                return base64_encode($output);
-            } else {
-                return openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
-            }
-        }
-        return $string;
-    }
+
 
     /**
      * Create a required hint text element if showTextHint is set to true
      * @param string $position - has to be 'top' or 'bottom'
      * @return string
      */
-    private
-    function renderRequiredText(string $position): string
+    private function renderRequiredText(string $position): string
     {
         if ($this->defaultRequiredTextPosition === $position) {
             return $this->requiredHint->render();
@@ -4601,34 +4108,9 @@ class Form extends CustomRules
         return ''; // return empty string
     }
 
-    /**
-     * Create a random string with a certain length for usage in URL query strings
-     * @param int $charLength - the length of the random string - default is 100
-     * @return string - returns a slug version of the generated random string that can be used inside an url
-     */
-    protected
-    function createQueryCode(int $charLength = 100): string
-    {
-        $pass = new \ProcessWire\Password();
-        if ($charLength <= 0) {
-            $charLength = 10;
-        }
-        // instantiate a password object to use the methods
-        $string = $pass->randomBase64String($charLength);
-        return $this->generateSlug($string);
-    }
 
-    /**
-     * Generate a slug out of a string for usage in urls (fe query strings)
-     * This is only a helper function
-     * @param $string - the string
-     * @return string
-     */
-    protected
-    function generateSlug(string $string): string
-    {
-        return preg_replace('/[^A-Za-z\d-]+/', '-', $string);
-    }
+
+
 
     /**
      * Make a readable string from a number of seconds
@@ -4636,66 +4118,66 @@ class Form extends CustomRules
      * @return string|null - a readable string of the time (fe 1 day instead of 86400 seconds)
      * @throws Exception
      */
-    protected
-    function readableTimestringFromSeconds(int $seconds = 0): ?string
+    protected function readableTimestringFromSeconds(int $seconds = 0): ?string
     {
         $then = new DateTime(date('Y-m-d H:i:s', 0));
         $now = new DateTime(date('Y-m-d H:i:s', $seconds));
         $interval = $then->diff($now);
 
         if ($interval->y >= 1) {
-            $thetime[] = $interval->y . ' ' . _n($this->_('year'),
-                    $this->_('years'), $interval->y);
+            $thetime[] = $interval->y . ' ' . _n(
+                    $this->_('year'),
+                    $this->_('years'),
+                    $interval->y
+                );
         }
         if ($interval->m >= 1) {
-            $thetime[] = $interval->m . ' ' . _n($this->_('month'),
-                    $this->_('months'), $interval->m);
+            $thetime[] = $interval->m . ' ' . _n(
+                    $this->_('month'),
+                    $this->_('months'),
+                    $interval->m
+                );
         }
         if ($interval->d >= 1) {
-            $thetime[] = $interval->d . ' ' . _n($this->_('day'),
-                    $this->_('days'), $interval->d);
+            $thetime[] = $interval->d . ' ' . _n(
+                    $this->_('day'),
+                    $this->_('days'),
+                    $interval->d
+                );
         }
         if ($interval->h >= 1) {
-            $thetime[] = $interval->h . ' ' . _n($this->_('hour'),
-                    $this->_('hours'), $interval->h);
+            $thetime[] = $interval->h . ' ' . _n(
+                    $this->_('hour'),
+                    $this->_('hours'),
+                    $interval->h
+                );
         }
         if ($interval->i >= 1) {
-            $thetime[] = $interval->i . ' ' . _n($this->_('minute'),
-                    $this->_('minutes'), $interval->i);
+            $thetime[] = $interval->i . ' ' . _n(
+                    $this->_('minute'),
+                    $this->_('minutes'),
+                    $interval->i
+                );
         }
         if ($interval->s >= 1) {
-            $thetime[] = $interval->s . ' ' . _n($this->_('second'),
-                    $this->_('seconds'), $interval->s);
+            $thetime[] = $interval->s . ' ' . _n(
+                    $this->_('second'),
+                    $this->_('seconds'),
+                    $interval->s
+                );
         }
 
         return isset($thetime) ? implode(' ', $thetime) : null;
     }
 
-    /**
-     * Return the names of all input fields inside a form as an array
-     * @return array
-     */
-    public
-    function getNamesOfInputFields(): array
-    {
-        $elements = [];
-        if ($this->formElements) {
-            foreach ($this->formElements as $element) {
-                if (is_subclass_of($element, 'FrontendForms\Inputfields')) {
-                    $elements[] = $element->getAttribute('name');
-                }
-            }
-        }
-        return array_filter($elements);
-    }
+
 
     /**
      * Output an error message that email could not be sent due to possible wrong email configuration settings
      * This is a general message that could be used for all forms
      * @return void
      */
-    protected
-    function generateEmailSentErrorAlert(): void
+    protected function generateEmailSentErrorAlert(): void
     {
         $this->alert->setCSSClass('alert_dangerClass');
         $this->alert->setText($this->_('Email could not be sent due to possible wrong email configuration settings.'));
@@ -4707,20 +4189,18 @@ class Form extends CustomRules
      * pre-header
      * @return string
      */
-    protected
-    function getLitmusHack(): string
+    protected function getLitmusHack(): string
     {
-        return '&#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279;';
+        return $this->mailTemplateRenderer->getLitmusHack();
     }
 
     /**
      * Method for internal usage only
      * @return string
      */
-    protected
-    function getPreheaderStyle(): string
+    protected function getPreheaderStyle(): string
     {
-        return 'display:none;font-size:1px; color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;';
+        return $this->mailTemplateRenderer->getPreheaderStyle();
     }
 
     /**
@@ -4728,86 +4208,9 @@ class Form extends CustomRules
      * @param WireMail $mail
      * @return string
      */
-    protected
-    function generateEmailPreHeader(WireMail $mail): string
+    protected function generateEmailPreHeader(WireMail $mail): string
     {
-        if ($mail->title) { // check if title property was set
-            // generate an invisible div container
-            return '<div id="preheader-text" style="' . $this->getPreheaderStyle() . '">' . $mail->title . $this->getLitmusHack() . '</div>';
-        }
-        return '';
-    }
-
-    /**
-     * Get all Captcha questions as a PageArray
-     * @return array
-     * @throws WireException
-     */
-    protected
-    function getCaptchaQuestions(): array
-    {
-        // need to include all, otherwise pages under the admin tree will not be listed
-        $questions = $this->wire('pages')->find('template=ff_question,include=all,status=published,status!=hidden');
-
-        $questionArray = [];
-
-        $numberOfQuestions = $questions->count;
-        if (!$numberOfQuestions) return $questionArray;
-
-        // just the case there are more than 25 pages, pick only 25 pages randomly to prevent a too large array
-        if ($numberOfQuestions > 25) {
-            $questions = $questions->findRandom(25);
-        }
-
-        // check if multi-language site
-        $multilang = false;
-        if ($this->wire('languages')) {
-            $multilang = true;
-            $lang = $this->wire('user')->language;
-        }
-        // create the multidim. array
-        foreach ($questions as $key => $question) {
-
-            if ($multilang) {
-                $title = $question->getLanguageValue($lang, 'title');
-                // check if field "title" contains a value in this language, otherwise take the value from the default lanugage
-                if (!$title) {
-                    $title = $question->getLanguageValue('default', 'title');
-                }
-                $answers = explode("\n", $question->getLanguageValue($lang, 'ff_answers'));
-                // check if field "answers" contains values in this language, otherwise take the values from the default lanugage
-                if ($answers) {
-                    $answers = explode("\n", $question->getLanguageValue('default', 'ff_answers'));
-                }
-                $successmsg = $question->getLanguageValue($lang, 'ff_successmsg');
-                $errormsg = $question->getLanguageValue($lang, 'ff_errormsg');
-                $placeholder = $question->getLanguageValue($lang, 'ff_placeholder');
-                $notes = $question->getLanguageValue($lang, 'ff_notes');
-                $description = $question->getLanguageValue($lang, 'ff_description');
-                $descriptionPosition = $question->getLanguageValue($lang, 'ff_descposition')->value;
-            } else {
-                $title = $question->title;
-                $answers = explode("\n", $question->ff_answers);
-                $successmsg = $question->ff_successmsg;
-                $errormsg = $question->ff_errormsg;
-                $placeholder = $question->ff_placeholder;
-                $notes = $question->ff_notes;
-                $description = $question->description;
-                $descriptionPosition = $question->ff_descposition->value;
-            }
-
-            $questionArray[$key]['question'] = $title;
-            $questionArray[$key]['answers'] = $answers;
-            $questionArray[$key]['successMsg'] = $successmsg;
-            $questionArray[$key]['errorMsg'] = $errormsg;
-            $questionArray[$key]['placeholder'] = $placeholder;
-            $questionArray[$key]['notes'] = $notes;
-            $questionArray[$key]['description'] = $description;
-            $questionArray[$key]['descriptionPosition'] = $descriptionPosition;
-
-        }
-        return array_filter($questionArray);
-
+        return $this->mailTemplateRenderer->generateEmailPreHeader($mail);
     }
 
     /**
@@ -4815,13 +4218,9 @@ class Form extends CustomRules
      * @return $this
      *
      */
-    public
-    function addStep(): self
+    public function addStep(): self
     {
-        $steps = $this->steps;
-        $total = count($this->formElements);
-        $steps[] = ['position' => $total];
-        $this->steps = $steps;
+        $this->stepController->addStep(count($this->formElements));
         return $this;
     }
 
@@ -4830,12 +4229,10 @@ class Form extends CustomRules
      * @param string $text
      * @return void
      */
-    public
-    function setLastStepListText(string $text): self
+    public function setLastStepListText(string $text): self
     {
-        $this->lastStepListText = $text;
+        $this->stepController->setLastStepListText($text);
         return $this;
     }
 
 }
-

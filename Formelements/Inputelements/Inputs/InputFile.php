@@ -15,6 +15,7 @@ namespace FrontendForms;
  */
 
 use Exception;
+use InvalidArgumentException;
 
 class InputFile extends Input
 {
@@ -42,9 +43,20 @@ class InputFile extends Input
         $this->setMultiple();
         $this->setLabel($this->_('File upload'));
         $this->removeSanitizers('text');
-        $this->setSanitizer('arrayVal');
-        $this->setRule('noErrorOnUpload');
-        $this->setRule('phpIniFilesize');
+        $this->setSanitizer('arrayVal'); // sanitize that upload value is an array
+        $this->setRule('noErrorOnUpload'); // do not remove - check for error during upload
+        $this->setRule('noEmptyFiles'); // do not allow the upload of empty files
+        $this->setRule('matchingExtMimeType'); // do not remove - security check for spoofed files
+        $this->setRule('phpIniUploadMaxFileSize', self::normalizeSizeUnit(ini_get('upload_max_filesize'))); // do not remove-> checks for server limit against single upload size limit
+        $this->setRule('phpIniPostMaxFileSize', self::normalizeSizeUnit(ini_get('post_max_size'))); // do not remove -> checks for server limit against total upload size
+
+        // check global settings for allowed MIME types
+        if (array_key_exists('input_allowedmimetypes', $this->frontendforms)) {
+            if ($this->frontendforms['input_allowedmimetypes']) {
+                $allowedMimeTypes = preg_split("/\r\n|\r|\n/", $this->frontendforms['input_allowedmimetypes']);
+                $this->setRule('allowedMimeTypes', $allowedMimeTypes);
+            }
+        }
 
         match ($framework) {
             'uikit3' => $this->initUikit3(),
@@ -201,13 +213,42 @@ class InputFile extends Input
     }
 
     /**
-     * Render the input field including additional notes for validators used for file uploads
+     * Normalize a PHP ini-style size value (e.g. "8M", "2G", "512K") into a
+     * space-separated number+unit string suitable for convertToBytes()
+     * (e.g. "8 MB", "2 GB"). A bare number with no unit is treated as bytes.
+     * @param string $value
+     * @return string
+     * @throws InvalidArgumentException if $value does not match a valid size format
+     */
+    public static function normalizeSizeUnit(string $value): string
+    {
+        $value = trim(strtoupper($value));
+
+        // Zahl + optionale Einheit zerlegen
+        if (!preg_match('/^(\d+(?:\.\d+)?)\s*([KMGTP]?)(B)?$/', $value, $matches)) {
+            throw new InvalidArgumentException('Invalid size for input value: ' . $value);
+        }
+
+        $number = $matches[1];
+        $unit   = $matches[2];
+
+        // Keine Einheit → Bytes
+        if ($unit === '') {
+            return $number . 'B';
+        }
+
+        return $number .' '. $unit . 'B';
+    }
+
+    /**
+     * Render the input field including additional notes for Validation used for file uploads
      * @return string
      */
     public function ___render(): string
     {
         $notes = &$this->notes_array;
         $isMultiple = $this->getMultiple();
+
 
         if (isset($notes['phpIniFilesize'], $notes['allowedFileSize'])) {
             $allowed = Inputfields::convertToBytes($notes['allowedFileSize']['value']);
@@ -231,6 +272,7 @@ class InputFile extends Input
             }
 
             if (isset($notes['allowedTotalFileSize'])) {
+
                 $this->setAttribute('data-maxtotalfilesize', Inputfields::convertToBytes($notes['allowedTotalFileSize']['value']));
             }
         }

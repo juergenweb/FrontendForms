@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -18,7 +19,6 @@ use ProcessWire\WirePermissionException;
 
 class SelectMultiple extends Select
 {
-
     /**
      * @param string $id
      * @throws WireException
@@ -34,22 +34,29 @@ class SelectMultiple extends Select
     }
 
     /**
-     * Add brackets to the name attribute if not present
+     * Add brackets to the name attribute if not already present, so PHP
+     * collects all selected values into an array on submission (e.g.
+     * "myfield" becomes "myfield[]"). A missing "name" attribute (which
+     * should not normally happen, since Inputfields::__construct() always
+     * sets one) is treated as an empty string rather than causing a
+     * TypeError, since str_ends_with() requires a string argument under
+     * strict_types.
      * @return void
      */
     private function convertNameAttribute(): void
     {
-        $name = $this->getAttribute('name');
+        $name = (string) $this->getAttribute('name');
         if (!str_ends_with($name, '[]')) {
             $this->setAttribute('name', $name . '[]');
         }
     }
 
     /**
-     * Render the select input
+     * Render the select-multiple input: ensures the "name" attribute ends
+     * with "[]" before delegating to Select's own rendering.
      * @return string
      */
-    public function renderSelectMultiple(): string
+    public function ___renderSelectMultiple(): string
     {
         // add brackets to the name for multiple values array
         $this->convertNameAttribute();

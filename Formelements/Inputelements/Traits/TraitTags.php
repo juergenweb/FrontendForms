@@ -1,0 +1,43 @@
+<?php
+
+declare(strict_types=1);
+
+namespace FrontendForms;
+
+/*
+ * Trait for adding tag replacement functionality
+ * Will be used on Label, Description, Notes, SuccessMessage and ErrorMessage
+ *
+ * Created by Jürgen K.
+ * https://github.com/juergenweb
+ * File name: TraitTags.php
+ * Created: 12.07.2024
+ * Optimized via Claude AI 05.05.26
+ */
+
+
+trait TraitTags
+{
+    protected string|null $customTag = null;
+
+    /**
+     * Overwrite the default setTag() method to set a new property customTag
+     * @param string $tag
+     * @return TraitTags|Description|Errormessage|Label|Notes|Successmessage
+     */
+    public function setTag(string $tag): self
+    {
+        $this->customTag = $this->sanitizeTagName($tag);
+        return parent::setTag($tag);
+    }
+
+    /**
+     * Get the custom tag if set or null
+     * @return string|null
+     */
+    public function getCustomTag(): null|string
+    {
+        return $this->customTag;
+    }
+
+}

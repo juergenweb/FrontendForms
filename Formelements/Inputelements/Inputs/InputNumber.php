@@ -26,7 +26,7 @@ class InputNumber extends Input
     {
         parent::__construct($id);
         $this->setAttribute('type', 'number');
-        // set default validators
+        // set default Validation
         $this->setRule('numeric');
     }
 

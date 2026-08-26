@@ -1,0 +1,12 @@
+{
+    "file": "site\/modules\/FrontendForms\/tests\/UsernameRules.php",
+    "textdomain": "site--modules--frontendforms--tests--usernamerules-php",
+    "translations": {
+        "93032e55dd9344608037b854eb421f50": {
+            "text": "ist bereits in Gebrauch. Bitte w\u00e4hlen Sie einen anderen Benutzernamen."
+        },
+        "45410051a0f1e0e051d0659e328a87d9": {
+            "text": "erf\u00fcllt nicht die Anforderungen f\u00fcr Benutzername. Ein Benutzername muss zwischen 3 und 30 Zeichen lang sein und darf nur Kleinbuchstaben (a-z), Zahlen, Bindestriche, Unterstriche und Punkte enthalten, keine Leerzeichen."
+        }
+    }
+}

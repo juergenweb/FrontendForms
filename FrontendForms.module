@@ -1,4 +1,9 @@
 <?php
+
+/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+/** @noinspection PhpUndefinedFieldInspection */
+/** @noinspection PhpUndefinedMethodInspection */
+
 declare(strict_types=1);
 
 namespace ProcessWire;
@@ -13,31 +18,33 @@ namespace ProcessWire;
  */
 
 use Exception;
-use FrontendForms\Form;
+use FrontendForms\FormHelper;
+use FrontendForms\Label;
+use ReflectionFunction;
 use stdClass;
 use Valitron\Validator;
 
 class FrontendForms extends WireData implements Module, ConfigurableModule
 {
-
     // use an API path to the GitHub repository for the 100 most common passwords
-    const TOP_PASSWORDS = 'https://api.github.com/repos/danielmiessler/SecLists/contents/Passwords/Common-Credentials/2024-197_most_used_passwords.txt';
+    public const TOP_PASSWORDS = 'https://api.github.com/repos/danielmiessler/SecLists/contents/Passwords/Common-Credentials/2025-199_most_used_passwords.txt';
     // This url contains the commits for the passwords including the dates of the commits (used for last modification date)
-    const LAST_PASSWORDS_MODIFICATION_URL = 'https://api.github.com/repos/danielmiessler/SecLists/commits?path=/Passwords/Common-Credentials/2024-197_most_used_passwords.txt';
+    public const LAST_PASSWORDS_MODIFICATION_URL = 'https://api.github.com/repos/danielmiessler/SecLists/commits?path=/Passwords/Common-Credentials/2025-199_most_used_passwords.txt';
 
-    const SUPPORTEDMAILMODULES = ['WireMailPostmark', 'WireMailPostmarkApp', 'WireMailSmtp', 'WireMailPHPMailer']; // Supported modules for sending emails in other modules based on FrontendForms
+    public const TOP_SPAMWORDS = 'https://api.github.com/repos/splorp/wordpress-comment-blocklist/contents/blacklist.txt';
+
+    public const LAST_SPAMWORDS_MODIFICATION_URL = 'https://api.github.com/repos/splorp/wordpress-comment-blocklist/commits?path=/blacklist.txt';
+
+    public const SUPPORTEDMAILMODULES = ['WireMailPostmark', 'WireMailPostmarkApp', 'WireMailSmtp', 'WireMailPHPMailer']; // Supported modules for sending emails in other modules based on FrontendForms
 
     public static string $framework = '';
-    protected string $temp_uploadPath = ''; // the path to the temporary upload folder
-    // the validator object
-    protected Validator $Validator;
+    // (temp_uploadPath removed - mail attachment staging now uses WireTempDir, see WireMail::sendAttachments hook)
 
     /* Password field */
     protected Field $password_field; // the system password field with the name "pass"
     protected InputfieldPassword $password_object; // an object of the InputfieldPassword
 
     protected string $passwordPath = ''; // path to the top 100 passwords.txt file
-    protected array $requirements = []; // the requirements as set in the pass field or in the module
     protected string $default_dateformat = ''; // the default date format as set in the processwire configuration file
     protected array $passwordList = []; // array that holds all passwords from passwords.txt
     protected string $last_check = ''; // date of the last monthly check of passwords
@@ -47,9 +54,6 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     protected string $customFrameworksPath = ''; // path to the folder, where all custom framework JSON files can be stored
     protected array $moduleConfig = []; // array that holds all module config values
     protected string $lang = 'en'; // default language
-
-    /* File uploads */
-    protected bool $keepFiles = false; // keep files after attachments were sent (true) or delete them (false)
 
     /* Assets */
     protected string|int $input_removeJS = 0; // remove module JS or not (frontend)
@@ -75,13 +79,9 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     /* Email configuration */
     protected string $input_emailTemplate = 'template_1.html'; // default email template
     protected array $email_template_files = []; // array containing all pathes to the email template files
-    protected array $mailProperties = []; // array of placeholder variables for HTML templates
     protected array $emailTemplates = []; // email template names as a numeric array
     protected string $emailTemplatesPath = ''; // path to the email templates folder
     protected string $custom_emailTemplatesPath = ''; // path to the custom email templates folder
-    protected array $mailPlaceholders = []; //  the array holds all custom mail properties for placeholder attributes as placeholder => value
-    protected string $bodyHTML = ''; // declare property from WireMail class
-    protected string $body = ''; // declare property from WireMail class
 
     /* Messages */
     protected string $input_requiredText = ''; // Text that should be displayed on each form for required fields
@@ -137,9 +137,10 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     protected string|int|bool $input_html5_validation = 0; // enable or disable HTML 5 form validation
 
     protected bool $gd_lib = false; // GD library is enabled/installed or not
+    private string $stopwordPath;
 
     /**
-     * Get all meta data for the module
+     * Get all metadata for the module
      * @return array
      */
     public static function getModuleInfo(): array
@@ -149,7 +150,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             'summary' => 'Create forms and validate them using the Valitron library.',
             'author' => "Jürgen Kern",
             'href' => 'https://github.com/juergenweb/FrontendForms',
-            'version' => '2.3.18',
+            'version' => '3.0.0',
             'singular' => true,
             'autoload' => true,
             'requires' => ['PHP>=8.0.0', 'ProcessWire>=3.0.194']
@@ -161,7 +162,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * These values will be stored in the DB during the installation process
      * This is necessary to get them via getModuleConfig() without saving the configuration page after the
      * installation If the values are not stored inside the DB, they are not reachable via getModuleConfig();
-     * return array
+     * @return array
      */
     public static function getDefaultData(): array
     {
@@ -220,6 +221,9 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             'toppasswords_download' => '',
             'last_check' => '',
             'github_modified' => '',
+            'topspamwords_download' => '',
+            'last_stopword_check' => '',
+            'spamwords_github_modified' => '',
             'input_html5_validation' => 0,
             'input_global_label_tag' => '',
             'input_global_desc_tag' => '',
@@ -247,11 +251,10 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $this->customFrameworksPath = $this->wire('config')->paths->assets . 'files/FrontendForms/frameworks/';
         $this->moduleConfig = $this->wire('modules')->getConfig($this);
         $this->imagePath = $this->modulePath . 'captchaimages/'; // path to the images for the CAPTCHA
-        $this->passwordPath = $this->modulePath . 'passwords.txt'; // path to passwords.txt file
-        $this->stopwordPath = $this->modulePath . 'stopwords.txt'; // path to stopwords.txt file
-        $this->emailTemplatesPath = $this->modulePath . 'email_templates';//  set the path to the email templates folder
+        $this->passwordPath = $this->modulePath . 'data/passwords.txt'; // path to passwords.txt file
+        $this->stopwordPath = $this->modulePath . 'data/stopwords.txt'; // path to stopwords.txt file
+        $this->emailTemplatesPath = $this->modulePath . 'email-templates';//  set the path to the email templates folder
         $this->custom_emailTemplatesPath = $this->wire('config')->paths->site . 'frontendforms-custom-templates'; //  set the path to the custom email templates folder
-        $this->temp_uploadPath = $this->modulePath . 'temp_uploads/';// set the path to the temporary folder for mail attachments
 
         //  create and set a property of each configuration setting from DB
         foreach ($this->moduleConfig as $key => $value) {
@@ -260,7 +263,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         // array of all passwords in the blacklist
         if ($this->input_blacklist) {
-            $this->blacklist = explode("\n", $this->input_blacklist);
+            $this->blacklist = explode("\n", str_replace("\r", "", $this->input_blacklist));
         }
 
         // create a numeric array of all available email templates inside the email folder
@@ -272,23 +275,34 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         if (array_key_exists('input_customframeworkpath', $this->moduleConfig) && ($this->moduleConfig['input_customframeworkpath'])) {
             $cp = $this->wire('config')->paths->root . $this->moduleConfig['input_customframeworkpath'];
             // add trailing slash at the end if it is missing
-            if (substr($cp, -1) != '/') {
+            if (!str_ends_with($cp, '/')) {
                 $cp = $cp . '/';
             }
             $this->customFrameworksPath = $cp;
         }
 
-        //get all classes from the currently loaded framework from the folder CSSClasses
+        //get all classes from the currently loaded framework from the folder frameworks
         $this->defaultClasses = json_decode(file_get_contents(self::getCSSClassFile($this->input_framework, $this->customFrameworksPath)));
 
     }
 
-    public function createEmailTemplatesOptions(InputfieldSelect $select, bool $inherit = false)
+    /**
+     * Populate a select field's options with the available HTML email templates,
+     * including a preview thumbnail image for each option (if one exists) and a
+     * "no HTML template" option.
+     * @param InputfieldSelect $select The select field to add the template options to.
+     * @param bool $inherit Whether this select is for a per-form override that can
+     *   inherit the module's default template setting (adds an "inherit" option
+     *   showing the currently inherited template's preview image).
+     * @return void
+     * @throws WireException
+     */
+    public function createEmailTemplatesOptions(InputfieldSelect $select, bool $inherit = false): void
     {
 
         //  create options
-        $placeholderimage = $this->wire('config')->urls->$this . 'img/emailtemplate-placeholder-image.png';
-        $noneimage = $this->wire('config')->urls->$this . 'img/none.png';
+        $placeholderimage = $this->wire('config')->urls->$this . 'assets/img/emailtemplate-placeholder-image.png';
+        $noneimage = $this->wire('config')->urls->$this . 'assets/img/none.png';
 
         if ($inherit) {
             if ($this->input_emailTemplate == 'none') {
@@ -304,7 +318,16 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
             $p = pathinfo($this->email_template_files[$template]);
             $absolutedir = $p['dirname'];
-            $relativedir = strstr($p['dirname'], '/site/modules');
+            // convert the absolute filesystem path to its corresponding URL -
+            // works regardless of whether the template lives inside
+            // /site/modules/ (bundled templates) or in the custom templates
+            // folder (site/frontendforms-custom-templates/), unlike a fixed
+            // strstr() search for "/site/modules" would.
+            $relativedir = str_replace(
+                $this->wire('config')->paths->root,
+                $this->wire('config')->urls->root,
+                $absolutedir
+            );
             $filename = $p['filename'] . '.png';
             $previewImage = $relativedir . '/' . $filename;
             $previewPath = $absolutedir . '/' . $filename;
@@ -338,13 +361,35 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     /**
      * Create the folder for custom frameworks classes file if it does not exist
      * @return void
-     * @throws \ProcessWire\WireException
+     * @throws WireException
+     */
+    /**
+     * Ensure the "frameworks" folder (custom CSS class JSON files) exists
+     * at its default location, restoring it from a module-internal backup
+     * first if one exists.
+     *
+     * Uses the fixed default path (not $this->customFrameworksPath) for
+     * the restore target deliberately: ___uninstall() backs up the
+     * default location specifically, since a user-configured custom path
+     * elsewhere on the server is outside the module's own managed file
+     * structure and not something it can reliably back up/restore.
+     * @return void
+     * @throws WireException
      */
     protected function createCustomFrameworksFolder(): void
     {
+        $defaultFrameworksPath = $this->wire('config')->paths->assets . 'files/FrontendForms/frameworks/';
+        $frameworksBackup = $this->modulePath . 'assets/frameworks/';
+
+        if ($this->wire('files')->exists($frameworksBackup)) {
+            $this->createFilesDir($frameworksBackup, $defaultFrameworksPath);
+        }
+
         // check if custom framework folder exists, otherwise create it
+        // ($recursive = true: customFrameworksPath may be a nested path
+        // whose parent folder doesn't exist yet)
         if (!$this->wire('files')->exists($this->customFrameworksPath)) {
-            $this->wire('files')->mkdir($this->customFrameworksPath);
+            $this->wire('files')->mkdir($this->customFrameworksPath, true);
         }
     }
 
@@ -353,33 +398,43 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * @param string $framework
      * @param string $customFrameworksPath
      * @return string
-     * @throws \ProcessWire\WireException
+     * @throws WireException
      */
     public static function getCSSClassFile(string $framework, string $customFrameworksPath): string
     {
-        $modulePath = wire('config')->paths->siteModules . 'FrontendForms' . DIRECTORY_SEPARATOR;
-        if (wire('files')->exists($modulePath . 'CSSClasses' . DIRECTORY_SEPARATOR . $framework)) {
-            return $modulePath . 'CSSClasses' . DIRECTORY_SEPARATOR . $framework;
-        } else if (wire('files')->exists($customFrameworksPath . $framework)) {
+        $modulePath = wire('config')->paths->siteModules . 'FrontendForms/';
+        if (wire('files')->exists($modulePath . 'frameworks/' . $framework)) {
+            return $modulePath . 'frameworks/' . $framework;
+        } elseif (wire('files')->exists($customFrameworksPath . $framework)) {
             return $customFrameworksPath . $framework;
         }
         // load none.json file as fallback
-        return $modulePath . 'CSSClasses' . DIRECTORY_SEPARATOR . 'none.json';
+        return $modulePath . 'frameworks/none.json';
     }
 
+    /**
+     * Build the list of selectable mail module options for the "custom mail module"
+     * config select field, containing a "None" default plus every supported mail
+     * module (see SUPPORTEDMAILMODULES) that is actually installed. If both
+     * WireMailPostmark and WireMailPostmarkApp are installed, they are combined
+     * into a single "WireMailPostmark" entry rather than listed separately.
+     * @param Modules $modules
+     * @return array Associative array of module class name => display label.
+     */
     public static function createMailModuleOptions(Modules $modules): array
     {
         $list = [];
         $list['none'] = __('None'); // default
 
         foreach (FrontendForms::SUPPORTEDMAILMODULES as $className) {
-            if ($modules->getModuleID($className))
+            if ($modules->getModuleID($className)) {
                 $list[$className] = $className;
+            }
         }
 
         // combine WireMailPostmark and WireMailPostmarkApp if both are installed
         $postmark = array_filter($list, function ($key) {
-            return strpos($key, 'WireMailPostmark') === 0;
+            return str_starts_with($key, 'WireMailPostmark');
         }, ARRAY_FILTER_USE_KEY);
         if (count($postmark) > 1) {
             foreach ($postmark as $k => $v) {
@@ -392,37 +447,42 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
     /**
      * Get the total number of installed 3rd party mail modules, which can be used with FrontendForms
-     * @param \ProcessWire\Modules $modules
+     *
+     * Counts the same, already-merged list that createMailModuleOptions()
+     * builds (minus its "none" entry), rather than counting
+     * SUPPORTEDMAILMODULES independently - so this number always matches
+     * the number of actually selectable options in the corresponding
+     * dropdown, even when WireMailPostmark and WireMailPostmarkApp get
+     * combined into a single option there.
+     * @param Modules $modules
      * @return int
      */
     public static function getNumberOfMailModules(Modules $modules): int
     {
-        $number = [];
-        foreach (FrontendForms::SUPPORTEDMAILMODULES as $className) {
-            if ($modules->getModuleID($className))
-                $number[] = $className;
-        }
-        return count($number);
+        $options = FrontendForms::createMailModuleOptions($modules);
+        unset($options['none']);
+        return count($options);
     }
 
 
     /**
      * Create an InputfieldSelect for choosing a custom mail module
      * Internal method for modules, which are based on FrontendForms
-     * @param \ProcessWire\Modules $modules
-     * @param \ProcessWire\Module $module
-     * @return \ProcessWire\InputfieldSelect
-     * @throws \ProcessWire\WirePermissionException
+     * @param Modules $modules
+     * @param Module $module
+     * @return InputfieldSelect
+     * @throws WirePermissionException
      */
     public static function createMailModuleInputfield(Modules $modules, Module $module): InputfieldSelect
     {
 
         // select if you want to use a custom mail module for sending mails or not
         $mailModuleSelect = $modules->get('InputfieldSelect');
+        /** @var InputfieldSelect $mailModuleSelect */
         $mailModuleSelect->label = __('Use Custom mail module');
         $mailModuleSelect->attr('name', 'input_mailmodule');
         $mailModuleSelect->addOptions(FrontendForms::createMailModuleOptions($modules));
-        $mailModuleSelect->attr('value', $module->input_mailmodule);
+        $mailModuleSelect->attr('value', $module->get('input_mailmodule'));
         $mailModuleSelect->required = 1;
         $mailModuleSelect->description = __('Select your preferred module for sending mails.');
         $mailModuleSelect->notes = __('By default, all mails will be sent with WireMail, but you can select a custom module from this field for sending mails too.');
@@ -435,34 +495,45 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * @param string $url
      * @return mixed - returns the JSON object
      * @throws WireException
-     * @throws WireException
      */
     protected function getDataFromGitHub(string $url): mixed
     {
         // add header for GitHub request to do not get a 403 response
         // Please note: GitHub only supports a certain number of requests from the same IP
         // If the maximum of requests is reached a 403 header will be displayed
+        //
+        // IMPORTANT: this method is called (via downloadPasswords(), and
+        // also via the manual "update now" button handlers
+        // blacklistButtonSubmit()/stopwordListButtonSubmit()) on a
+        // Page::render hook, meaning it can run before EVERY page request
+        // on the live site, not just inside the admin. An explicit, short
+        // timeout is essential here - without one, a slow or unresponsive
+        // GitHub could block every visitor's page load for up to PHP's
+        // default_socket_timeout (60 seconds by default), effectively
+        // taking the whole site down whenever the monthly check happens to
+        // coincide with a GitHub outage or rate limit.
         $opts = [
             'http' => [
                 'method' => 'GET',
                 'header' => [
                     'User-Agent: PHP'
-                ]
+                ],
+                'timeout' => 5,
             ]
         ];
         $response = false; // set response to false by default
         // fetch the response from the given url
         $context = stream_context_create($opts);
-        $file = file_get_contents($url, false, $context);
+        $file = @file_get_contents($url, false, $context);
 
         if ($file) {
             $response = json_decode($file); // contains all the response data as a JSON object
         } else {
             // there was an error getting the file - write an error log
 
-            $this->wire('log')->error(E_WARNING);
+            $this->wire('log')->error('FrontendForms: failed to fetch data from GitHub URL: ' . $url);
             // inform the user with a warning message
-            $this->wire('session')->warning($this->_('Sorry, but the file including the password list could not be downloaded from GitHub.'));
+            $this->wire('session')->warning($this->_('Sorry, but the requested file could not be downloaded from GitHub.'));
         }
         return $response;
     }
@@ -484,7 +555,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                 if ($language->isDefault()) {
                     $fieldObject->set('value', (string)$this->get($inputfield_name));
                 } else {
-                    $fieldObject->set("value$language", (string)$this->get($inputfield_name . '__' . $language->id));
+                    $fieldObject->set('value' . $language->id, (string)$this->get($inputfield_name . '__' . $language->id));
                 }
             }
         }
@@ -497,6 +568,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * @param string $templateName - the name of the template that should be used to render the email
      * @return WireMail
      * @throws Exception
+     * @throws WireException
      */
     protected function setEmailTemplate(WireMail $mail, string $templateName): WireMail
     {
@@ -506,32 +578,45 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
          */
         if ($templateName === 'inherit') {
             $templateName = $this->input_emailTemplate; //  use the template from the FrontendForms config
-        } else {
-
-            $customPath = false;
-            if (Form::checkForPath($templateName)) {
-                $customPath = true;
-                $path_parts = pathinfo($templateName);
-                if (!file_exists($path_parts['dirname'])) {
-                    throw new Exception(sprintf('The directory that should contain your email template under the given path %s/ does not exist. Please check your path once more.', $path_parts['dirname']));
-                }
-                $this->emailTemplates = $this->wire('files')->find($path_parts['dirname'], ['extensions' => 'html']);
-            } else {
-                $this->setEmailTemplates();
-            }
-
-            if (!in_array($templateName, $this->emailTemplates)) {
-                //  check if an email template with this name exists
-                $msg = sprintf('Email template with the name %s does not exist. Possible templates are: %s',
-                    $templateName, implode(', ', $this->emailTemplates));
-                if ($customPath) {
-                    $msg = sprintf('Email template under the given path %s does not exist. Possible templates are: %s',
-                        $templateName, implode(', ', $this->emailTemplates));
-                }
-                throw new Exception($msg);
-            }
-
         }
+
+        // Validate the resolved template name in all cases - including the
+        // "inherit" case above. The inherited value is only validated once,
+        // at selection time in the config dropdown, and stored persistently
+        // in the DB afterwards - if the underlying template file is later
+        // deleted or renamed (e.g. during a module update), that stored
+        // value becomes stale. Without re-validating it here too, an
+        // invalid inherited template name would silently be set on the
+        // mail object instead of failing clearly and immediately.
+        $customPath = false;
+        if (FormHelper::checkForPath($templateName)) {
+            $customPath = true;
+            $path_parts = pathinfo($templateName);
+            if (!file_exists($path_parts['dirname'])) {
+                throw new Exception(sprintf('The directory that should contain your email template under the given path %s/ does not exist. Please check your path once more.', $path_parts['dirname']));
+            }
+            $this->emailTemplates = $this->wire('files')->find($path_parts['dirname'], ['extensions' => 'html']);
+        } else {
+            $this->setEmailTemplates();
+        }
+
+        if (!in_array($templateName, $this->emailTemplates)) {
+            //  check if an email template with this name exists
+            $msg = sprintf(
+                'Email template with the name %s does not exist. Possible templates are: %s',
+                $templateName,
+                implode(', ', $this->emailTemplates)
+            );
+            if ($customPath) {
+                $msg = sprintf(
+                    'Email template under the given path %s does not exist. Possible templates are: %s',
+                    $templateName,
+                    implode(', ', $this->emailTemplates)
+                );
+            }
+            throw new Exception($msg);
+        }
+
         // add a new property to the mail class
         $mail->email_template = $templateName;
         return $mail;
@@ -542,18 +627,42 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * @param bool $add
      * @throws WireException
      */
-    protected function addRemoveIpFromBanList(bool $add): void
+    /**
+     * Add or remove an IP address to/from the ban list, based on the
+     * currently submitted POST value.
+     * @param bool $add True to add the submitted IP, false to remove it.
+     * @return bool True if the IP was actually added/removed, false if the
+     *   submitted value was invalid (add) or not found in the list (remove) -
+     *   so callers can show an accurate success/failure message instead of
+     *   always claiming success regardless of what actually happened.
+     * @throws WireException
+     */
+    protected function addRemoveIpFromBanList(bool $add): bool
     {
-        //create an array of string
-        $ipAddresses = explode("\n", $this->moduleConfig['input_preventIPs']);
+        //create an array of strings, filtering out empty lines (e.g. from
+        // an initially empty list, where explode("\n", '') would otherwise
+        // produce a stray blank entry that stays in the stored value
+        // permanently)
+        $ipAddresses = array_filter(
+            explode("\n", $this->moduleConfig['input_preventIPs']),
+            static function ($value) {
+                return trim($value) !== '';
+            }
+        );
+        $success = false;
         if ($add) {
-            // add the value to $ipAddresses
-            $ipAddresses[] = $_POST['submit_save_ip'];
+            // add the value to $ipAddresses, but only if it is a valid IP address
+            $ip = $this->wire('input')->post->submit_save_ip ?? '';
+            if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                $ipAddresses[] = $ip;
+                $success = true;
+            }
         } else {
             // remove the value from $ipAddresses
-            $key = array_search($_POST['submit_remove_ip'], $ipAddresses, true);
+            $key = array_search($this->wire('input')->post->submit_remove_ip ?? '', $ipAddresses, true);
             if ($key !== false) {
                 unset($ipAddresses[$key]);
+                $success = true;
             }
         }
         // convert it back to a string and save it to the module configuration
@@ -561,28 +670,31 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $data['input_preventIPs'] = implode("\n", array_unique($ipAddresses));
         $this->input_preventIPs = $data['input_preventIPs']; // show the values inside the inputfield
         $this->wire('modules')->saveConfig($this, $data);
+        return $success;
     }
 
     /**
      * Grab a txt file by its path and return an array of all values in it
+     *
+     * Uses file() with FILE_IGNORE_NEW_LINES (strips both \n and \r, so
+     * Windows CRLF-saved files don't leave a stray \r on each entry) and
+     * FILE_SKIP_EMPTY_LINES (so a typical trailing newline at the end of
+     * the file - or any other blank line - doesn't produce a spurious
+     * empty array entry). This also avoids the resource leak of manually
+     * calling fopen() without a matching fclose().
      * @param string $path
      * @return array
      */
-    protected function createArrayOfTxtFile(string $path): array
+    public static function createArrayOfTxtFile(string $path): array
     {
-        $listArray = [];
-        // convert txt values to array
-        $fp = @fopen($path, 'r');
-        // Add each line to an array
-        if ($fp) {
-            $listArray = explode("\n", fread($fp, filesize($this->passwordPath)));
-        }
-        return $listArray;
+        $listArray = @file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        return $listArray === false ? [] : $listArray;
     }
 
     /**
      * Grab all email template files inside the email template folder
-     * Create an array of all email template names without an extension
+     * Create an array of all email template file names (including the
+     * file extension, e.g. "template_1.html")
      * @return void
      * @throws WireException
      */
@@ -590,15 +702,23 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     {
         $custom_templateFiles = $this->wire('files')->find($this->custom_emailTemplatesPath, ['extensions' => 'html']);
         $templateFiles = $this->wire('files')->find($this->emailTemplatesPath, ['extensions' => 'html']);
-        $files = array_merge($custom_templateFiles, $templateFiles);
+        // built-in templates first, custom templates last - so that when
+        // both a built-in and a custom template share the same filename,
+        // the custom one takes priority (overwriting the built-in path in
+        // $pathes_to_files below) rather than silently being ignored in
+        // favor of the built-in default.
+        $files = array_merge($templateFiles, $custom_templateFiles);
 
-        $fileNames = $pathes_to_files = [];
+        $pathes_to_files = [];
         foreach ($files as $file) {
             $pathes_to_files[pathinfo($file, PATHINFO_BASENAME)] = $file;
-            $fileNames[] = pathinfo($file, PATHINFO_BASENAME);
         }
         $this->email_template_files = $pathes_to_files;
-        $this->emailTemplates = $fileNames; // set it to property emailTemplates
+        // derive the name list from the already-deduplicated keys above,
+        // rather than building it separately from $files - otherwise a
+        // template sharing its filename between the built-in and custom
+        // folders would appear twice in the resulting dropdown options
+        $this->emailTemplates = array_keys($pathes_to_files);
     }
 
     /**
@@ -612,15 +732,6 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     }
 
     /**
-     * Get the language code (fe de, en,...)
-     * @return string
-     */
-    protected function getLang(): string
-    {
-        return $this->lang;
-    }
-
-    /**
      * Set the language as language code (fe en, de,…)
      * Please take a look inside the lang folder which languages are available (the name of the folder is the
      * language code)
@@ -630,7 +741,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     public function setLang(string $lang): void
     {
         $this->lang = trim($lang);
-        $this->Validator::lang($this->lang);
+        Validator::lang($this->lang);
     }
 
     /**
@@ -638,26 +749,26 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * Created for future usage in modules based on this module
      * If pages were created by a module - the markup could be adapted to the site profile installed
      * @return string
-     * @throws WireException
      */
     public static function getSiteProfileName(): string
     {
         // grab the readme file if present
-        $self = new self();
-        $readme = $self->wire('files')->fileGetContents($self->wire('config')->paths->templates . '/readme.txt');
+        $readme = wire('files')->fileGetContents(wire('config')->paths->templates . '/readme.txt');
         if ($readme) {
             //find and extract the link
             preg_match_all('!https?://\S+!', $readme, $matches);
-            return basename($matches[0][0]) . '.txt';
-        } else {
-            return 'default.txt';
+            if (!empty($matches[0])) {
+                return basename($matches[0][0]) . '.txt';
+            }
         }
+        return 'default.txt';
     }
 
     /**
      * Ready method contains all Hooks to extend the WireMail class
      * These Hooks need to be inside ready(), do not work inside init()
      * @return void
+     * @throws WireException
      */
     public function ready(): void
     {
@@ -673,31 +784,42 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         wire()->addHookMethod('WireMail::sendAttachments', function ($event) {
 
             $mail = $event->object;
+            /** @var WireMail $mail */
             $form = $event->arguments(0);
 
-
-            // check if temp_uploads folder exists - otherwise create it
-            if (!$this->wire('files')->exists($this->temp_uploadPath)) {
-                $this->wire('files')->mkdir($this->temp_uploadPath);
-            }
-
-            $keep_files = ($event->arguments(1)) ? ($event->arguments(1)) : false;
+            $keep_files = $event->arguments(1) && $event->arguments(1);
 
             // get the paths of the currently uploaded files
             $fileNames = $form->getUploadedFiles();
+
             if ($fileNames) {
+                // isolated temp dir for this send - avoids collisions between concurrent
+                // submissions (and between multiple sendAttachments() calls within the same
+                // request) that a single shared temp_uploads folder would risk.
+                //
+                // IMPORTANT: WireTempDir removes its directory as soon as the PHP object is
+                // destructed (see WireTempDir::__destruct()), not only at the actual end of
+                // the request. Since $tempDir would otherwise go out of scope (and get
+                // destructed) the moment this closure returns - i.e. before WireMail::send()
+                // has read the attachment - we disable that auto-removal and instead keep the
+                // object alive on $mail itself, so we can remove it explicitly after sending.
+                $tempDir = $this->wire('files')->tempDir();
+                $tempDir->setRemove(false);
+                $mail->set('_ffAttachmentTempDir', $tempDir);
+                $tempPath = $tempDir->get();
+
                 foreach ($fileNames as $path) {
                     // move the files to the tmp folder
                     $file_name = pathinfo($path, PATHINFO_BASENAME);
-                    $this->wire('files')->copy($path, $this->temp_uploadPath);
+                    $this->wire('files')->copy($path, $tempPath);
                     if ($mail->className() === 'WireMailPHPMailer') {
-                        $mail->addAttachment($this->temp_uploadPath . $file_name);
+                        $mail->addAttachment($tempPath . $file_name);
                     } else {
-                        $mail->attachment($this->temp_uploadPath . $file_name);
+                        $mail->attachment($tempPath . $file_name);
                     }
                     // save the file in addition under the upload path
                     if ($keep_files) {
-                        $this->wire('files')->copy($this->temp_uploadPath, $form->getUploadPath());
+                        $this->wire('files')->copy($tempPath . $file_name, $form->getUploadPath() . $file_name);
                     } else {
                         $this->wire('files')->unlink($path);
                     }
@@ -714,6 +836,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
          */
         wire()->addHookMethod('WireMail::mailTemplate', function ($event) {
             $mail = $event->object;
+            /** @var WireMail $mail */
             $mail->email_template = 'none';
             $template = $event->arguments(0);
             //  run only if a template was selected
@@ -732,6 +855,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
          */
         wire()->addHookMethod('WireMail::title', function ($event) {
             $mail = $event->object;
+            /** @var WireMail $mail */
             $title = $event->arguments(0);
             $mail['title'] = trim((string)$title);
             $event->return = $mail;
@@ -746,10 +870,14 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
             // First check if FrontendComments fields exist
             $commentfields = $this->wire('fields')->findByType('FieldtypeFrontendComments');
-            if (!$commentfields) return;
+            if (!$commentfields) {
+                return;
+            }
 
             // make sure we're editing a page and not a user
-            if ($event->process != 'ProcessPageEdit') return;
+            if ($event->process != 'ProcessPageEdit') {
+                return;
+            }
 
             $page = $event->object->getPage();
 
@@ -761,7 +889,9 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                 }
             }
 
-            if (!$pageCommentFields) return; // no field of this type found
+            if (!$pageCommentFields) {
+                return;
+            } // no field of this type found
 
             $form = $event->return;
 
@@ -807,14 +937,24 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         // Require the classloaders
         wire('classLoader')->addNamespace('Valitron', __DIR__ . '/valitron/src');
+        wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Validation');
+        wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Validation/ValidationRules');
+        wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Validation/ValidationLogic');
+        wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Validation/ValidationHelpers');
+        wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Security');
+        wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Upload');
+        wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Mail');
+        wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Steps');
         wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements');
         wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Textelements');
         wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Textelements/Defaults');
         wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements');
+        wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Traits');
         wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Miscellaneous');
         wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Miscellaneous/defaults');
         wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Wrapper');
         wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Captcha');
+        wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Rendering');
         wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Captcha/variants');
         wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Images');
         wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Datalist');
@@ -826,18 +966,23 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/Formelements/Inputelements/Textarea/defaults');
         wire('classLoader')->addNamespace('FrontendForms', __DIR__ . '/avatar');
 
-
         //create instance of InputfieldPassword and set the requirement settings from field "pass" to it
         $this->password_field = $this->wire('fields')->get('pass');
         $this->password_object = new InputfieldPassword();
-        if (!$this->password_field->requirements) // the password field was not saved till now, so requirements are not stored
-        {
+        if (!$this->password_field->requirements) { // the password field was not saved till now, so requirements are not stored
             $this->password_field->requirements = ['letter', 'digit'];
         }
 
         $this->password_object->requirements = $this->password_field->requirements;
-        $this->default_dateformat = $this->wire('config')->dateFormat;
-        $this->passwordList = $this->createArrayOfTxtFile($this->passwordPath);
+        // use the module's own configured date format (input_dateformat)
+        // for all of this module's own date displays (statistics tables,
+        // "last checked" dates, ...) - falling back to ProcessWire's
+        // global config date format only if the module's own setting is
+        // ever somehow empty. Previously this always used
+        // wire('config')->dateFormat unconditionally, meaning the
+        // input_dateformat admin setting had no effect at all.
+        $this->default_dateformat = $this->input_dateformat ?: $this->wire('config')->dateFormat;
+        $this->passwordList = self::createArrayOfTxtFile($this->passwordPath);
 
         // check if LanguageSupport module is installed
         if ($this->wire('modules')->isInstalled('LanguageSupport')) {
@@ -857,21 +1002,22 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $this->addHook('LazyCron::every4Weeks', $this, 'updateStopWordList');
 
         // load only in the backend
-        if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], $this->wire('config')->urls->admin) === 0) {
+        if (isset($_SERVER['REQUEST_URI']) && str_starts_with($_SERVER['REQUEST_URI'], $this->wire('config')->urls->admin)) {
 
             // add CSS and JS to the backend but only on this module page
             $version = $this->getModuleInfo()['version'] . '-' . time();
 
+
             if (self::isModuleEditPage(['FrontendForms'])) {
-                $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.css?v=' . $version);
-                $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'backend/frontendforms.js?v=' . $version);
+                $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'assets/css/frontendforms-backend.css?v=' . $version);
+                $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'assets/js/frontendforms-backend.js?v=' . $version.'-'.time());
             }
 
             // add image picker js and CSS files to the backend (used for the email template select)
 
             if ((self::isModuleEditPage(['FrontendForms', 'FrontendContact', 'FrontendLoginRegister'])) || (self::isFieldEditPage(['FieldtypeFrontendComments']))) {
-                $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.css?v=' . $version);
-                $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'image-picker/image-picker.min.js?v=' . $version);
+                $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'assets/css/image-picker.css?v=' . $version);
+                $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'assets/js/image-picker.min.js?v=' . $version);
             }
 
         }
@@ -882,8 +1028,9 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         // outputs examples how to overwrite global settings
         $this->addHookAfter('Inputfield::render', $this, 'overwriteExamplesNotes');
         $this->addHookBefore('WireMail::send', $this, 'convertMailProperties');
-        // remove uploaded attachments after successful sending
-        $this->addHookAfter('WireMail::send', $this, 'deleteUploadedFilesAfterSending');
+        // clean up the WireTempDir used for staging mail attachments (see
+        // WireMail::sendAttachments above) now that sending has actually completed
+        $this->addHookAfter('WireMail::send', $this, 'removeMailAttachmentTempDir');
         // if an image captcha is selected than set the height of the image to 2/3 of the width
         $this->addHookBefore('Modules::saveConfig', $this, 'setImageHeight');
         // if an image captcha is selected than set the height of the image to 2/3 of the width
@@ -896,6 +1043,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         // Hook for checking if update button was pressed by analyzing Post values
         $this->addHookBefore('Page::render', $this, 'blacklistButtonSubmit');
+        $this->addHookBefore('Page::render', $this, 'stopwordListButtonSubmit');
         // Hook to check if a button to add an IP to the IP blacklist was submitted
         $this->addHookBefore('Page::render', $this, 'saveIPButtonSubmit');
         // Hook to check if a button to remove an IP from the IP blacklist was submitted
@@ -905,112 +1053,186 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         // Show details about the blocked IP address inside a panel
         $this->wire->addHook('/detail-view/{ip}', function () { // event variable is necessary
+            // this is an admin-only panel - hide it as a 404 for anyone without module-admin permission
+            if (!$this->wire('user')->hasPermission('module-admin')) {
+                throw new Wire404Exception();
+            }
             if ($this->wire('modules')->isInstalled('LanguageSupport')) {
-                // grab current user lang from session
-                $this->wire('user')->language = $this->wire('session')->get('userlang');
+                // grab current user lang from session and convert the
+                // stored ID back into an actual Language object - $user
+                // ->language expects a Language page, not a raw ID, so
+                // assigning the ID directly here did not reliably work.
+                $langId = $this->wire('session')->get('userlang');
+                $language = $langId ? $this->wire('languages')->get((int) $langId) : null;
+                if ($language && $language->id) {
+                    $this->wire('user')->language = $language;
+                }
             }
             $out = '';
-            // load the detail-view template file
+            // load the detail-view template file - use an absolute,
+            // reliable path (not a bare relative filename) so PHP always
+            // resolves this to the exact same file regardless of the
+            // current working directory, and so ProcessWire's
+            // translation system correctly matches it to the textdomain
+            // registered via "Find files to translate" (a CWD-dependent
+            // resolution could otherwise silently mismatch the textdomain
+            // and fall back to the original, untranslated English text).
             include_once('detail-view.php');
             return $out;
         });
     }
 
     /**
-     * Update the STOP word list every 4 weeks
-     * @param HookEvent $e
+     * Update the STOP word list every 4 weeks, but only if it has
+     * actually changed on GitHub since the last check - mirrors
+     * downloadPasswords()'s logic exactly, just for the SPAM-word list.
+     * Also updates spamwords_github_modified/topspamwords_download, the
+     * same fields the "last automatic check" text in the module config
+     * displays, so that text actually reflects LazyCron runs.
      * @return void
+     * @throws WireException
+     * @noinspection PhpUnused
      */
-    public function updateStopWordList(HookEvent $e)
+    public function updateStopWordList(): void
     {
+        $data = $this->wire('modules')->getConfig($this);
+        $data['last_stopword_check'] = $this->last_stopword_check = $this->wire('datetime')->date($this->default_dateformat);
 
-        $stopwordlisturl = 'https://raw.githubusercontent.com/splorp/wordpress-comment-blocklist/refs/heads/master/blacklist.txt';
+        $github_data = $this->getDataFromGitHub(self::LAST_SPAMWORDS_MODIFICATION_URL);
 
-        if ($this->githubRawFileExists($stopwordlisturl)) {
+        if ($github_data && isset($github_data[0]->commit->author->date)) {
+            $last_update = $github_data[0]->commit->author->date;
 
-            $content = $this->wire('files')->fileGetContents($stopwordlisturl);
+            // only re-download if the GitHub version is actually newer
+            // than what was downloaded last time - or if nothing has
+            // ever been downloaded yet
+            $shouldDownload = (!$this->topspamwords_download)
+                || (strtotime($last_update) > strtotime($this->topspamwords_download));
 
-            if ($content) {
-                if ($this->wire('files')->filePutContents($this->stopwordPath, $content)) {
-                    $data = date('Y-m-d H:i:s');
+            if ($shouldDownload) {
+                if ($this->downloadStopwordsFromGitHub()) {
+                    $data['topspamwords_download'] = $this->topspamwords_download = $this->wire('datetime')->date($this->default_dateformat);
+                    $data['spamwords_github_modified'] = $this->spamwords_github_modified = $this->wire('datetime')->date(
+                        $this->default_dateformat,
+                        $last_update
+                    );
+                    $log_data = $this->wire('datetime')->date('Y-m-d H:i:s');
                 } else {
-                    $data = 'Error saving file';
+                    $log_data = 'Error saving file';
                 }
             } else {
-                $data = 'No content';
+                $log_data = 'No update needed - not modified on GitHub since last download';
             }
-
         } else {
-            $data = 'File not found on Github';
+            $log_data = 'Could not retrieve last modification date from GitHub';
         }
-        $this->wire('log')->save('frontendforms_updatestopwords', $data);
+
+        $this->wire('modules')->saveConfig($this, $data);
+
+        $log = $this->wire('log');
+        /** @var WireLog $log */
+        $log->save('frontendforms_updatestopwords', $log_data);
     }
 
-
-    /**
-     * Check if the STOP word list exist on Github
-     * @param string $url
-     * @return bool
-     */
-    protected function githubRawFileExists(string $url): bool
-    {
-        $ch = curl_init($url);
-
-        curl_setopt_array($ch, [
-            CURLOPT_NOBODY => true,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_USERAGENT => 'PHP Checker',
-        ]);
-
-        curl_exec($ch);
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        return $code === 200;
-    }
 
     /**
      * Check if we are on the module config page
      * @param array $moduleNames
      * @return bool
-     * @throws \ProcessWire\WireException
+     * @throws WireException
      */
     public static function isModuleEditPage(array $moduleNames): bool
     {
         $currentURL = wire('input')->url(['withQueryString' => true]);
         $queryStrings = parse_url($currentURL, PHP_URL_QUERY);
         if ($queryStrings) {
+            // find the "name=..." parameter specifically, regardless of
+            // its position in the query string - previously this always
+            // took the first parameter, which incorrectly assumed "name"
+            // is always first. If some other parameter (e.g. a tab or
+            // anchor-style param) came first instead, the comparison
+            // against getModuleEditUrl() below would never match, even
+            // when actually on the correct module edit page.
             $queryStringsArray = explode('&', $queryStrings);
             $nameQueryString = $queryStringsArray[0];
+            foreach ($queryStringsArray as $param) {
+                if (str_starts_with($param, 'name=')) {
+                    $nameQueryString = $param;
+                    break;
+                }
+            }
             $currentURL = str_replace($queryStrings, $nameQueryString, $currentURL);
         }
+        $currentURL = self::normalizeAdminUrl($currentURL);
 
         foreach ($moduleNames as $name) {
-            $modulePageEditUrl = str_replace('edit/?name=', 'edit?name=', wire('modules')->getModuleEditUrl($name, false));
+            $modulePageEditUrl = self::normalizeAdminUrl(wire('modules')->getModuleEditUrl($name, false));
             if ($modulePageEditUrl === $currentURL) {
                 return true;
-                break;
             }
         }
         return false;
     }
 
     /**
+     * Normalize an admin URL for reliable comparison in isModuleEditPage()
+     * and isFieldEditPage().
+     *
+     * Confirmed via live-server testing: wire('input')->url() can return
+     * a trailing slash before the query string (e.g.
+     * ".../edit/?name=FrontendForms"), while
+     * Modules::getModuleEditUrl()/Field::editUrl() do not (e.g.
+     * ".../edit?name=FrontendForms") - or vice versa, depending on the
+     * PW version/environment. Previously only one side of the comparison
+     * was normalized (via a narrow, action-specific str_replace()), so
+     * the two could still end up in different, non-matching forms
+     * depending on which side actually had the trailing slash on a given
+     * server. Stripping any slash immediately before "?" from BOTH sides
+     * here guarantees they're always compared in the same form.
+     * @param string $url
+     * @return string
+     */
+    protected static function normalizeAdminUrl(string $url): string
+    {
+        return str_replace('/?', '?', $url);
+    }
+
+    /**
      * Check if we are on the field edit page of a certain Fieldtype
      * @param array $fieldTypes
      * @return bool
-     * @throws \ProcessWire\WireException
+     * @throws WireException
      */
     public static function isFieldEditPage(array $fieldTypes): bool
     {
         $currentURL = wire('input')->url(['withQueryString' => true]);
+        $queryStrings = parse_url($currentURL, PHP_URL_QUERY);
+        if ($queryStrings) {
+            // find the "id=..." parameter specifically, regardless of its
+            // position or any other extra query parameters present (e.g.
+            // "modal=1" when a field is opened in a modal window) - a
+            // strict full-string comparison against editUrl() below would
+            // otherwise fail to match on the correct field edit page
+            // whenever any such extra parameter is present. Same
+            // reasoning as the fix applied to isModuleEditPage().
+            $queryStringsArray = explode('&', $queryStrings);
+            $idQueryString = $queryStringsArray[0];
+            foreach ($queryStringsArray as $param) {
+                if (str_starts_with($param, 'id=')) {
+                    $idQueryString = $param;
+                    break;
+                }
+            }
+            $currentURL = str_replace($queryStrings, $idQueryString, $currentURL);
+        }
+        $currentURL = self::normalizeAdminUrl($currentURL);
+
         foreach ($fieldTypes as $type) {
             $fields = wire('fields')->findByType($type);
             foreach ($fields as $field) {
-                $editURL = $field->editUrl();
+                $editURL = self::normalizeAdminUrl($field->editUrl());
                 if ($editURL === $currentURL) {
                     return true;
-                    break;
                 }
             }
         }
@@ -1023,11 +1245,18 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * This is necessary because the images are in 3/2 format
      * @param HookEvent $event
      * @return void
+     * @noinspection PhpUnused
      */
     protected function setImageHeight(HookEvent $event): void
     {
+        $class = $event->arguments(0);
         $data = $event->arguments(1);
-        if (isset($data['input_captchaType']) && $data['input_captchaType'] === 'DefaultImageCaptcha') {
+        // run only on FrontendForms module - Modules::saveConfig is a
+        // global hook point that fires for every module's config save,
+        // not just this one, so without this check any other module
+        // that happens to also have a matching input_captchaType field
+        // would have its config data incorrectly modified too.
+        if ($class == 'FrontendForms' && isset($data['input_captchaType']) && $data['input_captchaType'] === 'DefaultImageCaptcha') {
             $data['input_captchaHeight'] = (int)($data['input_captchaWidth'] * 2 / 3);
         }
         $event->arguments(1, $data);
@@ -1047,8 +1276,15 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             // old data will be deleted and only the values from the list of the top 100 will be used
             $blacklist = implode("\n", $this->passwordList);
         } else {
-            // merge blacklist from the db and the password list from passwords.txt
-            $blacklist = array_unique(array_merge($this->blacklist, $this->passwordList), SORT_REGULAR);
+            // Relying on array_unique()'s default $flags (SORT_STRING) here
+            // is essential, not incidental: passing SORT_REGULAR instead
+            // would compare numeric-looking strings as numbers, which
+            // would incorrectly treat e.g. "123456" and "0123456" as
+            // duplicates and silently drop one of them - even though they
+            // are different password strings and "123456" in particular
+            // is a genuinely common weak password that should stay
+            // blacklisted.
+            $blacklist = array_unique(array_merge($this->blacklist, $this->passwordList));
         }
         // save the list
         $data = $this->moduleConfig;
@@ -1056,7 +1292,6 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         // save the current date and time of the list update
         $data['last_check'] = $this->wire('datetime')->date($this->default_dateformat);
         $this->wire('modules')->saveConfig($this, $data);
-        //$this->blacklist = $data['input_blacklist'];
         return $data['input_blacklist'];
     }
 
@@ -1071,12 +1306,19 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         if (is_string($data)) {
             $data = explode("\n", $data);
         }
-        //filter out empty array values if present
-        $passwords = array_filter(($data));
+        // filter out empty array values if present (only genuinely empty/
+        // whitespace-only entries - not every "falsy" value, since a
+        // password consisting of just "0" is a real, non-empty entry that
+        // array_filter() without a callback would incorrectly drop)
+        $passwords = array_filter($data, static function ($value) {
+            return trim((string) $value) !== '';
+        });
         foreach ($passwords as $key => $password) {
             $password = str_replace(['.', ' ', "\n", "\t", "\r"], '', $password);
             if (!$this->password_object->isValidPassword($password)) {
                 unset($passwords[$key]);
+            } else {
+                $passwords[$key] = $password;
             }
         }
         // let us remove double entries if present
@@ -1093,6 +1335,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * BTW all duplicates (if present) will also be removed
      * @param HookEvent $event
      * @return void
+     * @noinspection PhpUnused
      */
     protected function cleanUpBlacklist(HookEvent $event): void
     {
@@ -1100,7 +1343,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $data = $event->arguments(1);
         // run only on FrontendForms module
         if ($class == 'FrontendForms') {
-            if (is_array($data) && !is_null($data['input_blacklist'])) {
+            if (is_array($data) && isset($data['input_blacklist'])) {
                 $data['input_blacklist'] = $this->cleanUpPasswordList($data['input_blacklist']);
             }
         }
@@ -1108,17 +1351,91 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     }
 
     /**
+     * Check whether the current request is allowed to submit changes to the
+     * FrontendForms module configuration (password blacklist / IP blacklist
+     * buttons). Requires a user with the "module-admin" permission on the
+     * module's own edit page with a valid CSRF token, since these actions
+     * are hooked onto Page::render and would otherwise run unauthenticated
+     * on every page of the site.
+     * @return bool
+     * @throws WireException
+     */
+    protected function isAuthorizedConfigSubmit(): bool
+    {
+        if (!$this->wire('user')->hasPermission('module-admin')) {
+            return false;
+        }
+        if (!self::isModuleEditPage(['FrontendForms'])) {
+            return false;
+        }
+        return $this->wire('session')->CSRF->hasValidToken();
+    }
+
+
+    /**
      * Hook method to add passwords from the passwords.txt file to the blacklist if
      * the update blacklist button was submitted manually
      * @return void
      * @throws WireException
+     * @noinspection PhpUnused
      */
     protected function blacklistButtonSubmit(): void
     {
         // check if blacklist update button was submitted
         if ($this->wire('input')->post->submit_save_passwordblacklist) {
+            if (!$this->isAuthorizedConfigSubmit()) {
+                return;
+            }
             $this->input_blacklist = $this->addPopularPasswords();
-            $this->wire->message($this->_('The password blacklist has been updated manually.'));
+            $message = $this->_('The password blacklist has been updated manually.');
+            $this->wire->message($message);
+            $this->wire('session')->setFor($this, 'scrollToField', 'ff-password-changes');
+            $this->wire('session')->setFor($this, 'popupMessage', $message);
+        }
+    }
+
+    /**
+     * Hook method to manually re-download the stopwords.txt (SPAM word)
+     * file from GitHub if the update button was submitted manually.
+     * Mirrors blacklistButtonSubmit() exactly, just downloading the
+     * SPAM-word file directly (via downloadStopwordsFromGitHub()) rather
+     * than re-merging an already-downloaded local file into a textarea,
+     * since the request here is specifically to freshly re-download
+     * stopwords.txt on demand.
+     * @return void
+     * @throws WireException
+     * @noinspection PhpUnused
+     */
+    protected function stopwordListButtonSubmit(): void
+    {
+        // check if the stopword list update button was submitted
+        if ($this->wire('input')->post->submit_save_stopwordlist) {
+            if (!$this->isAuthorizedConfigSubmit()) {
+                return;
+            }
+            $data = $this->wire('modules')->getConfig($this);
+            $data['last_stopword_check'] = $this->last_stopword_check = $this->wire('datetime')->date($this->default_dateformat);
+
+            if ($this->downloadStopwordsFromGitHub()) {
+                $data['topspamwords_download'] = $this->topspamwords_download = $this->wire('datetime')->date($this->default_dateformat);
+
+                $github_data = $this->getDataFromGitHub(self::LAST_SPAMWORDS_MODIFICATION_URL);
+                if ($github_data && isset($github_data[0]->commit->author->date)) {
+                    $data['spamwords_github_modified'] = $this->spamwords_github_modified = $this->wire('datetime')->date(
+                        $this->default_dateformat,
+                        $github_data[0]->commit->author->date
+                    );
+                }
+
+                $this->wire('modules')->saveConfig($this, $data);
+                $message = $this->_('The SPAM word list has been updated manually.');
+                $this->wire->message($message);
+                $this->wire('session')->setFor($this, 'scrollToField', 'ff-stopword-changes');
+                $this->wire('session')->setFor($this, 'popupMessage', $message);
+            } else {
+                $this->wire('modules')->saveConfig($this, $data);
+                $this->wire->warning($this->_('Sorry, the SPAM word list could not be downloaded from GitHub. Please try again later.'));
+            }
         }
     }
 
@@ -1127,14 +1444,26 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * If yes, then save this IP address to the blacklist of banned IP addresses
      * @return void
      * @throws WireException
+     * @noinspection PhpUnused
      */
     protected function saveIPButtonSubmit(): void
     {
         // check if a save ip to blacklist button was submitted
         if ($this->wire('input')->post->submit_save_ip) {
-            $this->addRemoveIpFromBanList(true);
-            $this->wire->message(sprintf($this->_('The IP address %s was added to the IP blacklist.'),
-                $this->wire('input')->post->submit_save_ip));
+            if (!$this->isAuthorizedConfigSubmit()) {
+                return;
+            }
+            if ($this->addRemoveIpFromBanList(true)) {
+                $this->wire->message(sprintf(
+                    $this->_('The IP address %s was added to the IP blacklist.'),
+                    $this->wire('input')->post->submit_save_ip
+                ));
+            } else {
+                $this->wire->warning(sprintf(
+                    $this->_('The IP address %s is not a valid IP address and was not added to the IP blacklist.'),
+                    $this->wire('input')->post->submit_save_ip
+                ));
+            }
         }
     }
 
@@ -1143,14 +1472,26 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * If yes, this IP address will be removed from the blacklist of banned IP addresses
      * @return void
      * @throws WireException
+     * @noinspection PhpUnused
      */
     protected function removeIPButtonSubmit(): void
     {
         // check if a save ip to blacklist button was submitted
         if ($this->wire('input')->post->submit_remove_ip) {
-            $this->addRemoveIpFromBanList(false);
-            $this->wire->message(sprintf($this->_('The IP address %s was removed from the IP blacklist.'),
-                $this->wire('input')->post->submit_remove_ip));
+            if (!$this->isAuthorizedConfigSubmit()) {
+                return;
+            }
+            if ($this->addRemoveIpFromBanList(false)) {
+                $this->wire->message(sprintf(
+                    $this->_('The IP address %s was removed from the IP blacklist.'),
+                    $this->wire('input')->post->submit_remove_ip
+                ));
+            } else {
+                $this->wire->warning(sprintf(
+                    $this->_('The IP address %s was not found in the IP blacklist and could not be removed.'),
+                    $this->wire('input')->post->submit_remove_ip
+                ));
+            }
         }
     }
 
@@ -1158,14 +1499,27 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * Find all ttf fonts across the whole site and save the names and paths to the input_captcha_fonts property
      * @return void
      * @throws WireException
+     * @noinspection PhpUnused
      */
     protected function findFontFiles(): void
     {
         if ($this->wire('input')->post->input_submit_refreshFonts_frontendforms) {
+            if (!$this->isAuthorizedConfigSubmit()) {
+                return;
+            }
             $data = $this->moduleConfig;
             $data['input_captchaFonts'] = $this->findAllFontfiles();
             $this->input_captchaFonts = $data['input_captchaFonts'];
-            $this->wire('modules')->saveConfig($this, $data);
+            if ($this->wire('modules')->saveConfig($this, $data)) {
+                $message = $this->_('The website has been searched for new fonts.');
+                $this->wire->message($message);
+                // flag for initializeImagePicker() to scroll to the font
+                // family field on the next page render, so the admin
+                // lands right where the newly found fonts are selectable
+                // instead of having to scroll/search for the field again
+                $this->wire('session')->setFor($this, 'scrollToField', 'wrap_Inputfield_input_captchaFontFamily');
+                $this->wire('session')->setFor($this, 'popupMessage', $message);
+            }
         }
     }
 
@@ -1174,6 +1528,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * @param HookEvent $event
      * @return void
      * @throws WireException
+     * @noinspection PhpUnused
      */
     protected function updateBlacklist(HookEvent $event): void
     {
@@ -1210,6 +1565,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * Sanitize and validate all IP addresses to be unique inside the textarea input_preventIPs
      * @param HookEvent $event
      * @return void
+     * @noinspection PhpUnused
      */
     protected function validateIP(HookEvent $event): void
     {
@@ -1220,8 +1576,10 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             //validate if all array items contain a valid IP address
             foreach ($dataArray as $key => $ip) {
                 if (!filter_var($ip, FILTER_VALIDATE_IP)) {
-                    $this->wire->error(sprintf($this->_('%s is not a valid IP address and has therefore been deleted.'),
-                        $ip));
+                    $this->wire->error(sprintf(
+                        $this->_('%s is not a valid IP address and has therefore been deleted.'),
+                        $ip
+                    ));
                     unset($dataArray[$key]);
                 }
             }
@@ -1236,6 +1594,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * Validate, if value is a valid HEX color code
      * @param HookEvent $event
      * @return void
+     * @noinspection PhpUnused
      */
     protected function validateColorCodeTextarea(HookEvent $event): void
     {
@@ -1249,8 +1608,10 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                 //validate if all array items contain a valid HEX code
                 foreach ($dataArray as $key => $item) {
                     if (!self::checkHex($item)) {
-                        $this->wire->error(sprintf($this->_('%s is not a valid color code and has therefore been deleted.'),
-                            $item));
+                        $this->wire->error(sprintf(
+                            $this->_('%s is not a valid color code and has therefore been deleted.'),
+                            $item
+                        ));
                         unset($dataArray[$key]);
                     }
                 }
@@ -1281,6 +1642,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * Sanitize all color values if they are valid HEX code
      * @param HookEvent $event
      * @return void
+     * @noinspection PhpUnused
      */
     protected function sanitizeColorValues(HookEvent $event): void
     {
@@ -1290,8 +1652,11 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $value = $fields->$name;
             if (($value) && !(self::checkHex($value))) {
                 $defaultColor = $this->getDefaultData()[$name];
-                $this->wire->error(sprintf($this->_('The color code %s does not correspond to a valid color code in HEX format and has therefore been reset to the default value %s.'),
-                    $value, $defaultColor));
+                $this->wire->error(sprintf(
+                    $this->_('The color code %s does not correspond to a valid color code in HEX format and has therefore been reset to the default value %s.'),
+                    $value,
+                    $defaultColor
+                ));
                 // set the color code back to the default value
                 $fields->$name = $defaultColor;
                 $event->arguments(0, $fields);
@@ -1303,31 +1668,38 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * Method to add HTML links to field notes
      * @param HookEvent $event
      * @return void
+     * @noinspection PhpUnused
      */
     protected function addLinkToNotes(HookEvent $event): void
     {
         $field = $event->object;
+        /** @var Inputfield $field */
         if (!in_array($field->name, ['input_dateformat', 'input_timeformat'])) {
             return;
         }
         $field->entityEncodeText = false;
 
         switch ($field->name) {
-            case('input_dateformat'):
-                $notes = sprintf($this->_('Enter a date format in PHP dateformat syntax (fe Y-m-d). %s'),
-                    '<a href="https://www.php.net/manual/en/datetime.format.php" target="_blank" title="Link opens in a new tab">Read more...</a><br>');
+            case ('input_dateformat'):
+                $notes = sprintf(
+                    $this->_('Enter a date format in PHP dateformat syntax (fe Y-m-d). %s'),
+                    '<a href="https://www.php.net/manual/en/datetime.format.php" target="_blank" rel="noopener noreferrer" title="Link opens in a new tab">Read more...</a><br>'
+                );
                 $field->notes = $notes . sprintf($this->_(' The default format is %s'), 'Y-m-d');
                 break;
-            case('input_timeformat'):
-                $notes = sprintf($this->_('Enter a time format in PHP dateformat syntax (fe H:i:s). %s'),
-                    '<a href="https://www.php.net/manual/en/datetime.format.php" target="_blank" title="Link opens in a new tab">Read more...</a><br>');
+            case ('input_timeformat'):
+                $notes = sprintf(
+                    $this->_('Enter a time format in PHP dateformat syntax (fe H:i:s). %s'),
+                    '<a href="https://www.php.net/manual/en/datetime.format.php" target="_blank" rel="noopener noreferrer" title="Link opens in a new tab">Read more...</a><br>'
+                );
                 $field->notes = $notes . sprintf($this->_(' The default format is %s'), 'H:i a');
                 break;
         }
     }
 
     /**
-     * Request GitHub, download the passwords.txt file and save it to the module root
+     * Request GitHub, download the passwords.txt file and save it to the
+     * module's data folder
      * @return bool - true if download was successful, otherwise false
      * @throws WireException
      */
@@ -1335,13 +1707,108 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     {
 
         $filedata = $this->getDataFromGitHub(self::TOP_PASSWORDS); //load JSON data from the txt.file
-        if ($filedata) {
-            //get content of the file from GitHub
-            $download_content = $this->wire('files')->fileGetContents($filedata->download_url);
-            // create or overwrite existing file passwords.txt
-            return (bool)($this->wire('files')->filePutContents($this->passwordPath, $download_content));
+        if (!is_object($filedata) || empty($filedata->download_url)) {
+            return false;
         }
-        return false;
+
+        //get content of the file from GitHub - using a direct,
+        // explicitly timeout-protected call rather than
+        // WireFileTools::fileGetContents(), whose internal timeout
+        // behavior isn't something this code can rely on. This method can
+        // run before every page request (via the Page::render hook in
+        // downloadPasswords()), so a hanging request here would be just as
+        // serious as the one fixed in getDataFromGitHub().
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'header' => [
+                    'User-Agent: PHP'
+                ],
+                'timeout' => 5,
+            ]
+        ]);
+        $download_content = @file_get_contents($filedata->download_url, false, $context);
+
+        if (!$download_content || !$this->isPlausibleTextListContent($download_content, 1024 * 1024)) {
+            return false;
+        }
+        // create or overwrite existing file passwords.txt
+        return (bool)($this->wire('files')->filePutContents($this->passwordPath, $download_content));
+    }
+
+    /**
+     * Request GitHub, download the stopwords.txt (SPAM word) file and
+     * save it to the module's data folder. Mirrors
+     * downloadPasswordsFromGitHub() exactly, using the same
+     * timeout-protected direct download and defense-in-depth content
+     * check, just against the SPAM-word list source and stopwordPath
+     * instead.
+     * @return bool - true if download was successful, otherwise false
+     * @throws WireException
+     */
+    protected function downloadStopwordsFromGitHub(): bool
+    {
+        $filedata = $this->getDataFromGitHub(self::TOP_SPAMWORDS); //load JSON data from the txt.file
+        if (!is_object($filedata) || empty($filedata->download_url)) {
+            return false;
+        }
+
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'header' => [
+                    'User-Agent: PHP'
+                ],
+                'timeout' => 5,
+            ]
+        ]);
+        $download_content = @file_get_contents($filedata->download_url, false, $context);
+
+        // the SPAM-word list is a community-maintained list with tens of
+        // thousands of entries (unlike the small top-100-ish password
+        // list), so it gets a considerably larger plausible-size ceiling
+        // - 10 MB is still far more generous than the list has ever
+        // actually needed, while still catching genuinely implausible
+        // responses.
+        if (!$download_content || !$this->isPlausibleTextListContent($download_content, 10 * 1024 * 1024)) {
+            return false;
+        }
+        // create or overwrite existing file stopwords.txt
+        return (bool)($this->wire('files')->filePutContents($this->stopwordPath, $download_content));
+    }
+
+    /**
+     * Defense-in-depth sanity check for content downloaded from GitHub
+     * before it gets saved to a local file (passwords.txt / stopwords.txt).
+     * This is not currently a direct code-execution path (the file is
+     * saved with a .txt extension and is only ever read line-by-line via
+     * file(), never include()'d), but validating the content anyway
+     * guards against the file's usage ever-changing in the future, or a
+     * misconfigured server that executes .txt files as PHP.
+     * @param string $content
+     * @param int $maxBytes Maximum plausible size for this particular
+     *   list - a top-100-ish password list should be tiny, while a
+     *   community-maintained spam-word list can legitimately be much
+     *   larger (tens of thousands of entries).
+     * @return bool True if the content looks like a plausible plain-text
+     *   word list, false if it should be rejected.
+     */
+    protected function isPlausibleTextListContent(string $content, int $maxBytes): bool
+    {
+        if (strlen($content) > $maxBytes) {
+            return false;
+        }
+        // reject content containing PHP/script open tags or a null byte -
+        // a plain-text word list should never legitimately contain these
+        if (str_contains($content, '<?php') || str_contains($content, '<?=') || str_contains($content, '<script') || str_contains($content, "\0")) {
+            return false;
+        }
+        // reject content that isn't valid UTF-8 / doesn't look like plain
+        // text (a real word list is just newline-separated entries)
+        if (!mb_check_encoding($content, 'UTF-8')) {
+            return false;
+        }
+        return true;
     }
 
 
@@ -1352,6 +1819,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * modified on GitHub
      * @return void
      * @throws WireException
+     * @noinspection PhpUnused
      */
     protected function downloadPasswords(): void
     {
@@ -1360,42 +1828,58 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         // let us check some conditions if it is necessary to update the passwords
         if ($this->wire('files')->exists($this->passwordPath)) {
 
-            // check if the last check was in the same month or not
+            // check if the last check was in the same month or not (only for automated downloads - not for manual downloads)
             $check = $this->wire('datetime')->date('Y-m', $this->last_check) != $this->wire('datetime')->date('Y-m');
+            $manualDownload = (bool) $this->wire('input')->post->submit_save_passwordblacklist;
 
-            if ($check) {
+            if ($check || $manualDownload) {
 
                 // save the check date to the database
                 $this->last_check = $data['last_check'] = $this->wire('datetime')->date($this->default_dateformat);
                 // grab data from GitHub
                 $github_data = $this->getDataFromGitHub(self::LAST_PASSWORDS_MODIFICATION_URL); //load JSON data from the file
-
-                if ($github_data) {
+                if ($github_data && isset($github_data[0]->commit->author->date)) {
                     $last_update = $github_data[0]->commit->author->date; // last modification date on GitHub
-                    // check if last download was before last update - so we need to download the file again
-                    if ((!$this->toppasswords_download) || (strtotime($last_update) > strtotime($this->toppasswords_download))) {
-                        // download the passwords from GitHub
-                        if ($this->downloadPasswordsFromGitHub()) {
-                            $this->toppasswords_download = $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
-                            //$this->github_modified = $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat);
-                            $this->github_modified = $this->wire('datetime')->date($this->default_dateformat, $last_update);
-                        }
+                    // a manual download always re-downloads, regardless of
+                    // whether the GitHub version is newer than the last
+                    // download - an automated (monthly) check only
+                    // downloads if it actually is newer
+                    $shouldDownload = $manualDownload
+                        || (!$this->toppasswords_download)
+                        || (strtotime($last_update) > strtotime($this->toppasswords_download));
+
+                    if ($shouldDownload && $this->downloadPasswordsFromGitHub()) {
+                        $this->toppasswords_download = $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
+                        $this->github_modified = $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat, $last_update);
                     }
                 }
-                wire('modules')->saveConfig($this, $data);
+                $this->wire('modules')->saveConfig($this, $data);
             }
         } else {
             // in the rare case that the file does not exist (fe accidentally deleted) - download it once more
             if ($this->downloadPasswordsFromGitHub()) {
                 $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
-                wire('modules')->saveConfig($this, $data);
+                $this->wire('modules')->saveConfig($this, $data);
             }
         }
     }
 
+    /**
+     * Page::render hook (admin only) that initializes the jQuery "imagepicker"
+     * plugin on select fields carrying the "ff-imagepicker" class, so options
+     * are rendered as clickable image thumbnails rather than plain text.
+     * Runs only on the module's own edit page and the FieldtypeFrontendComments
+     * field edit page, where such select fields (e.g. the email template
+     * picker) actually appear.
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     * @noinspection PhpUnused
+     */
     protected function initializeImagePicker(HookEvent $event): void
     {
         $page = $event->object;
+        /** @var Page $page */
         // don't add this to frontend pages
         if ($page->template->name !== 'admin') {
             return;
@@ -1403,30 +1887,92 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         if ((self::isModuleEditPage(['FrontendForms', 'FrontendContact', 'FrontendLoginRegister'])) || (self::isFieldEditPage(['FieldtypeFrontendComments']))) {
             $initialize = '<script>$("select.ff-imagepicker").imagepicker({show_label  : true})</script>';
             $event->return = str_replace('</body>', $initialize . '</body>', $event->return);
+
+            // Translatable text for the "unsaved changes" confirmation
+            // dialog shown by guardActionButtons() in
+            // frontendforms-backend.js, passed via data attributes rather
+            // than hardcoded in the JS file so it goes through
+            // ProcessWire's translation system.
+            $discardWarning = $this->_('There are unsaved changes in this form. If you continue, these changes will be lost, since this action only saves the related settings. Please save your changes first, or choose "Continue" to discard them.');
+            $continueLabel = $this->_('Continue');
+            $cancelLabel = $this->_('Cancel');
+            $okLabel = $this->_('OK');
+            $event->return = preg_replace(
+                '/<body\b/',
+                '<body'
+                . ' data-ff-discard-warning="' . htmlspecialchars($discardWarning, ENT_QUOTES, 'UTF-8') . '"'
+                . ' data-ff-btn-continue="' . htmlspecialchars($continueLabel, ENT_QUOTES, 'UTF-8') . '"'
+                . ' data-ff-btn-cancel="' . htmlspecialchars($cancelLabel, ENT_QUOTES, 'UTF-8') . '"'
+                . ' data-ff-btn-ok="' . htmlspecialchars($okLabel, ENT_QUOTES, 'UTF-8') . '"',
+                $event->return,
+                1
+            );
+        }
+
+        // if a manual action just completed that should draw attention to
+        // a specific element (see findFontFiles(), blacklistButtonSubmit(),
+        // stopwordListButtonSubmit()), flag that element's id for
+        // scrollToFlaggedField() in frontendforms-backend.js to reveal and
+        // scroll to on this page load, so the admin lands right where the
+        // relevant setting is instead of having to scroll/search for it
+        // again. The session flag is removed immediately so this only
+        // happens once, right after the action, not on every subsequent
+        // visit to this page.
+        $scrollToElementId = $this->wire('session')->getFor($this, 'scrollToField');
+        if ($scrollToElementId) {
+            $this->wire('session')->removeFor($this, 'scrollToField');
+            $event->return = preg_replace(
+                '/<body\b/',
+                '<body data-ff-scroll-to="' . htmlspecialchars($scrollToElementId, ENT_QUOTES, 'UTF-8') . '"',
+                $event->return,
+                1
+            );
+        }
+
+        // if a manual action just completed and set a message (see
+        // blacklistButtonSubmit()), show that same message again as a
+        // Vex popup dialog, in addition to the regular PW notice, so it's
+        // harder to miss.
+        $popupMessage = $this->wire('session')->getFor($this, 'popupMessage');
+        if ($popupMessage) {
+            $this->wire('session')->removeFor($this, 'popupMessage');
+            $event->return = preg_replace(
+                '/<body\b/',
+                '<body data-ff-popup-message="' . htmlspecialchars($popupMessage, ENT_QUOTES, 'UTF-8') . '"',
+                $event->return,
+                1
+            );
         }
     }
 
     /**
-     * Method to delete all uploaded files after email was sent
+     * Remove the WireTempDir used for staging mail attachments (if any) now that
+     * WireMail::send() has actually completed. See WireMail::sendAttachments hook
+     * in ready(), where the temp dir is created with setRemove(false) and stored
+     * on the mail object so it survives until this point.
+     * @param HookEvent $event
      * @return void
-     * @throws WireException
+     * @noinspection PhpUnused
      */
-    protected function deleteUploadedFilesAfterSending(): void
+    protected function removeMailAttachmentTempDir(HookEvent $event): void
     {
-        // all files were sent -> so empty the temp folders
-        $files = $this->wire('files')->find($this->temp_uploadPath);
-        foreach ($files as $file) {
-            $this->wire('files')->unlink($file);
+        $mail = $event->object;
+        /** @var WireMail $mail */
+        $tempDir = $mail->get('_ffAttachmentTempDir');
+        if ($tempDir) {
+            $tempDir->remove();
         }
     }
 
     /**
-     * @param \ProcessWire\HookEvent $event
+     * @param HookEvent $event
      * @return void
+     * @noinspection PhpUnused
      */
     protected function convertMailProperties(HookEvent $event): void
     {
         $mail = $event->object;
+        /** @var WireMail $mail */
         $className = $mail->className();
 
         if ($className === 'WireMailPHPMailer') {
@@ -1445,8 +1991,11 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     protected function createAdditionalNotesText(array $methods): string
     {
         // create singular/plural default text
-        $text = $this->_n($this->_('This can be overwritten on the form by using this method'),
-            $this->_('This can be overwritten on the form by using these methods'), count($methods));
+        $text = $this->_n(
+            $this->_('This can be overwritten on the form by using this method'),
+            $this->_('This can be overwritten on the form by using these methods'),
+            count($methods)
+        );
         $methodsMarkup = [];
         foreach ($methods as $method) {
             $methodsMarkup[] = '<b>' . $method . '</b>';
@@ -1460,10 +2009,12 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * These examples will be displayed under the input fields in the module configuration
      * @param HookEvent $event
      * @return void
+     * @noinspection PhpUnused
      */
     protected function overwriteExamplesNotes(HookEvent $event): void
     {
         $field = $event->object;
+        /** @var Inputfield $field */
         $fields = [
             'input_minTime' => ['$form->setMinTime(3);'],
             'input_maxTime' => ['$form->setMaxTime(600);'],
@@ -1506,7 +2057,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             'input_global_notes_tag' => ['$form->setNotesTag("div");'],
             'input_global_msg_tag' => ['$form->setMessageTag("div");'],
             'input_removeCSS' => ['$form->useCSS(false); // true or false'],
-            'input_removeJS' => ['$form->useJS(false); // true or false'],
+            'input_removeJS' => ['$form->useJS(false); // true or false']
         ];
         if (!array_key_exists($field->name, $fields)) {
             return;
@@ -1527,6 +2078,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     protected function addAssets(HookEvent $event): void
     {
         $page = $event->object;
+        /** @var Page $page */
         // don't add this to the admin pages
         if ($page->template->name === 'admin') {
             return;
@@ -1542,7 +2094,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                     'failedText' => $this->_('Try again!'),
                     'offset' => $this->input_offset
                 ];
-                $script = '<script>var slidertexts = ' . json_encode($sliderdata) . ';</script>';
+                $script = '<script>let slidertexts = ' . json_encode($sliderdata) . ';</script>';
 
                 $event->return = str_replace('</head>', $script . '</head>', $event->return);
             }
@@ -1554,19 +2106,19 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $js = '';
             // check if at field conditions are used inside this form, if so add the JavaScript file to the page
             if ($page->field_conditions) {
-                $js = '<script src="' . $this->wire('config')->urls->$this . 'mf-conditional-fields.min.js?v=' . $version . '"></script>' . PHP_EOL;
+                $js = '<script src="' . $this->wire('config')->urls->$this . 'assets/js/mf-conditional-fields.js?v=' . $version .time(). '"></script>' . PHP_EOL;
             }
 
             // set the asterisk as JS constant, because it could be changed via Hook
             // will be used to add it via JS to conditional required input fields
-            $label = new \FrontendForms\Label();
+            $label = new Label();
             $asterisk = $label->renderAsterisk();
             $js .= '<script>const asterisk = \'' . $asterisk . '\';</script>' . PHP_EOL;
-            $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms.min.js?v=' . $version . '" defer></script>' . PHP_EOL;
+            $js .= '<script src="' . $this->wire('config')->urls->$this . 'assets/js/frontendforms-frontend.js?v=' . $version . time() . '" defer></script>' . PHP_EOL;
 
             // load slidercaptcha.js only if this captcha type is selected
             if ($this->input_captchaType == 'SliderCaptcha' && $page->sliderCaptcha) {
-                $js .= '<script src="' . $this->wire('config')->urls->$this . 'frontendforms-slidercaptcha.min.js?v=' . $version . '" defer></script>' . PHP_EOL;
+                $js .= '<script src="' . $this->wire('config')->urls->$this . 'assets/js/frontendforms-slidercaptcha.min.js?v=' . $version . '" defer></script>' . PHP_EOL;
             }
 
             if (array_filter($page->useJS)) {
@@ -1577,7 +2129,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         if ((!is_null($page->ff_forms)) && (!$this->input_removeCSS || $page->useCSS)) {
 
-            $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'frontendforms.min.css?v=' . $version . '">' . PHP_EOL;
+            $css = '<link rel="stylesheet" type="text/css" href="' . $this->wire('config')->urls->$this . 'assets/css/frontendforms-frontend.min.css?v=' . $version . '">' . PHP_EOL;
 
             if (!is_null($page->ff_forms) && array_filter($page->useCSS)) {
                 $event->return = str_replace('</head>', $css . PHP_EOL . '</head>', $event->return);
@@ -1591,8 +2143,9 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
             // get all comment fields
             $fields = $this->wire('fields')->findByType('FieldtypeFrontendComments');
-            if (count($fields) == 0)
+            if (count($fields) == 0) {
                 return;
+            }
 
             // check if the given comment fields have JS and CSS enabled
             $commentFieldJS = [];
@@ -1608,22 +2161,28 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                 if ($page->hasField($field->name)) {
 
                     // Remove all JS
-                    if (!array_key_exists('input_removeFrontendCommentsJS', $field->data))
+                    if (!array_key_exists('input_removeFrontendCommentsJS', $field->data)) {
                         $commentFieldJS[$field->name] = 1;
-                    if (!is_null($page->$jsPropName)) // overwrite it
+                    }
+                    if (!is_null($page->$jsPropName)) { // overwrite it
                         $commentFieldJS[$field->name] = $page->$jsPropName;
+                    }
 
                     // Remove all CSS
-                    if (!array_key_exists('input_removeFrontendCommentsCSS', $field->data))
+                    if (!array_key_exists('input_removeFrontendCommentsCSS', $field->data)) {
                         $commentFieldCSS[$field->name] = 1;
-                    if (!is_null($page->$cssPropName)) // overwrite it
+                    }
+                    if (!is_null($page->$cssPropName)) { // overwrite it
                         $commentFieldCSS[$field->name] = $page->$cssPropName;
+                    }
 
                     // Remove star rating CSS and JS
-                    if ($field->data['input_fc_stars'])
+                    if ($field->data['input_fc_stars']) {
                         $commentFieldStars[$field->name] = 1;
-                    if (!is_null($page->$starsPropName)) // overwrite it
+                    }
+                    if (!is_null($page->$starsPropName)) { // overwrite it
                         $commentFieldStars[$field->name] = $page->$starsPropName;
+                    }
                 }
             }
 
@@ -1673,7 +2232,10 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                 if (in_array(1, $commentFieldStars)) {
 
                     $js .= '<script src="' . $url . 'star-rating.min.js?v=' . $moduleVersion . ' "></script>' . PHP_EOL;
-                    $js .= "<script>var stars = new StarRating('.fcm-star-rating');</script>" . PHP_EOL;
+                    $js .= '<script>' . PHP_EOL;
+                    $js .= '/** @noinspection JSUnresolvedReference */' . PHP_EOL;
+                    $js .= "let stars = new StarRating('.fcm-star-rating');" . PHP_EOL;
+                    $js .= '</script>' . PHP_EOL;
                 }
 
                 $event->return = str_replace('</body>', $js . PHP_EOL . '</body>', $event->return);
@@ -1682,9 +2244,36 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         }
     }
 
+    /**
+     * Normalize paths for string comparison
+     * This is a typical Windows problem. PHP provides paths differently depending on the source
+     * This function makes paths equal under Windows and Linux
+     * @param string $path
+     * @return string
+     */
+    private function normalizePath(string $path): string
+    {
+        return rtrim(str_replace('\\', '/', $path), '/');
+    }
+
+    /**
+     * Page::render hook that scans the rendered page content for
+     * {{formname}} (or {{formname__2}}, {{formname__3}}, ... for repeated
+     * occurrences of the same form) placeholders and replaces each one with
+     * the output of a matching, developer-defined PHP function of the same
+     * name, if one exists inside a file under site/templates/. This allows
+     * editors to insert a form anywhere in a CKEditor/textarea field simply
+     * by typing the placeholder, without needing direct template access.
+     * Does not run on admin pages.
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     * @noinspection PhpUnused
+     */
     protected function replaceFormPlaceholders(HookEvent $event): void
     {
         $page = $event->object;
+        /** @var Page $page */
 
         // don't run on admin pages
         if ($page->template->name === 'admin') {
@@ -1699,18 +2288,31 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         // get all fields of the template
         $fields = $template->fieldgroup;
 
+        // Initialize the temporary "found forms" tracking array once per
+        // page render, before iterating fields - not inside the loop
+        // below. Page::data($key, $value) is a setter (not a "get with
+        // default"), so calling it inside the loop would unconditionally
+        // reset the tracking array on every matching field, causing the
+        // same {{formname}} placeholder used in multiple CKEditor/textarea
+        // fields on the same page to incorrectly receive duplicate
+        // numbering (e.g. both getting __1) instead of incrementing
+        // correctly across fields (__1, __2, ...).
+        if ($page->data('found-forms') === null) {
+            $page->data('found-forms', []);
+        }
+
         foreach ($fields as $field) {
 
             if (($field->type == 'FieldtypeTextarea' || $field->type == 'FieldtypeTextareaLanguage') && ($field->contentType == 1)) {
-
-                // Save found placeholders temporarily to iterate their number
-                $foundForms = $page->data('found-forms', []);
 
                 // Find forms with or without surrounding <p> inside body
                 $findFormsRegex = '/(<p>\s*)?{{([a-zA-Z0-9_-]+)}}(\s*<\/p>)?/';
 
                 // Do the search and Replace
                 $content = preg_replace_callback(
+                /**
+                 * @throws WireException
+                 */
                     $findFormsRegex,
                     function ($matches) use ($page, $event, $namespace) {
 
@@ -1724,9 +2326,6 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                         $formName = $formNameParts[0];
                         $formCount = $formNameParts[1] ?? 1;
 
-                        // Replace it with nothing if placeholders are unknown
-                        if ($formName != $formFullName) return '';
-
                         // Get form number on the page
                         $formCount = $formCount ?? 1;
 
@@ -1734,7 +2333,9 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                         $foundForms = $page->data('found-forms');
 
                         // Increment form number if form name was already found before and exists in the temp found forms array
-                        while (in_array($formName . '__' . $formCount, $foundForms)) $formCount++;
+                        while (in_array($formName . '__' . $formCount, $foundForms)) {
+                            $formCount++;
+                        }
 
                         // Generate form name with new incremented number
                         $formNameCount = $formName . '__' . $formCount;
@@ -1747,14 +2348,31 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
                         // Create the dynamic function name (with or without a namespace
                         if ($namespace) {
-                            $functionName = $namespace . DIRECTORY_SEPARATOR . $formName;
+                            $functionName = $namespace . '\\' . $formName;
                         } else {
                             $functionName = $formName;
                         }
 
                         // check if a function with this name exists
                         if (function_exists($functionName)) {
-                            $out .= $functionName($formNameCount);
+                            // security check: only call functions that are actually
+                            // defined in a PHP file (this alone excludes every internal/
+                            // compiled PHP core function like exec(), system(), phpinfo(),
+                            // etc. - they have no file of their own) AND whose file lives
+                            // inside site/templates/, the conventional location for
+                            // developer-defined form-rendering functions. Without this,
+                            // a page editor could trigger arbitrary global PHP functions
+                            // (including dangerous ones) just by typing a matching
+                            // {{functionname}} placeholder into a textarea/CKEditor field.
+                            $reflection = new ReflectionFunction($functionName);
+                            $functionFile = $reflection->getFileName();
+                            $functionFile = $this->normalizePath($functionFile);
+                            $templatesPath = (string) $this->wire('config')->paths->templates;
+                            $templatesPath = $this->normalizePath($templatesPath);
+                            if ($functionFile !== false && str_starts_with($functionFile, $templatesPath)) {
+                                $out .= $functionName($formNameCount);
+                            }
+
                         }
                         return $out;
                     },
@@ -1776,6 +2394,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     public static function addUnitToLabel(HookEvent $event, string $fieldname, string $unit): void
     {
         $inputfield = $event->object;
+        /** @var Inputfield $inputfield */
         if ($inputfield->name === $fieldname) {
             $input = $event->return;
             $event->return = '<div id="label-' . $inputfield->name . '" class="fieldlabel">' . $input . ' ' . $unit . '</div>';
@@ -1786,6 +2405,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * Add the appropriate label text next to the input fields of type integer
      * @param HookEvent $event
      * @return void
+     * @noinspection PhpUnused
      */
     protected function inputfieldIntegerRenderAfter(HookEvent $event): void
     {
@@ -1804,25 +2424,80 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     /**
      * Get various information about an IP address from ip-api.com
      * @param string $ip
-     * @return \stdClass - returns a json-decoded object
+     * @return stdClass|null - returns a json-decoded object, or null if the
+     *     lookup failed (network error) or the response was not valid JSON
      */
-    public static function getIPData(string $ip): stdClass
+    public static function getIPData(string $ip): ?stdClass
     {
+        // Deliberately HTTP, not HTTPS: ip-api.com's free endpoint (used
+        // here, without an API key) does not support SSL at all -
+        // "256-bit SSL encryption is not available for this free API" per
+        // their own documentation (https://ip-api.com/). Their paid Pro
+        // tier is required for HTTPS access. Switching this to https://
+        // would make every request fail outright.
         $iptolocation = 'http://ip-api.com/json/' . $ip;
-        $location = file_get_contents($iptolocation);
-        return json_decode($location);
+        $location = @file_get_contents($iptolocation);
+        if ($location === false) {
+            return null;
+        }
+        $data = json_decode($location);
+        return ($data instanceof stdClass) ? $data : null;
+    }
+
+    /**
+     * Resolve the current user's admin theme class name (or the site-wide
+     * default, if the user hasn't chosen one).
+     *
+     * Used by code that runs outside of ProcessWire's normal
+     * admin-template page lifecycle (e.g. the /detail-view/{ip} URL-hook
+     * route), where wire('adminTheme') is never populated - see
+     * detail-view.php for the full explanation.
+     * @return string The admin theme class name, or an empty string if none could be resolved.
+     * @throws WireException
+     * @noinspection PhpUnused
+     */
+    protected function getActiveAdminThemeClass(): string
+    {
+        return (string) ($this->wire('user')->admin_theme ?: $this->wire('config')->defaultAdminTheme);
+    }
+
+    /**
+     * Check whether the current user's admin theme (or the site-wide
+     * default) is Uikit-based.
+     * @return bool
+     * @throws WireException
+     */
+    protected function isUikitAdminThemeActive(): bool
+    {
+        $themeClass = $this->getActiveAdminThemeClass();
+        return $themeClass !== '' && str_contains($themeClass, 'Uikit');
     }
 
     /**
      * Render a link to domaintools.com for further information about the IP address
      * @param string $ip
      * @return string
+     * @throws Wire404Exception
+     * @throws WireException
+     * @throws WirePermissionException
+     * @noinspection PhpUnused
      */
     protected function executeWhoisLookUp(string $ip): string
     {
-        $whoislookup = '<div id="linkwrapper"><a href="https://whois.domaintools.com/' . $ip . '" title="' . $this->_('Opens in a new window') . '" target="_blank">';
-        $whoislookup .= sprintf($this->_('More detailed information about the IP %s at www.domaintools.com'),
-                $ip) . '</a></div>';
+        $whoislookup = '<div id="linkwrapper">';
+
+        $button = $this->wire('modules')->get('InputfieldButton');
+
+        $button->name = 'external_link';
+        $button->value = sprintf(
+            $this->_('More detailed information about the IP %s at www.domaintools.com'),
+            $ip
+        );
+        $button->attr('onclick', "window.open('https://whois.domaintools.com/$ip', '_blank');");
+
+        $whoislookup .= $button->render();
+
+        $whoislookup .= '</div>';
         return $whoislookup;
     }
 
@@ -1833,6 +2508,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * @return string
      * @throws WireException
      * @throws WirePermissionException
+     * @noinspection PhpUnused
      */
     protected function executeViewDetailsTable(string $ip): string
     {
@@ -1840,6 +2516,21 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $headline = '<h2>' . sprintf($this->_('Failed attempts for IP %s'), $ip) . '</h2>';
 
         $table = $this->wire('modules')->get('MarkupAdminDataTable');
+        $table->setEncodeEntities(false);
+        // AdminThemeUikit normally adds Uikit-compatible table markup via
+        // its own hook on MarkupAdminDataTable::render() - but that hook
+        // is only registered while AdminThemeUikit's own bootstrap runs,
+        // which skips itself outside of admin-template pages. This
+        // /detail-view/{ip} URL-hook route is never an admin-template
+        // page, so that hook never fires here. Adding the standard Uikit
+        // table classes directly ensures the table looks right in that
+        // case - but only when the current user's admin theme (or the
+        // site-wide default, if the user hasn't chosen one) actually is
+        // Uikit-based; otherwise these classes would just be inert,
+        // unused markup for that user.
+        if ($this->isUikitAdminThemeActive()) {
+            $table->addClass('uk-table uk-table-divider uk-table-small uk-table-justify uk-table-striped');
+        }
         $table->headerRow([
             $this->_('Date'),
             $this->_('URL'),
@@ -1848,11 +2539,23 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         foreach ($logs as $log) {
             $text = json_decode($log['text']);
+            // skip log entries that aren't valid JSON, rather than
+            // attempting to read a property off of null
+            if (!$text) {
+                continue;
+            }
             // grab only log with the given IP
             if ($text->IP == $ip) {
-                $table->row([$this->_('Date') . ': ' . $log['date'],
-                    $this->_('URL') . ': ' . $log['url'],
-                    $this->_('Form-ID') . ': ' . $text->FormID]);
+                $urlLink = '<a href="' . htmlspecialchars($log['url'], ENT_QUOTES, 'UTF-8') . '"'
+                    . ' target="_blank" rel="noopener noreferrer"'
+                    . ' title="' . htmlspecialchars($this->_('Opens in a new window'), ENT_QUOTES, 'UTF-8') . '">'
+                    . htmlspecialchars($log['url'], ENT_QUOTES, 'UTF-8')
+                    . '</a>';
+                $table->row([
+                    htmlspecialchars($log['date'], ENT_QUOTES, 'UTF-8'),
+                    $urlLink,
+                    htmlspecialchars((string) $text->FormID, ENT_QUOTES, 'UTF-8'),
+                ]);
             }
         }
         return $headline . $table->render();
@@ -1870,6 +2573,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $table = $this->wire('modules')->get('MarkupAdminDataTable');
             $table->setEncodeEntities(false);
             $table->setSortable(false);
+            $table->addClass('uk-table-middle');
             $table->headerRow([
                 $this->_('IP address'),
                 $this->_('User'),
@@ -1913,8 +2617,8 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                     $fa = 'fa-times';
                 }
                 $table->row([
-                    $ip,
-                    $entry['user'],
+                    htmlspecialchars((string) $ip, ENT_QUOTES, 'UTF-8'),
+                    htmlspecialchars((string) $entry['user'], ENT_QUOTES, 'UTF-8'),
                     '<i class="fa fa-fw ' . $fa . '"></i>',
                     $entry['count'],
                     $details,
@@ -1937,15 +2641,43 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         $files = [];
         $rootPath = $this->wire('config')->paths->root;
-        $results = $this->wire('files')->find($rootPath, ['recursive' => true, 'extensions' => ['ttf'], 'returnRelative' => true]);
+        // absolute paths (the default for find(), no 'returnRelative'
+        // option needed) - not relative ones. The saved config value
+        // (input_captchaFontFamily) is later checked directly via
+        // wire('files')->exists($this->frontendforms['input_captchaFontFamily'])
+        // in AbstractTextCaptcha::getFontFamily(), which requires an
+        // absolute path to resolve correctly. A relative path there would
+        // silently fail to be found, meaning any font the admin actually
+        // selected via this dropdown (other than the one set during
+        // ___install(), which already used an absolute path) would never
+        // actually be applied.
+        $results = $this->wire('files')->find($rootPath, ['recursive' => true, 'extensions' => ['ttf']]);
 
         foreach ($results as $font) {
-            // do not add Fontawesome to the fonts
-            if (!str_contains($font, 'fontawesome')) {
+            if (!self::isFontAwesomeFile($font)) {
                 $files[$font] = ucfirst(pathinfo($font, PATHINFO_BASENAME));
             }
         }
         return array_unique($files);
+    }
+
+    /**
+     * Check whether a given font file path belongs to Font Awesome - icon
+     * fonts don't contain glyphs for regular text characters at all, so if
+     * one of these ever gets selected as the CAPTCHA font, captcha text
+     * would render as empty/missing-glyph boxes for every character.
+     *
+     * Case-insensitive and matches both "fontawesome" and the hyphenated
+     * "font-awesome" (the actual directory name ProcessWire's admin theme
+     * ships it under, e.g.
+     * wire/templates-admin/styles/font-awesome-6.7.2/...) - an earlier,
+     * hyphen-less-only, case-sensitive check let this slip through.
+     * @param string $path
+     * @return bool
+     */
+    public static function isFontAwesomeFile(string $path): bool
+    {
+        return (bool) preg_match('/font-?awesome/i', $path);
     }
 
     /**
@@ -2077,14 +2809,17 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         // Select CSS framework
         $frameworkSelect = $this->wire('modules')->get('InputfieldSelect');
+        /** @var InputfieldSelect $frameworkSelect */
         $frameworkSelect->attr('name', 'input_framework');
         $frameworkSelect->label = $this->_('Output rendering');
         $frameworkSelect->description = $this->_('Select if you want to use a framework for rendering the form or not');
-        $defaultFrameWorkFiles = $this->wire('files')->find($this->modulePath . 'CSSClasses/', ['extensions' => 'json']);
+        $defaultFrameWorkFiles = $this->wire('files')->find($this->modulePath . 'frameworks/', ['extensions' => 'json']);
         $customFrameworkFiles = $this->wire('files')->find($this->customFrameworksPath, ['extensions' => 'json']);
         $frameWorkFiles = array_merge($defaultFrameWorkFiles, $customFrameworkFiles);
-        $key = array_search($this->modulePath . 'CSSClasses/none.json', $frameWorkFiles);
-        array_unshift($frameWorkFiles, $frameWorkFiles[$key]); // move none.json to the first position in the array
+        $key = array_search($this->modulePath . 'frameworks/none.json', $frameWorkFiles);
+        if ($key !== false) {
+            array_unshift($frameWorkFiles, $frameWorkFiles[$key]); // move none.json to the first position in the array
+        }
 
         $frameWorkOptions = [];
         foreach ($frameWorkFiles as $path) {
@@ -2127,6 +2862,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         // Set global position of the input field description
         $descPosition = $this->wire('modules')->get('InputfieldSelect');
+        /** @var InputfieldSelect $descPosition */
         $descPosition->label = $this->_('Set the position of the field description');
         $descPosition->description = $this->_('By default, the field description will be displayed after the input field. If you want you can display the description before or after the label too.');
         $descPosition->notes = $this->_('Can be overwritten on each form and even on each input field.');
@@ -2228,7 +2964,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $removeCSS->columnWidth = 50;
         $fieldsetAssets->add($removeCSS, $inputfields);
 
-        $fieldset1->add($fieldsetAssets, $inputfields, $inputfields);
+        $fieldset1->add($fieldsetAssets, $inputfields);
         $inputfields->add($fieldset1);
 
         $fieldset2 = $this->wire('modules')->get('InputfieldFieldset');
@@ -2262,7 +2998,6 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $ajaxMsgText = $this->_('This text will be displayed next to the progress bar during a form is submitted via AJAX.') . ' ';
         $ajaxMsgText .= $this->_('If nothing is entered, a default text will be displayed instead.');
         $ajaxMsg->description = $ajaxMsgText;
-        $ajaxMsg->notes = $this->_('Can be overwritten on each form.');
         $ajaxMsg->useLanguages = true;
 
         $fieldset2->add($ajaxMsg, $inputfields);
@@ -2274,22 +3009,6 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $fieldset3->collapsed = 1;
         $fieldset3->icon = 'fa-envelope';
 
-        //  Select an email template or not
-        if ($this->emailTemplates) {
-            $emailTemplate = $this->wire('modules')->get('InputfieldSelect');
-            $emailTemplate->label = $this->_('HTML email template setting');
-            $emailTemplate->attr('name', 'input_emailTemplate');
-            $emailTemplate->attr('class', 'ff-imagepicker');
-
-            // create and add all options
-            $this->createEmailTemplatesOptions($emailTemplate);
-
-            $emailTemplate->attr('value', $this->input_emailTemplate);
-            $emailTemplate->required = 1;
-            $emailTemplate->description = $this->_('Choose whether you want to use the HTML template for your emails and if so, which one.');
-            $emailTemplate->notes = $this->_('If you are using FrontendForms with the PW WireMail class to send emails, you can use a HTML email template by adding the mailTemplate() method to the WireMail object. Can be overwritten on each form.');
-            $fieldset3->add($emailTemplate, $inputfields);
-        }
 
         // enter a global date format for usage of date strings in emails
         $dateFormat = $this->wire('modules')->get('InputfieldText');
@@ -2316,10 +3035,28 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $timeFormat->value = $this->input_timeformat;
         }
         $timeFormat->columnWidth = 50;
-        $timeFormat->required = 1;
         $timeFormat->placeholder = $this->_('fe. H:i');
         $timeFormat->description = $this->_('Enter a global time format which can be used for time strings in email templates.');
+        $timeFormat->required = 1;
         $fieldset3->add($timeFormat, $inputfields);
+
+        //  Select an email template or not
+        if ($this->emailTemplates) {
+            $emailTemplate = $this->wire('modules')->get('InputfieldSelect');
+            /** @var InputfieldSelect $emailTemplate */
+            $emailTemplate->label = $this->_('HTML email template setting');
+            $emailTemplate->attr('name', 'input_emailTemplate');
+            $emailTemplate->attr('class', 'ff-imagepicker');
+
+            // create and add all options
+            $this->createEmailTemplatesOptions($emailTemplate);
+
+            $emailTemplate->attr('value', $this->input_emailTemplate);
+            $emailTemplate->required = 1;
+            $emailTemplate->description = $this->_('Choose whether you want to use the HTML template for your emails and if so, which one.');
+            $emailTemplate->notes = $this->_('If you are using FrontendForms with the PW WireMail class to send emails, you can use a HTML email template by adding the mailTemplate() method to the WireMail object. Can be overwritten on each form.');
+            $fieldset3->add($emailTemplate, $inputfields);
+        }
 
         $inputfields->add($fieldset3);
 
@@ -2330,6 +3067,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         // TODO
         $privacyPageSelect = $this->wire('modules')->get('InputfieldSelect');
+        /** @var InputfieldSelect $privacyPageSelect */
         $privacyPageSelect->attr('name', 'input_privacypageselect');
         $privacyPageSelect->label = $this->_('Select the type of page that contains your privacy policy');
         $privacyPageSelect->description = $this->_('Choose whether you want to use an internal ProcessWire page or an external website as your privacy policy page.');
@@ -2500,8 +3238,10 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $captchaType->attr('name', 'input_captchaType');
             $captchaType->label = $this->_('Use a CAPTCHA');
             $captchaType->description = $this->_('Choose whether you want to use a CAPTCHA and if so what kind.');
-            $captchaTypes = $this->wire('files')->find($this->modulePath . 'Formelements/Captcha/variants/',
-                ['recursive' => 0]);
+            $captchaTypes = $this->wire('files')->find(
+                $this->modulePath . 'Formelements/Captcha/variants/',
+                ['recursive' => 0]
+            );
             $captchaType->addOption('none', $this->_('No CAPTCHA'));
 
             foreach ($captchaTypes as $file) {
@@ -2599,7 +3339,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $fieldsetBackgroundSettings->label = $this->_('Image background settings');
             $fieldsetBackgroundSettings->collapsed = 1;// by default, this fieldset should be collapsed
             $fieldsetBackgroundSettings->description = $this->_('Set the styling of the background for the CAPTCHA image.');
-            $fieldsetBackgroundSettings->showIf = "input_captchaType!=none|DefaultImageCaptcha|slider";
+            $fieldsetBackgroundSettings->showIf = "input_captchaType!=none|SimpleQuestionCaptcha|DefaultImageCaptcha|SliderCaptcha";
 
             // Random or custom colors
             $bgcolorchooser = $this->wire('modules')->get('InputfieldRadios');
@@ -2646,7 +3386,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $fieldsetTextCaptcha->label = $this->_('Character settings');
             $fieldsetTextCaptcha->collapsed = 1;// by default, this fieldset should be collapsed
             $fieldsetTextCaptcha->description = $this->_('Set the styling of the text (character string or calculation) based on your own preferences.');
-            $fieldsetTextCaptcha->showIf = "input_captchaType!=none|DefaultImageCaptcha|slider";
+            $fieldsetTextCaptcha->showIf = "input_captchaType!=none|SimpleQuestionCaptcha|DefaultImageCaptcha|SliderCaptcha|SimpleMathTextCaptcha";
 
             // Select the font family
             $refreshLink = $this->wire('modules')->get('InputFieldSubmit');
@@ -2657,6 +3397,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $refreshLink->text = $this->_('Refresh all font files');
 
             $captchaFontFamily = $this->wire('modules')->get('InputfieldSelect');
+            /** @var InputfieldSelect $captchaFontFamily */
             $captchaFontFamily->attr('name', 'input_captchaFontFamily');
             $captchaFontFamily->label = $this->_('Font family');
             $captchaFontFamily->description = $this->_('Select the font family for the text.');
@@ -2733,7 +3474,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $fieldsetDistortionlines->label = $this->_('Distortion lines');
             $fieldsetDistortionlines->collapsed = 1; // by default, this fieldset should be collapsed
             $fieldsetDistortionlines->description = $this->_('Add distortion lines over the image to make it more difficult for spam bots to read the content.');
-            $fieldsetDistortionlines->showIf = "input_captchaType!=none|slider";
+            $fieldsetDistortionlines->showIf = "input_captchaType!=none|SimpleQuestionCaptcha|SliderCaptcha";
 
             // Set the number of distortion lines
             $captchaNumberOfLines = $this->wire('modules')->get('InputfieldInteger');
@@ -2853,8 +3594,10 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $blacklist->description = $desc;
         $notes = sprintf($this->_('Current number of entries in the blacklist: %s.'), count($this->blacklist));
         if ($this->last_check) {
-            $notes .= ' ' . sprintf($this->_('Last update of the blacklist: %s.'),
-                    $this->wire('datetime')->date($this->default_dateformat, $this->last_check));
+            $notes .= ' ' . sprintf(
+                    $this->_('Last update of the blacklist: %s.'),
+                    $this->wire('datetime')->date($this->default_dateformat, $this->last_check)
+                );
         }
         $blacklist->notes = $notes;
         $blacklist->attr('name', 'input_blacklist');
@@ -2867,9 +3610,12 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $content = '<h2>' . $this->_('List of top 100 most common passwords') . '</h2>';
         $content .= '<p>' . $this->_('The passwords in the list below are unsafe and a serious security issue for each account on your site.') . '<br>';
         $osaplink = '<a href="https://owasp.org/" target="_blank">OSAP</a>';
-        $content .= sprintf($this->_('All passwords were taken from %s (Open Web Application Security Project).'),
-                $osaplink) . '<br>';
-        $gitlink = '<a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/2024-197_most_used_passwords.txt" target="_blank">https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/2024-197_most_used_passwords.txt</a>';
+        $content .= sprintf(
+                $this->_('All passwords were taken from %s (Open Web Application Security Project).'),
+                $osaplink
+            ) . '<br>';
+        $url =  $this->getDataFromGitHub(self::TOP_PASSWORDS)->html_url;
+        $gitlink = '<a href="'.$url.'" target="_blank">'.$url.'</a>';
         $content .= sprintf($this->_('Source of the passwords: %s'), $gitlink) . '</p><hr>';
         $hintText = '<h3>' . $this->_('Please note:') . '</h3>';
         $hintText .= '<p>' . $this->_('Only passwords that matches your password requirements will be added to the blacklist after pressing the update button or during the automatic update.') . '<br>';
@@ -2890,8 +3636,9 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             }
 
             foreach ($this->password_field->requirements as $label) {
-                if (array_key_exists($label, $requirementsLabels))
+                if (array_key_exists($label, $requirementsLabels)) {
                     $hintText .= '<li>' . $requirementsLabels[$label] . '</li>';
+                }
             }
         } else {
             $hintText .= '<li>' . $this->_('No password requirements have been set!') . '</li>';
@@ -2900,30 +3647,38 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $hintText .= '</ul>';
         $link = '<a title="' . $this->_('To the password field edit page') . '" href="' . $this->password_field->editUrl() . '">';
         $link .= $this->_('here') . '</a>';
-        $hintText .= '<p>' . sprintf($this->_('If you have the permission to change the password requirements, you can do it %s.'),
-                $link) . '</p>';
+        $hintText .= '<p>' . sprintf(
+                $this->_('If you have the permission to change the password requirements, you can do it %s.'),
+                $link
+            ) . '</p>';
 
         // information about the last update of the list
         $update = $this->_('The password list will be checked once a month automatically if something has been changed on GitHub.');
         $updatedata = '';
 
-        if ($this->toppasswords_download) {
-            $updatedata .= '<li>' . sprintf($this->_('Last download date: %s (%s).'),
+        if ($this->toppasswords_download && $this->wire('files')->exists($this->passwordPath)) {
+            $updatedata .= '<li>' . sprintf(
+                    $this->_('Last download date: %s (%s).'),
                     $this->wire('datetime')->date($this->default_dateformat, filemtime($this->passwordPath)),
-                    $this->wire('datetime')->date('relative', filemtime($this->passwordPath))) . '</li>';
+                    $this->wire('datetime')->date('relative', filemtime($this->passwordPath))
+                ) . '</li>';
         }
         if ($this->github_modified) {
-            $updatedata .= '<li>' . sprintf($this->_('Last modification date on GitHub: %s (%s).'),
+            $updatedata .= '<li>' . sprintf(
+                    $this->_('Last modification date on GitHub: %s (%s).'),
                     $this->wire('datetime')->date($this->default_dateformat, $this->github_modified),
-                    $this->wire('datetime')->date('relative', $this->github_modified)) . '</li>';
+                    $this->wire('datetime')->date('relative', $this->github_modified)
+                ) . '</li>';
         }
         if ($this->last_check) {
-            $updatedata .= '<li>' . sprintf($this->_('Last check for passwords date: %s (%s).'),
+            $updatedata .= '<li>' . sprintf(
+                    $this->_('Last automatic check for passwords via CronJob: %s (%s).'),
                     $this->wire('datetime')->date($this->default_dateformat, $this->last_check),
-                    $this->wire('datetime')->date('relative', $this->last_check)) . '</li>';
+                    $this->wire('datetime')->date('relative', $this->last_check)
+                ) . '</li>';
         }
 
-        $update .= '<ul>' . $updatedata . '</ul>';
+        $update .= '<ul id="ff-password-changes">' . $updatedata . '</ul>';
         $content .= '<p>' . $update . '</p>';
         $content .= '<p>' . $this->_('After the check, all passwords that fulfill your password requirements and are not on your blacklist, will be added automatically.') . '<br>';
         $content .= $this->_('You do not need to add them manually.') . '</p><hr>';
@@ -2942,11 +3697,12 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         if ($this->passwordList) {
             // if the list is longer than 100, cut all passwords after number 100
             $arr = array_filter($this->passwordList);
-            $pos = array_search('100', array_keys($arr));
-            $list = array_slice($arr, 0, $pos, true);
-            $content .= '<h3>' . sprintf($this->_('Top 100 most common passwords in %s (Last list update on GitHub: %s)'),
+            $list = array_slice($arr, 0, 100, true);
+            $content .= '<h3>' . sprintf(
+                    $this->_('Top 100 most common passwords in %s (Last list update on GitHub: %s)'),
                     date('Y'),
-                    $this->wire('datetime')->date($this->default_dateformat, $this->github_modified)) . '</h3>';
+                    $this->wire('datetime')->date($this->default_dateformat, $this->github_modified)
+                ) . '</h3>';
             $items = '';
             foreach ($list as $password) {
                 $class = (in_array($password, $this->blacklist)) ? 'active notes' : 'inactive';
@@ -2994,14 +3750,124 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
         $desc .= $this->_('This validator is especially created for textarea fields, which contain for example a message of a contact form.');
         $stopwords->description = $desc;
         $notes = sprintf($this->_('This list is for your own custom SPAM words. All other SPAM words (over 60 000) will be taken from %s and will be downloaded to FrontendForms every 4 weeks automatically.'), '<a href="https://github.com/splorp/wordpress-comment-blocklist/blob/master/blacklist.txt" target="_blank">wordpress-comment-blocklist</a>');
-        $notes .= '<br>'.$this->_('The validator checks whether words from this long list are included in the text, and then marks the text as SPAM.');
+        $notes .= '<br>' . $this->_('The validator checks whether words from this long list are included in the text, and then marks the text as SPAM.');
         $stopwords->notes = $notes;
         $stopwords->attr('name', 'input_stopwords');
         $stopwords->attr('value', $this->input_stopwords);
         $fieldset9->add($stopwords, $inputfields);
 
+        // information about the last update of the SPAM word list -
+        // mirrors the equivalent password-list status block above
+        $spamUpdate = $this->_('The SPAM word list will be checked once every 4 weeks automatically if something has been changed on GitHub.');
+        $spamUpdateData = '';
+
+        if ($this->topspamwords_download && $this->wire('files')->exists($this->stopwordPath)) {
+            $spamUpdateData .= '<li>' . sprintf(
+                    $this->_('Last download date: %s (%s).'),
+                    $this->wire('datetime')->date($this->default_dateformat, filemtime($this->stopwordPath)),
+                    $this->wire('datetime')->date('relative', filemtime($this->stopwordPath))
+                ) . '</li>';
+        }
+        if ($this->spamwords_github_modified) {
+            $spamUpdateData .= '<li>' . sprintf(
+                    $this->_('Last modification date on GitHub: %s (%s).'),
+                    $this->wire('datetime')->date($this->default_dateformat, $this->spamwords_github_modified),
+                    $this->wire('datetime')->date('relative', $this->spamwords_github_modified)
+                ) . '</li>';
+        }
+        if ($this->last_stopword_check) {
+            $spamUpdateData .= '<li>' . sprintf(
+                    $this->_('Last automatic check for SPAM words via CronJob: %s (%s).'),
+                    $this->wire('datetime')->date($this->default_dateformat, $this->last_stopword_check),
+                    $this->wire('datetime')->date('relative', $this->last_stopword_check)
+                ) . '</li>';
+        }
+
+        $spamUpdate .= '<ul id="ff-stopword-changes">' . $spamUpdateData . '</ul>';
+        $spamUpdate .= '<p>' . $this->_('If you do not want to wait until the next automatic update, you can update the SPAM word list manually by pressing the button below.') . '</p>';
+
+        $spamStatus = $this->wire('modules')->get('InputfieldMarkup');
+        $spamStatus->value = $spamUpdate;
+        $fieldset9->add($spamStatus, $inputfields);
+
+        // Create a button to manually re-download the SPAM word list
+        $stopwordButton = $this->wire('modules')->get('InputfieldSubmit');
+        $stopwordButton->name = 'submit_save_stopwordlist';
+        $stopwordButton->value = 'add';
+        $stopwordButton->text = $this->_('Update SPAM word list manually');
+        $fieldset9->add($stopwordButton, $inputfields);
+
 
         $fieldset5->add($fieldset9, $inputfields);
+
+
+        $fieldset10 = $this->wire('modules')->get('InputfieldFieldset');
+        $fieldset10->label = $this->_('Measure 9: Allowed MIME types for uploads');
+        $fieldset10->collapsed = 1;// by default, this fieldset should be collapsed
+        $fieldset10->description = $this->_('Define all MIME types that are allowed for file uploads.');
+
+        $mimetypes = wire('modules')->get('InputfieldTextarea');
+        $mimetypes->attr('name', 'input_allowedmimetypes');
+        $mimetypes->label = $this->_('Allowed MIME Types');
+        $mimetypes->textFormat = Inputfield::textFormatMarkdown;
+        $mimetypes->description = $this->_('Enter the MIME types that are allowed for file uploads, one per line.');
+
+        $mimeLink = '<a class="external" href="https://codeshack.io/mime-type-lookup/">codeshack.io</a>';
+
+        $table = wire('modules')->get('MarkupAdminDataTable');
+        $table->setSortable(false);
+
+        $table->headerRow([
+            $this->_('Examples of the most commonly used MIME types in web forms:'),
+            $this->_('Examples of dangerous MIME types:')
+        ]);
+
+        $mostUsed = '<ul>
+                    <li>image/jpeg</li>
+                    <li>image/png</li>
+                    <li>image/gif</li>
+                    <li>image/webp</li>
+                    <li>application/pdf</li>
+                    <li>text/plain</li>
+                    <li>text/csv</li>
+                    <li>application/zip</li>
+                    </ul>';
+
+        $mostDangerous = '<ul>
+     <li>application/x-php</li>
+      <li>text/x-php</li>
+        <li>application/x-httpd-php</li>
+        <li>application/javascript</li>
+        <li>text/javascript</li>
+        <li>text/html</li>
+        <li>application/x-sh</li>
+        <li>application/octet-stream</li>
+        <li>application/x-msdownload</li>
+        <li>application/x-python-code</li>
+                    </ul>';
+
+        $table->row([
+            $mostUsed,
+            $mostDangerous
+        ]);
+
+        $outputTable = $table->render();
+
+        $notes = sprintf($this->_('Use the following website to search for MIME types: %s'), $mimeLink).'<br><br>';
+        $notes .= $this->_('Some MIME types pose a higher security risk because they can execute code, bypass browser restrictions, or compromise your server if uploaded to a web-accessible directory.');
+        $notes .= '<br>'.$this->_('The most secure approach is to allow only specific MIME types instead of blocking specific MIME types.');
+        $notes .= '<br>'.$this->_('If a user uploads a file with a disallowed MIME type, the form submission will fail and an error message will be displayed.');
+        $notes .= '<br>'.sprintf($this->_('Just a note: this global setting can be overridden for each file upload field by using the %s validation rule with different values defined directly on the upload field.'), '<b>allowedMimeTypes</b>');
+        $notes .= '<br>'.sprintf($this->_('If you want to bypass this security check, you can use the %s method on an upload field to disable the global setting.'), '<b>removeRule("allowedMimeTypes")</b>');
+        $notes .= '<h2>'.$this->_('MIME types examples:').'</h2>';
+        $notes .= $outputTable;
+
+        $mimetypes->notes = $notes;
+
+        $mimetypes->attr('value', $this->input_allowedmimetypes);
+        $fieldset10->add($mimetypes, $inputfields);
+
+        $fieldset5->add($fieldset10, $inputfields);
 
         $inputfields->add($fieldset5);
 
@@ -3026,6 +3892,11 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                 $url = $element['url'];
                 $user = $element['user'];
                 $text = json_decode($element['text']);
+                // skip log entries that aren't valid JSON, rather than
+                // attempting to read a property off of null
+                if (!$text) {
+                    continue;
+                }
                 $ip = $text->IP;
                 (isset($result[$ip])) ? $result[$ip]['count'] += 1 : $result[$ip] = array(
                     'data' => $date,
@@ -3065,27 +3936,44 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * @return void
      * @throws WireException
      */
-    protected function createFilesDir(string $from, string $to): void
+    protected function createFilesDir(string $from, string $to, bool $delete = true): void
     {
         // if a directory exists or directory was created successfully
-        if (($this->wire('files')->exists($to)) || ($this->wire('files')->mkdir($to))) {
+        // ($recursive = true is required here: $to can be a nested path,
+        // e.g. files/FrontendForms/template-images/, whose parent folder
+        // may not exist yet - mkdir() only creates one level at a time by
+        // default and would otherwise fail with "Unable to mkdir")
+        if (($this->wire('files')->exists($to)) || ($this->wire('files')->mkdir($to, true))) {
             // check if files exists in the modules assets folder
             if ($this->wire('files')->exists($from)) {
                 // scan directory if it contains files
                 $files = $this->wire('files')->find($from);
                 if ($files) {
                     // copy all files to the newly created FrontendForms directory under site/assets/files
-                    $this->wire('files')->copy($from, $to);
-                    // now remove the assets folder and its content form FrontendForms/assets
-                    $this->wire('files')->rmdir($from, true);
+                    $copied = $this->wire('files')->copy($from, $to);
+                    // only remove the source folder once its contents have
+                    // actually been copied to the destination - removing it
+                    // unconditionally could otherwise leave neither location
+                    // with the files (e.g. if the copy fails partway
+                    // through), permanently losing the email template
+                    // images.
+                    if ($copied && $delete) {
+                        $this->wire('files')->rmdir($from, true);
+                    }
                 }
             }
         }
     }
 
     /**
-     * Copy/Remove the captchaimage.php from the root and copy it back to
-     * site/modules/FrontendForms/Formelements/Captcha/captchaimage.php
+     * Copy captchaimage.php from the module to the root (on install), or
+     * remove it from the root (on uninstall).
+     *
+     * The module's own copy (Formelements/Captcha/captchaimage.php) is
+     * treated as the permanent, authoritative source and is never
+     * deleted - only ever copied FROM. This keeps every uninstall/install
+     * cycle simple and lossless without needing to copy the root file
+     * back into the module first.
      * @param bool $install
      * @return void
      * @throws WireException
@@ -3094,26 +3982,23 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     {
         $moduleFile = $this->modulePath . 'Formelements/Captcha/captchaimage.php';
         $rootFile = $this->wire('config')->paths->root . 'captchaimage.php';
-        $from = $install ? $moduleFile : $rootFile;
-        $to = $install ? $rootFile : $moduleFile;
 
-        if ($this->wire('files')->copy($from, $to)) {
-            if (!is_writable($to) && $install) {
-                // captcha file could not be copied to the root folder
-                $warning_text[] = sprintf($this->_('The captchaimage.php file could not be copied to the root directory (%s), because the root directory is not writeable.'), $this->wire('config')->paths->root);
-                $warning_text[] = sprintf($this->_('Do not be worry! To fix this issue, please move the file from "/site/modules/FrontendForms/Formelements/Captcha/captchaimage.php" to "%s" by yourself.'), $to);
-                $warning_text[] = $this->_('Otherwise you will get an error if you try to use the CAPTCHA on your forms.');
-                $this->wire('session')->warning(implode('<br>', $warning_text), Notice::allowMarkup);
-            }
-        }
-        // try to unlink the file on uninstallation
-        try {
-            // unlink the captcha.php file
-            $this->wire('files')->unlink($from);
-        } catch (Exception $ex) {
-            $this->wire('session')->warning($ex);
+        if (!$install) {
+            // uninstall: just remove the root copy - the module's own
+            // file was never touched, so there is nothing to preserve
+            $this->wire('files')->unlink($rootFile);
+            return;
         }
 
+        $copied = $this->wire('files')->copy($moduleFile, $rootFile);
+
+        if ($copied && !is_writable($rootFile)) {
+            // captcha file could not be copied to the root folder
+            $warning_text[] = sprintf($this->_('The captchaimage.php file could not be copied to the root directory (%s), because the root directory is not writeable.'), $this->wire('config')->paths->root);
+            $warning_text[] = sprintf($this->_('Do not be worry! To fix this issue, please move the file from "/site/modules/FrontendForms/Formelements/Captcha/captchaimage.php" to "%s" by yourself.'), $rootFile);
+            $warning_text[] = $this->_('Otherwise you will get an error if you try to use the CAPTCHA on your forms.');
+            $this->wire('session')->warning(implode('<br>', $warning_text), Notice::allowMarkup);
+        }
     }
 
     /**
@@ -3124,48 +4009,70 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
     public function ___install(): void
     {
 
-
         //save default module configurations on install
         $data = self::getDefaultData();
         //save the path to the default font file manually to the config data
-        $data['input_captchaFontFamily'] = $this->modulePath . 'Formelements/Captcha/fonts/OpenSans-SemiBold.ttf';
+        $data['input_captchaFontFamily'] = $this->modulePath . 'assets/fonts/OpenSans-SemiBold.ttf';
         // save all other ttf fonts to the db
         $data['input_captchaFonts'] = $this->findAllFontfiles();
 
         if ($this->downloadPasswordsFromGitHub()) { // first download the file from GitHub
             $data['toppasswords_download'] = $this->wire('datetime')->date($this->default_dateformat);
             $data['last_check'] = $this->wire('datetime')->date($this->default_dateformat);
-            // load password list data from GitHub (https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-100.txt)
+            // load password list data from GitHub
             $githubdata = $this->getDataFromGitHub(self::LAST_PASSWORDS_MODIFICATION_URL); //load JSON data from the file
-            $last_update = $githubdata[0]->commit->author->date; // last modification date on GitHub
-            $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat, $last_update);
+            if ($githubdata && isset($githubdata[0]->commit->author->date)) {
+                $last_update = $githubdata[0]->commit->author->date; // last modification date on GitHub
+                $data['github_modified'] = $this->wire('datetime')->date($this->default_dateformat, $last_update);
+            }
             $this->password_field = wire('fields')->get('pass');
             $this->password_object = new InputfieldPassword();
             // for the case that property requirements is not stored inside the db at this moment
             $requirements = $this->password_field->requirements ?? ["letter", "digit"];
             $this->password_object->requirements = $requirements;
-            $passwordsArray = $this->createArrayOfTxtFile($this->passwordPath);
+            $passwordsArray = self::createArrayOfTxtFile($this->passwordPath);
             $data['input_blacklist'] = $this->cleanUpPasswordList($passwordsArray);
             $this->input_blacklist = $data['input_blacklist'];
+        }
+
+        // download the SPAM word (stopwords) list from GitHub, mirroring
+        // the password list download above
+        $data['last_stopword_check'] = $this->wire('datetime')->date($this->default_dateformat);
+        if ($this->downloadStopwordsFromGitHub()) {
+            $data['topspamwords_download'] = $this->wire('datetime')->date($this->default_dateformat);
+            $spamGithubData = $this->getDataFromGitHub(self::LAST_SPAMWORDS_MODIFICATION_URL);
+            if ($spamGithubData && isset($spamGithubData[0]->commit->author->date)) {
+                $data['spamwords_github_modified'] = $this->wire('datetime')->date(
+                    $this->default_dateformat,
+                    $spamGithubData[0]->commit->author->date
+                );
+            }
         }
         // save the config data to the db
         wire('modules')->saveConfig($this, $data);
 
-        // copy files from FrontendForms/assets to site/assets/files/Frontendforms
-        $to = $this->wire('config')->paths->assets . 'files/FrontendForms/';
-        $from = $this->modulePath . 'assets/';
+        // copy files from FrontendForms/assets/template-images to site/assets/files/Frontendforms
+        $to = $this->wire('config')->paths->assets . 'files/FrontendForms/template-images/';
+        $from = $this->modulePath . 'assets/template-images/';
 
-        $this->createFilesDir($from, $to);
+        $this->createFilesDir($from, $to, false);
 
-        // copy captchaimage.php from site/modules/FrontendForms/Formfields/captcha/ to the root dir
+        // copy captchaimage.php from site/modules/FrontendForms/FormElements/Captcha/to the root dir
         $this->createRemoveCaptchaImageFile(true);
 
-        // create temp_uploads folder
-        $this->wire('files')->mkdir($this->temp_uploadPath);
-
-        // create folder for the custom email templates
-        if (!$this->wire('files')->exists($this->wire('config')->paths->site . 'frontendforms-custom-templates/', 'dir')) {
-            $this->wire('files')->mkdir($this->wire('config')->paths->site . 'frontendforms-custom-templates/');
+        // Restore any custom email templates that were backed up into the
+        // module on a previous uninstall (see ___uninstall()), so a
+        // deinstall-then-reinstall cycle (without the module's own files
+        // being deleted from disk in between) doesn't lose them. Falls
+        // back to just creating the empty folder if there is nothing to
+        // restore (e.g. a fresh installation).
+        $customTemplatesLive = $this->wire('config')->paths->site . 'frontendforms-custom-templates/';
+        $customTemplatesBackup = $this->modulePath . 'assets/frontendforms-custom-templates/';
+        if ($this->wire('files')->exists($customTemplatesBackup)) {
+            $this->createFilesDir($customTemplatesBackup, $customTemplatesLive);
+        }
+        if (!$this->wire('files')->exists($customTemplatesLive, 'dir')) {
+            $this->wire('files')->mkdir($customTemplatesLive, true);
         }
 
         // create the custom frameworks classes folder
@@ -3178,26 +4085,116 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      * @param $fromVersion
      * @param $toVersion
      * @return void
-     * @throws \ProcessWire\WireException
+     * @throws WireException
      */
     public function ___upgrade($fromVersion, $toVersion): void
     {
 
-
         // copy new captchaimage.php to the root
         $this->createRemoveCaptchaImageFile(true);
-        // create temp_uploads folder again
-        $this->wire('files')->mkdir($this->temp_uploadPath);
-        // copy files from FrontendForms/assets to site/assets/files/Frontendforms
-        $to = $this->wire('config')->paths->assets . 'files/FrontendForms/';
-        $from = $this->modulePath . 'assets/';
-        $this->createFilesDir($from, $to);
+
+        // copy files from FrontendForms/assets/template-images to site/assets/files/FrontendForms
+        $to = $this->wire('config')->paths->assets . 'files/FrontendForms/template-images/';
+        $from = $this->modulePath . 'assets/template-images/';
+        $this->createFilesDir($from, $to, false);
 
         // create custom email template folder if it does not exist
-        $this->wire('files')->mkdir($this->wire('config')->paths->site . 'frontendforms-custom-templates/');
+        if (!$this->wire('files')->exists($this->wire('config')->paths->site . 'frontendforms-custom-templates/', 'dir')) {
+            $this->wire('files')->mkdir($this->wire('config')->paths->site . 'frontendforms-custom-templates/', true);
+        }
 
         // create the custom frameworks classes folder
         $this->createCustomFrameworksFolder();
+
+        // Version-specific migration steps. Each one is gated to the
+        // specific fromVersion/toVersion range it applies to, so
+        // ___upgrade() stays safe to extend with further, unrelated
+        // migration steps for future version changes without them
+        // accidentally re-running for upgrades they were never meant for.
+
+        if ($this->isVersionUpgrade($fromVersion, $toVersion, 2, 3)) {
+            // Usually all old files will be deleted by default in the automatic update process -
+            // this is only a fallback if the update will be done manually without deleting the old module files
+            $this->migrateOrphanedFilesFromV2ToV3();
+        }
+    }
+
+
+    /**
+     * Check whether a module version upgrade crosses from one given major
+     * version to another - e.g. isVersionUpgrade($fromVersion, $toVersion, 2, 3)
+     * is true for an upgrade from any 2.x version to any 3.x version, but
+     * false for e.g. 2.3 -> 2.15, or 3.0 -> 3.1.
+     *
+     * Used by ___upgrade() to gate one-time, version-specific migration
+     * steps (see migrateOrphanedFilesFromV2ToV3()) so they only run for
+     * the exact transition they were written for, while ___upgrade()
+     * itself stays reusable for handling further version changes later.
+     *
+     * @param string $fromVersion Version before the upgrade, e.g. "2.3.17"
+     * @param string $toVersion Version after the upgrade, e.g. "3.0.0"
+     * @param int $fromMajor Major version before the upgrade
+     * @param int $toMajor Major version after the upgrade
+     * @return bool
+     */
+    protected function isVersionUpgrade(
+        string $fromVersion,
+        string $toVersion,
+        int $fromMajor,
+        int $toMajor
+    ): bool {
+
+        $fromVersionMajor = (int) explode('.', $fromVersion, 2)[0];
+        $toVersionMajor = (int) explode('.', $toVersion, 2)[0];
+
+        return $fromVersionMajor === $fromMajor
+            && $toVersionMajor === $toMajor;
+    }
+
+    /**
+     * Remove the now-orphaned files/folders listed in migrateV2V3.json, left
+     * over from version 2.x's directory layout, which version 3.x no
+     * longer uses.
+     * @return void
+     * @throws WireException
+     */
+    protected function migrateOrphanedFilesFromV2ToV3(): void
+    {
+        $migrateJsonPath = $this->modulePath . 'migrateV2V3.json';
+        $files = [];
+        if ($this->wire('files')->exists($migrateJsonPath)) {
+            $migrate = file_get_contents($migrateJsonPath);
+            $decoded = json_decode((string) $migrate, true);
+            if (is_array($decoded)) {
+                $files = $decoded;
+            }
+        }
+        // delete each file or folder from the migrateV2V3.json file
+        foreach ($files as $file) {
+            $this->removeOrphanedDataPath($file);
+        }
+    }
+
+    /**
+     * Remove a file or folder (including all of its contents) from its old
+     * location, left over from a previous module version's directory
+     * layout. The current version already ships with the module code at
+     * its new location, so this is a cleanup step only - not a migration.
+     * @param string $relativePath Path relative to the module root, e.g. "passwords.txt" or "some/nested/folder". May point to either a file or a folder.
+     * @return void
+     * @throws WireException
+     */
+    protected function removeOrphanedDataPath(string $relativePath): void
+    {
+        $files = $this->wire('files');
+        $oldPath = $this->modulePath . ltrim($relativePath, '/');
+
+        if ($files->exists($oldPath, 'dir')) {
+            // recursively remove the folder and everything inside it
+            $files->rmdir($oldPath, true);
+        } elseif ($files->exists($oldPath)) {
+            $files->unlink($oldPath);
+        }
     }
 
     /**
@@ -3207,13 +4204,49 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
      */
     public function ___uninstall(): void
     {
-        // copy files from site/assets/files/Frontendforms to FrontendForms/assets
+        // back up the user-customizable "frameworks" folder (custom CSS
+        // class JSON files) into the module BEFORE removing
+        // files/FrontendForms/ below - that removal is recursive and
+        // would otherwise destroy this folder along with everything else
+        // under files/FrontendForms/ before it could be preserved.
+        //
+        // Only back it up if no custom path is configured
+        // (input_customframeworkpath): if the admin has explicitly moved
+        // their custom class files elsewhere, this default-location
+        // folder is not the active one and not something the module
+        // should back up - just remove it.
+        $from = $this->wire('config')->paths->assets . 'files/FrontendForms/frameworks/';
+        if ($this->input_customframeworkpath) {
+            $this->wire('files')->rmdir($from, true);
+        } else {
+            $to = $this->modulePath . 'assets/frameworks/';
+            $this->createFilesDir($from, $to);
+            $this->wire('files')->rmdir($from, true);
+        }
+
+        // remove site/assets/files/FrontendForms/ outright, without
+        // copying it back into the module first: unlike
+        // frontendforms-custom-templates below (which may contain genuine
+        // admin edits), this folder's contents are just a working copy of
+        // the module's own, permanent template images
+        // (assets/template-images/), which install() already recreates
+        // this folder from on the next install - nothing would be lost by
+        // deleting it directly here.
         $from = $this->wire('config')->paths->assets . 'files/FrontendForms/';
-        $to = $this->modulePath . 'assets/';
+        $this->wire('files')->rmdir($from, true);
+        // copy files from site/frontendforms-custom-templates to FrontendForms/assets
+        $from = $this->wire('config')->paths->site . 'frontendforms-custom-templates/';
+        $to = $this->modulePath . 'assets/frontendforms-custom-templates/';
         $this->createFilesDir($from, $to);
+        $this->wire('files')->rmdir($from, true);
+        // delete captchaimage.php from root
         $this->createRemoveCaptchaImageFile(false); // delete captchaimage.php from root
         // remove passwords.txt - should be downloaded on next installation
         $this->wire('files')->unlink($this->passwordPath);
+        // remove stopwords.txt - should be downloaded on next installation
+        $this->wire('files')->unlink($this->stopwordPath);
     }
+
+
 
 }

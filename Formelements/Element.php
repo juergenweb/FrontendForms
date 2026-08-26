@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -52,7 +53,9 @@ abstract class Element extends Tag
      */
     public function setConditionContainerClass(string $class): void
     {
-        if (!str_starts_with($class, '.')) $class = '.' . $class;
+        if (!str_starts_with($class, '.')) {
+            $class = '.' . $class;
+        }
         $this->conditionContainerClass = $class;
     }
 
@@ -73,7 +76,13 @@ abstract class Element extends Tag
     {
         $this->conditions = null;
         $this->contains_conditions = false;
-        $this->getFieldWrapper()->removeAttribute('hidden');
+
+        if (is_subclass_of($this, Inputfields::class)) {
+            $this->getFieldWrapper()->removeAttribute('hidden');
+        } elseif ($this->getWrap() !== null) {
+            $this->getWrap()->removeAttribute('hidden');
+        }
+
         $this->removeAttribute('data-conditional-rules');
     }
 
@@ -94,7 +103,7 @@ abstract class Element extends Tag
      * @param string $container
      * @return void
      */
-    protected function get_mf_conditional_rules(string $action, array $rules, string $logic = 'or', string $container = '.fieldwrapper'): void
+    protected function applyConditionalRules(string $action, array $rules, string $logic = 'or', string $container = '.fieldwrapper'): void
     {
         $this->conditions = [
             'container' => $container,
@@ -128,7 +137,7 @@ abstract class Element extends Tag
      */
     public function hideIf(array $rules, string $logic = 'or', string $container = '.fieldwrapper'): void
     {
-        $this->get_mf_conditional_rules('hide', $rules, $logic, $container);
+        $this->applyConditionalRules('hide', $rules, $logic, $container);
     }
 
     /**
@@ -140,7 +149,7 @@ abstract class Element extends Tag
      */
     public function showIf(array $rules, string $logic = 'or', string $container = '.fieldwrapper'): void
     {
-        $this->get_mf_conditional_rules('show', $rules, $logic, $container);
+        $this->applyConditionalRules('show', $rules, $logic, $container);
     }
 
     /**
@@ -152,7 +161,7 @@ abstract class Element extends Tag
      */
     public function disableIf(array $rules, string $logic = 'or', string $container = '.fieldwrapper'): void
     {
-        $this->get_mf_conditional_rules('disable', $rules, $logic, $container);
+        $this->applyConditionalRules('disable', $rules, $logic, $container);
     }
 
     /**
@@ -164,7 +173,7 @@ abstract class Element extends Tag
      */
     public function enableIf(array $rules, string $logic = 'or', string $container = '.fieldwrapper'): void
     {
-        $this->get_mf_conditional_rules('enable', $rules, $logic, $container);
+        $this->applyConditionalRules('enable', $rules, $logic, $container);
         // add disabled attribute to input field
         $this->setAttribute('disabled');
     }
@@ -187,7 +196,7 @@ abstract class Element extends Tag
      */
     public function removeWrap(): void
     {
-        unset($this->wrapper);
+        $this->wrapper = null;
     }
 
     /**

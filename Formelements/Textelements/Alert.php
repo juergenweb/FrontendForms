@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -17,7 +18,6 @@ use ProcessWire\WirePermissionException;
 
 class Alert extends TextElements
 {
-
     /**
      * @throws WireException
      * @throws WirePermissionException

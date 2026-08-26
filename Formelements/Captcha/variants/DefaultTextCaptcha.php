@@ -1,15 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 /*
  * Class for creating a captcha with a random string
  *
  * Created by Jürgen K.
- * https://github.com/juergenweb 
+ * https://github.com/juergenweb
  * File name: DefaultTextCaptcha.php
- * Created: 05.08.2022 
+ * Created: 05.08.2022
  */
-
 
 namespace FrontendForms;
 
@@ -18,7 +18,6 @@ use ProcessWire\WirePermissionException;
 
 class DefaultTextCaptcha extends AbstractCharset
 {
-
     /**
      * @throws WireException
      * @throws WirePermissionException

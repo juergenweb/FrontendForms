@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -18,6 +19,9 @@ class FieldsetOpen extends Element
     protected Legend $legend;
     protected bool $useID = false;
 
+    /**
+     * @param string|null $id
+     */
     public function __construct(?string $id = null)
     {
         if ($id !== null) {
@@ -40,6 +44,11 @@ class FieldsetOpen extends Element
         return $this->legend;
     }
 
+    /**
+     * Allow the element to be cast directly to a string, producing the
+     * same output as render().
+     * @return string
+     */
     public function __toString(): string
     {
         return $this->render();
@@ -53,7 +62,7 @@ class FieldsetOpen extends Element
     {
         $this->append($this->legend->render());
         $this->removeAttribute('name');
-        if(!$this->useID){
+        if (!$this->useID) {
             $this->removeAttribute('id');
         }
         return $this->renderSelfclosingTag($this->getTag());

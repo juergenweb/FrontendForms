@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -17,8 +18,9 @@ use Exception;
 
 class InputRadioCheckbox extends Input
 {
-
     use TraitCheckboxesAndRadios;
+
+    protected bool $retainSubmittedValue = true;
 
     /**
      * @param string $id
@@ -30,4 +32,21 @@ class InputRadioCheckbox extends Input
         $this->removeAttribute('class');
     }
 
+    /**
+     * Control whether a previously submitted (or default) value stays
+     * selected/checked when this element is re-rendered.
+     *
+     * Defaults to true, matching normal checkbox/radio behavior. Set to
+     * false for cases where retaining the value would be undesirable -
+     * most notably the image CAPTCHA's radio group (see
+     * InputRadioMultiple::retainSubmittedValue(), which propagates this
+     * same setting to each of its individual InputRadio options before
+     * rendering them).
+     * @param bool $retain
+     * @return void
+     */
+    public function retainSubmittedValue(bool $retain): void
+    {
+        $this->retainSubmittedValue = $retain;
+    }
 }

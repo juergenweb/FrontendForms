@@ -1,15 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 /*
  * Class for creating a captcha with a random string, where any even character has to be added
  *
  * Created by Jürgen K.
- * https://github.com/juergenweb 
+ * https://github.com/juergenweb
  * File name: EvenCharacterTextCaptcha.php
- * Created: 05.08.2022 
+ * Created: 05.08.2022
  */
-
 
 namespace FrontendForms;
 
@@ -18,7 +18,6 @@ use ProcessWire\WirePermissionException;
 
 class EvenCharacterTextCaptcha extends AbstractCharset
 {
-
     /**
      * @throws WireException
      * @throws WirePermissionException
@@ -37,8 +36,15 @@ class EvenCharacterTextCaptcha extends AbstractCharset
      */
     protected function setCaptchaValidValue(string $content): AbstractTextCaptcha
     {
+        // multibyte-safe iteration (not strlen()/direct string indexing,
+        // which operate on bytes) - otherwise multi-byte UTF-8 characters
+        // (e.g. Cyrillic letters) would be split mid-character, producing
+        // invalid, corrupted fragments instead of complete characters.
+        $characters = mb_str_split($content);
         $newStr = '';
-        for( $i = 0; $i < strlen($content); $i++) { $newStr .= ( ( $i % 2 ) != 0 ? $content[ $i ] : '' );}
+        foreach ($characters as $i => $character) {
+            $newStr .= (($i % 2) != 0 ? $character : '');
+        }
         return parent::setCaptchaValidValue($newStr);
     }
 

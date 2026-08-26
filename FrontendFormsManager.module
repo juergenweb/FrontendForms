@@ -1,433 +1,442 @@
 <?php
 
-    namespace ProcessWire;
+namespace ProcessWire;
 
-    use Exception;
-    use PDO;
+use Exception;
+use PDO;
+
+/**
+ * A custom admin page module for the FrontendForms module
+ */
+class FrontendFormsManager extends Process implements Module, ConfigurableModule
+{
+    protected WireInputData|null $filtervalues = null; // post data after the filter form has been submitted
+    protected int $items_per_page = 10; // default number of questions to show inside the table, if there are more questions -> pagination will be added
+    protected PageArray $allQuestions; // PageArray containing all questions independent of status
+    protected PageArray $publishedQuestions; // PageArray containing all questions with status published
+    protected PageArray $unpublishedQuestions; // PageArray containing all questions with status unpublished
+    protected PageArray $hiddenQuestions; // PageArray containing all questions with status hidden
+    protected PageArray $lockedQuestions; // PageArray containing all questions with status locked
+    protected PageArray $activeQuestions; // PageArray containing all questions that are visible and will be used in the CAPTCHA
+    protected PageArray $inactiveQuestions; // PageArray containing all questions that are NOT visible and will NOT be used in the CAPTCHA
+    protected array $chartTexts = [];
+    protected array $questionFields = []; // configuration array containing all question fields
+    protected bool $langSupport = false; // language support is enabled (true) or not (false)
+    protected bool $langSupportFields = false; // language support for fields on the frontend is enabled (true) or not (false)
+    protected array $frontendforms_config = [];
+    protected array $failedAttempts = []; // array containing ips as key and number of failed attempts as value
+
+    // objects
+    protected FrontendForms $frontendForms;
 
     /**
-     * A custom admin page module for the FrontendForms module
+     * Constructor method which runs during class initialization
+     * @throws WireException
      */
-    class FrontendFormsManager extends Process implements Module, ConfigurableModule
+    public function __construct()
+    {
+        parent::__construct();
+        // include configuration file for the question fields
+        include('config/questionFields.php');
+
+        // grab FrontendForms module to be able to use some methods of it
+        $this->frontendForms = wire('modules')->get('FrontendForms');
+
+        $this->frontendforms_config = wire('modules')->getConfig('FrontendForms');
+
+        // set config values if present
+        if ($this->input_paginationnumber) {
+            $this->items_per_page = $this->input_paginationnumber;
+        }
+
+        $this->langSupport = $this->wire('modules')->isInstalled('LanguageSupport');
+        $this->langSupportFields = $this->wire('modules')->isInstalled('LanguageSupportFields');
+
+    }
+
+    /**
+     * Function to run before all modules have been initialized
+     * @return void
+     * @throws WireException
+     */
+    public function init(): void
     {
 
-        protected WireInputData|null $filtervalues = null; // post data after the filter form has been submitted
-        protected int $items_per_page = 10; // default number of questions to show inside the table, if there are more questions -> pagination will be added
-        protected PageArray $allQuestions; // PageArray containing all questions independent of status
-        protected PageArray $publishedQuestions; // PageArray containing all questions with status published
-        protected PageArray $unpublishedQuestions; // PageArray containing all questions with status unpublished
-        protected PageArray $hiddenQuestions; // PageArray containing all questions with status hidden
-        protected PageArray $lockedQuestions; // PageArray containing all questions with status locked
-        protected PageArray $activeQuestions; // PageArray containing all questions that are visible and will be used in the CAPTCHA
-        protected PageArray $inactiveQuestions; // PageArray containing all questions that are NOT visible and will NOT be used in the CAPTCHA
-        protected array $chartTexts = [];
-        protected array $questionFields = []; // configuration array containing all question fields
-        protected bool $langSupport = false; // language support is enabled (true) or not (false)
-        protected bool $langSupportFields = false; // language support for fields on the frontend is enabled (true) or not (false)
-        protected array $frontendforms_config = [];
-        protected array $failedAttempts = []; // array containing ips as key and number of failed attempts as value
+        // set the chart intro text
+        $this->chartTexts = [
+            'QuestionsStatusChart' => $this->_('This chart indicates how many questions belong to a certain status.'),
+            'QuestionsActiveChart' => $this->_('This chart shows how many questions are displayed on the frontend (active) or not (inactive).'),
+        ];
 
-        // objects
-        protected FrontendForms $frontendForms;
+        // add the chart.js to the backend
+        $this->wire('config')->scripts->add(
+            'https://cdn.jsdelivr.net/npm/chart.js'
+        );
 
-        /**
-         * Constructor method which runs during class initialization
-         * @throws \ProcessWire\WireException
-         */
-        public function __construct()
-        {
-            parent::__construct();
-            // include configuration file for the question fields
-            include('config/questionFields.php');
+        // get questions with different status
+        $this->allQuestions = $this->wire('pages')->find('template=ff_question,include=all');
+        $this->publishedQuestions = $this->activeQuestions = $this->wire('pages')->find('template=ff_question');
+        $this->unpublishedQuestions = $this->wire('pages')->find('template=ff_question,status=unpublished');
+        $this->hiddenQuestions = $this->wire('pages')->find('template=ff_question,status=hidden');
+        $this->lockedQuestions = $this->wire('pages')->find('template=ff_question,status=locked');
+        $this->inactiveQuestions = $this->wire('pages')->find('template=ff_question,status=unpublished|hidden');
 
-            // grab FrontendForms module to be able to use some methods of it
-            $this->frontendForms = wire('modules')->get('FrontendForms');
+        $this->addHookAfter('Pages::saved, Pages::deleted', $this, 'redirectAfterQuestionEdit');
+        $this->addHookAfter('ProcessLanguage::processCSV', $this, 'writeDataToFields');
+        $this->addHookBefore('Process::headline', $this, 'changePageHeadline');
 
-            $this->frontendforms_config = wire('modules')->getConfig('FrontendForms');
-
-            // set config values if present
-            if ($this->input_paginationnumber)
-                $this->items_per_page = $this->input_paginationnumber;
-
-            $this->langSupport = $this->wire('modules')->isInstalled('LanguageSupport');
-            $this->langSupportFields = $this->wire('modules')->isInstalled('LanguageSupportFields');
-
+        // set post values if the filter form has been submitted
+        if ($this->wire('input')) {
+            $this->filtervalues = $this->wire('input')->post;
         }
 
-        /**
-         * Function to run before all modules have been initialized
-         * @return void
-         * @throws \ProcessWire\WireException
-         */
-        public function init(): void
-        {
+        // set failed attempts for the IPs
+        if (wire('log')->getTotalEntries('failed-attempts-frontendforms')) {
 
-            // set the chart intro text
-            $this->chartTexts = [
-                'QuestionsStatusChart' => $this->_('This chart indicates how many questions belong to a certain status.'),
-                'QuestionsActiveChart' => $this->_('This chart shows how many questions are displayed on the frontend (active) or not (inactive).'),
-            ];
+            // group array by IP
+            $result = array();
 
-            // add the chart.js to the backend
-            $this->wire('config')->scripts->add(
-                'https://cdn.jsdelivr.net/npm/chart.js'
-            );
-
-            // get questions with different status
-            $this->allQuestions = $this->wire('pages')->find('template=ff_question,include=all');
-            $this->publishedQuestions = $this->activeQuestions = $this->wire('pages')->find('template=ff_question');
-            $this->unpublishedQuestions = $this->wire('pages')->find('template=ff_question,status=unpublished');
-            $this->hiddenQuestions = $this->wire('pages')->find('template=ff_question,status=hidden');
-            $this->lockedQuestions = $this->wire('pages')->find('template=ff_question,status=locked');
-            $this->inactiveQuestions = $this->wire('pages')->find('template=ff_question,status=unpublished|hidden');
-
-            $this->addHookAfter('Pages::saved, Pages::deleted', $this, 'redirectAfterQuestionEdit');
-            $this->addHookAfter('ProcessLanguage::processCSV', $this, 'writeDataToFields');
-            $this->addHookBefore('Process::headline', $this, 'changePageHeadline');
-
-            // set post values if the filter form has been submitted
-            if ($this->wire('input')) {
-                $this->filtervalues = $this->wire('input')->post;
+            foreach (wire('log')->getEntries('failed-attempts-frontendforms') as $element) {
+                $data = json_decode($element['text']);
+                $result[] = $data->IP;
             }
 
-            // set failed attempts for the IPs
-            if (wire('log')->getTotalEntries('failed-attempts-frontendforms')) {
+            $result = array_count_values($result);
 
-                // group array by IP
-                $result = array();
-
-                foreach (wire('log')->getEntries('failed-attempts-frontendforms') as $element) {
-                    $data = json_decode($element['text']);
-                    $result[] = $data->IP;
-                }
-
-                $result = array_count_values($result);
-
-                arsort($result);
-                $this->failedAttempts = $result;
-
-            }
+            arsort($result);
+            $this->failedAttempts = $result;
 
         }
 
-        /**
-         * Change the headlines of the questions-overview page and the add new question page
-         * @param \ProcessWire\HookEvent $event
-         * @return void
-         * @throws \ProcessWire\WireException
-         * @throws \ProcessWire\WirePermissionException
-         */
-        protected function changePageHeadline(HookEvent $event): void
-        {
-            $process = $event->object;
-            $headline = '';
+        // add CSS and JS to the backend but only on this module page
+        $version = $this->getModuleInfo()['version'] . '-' . time();
+        $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'assets/css/frontendforms-backend.css?v=' . $version);
+        $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'assets/js/frontendforms-backend.js?v=' . $version.'-'.time());
 
-            if (($process == 'FrontendFormsManager') || ($process == 'ProcessPageAdd')) {
+    }
 
-                if ($process == 'FrontendFormsManager') {
+    /**
+     * Change the headlines of the questions-overview page and the add new question page
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function changePageHeadline(HookEvent $event): void
+    {
+        $process = $event->object;
+        $headline = '';
 
-                    $slug = null;
-                    $pageNum = ($this->wire($this->wire('input')->pageNum)) ?? 1;
-                    $slug = $this->wire('input')->urlSegments[$pageNum];
+        if (($process == 'FrontendFormsManager') || ($process == 'ProcessPageAdd')) {
 
-                    $headlines = [
-                        'questions-for-the-simple-question-captcha' => $this->_('List of all questions for the simple question CAPTCHA'),
-                        'list-of-failed-attempts' => $this->_('List of temporarily blocked IPs'),
-                    ];
+            if ($process == 'FrontendFormsManager') {
 
-                    if (!is_null($slug) && array_key_exists($slug, $headlines)) {
-                        $headline = $headlines[$slug];
-                        // Overwrite the processBrowserTitle
-                        $this->wire('processBrowserTitle', $headline);
-                    }
-                } else {
-                    $page = $this->wire('page');
-                    $slug = $this->wire('input')->get();
-                    $template_id = (int)$slug->template_id;
-                    $template_ID = $this->wire('templates')->get('ff_question')->id;
+                $slug = null;
+                $pageNum = $this->wire('input')->pageNum ?? 1;
+                $slug = $this->wire('input')->urlSegments[$pageNum];
 
-                    if ($template_id === $template_ID) {
-                        $headline = $this->_('Add a new question');
-                    }
-                }
-
-                $event->arguments(0, $headline);
-
-            }
-        }
-
-
-        /**
-         * Parse the csv file and get the translation according to a given text
-         * @param string $path
-         * @param string $defaultText
-         * @return string|array
-         */
-        protected function parseLanguageCSV(string $path, string $defaultText): string|array
-        {
-            $csvArray = array_map('str_getcsv', file($path));
-            $key = array_search($defaultText, array_column($csvArray, 0));
-            return $csvArray[$key][1];
-        }
-
-        /**
-         * Add the translations to the newly created fields
-         * @param \ProcessWire\HookEvent $event
-         * @return void
-         * @throws \ProcessWire\WireException
-         * @throws \ProcessWire\WirePermissionException
-         */
-        protected function writeDataToFields(HookEvent $event): void
-        {
-
-            $csvFile_path = $event->arguments(0);
-
-            // run only if the translation file of this module is processed (contains FrontendFormsManager in the path)
-            if (str_contains($csvFile_path, 'frontendformsmanager')) {
-
-                $template = $this->wire('templates')->get('ff_question');
-
-                $language = $event->arguments(1); // the language where the translation should be added
-
-                //get the Language translator class for this language
-                $translation = $this->wire('languages')->translator($language);
-
-                // save data (label, description,..) to fields in current language
-                $textdomain = $translation->filenameToTextdomain($this->wire('config')->paths->siteModules . 'frontendforms/config/questionFields.php');
-
-                foreach ($this->questionFields as $name => $fieldproperties) {
-                    //grab the field object
-                    $f = $this->wire('fields')->get($name);
-
-                    // create an array of field properties that should be set and saved
-                    $field_properties = ['label', 'description', 'notes'];
-                    foreach ($field_properties as $property) {
-                        if ($f->$property) {
-                            ${$property} = $translation->getTranslation($textdomain, $f->$property);
-
-                            if ($language->isDefault()) {
-                                $property_lang = $property;
-                            } else {
-                                $property_lang = $property . $language->id;
-                            }
-                            $f->set($property_lang, ${$property});
-                            $f->save($property);
-                        }
-                    }
-                }
-
-                // set a new text domain because translatable strings for the options are inside another file
-                $textdomain = $translation->filenameToTextdomain($this->wire('config')->paths->siteModules . 'frontendforms/frontendformsmanager.module');
-
-                // get the FieldtypeOptions field "ff_descposition" and add the translations for the options
-                $f = $this->wire('fields')->get('ff_descposition');
-                if ($f) {
-                    $options = $this->wire('modules')->get('FieldtypeOptions')->getOptions($f);
-
-                    $database = $this->wire('database');
-                    // get the table
-                    $tablename = 'fieldtype_options';
-                    // check first if this table exists
-                    if ($database->tableExists($tablename)) {
-
-                        // check if single or multi-lang site with languages installed
-                        $multilang = ($this->languages->count() > 1);
-
-                        // update the title language column
-                        foreach ($options as $option) {
-
-                            if ($multilang) {
-                                $colTitle = 'title' . $language->id;
-                                $colValue = 'value' . $language->id;
-                            } else {
-                                $colTitle = 'title';
-                                $colValue = 'value';
-                            }
-
-                            // needs to be done this way, because translation will not be found at the first csv import
-                            $title = $translation->getTranslation($textdomain, $option->title, '', ['getInfo' => true]);
-                            if ($title['translated']) {
-                                $title = $title['response']['text'];
-                            } else {
-                                $title = $this->parseLanguageCSV($csvFile_path, $option->title);
-                            }
-
-                            //$title = $translation->getTranslation($textdomain, $option->title);
-                            $value = $option->value;
-
-                            // create sql statement to add title and value to the entry
-                            $sql = 'UPDATE ' . $tablename . ' SET ' . $colTitle . '=:title, ' . $colValue . '=:value WHERE fields_id=:fieldid AND option_id=:optionid';
-
-                            // try to save the data to the database
-                            try {
-                                $query = $database->prepare($sql);
-                                $query->bindValue(":title", $title);
-                                $query->bindValue(":value", $value);
-                                $query->bindValue(":fieldid", $f->id, PDO::PARAM_INT);
-                                $query->bindValue(":optionid", $option->id, PDO::PARAM_INT);
-
-                                // execute the query to save the language values to the databse
-                                $query->execute();
-                            } catch (Exception $e) {
-                                // not used at the moment
-                            }
-
-                        }
-                    }
-                }
-
-                // save the template context label for the title field in the given language
-                // will be changed from title to question
-                $f = $template->fieldgroup->getField('title', true);
-
-                // needs to be done this way, because translation will not be found at the first csv import
-                $label = $translation->getTranslation($textdomain, $f->label, '', ['getInfo' => true]);
-                if ($label['translated']) {
-                    $label = $label['response']['text'];
-                } else {
-                    $label = $this->parseLanguageCSV($csvFile_path, $f->label);
-                }
-
-                if ($language->isDefault()) {
-                    $property = 'label';
-                } else {
-                    $property = 'label' . $language->id;
-                }
-                $f->set($property, $label);
-                $this->wire('fields')->saveFieldgroupContext($f, $template->fieldgroup);
-
-
-            }
-        }
-
-        /**
-         * Method to redirect to the questions table page if there are no errors
-         * @param \ProcessWire\Page $page
-         * @return void
-         * @throws \ProcessWire\WireException
-         */
-        protected function redirectQuestion(Page $page): void
-        {
-            $errors = false;
-
-            // not a page with the question template? return
-            if ($page->template->name != 'ff_question') return;
-
-            // page does not contain at least 1 question? return ->
-            // this is especially to prevent redirect on newly added page
-            if ($this->wire('input')) {
-                if ($this->wire('input')->post->ff_answers) {
-                    if (!empty($page->ff_answers)) {
-
-                        // check for errors
-                        foreach (wire('notices') as $notice) {
-                            if ($notice instanceof NoticeError) $errors = true;
-                        }
-
-                        // if there are no errors -> redirect to the questions' overview page
-                        if (!$errors) {
-                            $this->wire('session')->redirect($this->wire('urls')->admin . 'setup/frontendforms-dashboard/questions-for-the-simple-question-captcha');
-
-                        }
-
-                    }
-                }
-            }
-
-        }
-
-        /**
-         * Method to redirect to the questions table page if a question has been edited without errors
-         * @param \ProcessWire\HookEvent $event
-         * @return void
-         * @throws \ProcessWire\WireException
-         */
-        public function redirectAfterQuestionEdit(HookEvent $event): void
-        {
-            $page = $event->arguments(0);
-            $this->redirectQuestion($page);
-        }
-
-        /**
-         * Render the chart for the questions
-         * @return string
-         * @throws \ProcessWire\WireException
-         * @throws \ProcessWire\WirePermissionException
-         */
-        public function renderQuestionsChart(): string
-        {
-
-            $out = '<div id="questionsstatistic"></div>';
-
-            // page load
-            $out .= '<div id="pageload" style="width:100%;"><p>' . $this->chartTexts['QuestionsStatusChart'] . '</p><canvas id="questions"></canvas></div>';
-            $out .= $this->createQuestionsStatusChart();
-
-            $form = $this->modules->get('InputfieldForm');
-            $form->action = $this->wire('input')->url; // we submit on the same page
-            $form->method = 'post';
-            $form->attr('name+id', 'ff_question_statistic_form');
-
-            // create buttons for different views
-            $buttons = [
-                'QuestionsStatusChart' => $this->_('Status'),
-                'QuestionsActiveChart' => $this->_('Visibility')
-            ];
-
-            foreach ($buttons as $id => $label) {
-                $button = $this->modules->get('InputfieldButton');
-                $button->setSmall();
-                $button->addClass('statistics');
-                $button->id = $id;
-                $button->value = $label;
-                $button->attr('data-statistic', $id);
-                $button->type = 'submit';
-                $form->add($button);
-            }
-
-            $out .= $form->render();
-
-            return $out;
-
-        }
-
-        /**
-         * Generate the script for showing the status charts
-         * @return string
-         */
-        protected function createQuestionsStatusChart(): string
-        {
-
-            // run only if questions exist
-            if ($this->allQuestions->count) {
-
-                // make a data string out of the array
-                $data = [
-                    $this->allQuestions->count,
-                    $this->publishedQuestions->count,
-                    $this->unpublishedQuestions->count,
-                    $this->hiddenQuestions->count,
-                    $this->lockedQuestions->count,
+                $headlines = [
+                    'questions-for-the-simple-question-captcha' => $this->_('List of all questions for the simple question CAPTCHA'),
+                    'list-of-failed-attempts' => $this->_('List of temporarily blocked IPs'),
                 ];
 
+                if (!is_null($slug) && array_key_exists($slug, $headlines)) {
+                    $headline = $headlines[$slug];
+                    // Overwrite the processBrowserTitle
+                    $this->wire('processBrowserTitle', $headline);
+                }
             } else {
-                $data = [0, 0, 0, 0, 0, 0];
+                $page = $this->wire('page');
+                $slug = $this->wire('input')->get();
+                $template_id = (int)$slug->template_id;
+                $template_ID = $this->wire('templates')->get('ff_question')->id;
+
+                if ($template_id === $template_ID) {
+                    $headline = $this->_('Add a new question');
+                }
             }
-            $data = implode(', ', $data);
-            // output the script tag
-            return '<script>
+
+            $event->arguments(0, $headline);
+
+        }
+    }
+
+
+    /**
+     * Parse the csv file and get the translation according to a given text
+     * @param string $path
+     * @param string $defaultText
+     * @return string|array
+     */
+    protected function parseLanguageCSV(string $path, string $defaultText): string|array
+    {
+        $csvArray = array_map('str_getcsv', file($path));
+        $key = array_search($defaultText, array_column($csvArray, 0));
+        return $csvArray[$key][1];
+    }
+
+    /**
+     * Add the translations to the newly created fields
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function writeDataToFields(HookEvent $event): void
+    {
+
+        $csvFile_path = $event->arguments(0);
+
+        // run only if the translation file of this module is processed (contains FrontendFormsManager in the path)
+        if (str_contains($csvFile_path, 'frontendformsmanager')) {
+
+            $template = $this->wire('templates')->get('ff_question');
+
+            $language = $event->arguments(1); // the language where the translation should be added
+
+            //get the Language translator class for this language
+            $translation = $this->wire('languages')->translator($language);
+
+            // save data (label, description,…) to fields in current language
+            $textdomain = $translation->filenameToTextdomain($this->wire('config')->paths->siteModules . 'frontendforms/config/questionFields.php');
+
+            foreach ($this->questionFields as $name => $fieldproperties) {
+                //grab the field object
+                $f = $this->wire('fields')->get($name);
+
+                // create an array of field properties that should be set and saved
+                $field_properties = ['label', 'description', 'notes'];
+                foreach ($field_properties as $property) {
+                    if ($f->$property) {
+                        ${$property} = $translation->getTranslation($textdomain, $f->$property);
+
+                        if ($language->isDefault()) {
+                            $property_lang = $property;
+                        } else {
+                            $property_lang = $property . $language->id;
+                        }
+                        $f->set($property_lang, ${$property});
+                        $f->save($property);
+                    }
+                }
+            }
+
+            // set a new text domain because translatable strings for the options are inside another file
+            $textdomain = $translation->filenameToTextdomain($this->wire('config')->paths->siteModules . 'frontendforms/frontendformsmanager.module');
+
+            // get the FieldtypeOptions field "ff_descposition" and add the translations for the options
+            $f = $this->wire('fields')->get('ff_descposition');
+            if ($f) {
+                $options = $this->wire('modules')->get('FieldtypeOptions')->getOptions($f);
+
+                $database = $this->wire('database');
+                // get the table
+                $tablename = 'fieldtype_options';
+                // check first if this table exists
+                if ($database->tableExists($tablename)) {
+
+                    // check if single or multi-lang site with languages installed
+                    $multilang = ($this->languages->count() > 1);
+
+                    // update the title language column
+                    foreach ($options as $option) {
+
+                        if ($multilang) {
+                            $colTitle = 'title' . $language->id;
+                            $colValue = 'value' . $language->id;
+                        } else {
+                            $colTitle = 'title';
+                            $colValue = 'value';
+                        }
+
+                        // needs to be done this way, because translation will not be found at the first csv import
+                        $title = $translation->getTranslation($textdomain, $option->title, '', ['getInfo' => true]);
+                        if ($title['translated']) {
+                            $title = $title['response']['text'];
+                        } else {
+                            $title = $this->parseLanguageCSV($csvFile_path, $option->title);
+                        }
+
+                        //$title = $translation->getTranslation($textdomain, $option->title);
+                        $value = $option->value;
+
+                        // create SQL statement to add title and value to the entry
+                        $sql = 'UPDATE ' . $tablename . ' SET ' . $colTitle . '=:title, ' . $colValue . '=:value WHERE fields_id=:fieldid AND option_id=:optionid';
+
+                        // try to save the data to the database
+                        try {
+                            $query = $database->prepare($sql);
+                            $query->bindValue(":title", $title);
+                            $query->bindValue(":value", $value);
+                            $query->bindValue(":fieldid", $f->id, PDO::PARAM_INT);
+                            $query->bindValue(":optionid", $option->id, PDO::PARAM_INT);
+
+                            // execute the query to save the language values to the databse
+                            $query->execute();
+                        } catch (Exception $e) {
+                            $this->wire('log')->save('errors', 'FrontendFormsManager: failed to save option translation - ' . $e->getMessage());
+                        }
+
+                    }
+                }
+            }
+
+            // save the template context label for the title field in the given language
+            // will be changed from title to question
+            $f = $template->fieldgroup->getField('title', true);
+
+            // needs to be done this way, because translation will not be found at the first csv import
+            $label = $translation->getTranslation($textdomain, $f->label, '', ['getInfo' => true]);
+            if ($label['translated']) {
+                $label = $label['response']['text'];
+            } else {
+                $label = $this->parseLanguageCSV($csvFile_path, $f->label);
+            }
+
+            if ($language->isDefault()) {
+                $property = 'label';
+            } else {
+                $property = 'label' . $language->id;
+            }
+            $f->set($property, $label);
+            $this->wire('fields')->saveFieldgroupContext($f, $template->fieldgroup);
+
+
+        }
+    }
+
+    /**
+     * Method to redirect to the questions table page if there are no errors
+     * @param \ProcessWire\Page $page
+     * @return void
+     * @throws WireException
+     */
+    protected function redirectQuestion(Page $page): void
+    {
+        $errors = false;
+
+        // not a page with the question template? return
+        if ($page->template->name != 'ff_question') {
+            return;
+        }
+
+        // page does not contain at least 1 question? return ->
+        // this is especially to prevent redirect on newly added page
+        if ($this->wire('input')) {
+            if ($this->wire('input')->post->ff_answers) {
+                if (!empty($page->ff_answers)) {
+
+                    // check for errors
+                    foreach (wire('notices') as $notice) {
+                        if ($notice instanceof NoticeError) {
+                            $errors = true;
+                        }
+                    }
+
+                    // if there are no errors -> redirect to the questions' overview page
+                    if (!$errors) {
+                        $this->wire('session')->redirect($this->wire('urls')->admin . 'setup/frontendforms-dashboard/questions-for-the-simple-question-captcha');
+
+                    }
+
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Method to redirect to the questions table page if a question has been edited without errors
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     */
+    public function redirectAfterQuestionEdit(HookEvent $event): void
+    {
+        $page = $event->arguments(0);
+        $this->redirectQuestion($page);
+    }
+
+    /**
+     * Render the chart for the questions
+     * @return string
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    public function renderQuestionsChart(): string
+    {
+
+        $out = '<div id="questionsstatistic"></div>';
+
+        // page load
+        $out .= '<div id="pageload" style="width:100%;"><p>' . $this->chartTexts['QuestionsStatusChart'] . '</p><canvas id="questions"></canvas></div>';
+        $out .= $this->createQuestionsStatusChart();
+
+        $form = $this->modules->get('InputfieldForm');
+        $form->action = $this->wire('input')->url; // we submit on the same page
+        $form->method = 'post';
+        $form->attr('name+id', 'ff_question_statistic_form');
+
+        // create buttons for different views
+        $buttons = [
+            'QuestionsStatusChart' => $this->_('Status'),
+            'QuestionsActiveChart' => $this->_('Visibility')
+        ];
+
+        foreach ($buttons as $id => $label) {
+            $button = $this->modules->get('InputfieldButton');
+            $button->setSmall();
+            $button->addClass('statistics');
+            $button->id = $id;
+            $button->value = $label;
+            $button->attr('data-statistic', $id);
+            $button->type = 'submit';
+            $form->add($button);
+        }
+
+        $out .= $form->render();
+
+        return $out;
+
+    }
+
+    /**
+     * Generate the script for showing the status charts
+     * @return string
+     */
+    protected function createQuestionsStatusChart(): string
+    {
+
+        // run only if questions exist
+        if ($this->allQuestions->count) {
+
+            // make a data string out of the array
+            $data = [
+                $this->allQuestions->count,
+                $this->publishedQuestions->count,
+                $this->unpublishedQuestions->count,
+                $this->hiddenQuestions->count,
+                $this->lockedQuestions->count,
+            ];
+
+        } else {
+            $data = [0, 0, 0, 0, 0];
+        }
+        $data = implode(', ', $data);
+        // output the script tag
+        return '<script>
               const ctx = document.getElementById("questions");
             
               new Chart(ctx, {
                 type: "bar",
                 data: {
-                  labels: ["' . $this->_('total') . '", 
-                  "' . $this->_('published') . '",  
-                  "' . $this->_('unpublished') . '", 
-                  "' . $this->_('hidden') . '", 
-                  "' . $this->_('locked') . '"],
+                  labels: [' . json_encode($this->_('total')) . ', 
+                  ' . json_encode($this->_('published')) . ',  
+                  ' . json_encode($this->_('unpublished')) . ', 
+                  ' . json_encode($this->_('hidden')) . ', 
+                  ' . json_encode($this->_('locked')) . '],
                   datasets: [{
-                    label: "' . $this->_('Number of questions') . '" ,
+                    label: ' . json_encode($this->_('Number of questions')) . ' ,
                     data: [' . $data . '],
                     borderWidth: 1
                   }]
@@ -438,7 +447,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: "' . $this->_('Number of questions') . '"
+                                text: ' . json_encode($this->_('Number of questions')) . '
                             },
                             ticks: {
                                 stepSize: 1
@@ -447,55 +456,55 @@
                         x: {
                             title: {
                                 display: true,
-                                text: "' . $this->_('Status types') . '"
+                                text: ' . json_encode($this->_('Status types')) . '
                             }
                         }
                     },
                     plugins: {
                         title: {
                             display: true,
-                            text: "' . $this->_('Number of question per status and total') . '"
+                            text: ' . json_encode($this->_('Number of question per status and total')) . '
                         }
                     }
                  }   
                 })
                 
                 </script>';
+    }
+
+    /**
+     * Generate the script for the active/inactive charts
+     * @return string
+     */
+    protected function createQuestionsActiveChart(): string
+    {
+
+        // run only if questions exist
+        if ($this->allQuestions->count) {
+
+            // make a data string out of the array
+            $data = [
+                $this->allQuestions->count,
+                $this->activeQuestions->count,
+                $this->inactiveQuestions->count,
+            ];
+
+        } else {
+            $data = [0, 0, 0];
         }
-
-        /**
-         * Generate the script for the active/inactive charts
-         * @return string
-         */
-        protected function createQuestionsActiveChart(): string
-        {
-
-            // run only if questions exist
-            if ($this->allQuestions->count) {
-
-                // make a data string out of the array
-                $data = [
-                    $this->allQuestions->count,
-                    $this->activeQuestions->count,
-                    $this->inactiveQuestions->count,
-                ];
-
-            } else {
-                $data = [0, 0, 0];
-            }
-            $data = implode(', ', $data);
-            // output the script tag
-            return '<script>
+        $data = implode(', ', $data);
+        // output the script tag
+        return '<script>
               const ctx = document.getElementById("questions");
             
               new Chart(ctx, {
                 type: "bar",
                 data: {
-                  labels: ["' . $this->_('total') . '", 
-                  "' . $this->_('active') . '",  
-                  "' . $this->_('inactive') . '"],
+                  labels: [' . json_encode($this->_('total')) . ', 
+                  ' . json_encode($this->_('active')) . ',  
+                  ' . json_encode($this->_('inactive')) . '],
                   datasets: [{
-                    label: "' . $this->_('Number of questions') . '" ,
+                    label: ' . json_encode($this->_('Number of questions')) . ' ,
                     data: [' . $data . '],
                     borderWidth: 1
                   }]
@@ -506,7 +515,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: "' . $this->_('Number of questions') . '"
+                                text: ' . json_encode($this->_('Number of questions')) . '
                             },
                             ticks: {
                                 stepSize: 1
@@ -515,179 +524,183 @@
                         x: {
                             title: {
                                 display: true,
-                                text: "' . $this->_('Visibility types') . '"
+                                text: ' . json_encode($this->_('Visibility types')) . '
                             }
                         }
                     },
                     plugins: {
                         title: {
                             display: true,
-                            text: "' . $this->_('Number of active and inactive question and total') . '"
+                            text: ' . json_encode($this->_('Number of active and inactive question and total')) . '
                         }
                     }
                  }   
                 })
                 </script>';
-        }
+    }
 
-        /**
-         * Method to redirect to the questions table page if a new question has been added without errors
-         * @param \ProcessWire\HookEvent $event
-         * @return void
-         * @throws \ProcessWire\WireException
-         */
-        public function redirectAfterQuestionAdded(HookEvent $event): void
-        {
-            $page = $event->arguments(0);
-            $this->redirectQuestion($page);
-        }
+    /**
+     * Method to redirect to the questions table page if a new question has been added without errors
+     * @param HookEvent $event
+     * @return void
+     * @throws WireException
+     */
+    public function redirectAfterQuestionAdded(HookEvent $event): void
+    {
+        $page = $event->arguments(0);
+        $this->redirectQuestion($page);
+    }
 
-        /**
-         * Create the module info
-         * @return array
-         */
-        public static function getModuleinfo(): array
-        {
-            return [
+    /**
+     * Create the module info
+     * @return array
+     */
+    public static function getModuleInfo(): array
+    {
+        return [
+            'title' => __('FrontendForms Manager', __FILE__),
+            'summary' => __('Additional administration page for the FrontendForms module.', __FILE__),
+            'author' => 'Jürgen Kern',
+            'version' => '1.1.0',
+            'icon' => 'area-chart',
+            'permanent' => false,
+            'autoload' => true,
+            'permission' => 'page-edit',
+            'requires' => [
+                'FrontendForms',
+                'PHP>=8.0.0',
+                'ProcessWire>=3.0.195'
+            ],
+            'page' => [
+                'name' => 'frontendforms-dashboard',
+                'parent' => 'setup',
                 'title' => __('FrontendForms Manager', __FILE__),
-                'summary' => __('Additional administration page for the FrontendForms module.', __FILE__),
-                'author' => 'Jürgen Kern',
-                'version' => '1.1.0',
-                'icon' => 'area-chart',
-                'permanent' => false,
-                'autoload' => true,
-                'permission' => 'page-edit',
-                'requires' => [
-                    'FrontendForms',
-                    'PHP>=8.0.0',
-                    'ProcessWire>=3.0.195'
-                ],
-                'page' => [
-                    'name' => 'frontendforms-dashboard',
-                    'parent' => 'setup',
-                    'title' => __('FrontendForms Manager', __FILE__),
-                ],
-            ];
-        }
+            ],
+        ];
+    }
 
-        /**
-         * Dashboard page
-         * @return string
-         * @throws \ProcessWire\WireException
-         * @throws \ProcessWire\WirePermissionException
-         */
-        public function execute(): string
-        {
+    /**
+     * Dashboard page
+     * @return string
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    public function execute(): string
+    {
 
-            if ($this->wire('config')->ajax) {
+        if ($this->wire('config')->ajax) {
 
-                // load JS depending on button value
-                $input = $this->wire('input');
-                $method = 'create' . $input->post('type');
-                $out = $this->$method();
-                // create the canvas for the chart
-                $out .= '<div style="width:100%;"><p>' . $this->chartTexts[$input->post('type')] . '</p><canvas id="questions"></canvas></div>';
-                return $out;
-            } else {
-
-                $form = $this->modules->get('InputfieldForm');
-
-                // Question part
-                $fieldsetQuestions = $this->modules->get('InputfieldFieldset');
-                $fieldsetQuestions->label = $this->_('Questions for the SIMPLE TEXT CAPTCHA');
-                $form->add($fieldsetQuestions);
-
-                $field = $this->modules->get('InputfieldMarkup');
-                $field->label = $this->_('Manage all questions for the SIMPLE QUESTION CAPTCHA');
-                $field->value = $this->renderQuestionsList();
-                $field->columnWidth = 50;
-                $fieldsetQuestions->add($field);
-
-                $field = $this->modules->get('InputfieldMarkup');
-                $field->label = $this->_('Questions statistics');
-                $field->value = $this->renderQuestionsChart();
-                $field->columnWidth = 50;
-                $fieldsetQuestions->add($field);
-
-                $form->add($fieldsetQuestions);
-
-                // Failed attempts part
-                $fieldsetFailedAttempts = $this->modules->get('InputfieldFieldset');
-                $fieldsetFailedAttempts->label = $this->_('List of all IPs that have been blocked temporarily');
-
-                // table for failed attempts
-                $field = $this->modules->get('InputfieldMarkup');
-                $field->label = $this->_('Information about all IP addresses that have been temporarily blocked due to too many unsuccessful form submissions.');
-
-                // check first if logging of failed attempts is enabled
-                if (array_key_exists('input_logFailedAttempts', $this->frontendforms_config) && ($this->frontendforms_config['input_logFailedAttempts'])) {
-                    $field->value = $this->renderFailedAttemptsList();
-                } else {
-                    $text = $this->_('Logging of blocked IPs is disabled.') . '<br>';
-                    $link = '<a href="' . $this->wire('config')->urls->admin . 'module/edit?name=FrontendForms" target="_blank">' . $this->_('FrontendForms configuration') . '</a>';
-                    $text .= sprintf($this->_('If you want to show statistics about blocked IPs, you need to go to the %s and enable it first (Spam protection and security settings for the forms -> Measure 1: Restrict number of failed attempts).'), $link);
-                    $field->value = $text;
-                }
-
-                $field->columnWidth = 50;
-                $fieldsetFailedAttempts->add($field);
-
-                // create the chart field for failed attempts
-                $chartfield = $this->modules->get('InputfieldMarkup');
-                $chartfield->label = $this->_('Temporarily Blocked IPs');
-                $chartfield->value = $this->renderFailedAttemptsChart();
-                $chartfield->columnWidth = 50;
-                $fieldsetFailedAttempts->add($chartfield);
-
-                $form->add($fieldsetFailedAttempts);
-
-                return $form->render();
-
-            }
-
-        }
-
-        /**
-         * Render the charts for the failed attempts grouped by ID and number of failed attempts
-         * @return string
-         */
-        public function renderFailedAttemptsChart(): string
-        {
-
-            // page load
-            $out = '<div id="pageload-fac" style="width:100%;"><p>' . $this->_('This chart shows the number of temporarily blocks for the 10 most temporarily blocked IPs in descending order.') . '</p><canvas id="failed-attempts"></canvas></div>';
-            $out .= $this->createFailedAttemptsStatusChart();
+            // load JS depending on button value
+            $input = $this->wire('input');
+            $type = $input->post('type');
+            $out = match ($type) {
+                'QuestionsStatusChart' => $this->createQuestionsStatusChart(),
+                'QuestionsActiveChart' => $this->createQuestionsActiveChart(),
+                default => '',
+            };
+            // create the canvas for the chart
+            $out .= '<div style="width:100%;"><p>' . ($this->chartTexts[$type] ?? '') . '</p><canvas id="questions"></canvas></div>';
             return $out;
+        } else {
+
+            $form = $this->modules->get('InputfieldForm');
+
+            // Question part
+            $fieldsetQuestions = $this->modules->get('InputfieldFieldset');
+            $fieldsetQuestions->label = $this->_('Questions for the SIMPLE TEXT CAPTCHA');
+            $form->add($fieldsetQuestions);
+
+            $field = $this->modules->get('InputfieldMarkup');
+            $field->label = $this->_('Manage all questions for the SIMPLE QUESTION CAPTCHA');
+            $field->value = $this->renderQuestionsList();
+            $field->columnWidth = 50;
+            $fieldsetQuestions->add($field);
+
+            $field = $this->modules->get('InputfieldMarkup');
+            $field->label = $this->_('Questions statistics');
+            $field->value = $this->renderQuestionsChart();
+            $field->columnWidth = 50;
+            $fieldsetQuestions->add($field);
+
+            $form->add($fieldsetQuestions);
+
+            // Failed attempts part
+            $fieldsetFailedAttempts = $this->modules->get('InputfieldFieldset');
+            $fieldsetFailedAttempts->label = $this->_('List of all IPs that have been blocked temporarily');
+
+            // table for failed attempts
+            $field = $this->modules->get('InputfieldMarkup');
+            $field->label = $this->_('Information about all IP addresses that have been temporarily blocked due to too many unsuccessful form submissions.');
+
+            // check first if logging of failed attempts is enabled
+            if (array_key_exists('input_logFailedAttempts', $this->frontendforms_config) && ($this->frontendforms_config['input_logFailedAttempts'])) {
+                $field->value = $this->renderFailedAttemptsList();
+            } else {
+                $text = $this->_('Logging of blocked IPs is disabled.') . '<br>';
+                $link = '<a href="' . $this->wire('config')->urls->admin . 'module/edit?name=FrontendForms" target="_blank">' . $this->_('FrontendForms configuration') . '</a>';
+                $text .= sprintf($this->_('If you want to show statistics about blocked IPs, you need to go to the %s and enable it first (Spam protection and security settings for the forms -> Measure 1: Restrict number of failed attempts).'), $link);
+                $field->value = $text;
+            }
+
+            $field->columnWidth = 50;
+            $fieldsetFailedAttempts->add($field);
+
+            // create the chart field for failed attempts
+            $chartfield = $this->modules->get('InputfieldMarkup');
+            $chartfield->label = $this->_('Temporarily Blocked IPs');
+            $chartfield->value = $this->renderFailedAttemptsChart();
+            $chartfield->columnWidth = 50;
+            $fieldsetFailedAttempts->add($chartfield);
+
+            $form->add($fieldsetFailedAttempts);
+
+            return $form->render();
+
         }
 
-        /**
-         * Create the Javascript for the failed attempts chart on the dashboard page
-         * @return string
-         */
-        protected function createFailedAttemptsStatusChart(): string
-        {
+    }
 
-            // run only if failed attempts exist
-            if ($this->failedAttempts) {
+    /**
+     * Render the charts for the failed attempts grouped by ID and number of failed attempts
+     * @return string
+     */
+    public function renderFailedAttemptsChart(): string
+    {
 
-                // slice the array after 10 entries
-                $data = array_slice($this->failedAttempts, 0, 10);
+        // page load
+        $out = '<div id="pageload-fac" style="width:100%;"><p>' . $this->_('This chart shows the number of temporarily blocks for the 10 most temporarily blocked IPs in descending order.') . '</p><canvas id="failed-attempts"></canvas></div>';
+        $out .= $this->createFailedAttemptsStatusChart();
+        return $out;
+    }
 
-            } else {
-                $data = [0];
-            }
+    /**
+     * Create the JavaScript for the failed attempts chart on the dashboard page
+     * @return string
+     */
+    protected function createFailedAttemptsStatusChart(): string
+    {
 
-            $keys = array_keys($data);
-            $data = implode(', ', $data);
+        // run only if failed attempts exist
+        if ($this->failedAttempts) {
 
-            $k = [];
-            foreach ($keys as $key) {
-                $k[] = '"' . $key . '"';
-            }
-            $labels = implode(',', $k);
+            // slice the array after 10 entries
+            $data = array_slice($this->failedAttempts, 0, 10);
 
-            // output the script tag
-            return '<script>
+        } else {
+            $data = [0];
+        }
+
+        $keys = array_keys($data);
+        $data = implode(', ', $data);
+
+        $k = [];
+        foreach ($keys as $key) {
+            $k[] = json_encode($key);
+        }
+        $labels = implode(',', $k);
+
+        // output the script tag
+        return '<script>
                   const fac = document.getElementById("failed-attempts");
                 
                   new Chart(fac, {
@@ -695,7 +708,7 @@
                     data: {
                       labels: [' . $labels . '],
                       datasets: [{
-                        label: "' . $this->_('Number of temporary blockings') . '" ,
+                        label: ' . json_encode($this->_('Number of temporary blockings')) . ' ,
                         data: [' . $data . '],
                         borderWidth: 1,
                         backgroundColor: ["rgba(255, 99, 132, 0.2)",
@@ -716,7 +729,7 @@
                             y: {
                                title: {
                                     display: true,
-                                    text: "' . $this->_('IPs') . '"
+                                    text: ' . json_encode($this->_('IPs')) . '
                                 } 
                             },
                             x: {
@@ -724,7 +737,7 @@
                                 beginAtZero: true,
                                 title: {
                                     display: true,
-                                    text: "' . $this->_('Number of temporarily blockings') . '"
+                                    text: ' . json_encode($this->_('Number of temporarily blockings')) . '
                                 },
                                 ticks: {
                                     stepSize: 1
@@ -734,696 +747,699 @@
                         plugins: {
                             title: {
                                 display: true,
-                                text: "' . $this->_('Number of temporary blockings') . '"
+                                text: ' . json_encode($this->_('Number of temporary blockings')) . '
                             }
                         }
                      }   
                     })
                     
                     </script>';
-        }
+    }
 
 
-        /**
-         * Render method to show a small table with failed attempts and a bar chart with forms and failed attempts
-         * @return string
-         */
-        protected function renderFailedAttemptsList(): string
-        {
+    /**
+     * Render method to show a small table with failed attempts and a bar chart with forms and failed attempts
+     * @return string
+     */
+    protected function renderFailedAttemptsList(): string
+    {
 
-            $out = '';
+        $out = '';
 
-            if ($this->failedAttempts) {
+        if ($this->failedAttempts) {
 
-                $out .= '<h3>' . $this->_('Top 10 IPs with the most blockings') . '</h3>';
-                // create the statistic table for the failed attempts
-                $out .= '<table id="failedattempts-statistic">';
-                $out .= '<thead>';
-                $out .= '<td>' . $this->_('IP') . '</td>';
-                $out .= '<td>' . $this->_('Number of blockings') . '</td>';
-                $out .= '<td>' . $this->_('Status') . '</td>';
-                $out .= '</thead>';
-                $out .= '<tbody>';
+            $out .= '<h3>' . $this->_('Top 10 IPs with the most blockings') . '</h3>';
+            // create the statistic table for the failed attempts
+            $out .= '<table id="failedattempts-statistic">';
+            $out .= '<thead>';
+            $out .= '<td>' . $this->_('IP') . '</td>';
+            $out .= '<td>' . $this->_('Number of blockings') . '</td>';
+            $out .= '<td>' . $this->_('Status') . '</td>';
+            $out .= '</thead>';
+            $out .= '<tbody>';
 
-                foreach ($this->failedAttempts as $ip => $numberOfFailedAttempts) {
-                    $out .= '<tr>';
-                    $out .= '<td>' . $ip . '</td>';
-                    $out .= '<td>' . $numberOfFailedAttempts . '</td>';
-                    $status = $this->_('Not banned');
-                    $icon = $notbanned_icon = '<i class="fa fa-check"></i>';
-                    $banned_icon = '<i class="fa fa-times"></i>';
-                    // check if this IP is in the list of banned IPs
-                    if (array_key_exists('input_preventIPs', $this->frontendforms_config)) {
-                        $bannedList = $this->frontendforms_config['input_preventIPs'];
-                        if (!empty($bannedList)) {
-                            // create array out of textarea content
-                            $bannedList = array_filter(explode("\n", str_replace("\r", "", $bannedList)));
-                            if (in_array($ip, $bannedList)) {
-                                $icon = $banned_icon;
-                            }
+            foreach ($this->failedAttempts as $ip => $numberOfFailedAttempts) {
+                $out .= '<tr>';
+                $out .= '<td>' . htmlspecialchars((string) $ip, ENT_QUOTES, 'UTF-8') . '</td>';
+                $out .= '<td>' . $numberOfFailedAttempts . '</td>';
+                $icon = $notbanned_icon = '<i class="fa fa-check"></i>';
+                $banned_icon = '<i class="fa fa-times"></i>';
+                // check if this IP is in the list of banned IPs
+                if (array_key_exists('input_preventIPs', $this->frontendforms_config)) {
+                    $bannedList = $this->frontendforms_config['input_preventIPs'];
+                    if (!empty($bannedList)) {
+                        // create array out of textarea content
+                        $bannedList = array_filter(explode("\n", str_replace("\r", "", $bannedList)));
+                        if (in_array($ip, $bannedList)) {
+                            $icon = $banned_icon;
                         }
                     }
-
-                    $out .= '<td>' . $icon . '</td>';
-                    $out .= '</tr>';
                 }
-                $out .= '</tbody>';
 
-                $out .= '</table>';
-                $out .= '<ul class="legend">';
-                $out .= '<li>' . $notbanned_icon . ': ' . $this->_('Not blocked - The IP is not on the list of permanent blocked IPs (Blacklist).') . '</li>';
-                $out .= '<li>' . $banned_icon . ': ' . $this->_('Blocked - The IP is currently on the list of permanent blocked IPs (Blacklist).') . '</li>';
-                $out .= '</ul>';
-
-                // create the "all failed attempts" button
-                $button = $this->modules->get('InputfieldButton');
-                $button->value = $this->_('To all temporarily blocked IPs');
-                $button->setSecondary();
-                $button->attr('href', $this->config->urls->admin . 'setup/frontendforms-dashboard/list-of-failed-attempts');
-                $out .= '<div id="to-all-blocked-ips">'.$button->render().'</div>';
-
-            } else {
-                // no entries
-                $out .= $this->_('At the moment there are no entries about temporarily blocked IPs in the log files.');
+                $out .= '<td>' . $icon . '</td>';
+                $out .= '</tr>';
             }
+            $out .= '</tbody>';
 
-            return $out;
+            $out .= '</table>';
+            $out .= '<ul class="legend">';
+            $out .= '<li>' . $notbanned_icon . ': ' . $this->_('Not blocked - The IP is not on the list of permanent blocked IPs (Blacklist).') . '</li>';
+            $out .= '<li>' . $banned_icon . ': ' . $this->_('Blocked - The IP is currently on the list of permanent blocked IPs (Blacklist).') . '</li>';
+            $out .= '</ul>';
+
+            // create the "all failed attempts" button
+            $button = $this->modules->get('InputfieldButton');
+            $button->value = $this->_('To all temporarily blocked IPs');
+            $button->setSecondary();
+            $button->attr('href', $this->config->urls->admin . 'setup/frontendforms-dashboard/list-of-failed-attempts');
+            $out .= '<div id="to-all-blocked-ips">'.$button->render().'</div>';
+
+        } else {
+            // no entries
+            $out .= $this->_('At the moment there are no entries about temporarily blocked IPs in the log files.');
         }
 
-
-        /**
-         * List all suspicious IPs inside a paginated table
-         * @return string
-         * @throws \ProcessWire\WireException
-         * @throws \ProcessWire\WirePermissionException
-         */
-        public function ___executeListOfFailedAttempts(): string
-        {
-
-            $out = '';
-
-            // check if there are entries in the log file
-            if ($this->failedAttempts) {
-
-                // create a paginated array of all grouped logged entries that can be used with pagination later on
-                $ips = PageArray();
-
-                $n = 0;
-                foreach ($this->failedAttempts as $ip => $numberOfFailedAttempts) {
-                    $n++;
-                    $item = new Page();
-                    $item->set('id', $n);
-                    $item->set('name', $ip);
-                    $item->template = 'admin';
-                    $item->ip = $ip;
-                    $item->attempts = $numberOfFailedAttempts;
-                    $ips->add($item);
-                }
-
-                // default number of items per page to show
-                $items_per_page = $this->items_per_page;
-                $start = ($this->wire('input')->pageNum - 1) * $items_per_page;
-                $ips->setLimit($items_per_page);
-                $ips->setStart($start);
-
-                // slice only if the number of pages is higher than the number of items per page
-                if ($ips->count > $items_per_page) {
-                    $paginatedIPs = $ips->slice($start, $items_per_page);
-                    $counter = true;
-                } else {
-                    $paginatedIPs = $ips;
-                    $counter = false;
-                }
-
-                $table = $this->modules->get('MarkupAdminDataTable');
-                $table->encodeEntities = false;
-                $table->setEncodeEntities(false);
-                $table->headerRow([
-                    $this->_('#'),
-                    $this->_('IP'),
-                    $this->_('Number of blocks'),
-                    $this->_('Info'),
-                    $this->_('Status'),
-                    $this->_('Add/remove IP to/from the blacklist ')
-                ]);
-
-                $n = 0;
-
-                foreach ($paginatedIPs as $item) {
-
-                    // instantiate the more info button
-                    $infobutton = $this->wire('modules')->get('InputfieldButton');
-                    $infobutton->setSecondary();
-                    $infobutton->setSmall();
-                    $infobutton->value = $this->_('View details about this IP');
-                    $infobutton->attr('data-href', '/detail-view/' . $item->ip);
-                    $infobutton->addClass('pw-panel');
-
-                    // instantiate button object for adding/removing the IP to/from the blacklist
-                    $button = $this->wire('modules')->get('InputfieldSubmit');
-                    $button->setSmall();
-                    $button->name = 'submit_save_ip';
-                    $button->value = 'add';
-                    $button->setAttribute('data-from_id', 'Inputfield_submit_save_module');
-                    $button->value = $item->ip;
-
-                    $blockedIPs = $this->frontendforms_config['input_preventIPs'];
-                    if (empty($blockedIPs)) {
-                        $blockedIPs = [];
-                    } else {
-                        $blockedIPs = preg_split('/\r\n|\r|\n/', $blockedIPs);
-                    }
-
-                    if (in_array($item->ip, $blockedIPs)) {
-                        $status = $this->_('IP is blocked');
-                        // remove button
-                        $button->name = 'submit_remove_ip';
-                        $button->text = $this->_('Remove from blacklist');
-                        $button->setSecondary();
-                    } else {
-                        // create add button
-                        $button->text = $this->_('Add to blacklist');
-                        $status = $this->_('IP is not blocked');
-                    }
-
-                    $number = $counter ? $start + $n + 1 : $n + 1;
-                    $table->row(
-                        [
-                            $number,
-                            $item->ip,
-                            $item->attempts,
-                            $infobutton->render(),
-                            $status,
-                            $button->render()
-                        ]
-                    );
-                    $n++;
-                }
-
-                $out .= '<p>'.$this->_('Any IP addresses that are blacklisted will not be able to submit forms, because in this case the forms will not be displayed.').'<br>';
-                $out .= $this->_('This is a security measure to exclude potential spammers.').'</p>';
-
-                // render the table with the questions
-                $out .= $ips->getPaginationString($this->_('IPs'));
-
-                $out .= '<form id="blocked-ips" name="blocked-ips" action="' . $this->wire('input')->url . '" method="post">';
-                $out .= $table->render();
-                $out .= '</form>';
-                $out .= '<div id="blockedlist-pagination" class="pagination">' . $ips->renderPager() . '</div>';
-
-                if (isset($_POST)) {
-                    $ip = null;
-                    // add the given ip to the blacklist
-                    if (array_key_exists('submit_save_ip', $_POST)) {
-                        $ip = $_POST['submit_save_ip'];
-                        // add this ip to the list if it is a valid IP
-                        if (filter_var($ip, FILTER_VALIDATE_IP)) {
-                            $blockedIPs[] = $ip;
-                        }
-                    } else if (array_key_exists('submit_remove_ip', $_POST)) {
-                        // remove the given ip from the blacklist
-                        $ip = $_POST['submit_remove_ip'];
-                        // remove $this IP from the list
-                        $key = array_search($ip, $blockedIPs, true);
-                        if ($key !== false) {
-                            unset($blockedIPs[$key]);
-                        }
-                    }
-                    if (!is_null($ip)) {
-
-                        // convert it back to a string and save it to the module configuration
-
-                        $ffdata = $this->frontendForms;
-
-                        $blockedIPs = array_filter($blockedIPs);
-                        $ffdata['input_preventIPs'] = implode("\n", array_unique($blockedIPs));
-
-                        $this->wire('modules')->saveConfig('FrontendForms', $ffdata);
-                        // finally redirect to make the changes visible
-                        $this->wire('session')->redirect($this->wire('input')->url);
+        return $out;
+    }
 
 
-                    }
-                }
+    /**
+     * List all suspicious IPs inside a paginated table
+     * @return string
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    public function ___executeListOfFailedAttempts(): string
+    {
 
+        $out = '';
 
-            } else {
-                $out .= '<div id="no-results"><p>' . $this->_('There are no temporarily blocked IPs entries inside the log files.') . '</p></div>';
+        // check if there are entries in the log file
+        if ($this->failedAttempts) {
+
+            // create a paginated array of all grouped logged entries that can be used with pagination later on
+            $ips = PageArray();
+
+            $n = 0;
+            foreach ($this->failedAttempts as $ip => $numberOfFailedAttempts) {
+                $n++;
+                $item = new Page();
+                $item->set('id', $n);
+                $item->set('name', $ip);
+                $item->template = 'admin';
+                $item->ip = $ip;
+                $item->attempts = $numberOfFailedAttempts;
+                $ips->add($item);
             }
 
-            // add back to the dashboard button
-            $backbutton = $this->wire('modules')->get('InputfieldButton');
-            $backbutton->value = $this->_('Back to the dashboard');
-            $backbutton->attr('href', $this->config->urls->admin . 'setup/frontendforms-dashboard/');
-            $out .= $backbutton->render();
+            // default number of items per page to show
+            $items_per_page = $this->items_per_page;
+            $start = ($this->wire('input')->pageNum - 1) * $items_per_page;
+            $ips->setLimit($items_per_page);
+            $ips->setStart($start);
 
-            return $out;
-        }
-
-
-        /**
-         * Overview page for all questions for the SIMPLE TEXT CAPTCHA
-         * @return string
-         * @throws \ProcessWire\WireException
-         * @throws \ProcessWire\WirePermissionException
-         */
-        public function ___executeQuestionsForTheSimpleQuestionCaptcha(): string
-        {
-
-            // render the text over the table
-            $out = '<p>' . $this->_('Manage all questions for the SIMPLE QUESTION CAPTCHA in one place.') . '</p>';
-
-            // render the table including the filter form
-            $out .= $this->renderQuestionsTable();
-            // render the back link
-            $out .= '<div id="backlink"><a href="' . $this->config->urls->admin . 'setup/frontendforms-dashboard"><i class="fa fa-arrow-left"></i> ' . $this->_('Back to the dashboard') . '</a>';
-
-            return $out;
-        }
-
-        /**
-         * Render the form to filter the questions by certain conditions
-         * @return string
-         * @throws \ProcessWire\WireException
-         * @throws \ProcessWire\WirePermissionException
-         */
-        protected function renderQuestionsFilter(): string
-        {
-
-            $form = modules()->get('InputfieldForm');
-            $form->action = $this->wire('input')->url; // we submit on the same page
-            $form->method = 'post';
-            $form->attr('name+id', 'ff_filter_form');
-
-            $fieldset = modules()->get('InputfieldFieldset');
-            $fieldset->label = $this->_('Filter');
-            $fieldset->columnWidth = '100';
-            $fieldset->icon = 'fa-filter';
-
-            // filter by question text
-            $f = modules()->get('InputfieldText');
-            $f->set('label', $this->_('Filter by question text'));
-            $f->attr('name+id', 'question');
-            $f->columnWidth = '50';
-            $f->notes = $this->_('Filter questions by containing a specific word or phrase.');
-            $fieldset->add($f);
-
-            // filter by page status
-            $f = modules()->get('InputfieldSelect');
-            $f->set('label', $this->_('Filter by status'));
-            $f->attr('name+id', 'status');
-            $f->attr('maxlength', 50);
-            if ($this->filtervalues)
-                $f->attr('value', $this->filtervalues->status);
-            $f->addOption(Page::statusOn, $this->_('all'));
-            $f->addOption('0', $this->_('published'));
-            $f->addOption(Page::statusUnpublished, $this->_('unpublished'));
-            $f->addOption(Page::statusHidden, $this->_('hidden'));
-            $f->addOption(Page::statusLocked, $this->_('locked'));
-            $f->required(true);
-            $f->defaultValue = '2';
-            $f->columnWidth = '25';
-            $f->notes = $this->_('Filter questions according to their page status.');
-            $fieldset->add($f);
-
-            // filter by visibility status
-            $f = modules()->get('InputfieldSelect');
-            $f->set('label', $this->_('Filter by visibility'));
-            $f->attr('name+id', 'statusvisibility');
-            $f->attr('maxlength', 50);
-            if ($this->filtervalues)
-                $f->attr('value', $this->filtervalues->statusvisibility);
-            $f->addOption('0', $this->_('all'));
-            $f->addOption('1', $this->_('active'));
-            $f->addOption('2', $this->_('inactive'));
-            $f->required(true);
-            $f->defaultValue = '0';
-            $f->columnWidth = '25';
-            $f->notes = $this->_('Filter whether the questions are used by the CAPTCHA or not.');
-            $fieldset->add($f);
-
-            // submit button
-            $f = modules()->get('InputfieldSubmit');
-            $f->attr('id+name', 'ff-submit-btn');
-            $f->attr('value', $this->_('Filter'));
-            $fieldset->add($f);
-
-            $form->add($fieldset);
-            return $form->render();
-
-        }
-
-        /**
-         * Get all questions matching the given selectors
-         * @return \ProcessWire\PageArray|null
-         * @throws \ProcessWire\WireException
-         */
-        protected function getAllQuestions(): PageArray|null
-        {
-
-            $selectors = []; // default selector array
-
-            // filter by template
-            $selectors['template'] = 'template=ff_question';
-
-            if ($this->filtervalues && $this->filtervalues->count()) {
-
-                // filter by title
-                if ($this->filtervalues->question) {
-                    $title = $this->wire('sanitizer')->selectorValue($this->filtervalues->question);
-                    $selectors['title'] = 'title%=' . $title;
-                }
-
-                // filter by status
-                if ($this->filtervalues->status != '0') {
-                    $selectors['status'] = 'status=' . $this->filtervalues->status;
-                } else {
-                    $selectors['status'] = 'status!=' . Page::statusUnpublished;
-                }
-
-                // filter by visibility (overwrites the status from the filter before
-                if ($this->filtervalues->statusvisibility != '0') {
-                    if ($this->filtervalues->statusvisibility == '1') {
-                        $selectors['statusvisible'] = 'status!=unpublished|hidden';
-                    } else {
-                        $selectors['statusvisible'] = 'status=unpublished|hidden';
-                    }
-                }
-
-            }
-
-            // include all questions independent of status
-            if (!$this->filtervalues->count() || (!array_key_exists('status', $selectors) || ($this->filtervalues->status == '1'))) {
-                $selectors[] = 'include=all';
-            }
-
-            return $this->wire('pages')->find(implode(',', $selectors));
-        }
-
-        /**
-         * Render the table containing all questions
-         * @return string
-         * @throws \ProcessWire\WireException
-         * @throws \ProcessWire\WirePermissionException
-         */
-        protected function renderQuestionsTable(): string
-        {
-
-            $pages = $this->getAllQuestions();
-            $out = $this->renderQuestionsFilter();
-
-            if (is_null($pages)) {
-                return $this->_('No questions have been created at the moment.');
-            }
-
-            $start = ($this->wire('input')->pageNum - 1) * $this->items_per_page;
-            $pages->setLimit($this->items_per_page);
-            $pages->setStart($start);
             // slice only if the number of pages is higher than the number of items per page
-            if ($pages->count > $this->items_per_page) {
-                $viewPages = $pages->slice($start, $this->items_per_page);
+            if ($ips->count > $items_per_page) {
+                $paginatedIPs = $ips->slice($start, $items_per_page);
                 $counter = true;
             } else {
-                $viewPages = $pages;
+                $paginatedIPs = $ips;
                 $counter = false;
             }
 
-            if ($viewPages->count) {
+            $table = $this->modules->get('MarkupAdminDataTable');
+            $table->encodeEntities = false;
+            $table->setEncodeEntities(false);
+            $table->headerRow([
+                $this->_('#'),
+                $this->_('IP'),
+                $this->_('Number of blocks'),
+                $this->_('Info'),
+                $this->_('Status'),
+                $this->_('Add/remove IP to/from the blacklist ')
+            ]);
 
-                $table = $this->modules->get('MarkupAdminDataTable');
-                $table->encodeEntities = false;
-                $table->setEncodeEntities(false);
-                $table->headerRow([
-                    $this->_('#'),
-                    $this->_('Question'),
-                    $this->_('Created'),
-                    $this->_('User'),
-                    $this->_('Visibility') . '*',
-                ]);
+            $n = 0;
 
-                foreach ($viewPages as $i => $p) {
+            foreach ($paginatedIPs as $item) {
 
-                    // single language site
-                    $question = $p->title;
+                // instantiate the more info button
+                $infobutton = $this->wire('modules')->get('InputfieldButton');
+                $infobutton->setSecondary();
+                $infobutton->setSmall();
+                $infobutton->value = $this->_('View details about this IP');
+                $infobutton->attr('data-href', '/detail-view/' . $item->ip);
+                $infobutton->addClass('pw-panel');
 
-                    // only for multi-language site
-                    if ($this->languages) {
-                        $lang = $this->wire('user')->language->name;
+                // instantiate button object for adding/removing the IP to/from the blacklist
+                $button = $this->wire('modules')->get('InputfieldSubmit');
+                $button->setSmall();
+                $button->name = 'submit_save_ip';
+                $button->value = 'add';
+                $button->setAttribute('data-from_id', 'Inputfield_submit_save_module');
+                $button->value = $item->ip;
 
-                        $question = $p->getLanguageValue($lang, 'title');
+                $blockedIPs = $this->frontendforms_config['input_preventIPs'];
+                if (empty($blockedIPs)) {
+                    $blockedIPs = [];
+                } else {
+                    $blockedIPs = preg_split('/\r\n|\r|\n/', $blockedIPs);
+                }
 
-                        if (empty($question)) {
-                            $question = $p->getLanguageValue($this->wire('languages')->getDefault()->id, 'title');
-                        }
+                if (in_array($item->ip, $blockedIPs)) {
+                    $status = $this->_('IP is blocked');
+                    // remove button
+                    $button->name = 'submit_remove_ip';
+                    $button->text = $this->_('Remove from blacklist');
+                    $button->setSecondary();
+                } else {
+                    // create add button
+                    $button->text = $this->_('Add to blacklist');
+                    $status = $this->_('IP is not blocked');
+                }
 
+                $number = $counter ? $start + $n + 1 : $n + 1;
+                $table->row(
+                    [
+                        $number,
+                        htmlspecialchars((string) $item->ip, ENT_QUOTES, 'UTF-8'),
+                        $item->attempts,
+                        $infobutton->render(),
+                        $status,
+                        $button->render()
+                    ]
+                );
+                $n++;
+            }
+
+            $out .= '<p>'.$this->_('Any IP addresses that are blacklisted will not be able to submit forms, because in this case the forms will not be displayed.').'<br>';
+            $out .= $this->_('This is a security measure to exclude potential spammers.').'</p>';
+
+            // render the table with the questions
+            $out .= $ips->getPaginationString($this->_('IPs'));
+
+            $out .= '<form id="blocked-ips" name="blocked-ips" action="' . $this->wire('input')->url . '" method="post">';
+            $out .= '<input type="hidden" name="' . $this->wire('session')->CSRF->getTokenName() . '" value="' . $this->wire('session')->CSRF->getTokenValue() . '">';
+            $out .= $table->render();
+            $out .= '</form>';
+            $out .= '<div id="blockedlist-pagination" class="pagination">' . $ips->renderPager() . '</div>';
+
+            if ($this->wire('input')->requestMethod('POST') && $this->wire('session')->CSRF->hasValidToken()) {
+                $ip = null;
+                $input = $this->wire('input');
+                // add the given ip to the blacklist
+                if ($input->post('submit_save_ip') !== null) {
+                    $ip = $input->post('submit_save_ip');
+                    // add this ip to the list if it is a valid IP
+                    if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                        $blockedIPs[] = $ip;
                     }
-
-                    // get visibility of the question
-                    if ($this->activeQuestions->find($p->id)->count) {
-                        $visibility = '<span class="ff-hiddenvalue">1</span><i class="fa fa-eye"></i>';
-                    } else {
-                        $visibility = '<span class="ff-hiddenvalue">0</span><i class="fa fa-eye-slash"></i>';
+                } elseif ($input->post('submit_remove_ip') !== null) {
+                    // remove the given ip from the blacklist
+                    $ip = $input->post('submit_remove_ip');
+                    // remove $this IP from the list
+                    $key = array_search($ip, $blockedIPs, true);
+                    if ($key !== false) {
+                        unset($blockedIPs[$key]);
                     }
+                }
+                if (!is_null($ip)) {
 
-                    $number = $counter ? $start + $i + 1 : $i + 1;
+                    // convert it back to a string and save it to the module configuration
 
-                    $table->row(
-                        [
-                            $number,
-                            [$question => $p->editUrl()],
-                            $p->createdStr,
-                            $p->createdUser->name,
-                            $visibility
+                    $ffdata = $this->frontendForms;
 
-                        ]
-                    );
+                    $blockedIPs = array_filter($blockedIPs);
+                    $ffdata['input_preventIPs'] = implode("\n", array_unique($blockedIPs));
+
+                    $this->wire('modules')->saveConfig('FrontendForms', $ffdata);
+                    // finally redirect to make the changes visible
+                    $this->wire('session')->redirect($this->wire('input')->url);
+
+
+                }
+            }
+
+
+        } else {
+            $out .= '<div id="no-results"><p>' . $this->_('There are no temporarily blocked IPs entries inside the log files.') . '</p></div>';
+        }
+
+        // add back to the dashboard button
+        $backbutton = $this->wire('modules')->get('InputfieldButton');
+        $backbutton->value = $this->_('Back to the dashboard');
+        $backbutton->attr('href', $this->config->urls->admin . 'setup/frontendforms-dashboard/');
+        $out .= $backbutton->render();
+
+        return $out;
+    }
+
+
+    /**
+     * Overview page for all questions for the SIMPLE TEXT CAPTCHA
+     * @return string
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    public function ___executeQuestionsForTheSimpleQuestionCaptcha(): string
+    {
+
+        // render the text over the table
+        $out = '<p>' . $this->_('Manage all questions for the SIMPLE QUESTION CAPTCHA in one place.') . '</p>';
+
+        // render the table including the filter form
+        $out .= $this->renderQuestionsTable();
+        // render the back link
+        $out .= '<div id="backlink"><a href="' . $this->config->urls->admin . 'setup/frontendforms-dashboard"><i class="fa fa-arrow-left"></i> ' . $this->_('Back to the dashboard') . '</a>';
+
+        return $out;
+    }
+
+    /**
+     * Render the form to filter the questions by certain conditions
+     * @return string
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function renderQuestionsFilter(): string
+    {
+
+        $form = modules()->get('InputfieldForm');
+        $form->action = $this->wire('input')->url; // we submit on the same page
+        $form->method = 'post';
+        $form->attr('name+id', 'ff_filter_form');
+
+        $fieldset = modules()->get('InputfieldFieldset');
+        $fieldset->label = $this->_('Filter');
+        $fieldset->columnWidth = '100';
+        $fieldset->icon = 'fa-filter';
+
+        // filter by question text
+        $f = modules()->get('InputfieldText');
+        $f->set('label', $this->_('Filter by question text'));
+        $f->attr('name+id', 'question');
+        $f->columnWidth = '50';
+        $f->notes = $this->_('Filter questions by containing a specific word or phrase.');
+        $fieldset->add($f);
+
+        // filter by page status
+        $f = modules()->get('InputfieldSelect');
+        $f->set('label', $this->_('Filter by status'));
+        $f->attr('name+id', 'status');
+        $f->attr('maxlength', 50);
+        if ($this->filtervalues) {
+            $f->attr('value', $this->filtervalues->status);
+        }
+        $f->addOption(Page::statusOn, $this->_('all'));
+        $f->addOption('0', $this->_('published'));
+        $f->addOption(Page::statusUnpublished, $this->_('unpublished'));
+        $f->addOption(Page::statusHidden, $this->_('hidden'));
+        $f->addOption(Page::statusLocked, $this->_('locked'));
+        $f->required(true);
+        $f->defaultValue = '2';
+        $f->columnWidth = '25';
+        $f->notes = $this->_('Filter questions according to their page status.');
+        $fieldset->add($f);
+
+        // filter by visibility status
+        $f = modules()->get('InputfieldSelect');
+        $f->set('label', $this->_('Filter by visibility'));
+        $f->attr('name+id', 'statusvisibility');
+        $f->attr('maxlength', 50);
+        if ($this->filtervalues) {
+            $f->attr('value', $this->filtervalues->statusvisibility);
+        }
+        $f->addOption('0', $this->_('all'));
+        $f->addOption('1', $this->_('active'));
+        $f->addOption('2', $this->_('inactive'));
+        $f->required(true);
+        $f->defaultValue = '0';
+        $f->columnWidth = '25';
+        $f->notes = $this->_('Filter whether the questions are used by the CAPTCHA or not.');
+        $fieldset->add($f);
+
+        // submit button
+        $f = modules()->get('InputfieldSubmit');
+        $f->attr('id+name', 'ff-submit-btn');
+        $f->attr('value', $this->_('Filter'));
+        $fieldset->add($f);
+
+        $form->add($fieldset);
+        return $form->render();
+
+    }
+
+    /**
+     * Get all questions matching the given selectors
+     * @return PageArray|null
+     * @throws WireException
+     */
+    protected function getAllQuestions(): PageArray|null
+    {
+
+        $selectors = []; // default selector array
+
+        // filter by template
+        $selectors['template'] = 'template=ff_question';
+
+        if ($this->filtervalues && $this->filtervalues->count()) {
+
+            // filter by title
+            if ($this->filtervalues->question) {
+                $title = $this->wire('sanitizer')->selectorValue($this->filtervalues->question);
+                $selectors['title'] = 'title%=' . $title;
+            }
+
+            // filter by status
+            $status = $this->wire('sanitizer')->int($this->filtervalues->status);
+            if ($status !== 0) {
+                $selectors['status'] = 'status=' . $status;
+            } else {
+                $selectors['status'] = 'status!=' . Page::statusUnpublished;
+            }
+
+            // filter by visibility (overwrites the status from the filter before
+            if ($this->filtervalues->statusvisibility != '0') {
+                if ($this->filtervalues->statusvisibility == '1') {
+                    $selectors['statusvisible'] = 'status!=unpublished|hidden';
+                } else {
+                    $selectors['statusvisible'] = 'status=unpublished|hidden';
+                }
+            }
+
+        }
+
+        // include all questions independent of status
+        if (!$this->filtervalues->count() || (!array_key_exists('status', $selectors) || ($this->filtervalues->status == '1'))) {
+            $selectors[] = 'include=all';
+        }
+
+        return $this->wire('pages')->find(implode(',', $selectors));
+    }
+
+    /**
+     * Render the table containing all questions
+     * @return string
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    protected function renderQuestionsTable(): string
+    {
+
+        $pages = $this->getAllQuestions();
+        $out = $this->renderQuestionsFilter();
+
+        if (is_null($pages)) {
+            return $this->_('No questions have been created at the moment.');
+        }
+
+        $start = ($this->wire('input')->pageNum - 1) * $this->items_per_page;
+        $pages->setLimit($this->items_per_page);
+        $pages->setStart($start);
+        // slice only if the number of pages is higher than the number of items per page
+        if ($pages->count > $this->items_per_page) {
+            $viewPages = $pages->slice($start, $this->items_per_page);
+            $counter = true;
+        } else {
+            $viewPages = $pages;
+            $counter = false;
+        }
+
+        if ($viewPages->count) {
+
+            $table = $this->modules->get('MarkupAdminDataTable');
+            $table->encodeEntities = false;
+            $table->setEncodeEntities(false);
+            $table->headerRow([
+                $this->_('#'),
+                $this->_('Question'),
+                $this->_('Created'),
+                $this->_('User'),
+                $this->_('Visibility') . '*',
+            ]);
+
+            foreach ($viewPages as $i => $p) {
+
+                // single language site
+                $question = $p->title;
+
+                // only for multi-language site
+                if ($this->languages) {
+                    $lang = $this->wire('user')->language->name;
+
+                    $question = $p->getLanguageValue($lang, 'title');
+
+                    if (empty($question)) {
+                        $question = $p->getLanguageValue($this->wire('languages')->getDefault()->id, 'title');
+                    }
 
                 }
 
-                // render the table with the questions
-                $out .= $table->render();
+                // get visibility of the question
+                if ($this->activeQuestions->find($p->id)->count) {
+                    $visibility = '<span class="ff-hiddenvalue">1</span><i class="fa fa-eye"></i>';
+                } else {
+                    $visibility = '<span class="ff-hiddenvalue">0</span><i class="fa fa-eye-slash"></i>';
+                }
 
-                $out .= '<div class="table-legend"><ul id="visiblity-legend">
+                $number = $counter ? $start + $i + 1 : $i + 1;
+
+                $table->row(
+                    [
+                        $number,
+                        [htmlspecialchars((string) $question, ENT_QUOTES, 'UTF-8') => $p->editUrl()],
+                        $p->createdStr,
+                        $p->createdUser->name,
+                        $visibility
+
+                    ]
+                );
+
+            }
+
+            // render the table with the questions
+            $out .= $table->render();
+
+            $out .= '<div class="table-legend"><ul id="visiblity-legend">
                         <li><i class="fa fa-eye"></i>...' . $this->_('will be used (shown) as CAPTCHA question on the frontend') . '</li>
                         <li><i class="fa fa-eye-slash"></i>...' . $this->_('will not be used (shown) as CAPTCHA question on the frontend') . '</li>
                         </ul></div>';
 
-                // render the pagination
-                $out .= $pages->renderPager();
+            // render the pagination
+            $out .= $pages->renderPager();
 
-            } else {
-                $out .= '<div id="no-results"><p>' . $this->_('There are no questions.') . '</p></div>';
-            }
-
-            // create the "add new question" button
-            $button = $this->modules->get('InputfieldButton');
-            $button->value = $this->_('Add new question');
-            $button->icon = 'plus';
-            $button->setSecondary();
-            $button->attr('href', $this->config->urls->admin . 'page/add/?parent_id=' . $this->wire('pages')->get('frontendforms-dashboard')->id . '&template_id=' . $this->wire('templates')->get('ff_question')->id);
-
-            $out .= $button->render();
-
-            return $out;
+        } else {
+            $out .= '<div id="no-results"><p>' . $this->_('There are no questions.') . '</p></div>';
         }
 
-        /**
-         * Render a list of questions
-         * @return string
-         * @throws \ProcessWire\WireException
-         */
-        protected function renderQuestionsList(): string
-        {
+        // create the "add new question" button
+        $button = $this->modules->get('InputfieldButton');
+        $button->value = $this->_('Add new question');
+        $button->icon = 'plus';
+        $button->setSecondary();
+        $button->attr('href', $this->config->urls->admin . 'page/add/?parent_id=' . $this->wire('pages')->get('frontendforms-dashboard')->id . '&template_id=' . $this->wire('templates')->get('ff_question')->id);
 
-            if (is_null($this->allQuestions)) {
-                return '<p>' . $this->_('No questions have been created yet.') . '</p>';
-            }
+        $out .= $button->render();
 
-            $out = '<p>' . $this->_('If you want to use the SIMPLE QUESTION CAPTCHA, you can add, edit or delete the related questions in this section by clicking on the button below.') . '</p>';
+        return $out;
+    }
 
-            // create the statistic table
-            $out .= '<table id="questions-statistic">';
-            $out .= '<tr id="questions-published"><td class="statistic-label">' . $this->_('Questions with status "published"') . ':</td><td class="question-number">' . $this->publishedQuestions->count() . '</td></tr>';
-            $out .= '<tr id="questions-unpublished"><td class="statistic-label">' . $this->_('Questions with status "unpublished"') . ':</td><td class="question-number">' . $this->unpublishedQuestions->count() . '</td></tr>';
-            $out .= '<tr id="questions-hidden"><td class="statistic-label">' . $this->_('Questions with status "hidden"') . ':</td><td class="question-number">' . $this->hiddenQuestions->count() . '</td></tr>';
-            $out .= '<tr id="questions-locked"><td class="statistic-label">' . $this->_('Questions with status "locked"') . ':</td><td class="question-number">' . $this->lockedQuestions->count() . '</td></tr>';
+    /**
+     * Render a list of questions
+     * @return string
+     * @throws WireException
+     */
+    protected function renderQuestionsList(): string
+    {
 
-            $out .= '<tr id="questions-active"><td class="statistic-label">' . $this->_('Active questions (will be displayed on the frontend)') . ':</td><td class="question-number">' . $this->activeQuestions->count() . '</td></tr>';
-            $out .= '<tr id="questions-active"><td class="statistic-label">' . $this->_('Inactive questions (will not be displayed on the frontend)') . ':</td><td class="question-number">' . $this->inactiveQuestions->count() . '</td></tr>';
-            $out .= '<tr id="questions-total"><td class="statistic-label">' . $this->_('Questions total') . ':</td><td class="question-number">' . $this->allQuestions->count() . '</td></tr>';
-            $out .= '</table>';
+        $out = '<p>' . $this->_('If you want to use the SIMPLE QUESTION CAPTCHA, you can add, edit or delete the related questions in this section by clicking on the button below.') . '</p>';
 
-            // create and add the button to add/edit/delete questions
-            $button = $this->modules->get('InputfieldButton');
-            $button->value = $this->_('Add/edit/delete questions');
-            $button->icon = 'pencil';
-            $button->setSecondary();
-            $button->attr('href', './questions-for-the-simple-question-captcha');
-            $out .= $button->render();
+        // create the statistic table
+        $out .= '<table id="questions-statistic">';
+        $out .= '<tr id="questions-published"><td class="statistic-label">' . $this->_('Questions with status "published"') . ':</td><td class="question-number">' . $this->publishedQuestions->count() . '</td></tr>';
+        $out .= '<tr id="questions-unpublished"><td class="statistic-label">' . $this->_('Questions with status "unpublished"') . ':</td><td class="question-number">' . $this->unpublishedQuestions->count() . '</td></tr>';
+        $out .= '<tr id="questions-hidden"><td class="statistic-label">' . $this->_('Questions with status "hidden"') . ':</td><td class="question-number">' . $this->hiddenQuestions->count() . '</td></tr>';
+        $out .= '<tr id="questions-locked"><td class="statistic-label">' . $this->_('Questions with status "locked"') . ':</td><td class="question-number">' . $this->lockedQuestions->count() . '</td></tr>';
 
-            return $out;
+        $out .= '<tr id="questions-active"><td class="statistic-label">' . $this->_('Active questions (will be displayed on the frontend)') . ':</td><td class="question-number">' . $this->activeQuestions->count() . '</td></tr>';
+        $out .= '<tr id="questions-active"><td class="statistic-label">' . $this->_('Inactive questions (will not be displayed on the frontend)') . ':</td><td class="question-number">' . $this->inactiveQuestions->count() . '</td></tr>';
+        $out .= '<tr id="questions-total"><td class="statistic-label">' . $this->_('Questions total') . ':</td><td class="question-number">' . $this->allQuestions->count() . '</td></tr>';
+        $out .= '</table>';
+
+        // create and add the button to add/edit/delete questions
+        $button = $this->modules->get('InputfieldButton');
+        $button->value = $this->_('Add/edit/delete questions');
+        $button->icon = 'pencil';
+        $button->setSecondary();
+        $button->attr('href', './questions-for-the-simple-question-captcha');
+        $out .= $button->render();
+
+        return $out;
+    }
+
+    /**
+     * Run code during module installation
+     * @return void
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    public function install(): void
+    {
+        parent::install();
+
+        // only for multilanguage sites
+        if ($this->langSupport) {
+            // set user language to default language -> only for storing the options in the database
+            $this->wire('user')->language = $this->wire('languages')->getLanguage('default');
         }
 
-        /**
-         * Run code during module installation
-         * @return void
-         * @throws \ProcessWire\WireException
-         * @throws \ProcessWire\WirePermissionException
-         */
-        public function install(): void
-        {
-            parent::install();
+        // create ff_question template if it does not exist
+        $template = $this->wire('templates')->get('ff_question');
+        if (!$template) {
+            $template = $this->wire('templates')->add('ff_question');
+            $template->noChildren = 1;
+            $template->noChangeTemplate = 1;
+            $template->parentTemplates = [2];
+            $template->tags = 'FrontendForms';
+            $template->save();
+        }
 
-            // only for multilanguage sites
-            if ($this->langSupport) {
-                $userLang = $this->wire('user')->language;
-                // set user language to default language -> only for storing the options in the database
-                $this->wire('user')->language = $this->wire('languages')->getLanguage('default');
-            }
+        // add title field to this template
+        $title = $this->wire('fields')->get('title');
+        $template->fieldgroup->add($title);
 
-            // create ff_question template if it does not exist
-            $template = $this->wire('templates')->get('ff_question');
-            if (!$template) {
-                $template = $this->wire('templates')->add('ff_question');
-                $template->noChildren = 1;
-                $template->noChangeTemplate = 1;
-                $template->parentTemplates = [2];
-                $template->tags = 'FrontendForms';
-                $template->save();
-            }
+        // Create all other fields and add them to the template too
+        foreach ($this->questionFields as $name => $fieldproperties) {
+            if (!wire('fields')->get($name)) {
 
-            // add title field to this template
-            $title = $this->wire('fields')->get('title');
-            $template->fieldgroup->add($title);
-
-            // Create all other fields and add them to the template too
-            foreach ($this->questionFields as $name => $fieldproperties) {
-                if (!wire('fields')->get($name)) {
-
-                    if ($this->langSupportFields) {
-                        if ($fieldproperties['fieldtype'] == 'FieldtypeTextarea') {
-                            $fieldproperties['fieldtype'] = 'FieldtypeTextareaLanguage';
-                        }
-                        if ($fieldproperties['fieldtype'] == 'FieldtypeText') {
-                            $fieldproperties['fieldtype'] = 'FieldtypeTextLanguage';
-                        }
+                if ($this->langSupportFields) {
+                    if ($fieldproperties['fieldtype'] == 'FieldtypeTextarea') {
+                        $fieldproperties['fieldtype'] = 'FieldtypeTextareaLanguage';
                     }
-
-                    $field = new Field();
-                    $field->type = wire('modules')->get($fieldproperties['fieldtype']);
-                    $field->name = $name;
-
-                    foreach ($fieldproperties as $propName => $propValue) {
-                        $field->$propName = $fieldproperties[$propName];
-                    }
-
-                    $field->tags = $this->className();
-                    $field->save();
-                    // add the field to the template
-                    $template->fieldgroup->add($field);
-
-                }
-            }
-
-            // save the complete fieldgroup
-            $template->fieldgroup->save();
-
-            // add the options for the description position field
-            $field = $this->wire('fields')->get('ff_descposition');
-
-            $fieldtype = $field->type;
-            $options = $fieldtype->getOptions($field);
-
-            // check if options are present
-            if ($options) {
-
-                $optionArray = [
-                    'inherit' => $this->_('Inherit from the default value'),
-                    'beforeLabel' => $this->_('Above the label of the input field'),
-                    'afterLabel' => $this->_('Below the label of the input field'),
-                    'afterInput' => $this->_('Below the input field')
-                ];
-
-                foreach ($optionArray as $v => $t) {
-                    $option = new SelectableOption();
-                    $option->value = $v;
-                    $option->title = $t;
-                    $options->add($option);
-                }
-
-                $fieldtype->setOptions($field, $options);
-            }
-
-            $f = $template->fieldgroup->getField('title', true);
-            $f->label = $this->_('Question');
-            $this->wire('fields')->saveFieldgroupContext($f, $template->fieldgroup);
-
-        }
-
-        /**
-         * Run code during uninstalling of the module
-         * @return void
-         * @throws \ProcessWire\WireException
-         * @throws \ProcessWire\WirePermissionException
-         */
-        public function uninstall(): void
-        {
-
-            $templates = $this->wire('templates');
-            $template = $this->wire('templates')->get('ff_question');
-            $pages = $this->wire('pages');
-
-            // delete the dashboard page and all its subpages
-            $page = $pages->get("frontendforms-dashboard");
-            if ($page->id != 0) $pages->delete($page, true);
-
-            $fieldgroup = $this->wire('fieldgroups')->get('ff_question');
-
-            // delete all fields
-            foreach ($this->questionFields as $name => $f) {
-                $f = $this->wire('fields')->get($name);
-                if (!is_null($f)) {
-                    if (!is_null($fieldgroup)) {
-                        $fieldgroup->softRemove($f);
-                        $fieldgroup->save();
-                        $this->wire('fields')->delete($f);
+                    if ($fieldproperties['fieldtype'] == 'FieldtypeText') {
+                        $fieldproperties['fieldtype'] = 'FieldtypeTextLanguage';
                     }
                 }
+
+                $field = new Field();
+                $field->type = wire('modules')->get($fieldproperties['fieldtype']);
+                $field->name = $name;
+
+                foreach ($fieldproperties as $propName => $propValue) {
+                    $field->$propName = $propValue;
+                }
+
+                $field->tags = $this->className();
+                $field->save();
+                // add the field to the template
+                $template->fieldgroup->add($field);
+
             }
-
-            // delete all pages using the question template
-            $pagesToDelete = $pages->find('template=ff_question,include=all');
-            foreach ($pagesToDelete as $p) {
-                $p->delete();
-            }
-
-            // finally, delete the question template
-            if ($template) $templates->delete($template);
-
         }
 
-        /**
-         * Define all fields for module configuration
-         * @param \ProcessWire\InputfieldWrapper $inputfields
-         * @return void
-         * @throws \ProcessWire\WireException
-         * @throws \ProcessWire\WirePermissionException
-         */
-        public function getModuleConfigInputfields(InputfieldWrapper $inputfields): void
-        {
+        // save the complete fieldgroup
+        $template->fieldgroup->save();
 
-            // pagination number
-            $paginationnumber = $this->modules->get('InputfieldInteger');
-            $paginationnumber->label = $this->_('Pagination number for data tables');
-            $paginationnumber->name = 'input_paginationnumber';
-            $paginationnumber->inputType = 'number';
-            $paginationnumber->value = $this->input_paginationnumber;
-            $paginationnumber->min = 1;
-            $paginationnumber->defaultValue = 10;
-            $paginationnumber->description = $this->_('Please select how many entries should be displayed inside a data table per page.');
-            $paginationnumber->notes = $this->_('If the total number of entries inside the table is higher, the table will be paginated.');
-            $inputfields->add($paginationnumber);
+        // add the options for the description position field
+        $field = $this->wire('fields')->get('ff_descposition');
 
+        $fieldtype = $field->type;
+        $options = $fieldtype->getOptions($field);
+
+        // check if options are present
+        if ($options) {
+
+            $optionArray = [
+                'inherit' => $this->_('Inherit from the default value'),
+                'beforeLabel' => $this->_('Above the label of the input field'),
+                'afterLabel' => $this->_('Below the label of the input field'),
+                'afterInput' => $this->_('Below the input field')
+            ];
+
+            foreach ($optionArray as $v => $t) {
+                $option = new SelectableOption();
+                $option->value = $v;
+                $option->title = $t;
+                $options->add($option);
+            }
+
+            $fieldtype->setOptions($field, $options);
+        }
+
+        $f = $template->fieldgroup->getField('title', true);
+        $f->label = $this->_('Question');
+        $this->wire('fields')->saveFieldgroupContext($f, $template->fieldgroup);
+
+    }
+
+    /**
+     * Run code during uninstalling of the module
+     * @return void
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    public function uninstall(): void
+    {
+
+        $templates = $this->wire('templates');
+        $template = $this->wire('templates')->get('ff_question');
+        $pages = $this->wire('pages');
+
+        // delete the dashboard page and all its subpages
+        $page = $pages->get("frontendforms-dashboard");
+        if ($page->id != 0) {
+            $pages->delete($page, true);
+        }
+
+        $fieldgroup = $this->wire('fieldgroups')->get('ff_question');
+
+        // delete all fields
+        foreach ($this->questionFields as $name => $f) {
+            $f = $this->wire('fields')->get($name);
+            if (!is_null($f)) {
+                if (!is_null($fieldgroup)) {
+                    $fieldgroup->softRemove($f);
+                    $fieldgroup->save();
+                    $this->wire('fields')->delete($f);
+                }
+            }
+        }
+
+        // delete all pages using the question template
+        $pagesToDelete = $pages->find('template=ff_question,include=all');
+        foreach ($pagesToDelete as $p) {
+            $p->delete();
+        }
+
+        // finally, delete the question template
+        if ($template) {
+            $templates->delete($template);
         }
 
     }
+
+    /**
+     * Define all fields for module configuration
+     * @param InputfieldWrapper $inputfields
+     * @return void
+     * @throws WireException
+     * @throws WirePermissionException
+     */
+    public function getModuleConfigInputfields(InputfieldWrapper $inputfields): void
+    {
+
+        // pagination number
+        $paginationnumber = $this->modules->get('InputfieldInteger');
+        $paginationnumber->label = $this->_('Pagination number for data tables');
+        $paginationnumber->name = 'input_paginationnumber';
+        $paginationnumber->inputType = 'number';
+        $paginationnumber->value = $this->input_paginationnumber;
+        $paginationnumber->min = 1;
+        $paginationnumber->defaultValue = 10;
+        $paginationnumber->description = $this->_('Please select how many entries should be displayed inside a data table per page.');
+        $paginationnumber->notes = $this->_('If the total number of entries inside the table is higher, the table will be paginated.');
+        $inputfields->add($paginationnumber);
+
+    }
+
+}

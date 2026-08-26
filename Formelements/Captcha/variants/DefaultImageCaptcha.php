@@ -1,15 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
 /*
- * File description
+ * Class for creating the default image-category CAPTCHA (assign the shown
+ * image to one of a set of categories)
  *
  * Created by Jürgen K.
- * https://github.com/juergenweb 
+ * https://github.com/juergenweb
  * File name: DefaultImageCaptcha.php
- * Created: 18.08.2022 
+ * Created: 18.08.2022
  */
-
 
 namespace FrontendForms;
 

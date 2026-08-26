@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -6,11 +7,10 @@ declare(strict_types=1);
  * Used for Captcha
  *
  * Created by Jürgen K.
- * https://github.com/juergenweb 
+ * https://github.com/juergenweb
  * File name: Image.php
- * Created: 31.07.2022 
+ * Created: 31.07.2022
  */
-
 
 namespace FrontendForms;
 
@@ -19,7 +19,6 @@ use ProcessWire\WirePermissionException;
 
 class Image extends Element
 {
-
     /**
      * @throws WireException
      * @throws WirePermissionException
@@ -38,7 +37,7 @@ class Image extends Element
     {
         if ($this->wrapper) {
             $this->wrapper->setContent($this->renderSelfclosingTag($this->getTag()));
-            return $this->wrapper->___render();
+            return $this->wrapper->render();
         }
         return $this->renderSelfclosingTag($this->getTag());
     }
@@ -48,7 +47,7 @@ class Image extends Element
      */
     public function __toString(): string
     {
-        return $this->___render();
+        return $this->render();
     }
 
 }

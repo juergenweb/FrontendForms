@@ -1,4 +1,43 @@
-README.md     export-ignore
-CHANGELOG.md  export-ignore
-images/       export-ignore
+# --- Line ending normalization ---
+# This project has had a recurring, inconsistent mix of CRLF and LF line
+# endings across otherwise-identical PHP files (observed repeatedly
+# during this session's PSR-12 checks). Normalizing everything to LF in
+# the repository - regardless of which OS a contributor commits from -
+# prevents diffs made up entirely of line-ending changes and keeps
+# git blame/history meaningful.
+* text=auto eol=lf
+
+# --- Binary files ---
+# Must never be subject to line-ending conversion, which would corrupt
+# them.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
+
+# --- Generated / minified files ---
+# These are build output derived from their non-minified counterparts,
+# not hand-edited source - mark them as generated so GitHub's diff view
+# collapses them by default and they're excluded from language
+# statistics.
+*.min.js linguist-generated
+*.min.css linguist-generated
+
+# --- git archive / distribution package ---
+# Excluded from "git archive" output (e.g. GitHub's auto-generated
+# release zips) - development-only tooling that a consumer of the
+# installed module doesn't need. RockLanguage/ and languages/ are
+# intentionally NOT listed here, since both ship real, user-facing
+# translations (RockLanguage/ for users who have that module installed,
+# languages/ for everyone else).
+tests/          export-ignore
+README.md       export-ignore
+CHANGELOG.md    export-ignore
+images/         export-ignore
 Examples/       export-ignore

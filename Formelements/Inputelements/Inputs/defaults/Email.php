@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -17,7 +18,6 @@ use Exception;
 
 class Email extends InputEmail
 {
-
     /**
      * @param string $id
      * @throws Exception

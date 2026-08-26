@@ -1,0 +1,33 @@
+{
+    "name": "juergen/validation",
+    "description": "Validation library",
+    "version": "1.0.0",
+    "type": "library",
+    "require": {
+        "ext-curl": "*",
+        "ext-gd": "*",
+        "ext-mbstring": "*",
+        "ext-zip": "*",
+        "ext-ctype": "*",
+        "ext-fileinfo": "*",
+        "ext-intl": "*",
+        "ext-openssl": "*",
+        "ext-dom": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Validation\\": "Validation/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}

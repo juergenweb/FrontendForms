@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -16,7 +17,6 @@ use Exception;
 
 class Subject extends InputText
 {
-
     /**
      * @param string $id
      * @throws Exception

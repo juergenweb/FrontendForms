@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -17,10 +18,9 @@ use Exception;
 
 class Input extends Inputfields
 {
-
     use TraitInputfields;
 
-        /**
+    /**
      * @param string $id
      * @throws Exception
      */
@@ -36,9 +36,9 @@ class Input extends Inputfields
      *  Render the input tag
      * @return string
      */
-    public function renderInput(): string
+    public function ___renderInput(): string
     {
-        return $this->renderSelfclosingTag($this->getTag()). PHP_EOL;
+        return $this->renderSelfclosingTag($this->getTag()) . PHP_EOL;
     }
 
 }

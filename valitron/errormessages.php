@@ -4,7 +4,7 @@ namespace ProcessWire;
 
 
 /*
- * File containing array of all error messages for the default validators of Valitron
+ * File containing array of all error messages for the default Validation of Valitron
  *
  * Created by Jürgen K.
  * https://github.com/juergenweb 

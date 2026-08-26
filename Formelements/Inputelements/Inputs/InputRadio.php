@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -17,7 +18,6 @@ use Exception;
 
 class InputRadio extends InputRadioCheckbox
 {
-
     /**
      * @param string $id
      * @throws Exception
@@ -37,9 +37,20 @@ class InputRadio extends InputRadioCheckbox
     public function ___renderInputRadio(): string
     {
         $value = $this->getAttribute('value');
-        $postValue = $this->getPostValue();
+        $postValue = $this->retainSubmittedValue ? $this->getPostValue() : null;
 
-        if (in_array($value, $this->getDefaultValue()) || ($value && $postValue === $value)) {
+        // Only consider the default value before the form has ever been
+        // submitted - once submitted, only the actual post value should
+        // decide whether this radio is checked (see the same reasoning in
+        // InputRadioMultiple/InputCheckboxMultiple).
+        //
+        // When retainSubmittedValue is false, neither the default nor the
+        // submitted value should ever pre-check this radio.
+        $isDefaultChecked = $this->retainSubmittedValue
+            && !$this->isSubmitted()
+            && in_array($value, (array) $this->getDefaultValue(), strict: true);
+
+        if ($isDefaultChecked || ($value && $postValue !== null && $postValue === $value)) {
             $this->setAttribute('checked');
         }
 

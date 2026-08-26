@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -19,8 +20,10 @@ use ProcessWire\WirePermissionException;
 
 class InputCheckboxMultiple extends Input
 {
-
-    use TraitPWOptions, TraitCheckboxesAndRadios, TraitCheckboxesAndRadiosMultiple, TraitOptionElements;
+    use TraitPWOptions;
+    use TraitCheckboxesAndRadios;
+    use TraitCheckboxesAndRadiosMultiple;
+    use TraitOptionElements;
 
     protected array $checkboxes = [];// array to hold all InputCheckbox objects
     protected bool $directionHorizontal = true;// default checkbox orientation
@@ -49,7 +52,7 @@ class InputCheckboxMultiple extends Input
      * Returns an array of all option objects
      * @return array
      */
-    protected function getOptions(): array
+    public function getOptions(): array
     {
         return $this->checkboxes;
     }
@@ -112,10 +115,16 @@ class InputCheckboxMultiple extends Input
             $this->appendLabel($this->directionHorizontal);
         }
 
-        $checkedValues = array_merge(
-            (array) $this->getDefaultValue(),
-            (array) $this->getPostValue()
-        );
+        // Only fall back to the default values before the form has ever
+        // been submitted. After submission, an unchecked checkbox group
+        // sends no entry at all (standard HTML behaviour) - indistinguishable
+        // from "never submitted" by looking at this field's post value
+        // alone - so merging in the defaults here would incorrectly
+        // re-check them even when the visitor deliberately unchecked
+        // everything.
+        $checkedValues = $this->isSubmitted()
+            ? (array) $this->getPostValue()
+            : array_merge((array) $this->getDefaultValue(), (array) $this->getPostValue());
         $isRequired    = $this->hasAttribute('required');
         $appendLabel   = $this->getAppendLabel();
         $name          = $this->getAttribute('name');

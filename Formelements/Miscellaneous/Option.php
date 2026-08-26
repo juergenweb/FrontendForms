@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -31,7 +32,7 @@ class Option extends Tag
      * Render an option tag
      * @return string
      */
-    public function render(): string
+    public function ___render(): string
     {
         return $this->renderNonSelfclosingTag($this->getTag());
     }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -19,19 +20,19 @@ use ProcessWire\FrontendForms;
 use ProcessWire\Wire;
 use ProcessWire\WireException;
 use ProcessWire\WirePermissionException;
-
+use Exception;
 
 \ProcessWire\wire('classLoader')->addNamespace('ProcessWire', __DIR__);
 
 abstract class Tag extends Wire
 {
-    const MULTIVALUEATTR = [
+    public const MULTIVALUEATTR = [
         'class',
         'rel',
         'style',
         'aria-describedby'
     ]; // array of all attributes that can have more than 1 value
-    const BOOLEANATTR = [   // array of all boolean attributes
+    public const BOOLEANATTR = [   // array of all boolean attributes
         'allowfullscreen',
         'allowpaymentrequest',
         'async',
@@ -62,7 +63,7 @@ abstract class Tag extends Wire
     /**
      * Array of class names of classes, where the value attribute can have multiple values and is not inside the MULTIVALUEATTR array
      */
-    const MULTIVALCLASSES = [
+    public const MULTIVALCLASSES = [
         'SelectMultiple',
         'InputCheckboxMultiple'
     ];
@@ -77,7 +78,6 @@ abstract class Tag extends Wire
     protected bool|null $useFieldWrapper = true;// whether the field wrapper should be user or not
     protected bool $appendcheckbox = false; // whether the checkbox should be appended after the label or not
     protected bool $appendradio = false;  // whether the radio should be appended after the label or not
-    protected string $uploadPath = '';
     protected array $frontendforms = []; // array that hold all module configuration values of this module
 
     /**
@@ -88,14 +88,27 @@ abstract class Tag extends Wire
     {
         parent::__construct();
 
-        $this->frontendforms = $this->wire('modules')->getConfig('FrontendForms');
+        // Merge the saved config on top of the module's own defaults - not
+        // the saved config alone. If the saved config (loaded from the
+        // database) is missing a key entirely - e.g. an older,
+        // already-installed site that predates a setting being added to
+        // getDefaultData() - every one of the many places throughout this
+        // codebase that reads $this->frontendforms['some_key'] directly
+        // would otherwise trigger an "Undefined array key" warning.
+        // Falling back to the module's own defaults here, once, at the
+        // source, is far more maintainable than defensively guarding each
+        // of those many individual usage sites.
+        $this->frontendforms = array_merge(FrontendForms::getDefaultData(), $this->wire('modules')->getConfig('FrontendForms'));
 
-        $this->uploadPath = $this->wire('config')->paths->siteModules . 'FrontendForms/temp_uploads/';
         // Extract values from configuration arrays to single properties of type bool
-        $this->useInputWrapper = in_array('inputwrapper', $this->frontendforms['input_wrappers']);
-        $this->useFieldWrapper = in_array('fieldwrapper', $this->frontendforms['input_wrappers']);
-        $this->appendcheckbox = in_array('appendcheckbox', $this->frontendforms['input_appendLabel']);
-        $this->appendradio = in_array('appendradio', $this->frontendforms['input_appendLabel']);
+        // Defensive fallback to an empty array: guards against a missing
+        // key in the saved config (e.g. an older, incomplete
+        // installation that never had this setting saved), rather than
+        // triggering an "Undefined array key" warning here.
+        $this->useInputWrapper = in_array('inputwrapper', $this->frontendforms['input_wrappers'] ?? []);
+        $this->useFieldWrapper = in_array('fieldwrapper', $this->frontendforms['input_wrappers'] ?? []);
+        $this->appendcheckbox = in_array('appendcheckbox', $this->frontendforms['input_appendLabel'] ?? []);
+        $this->appendradio = in_array('appendradio', $this->frontendforms['input_appendLabel'] ?? []);
 
         // set the default path to the custom CSS files directory under site/assets/...
         $customframeworkpath = $this->wire('config')->paths->assets .'files/FrontendForms/frameworks/';
@@ -104,7 +117,10 @@ abstract class Tag extends Wire
             $customframeworkpath = $this->frontendforms['input_customframeworkpath'];
         }
         // load the json file from CSSClass directory
-        $this->classes = json_decode(file_get_contents(FrontendForms::getCSSClassFile($this->frontendforms['input_framework'], $customframeworkpath)));
+        $this->classes = json_decode(file_get_contents(FrontendForms::getCSSClassFile(
+            $this->frontendforms['input_framework'] ?? 'none.json',
+            $customframeworkpath
+        )));
 
     }
 
@@ -132,9 +148,10 @@ abstract class Tag extends Wire
      * @param array $array
      * @return array
      */
-    public function flattenArray(array $array): array {
+    public function flattenArray(array $array): array
+    {
         $result = [];
-        array_walk_recursive($array, function($value) use (&$result) {
+        array_walk_recursive($array, function ($value) use (&$result) {
             $result[] = $value;
         });
         return $result;
@@ -238,6 +255,13 @@ abstract class Tag extends Wire
                 return $this;
             }
 
+            // do not allow to change the id of a form afterwards via the setAttribute method
+            if ($this->getID() !== null && $this->className() === 'Form' && $key === 'id') {
+                throw new Exception(
+                    'Please do not try to change the id of the form. The id have to be set inside the constructor only.'
+                );
+            }
+
             if (in_array($this->className(), self::MULTIVALCLASSES)) {
 
                 if (in_array($key, self::MULTIVALUEATTR)) {
@@ -247,9 +271,11 @@ abstract class Tag extends Wire
                         if ($value == trim($value) && str_contains($value, ' ')) {
                             $value = explode(' ', $value); // create array of string separated by whitespace
                         } // check if string contains semicolon between the words (fe color:yellow;font-weight:bold)
-                        elseif (strpos($value, ';')) {
-                            $assocArray = array_filter(explode(';',
-                                $value)); // create array of string separated by semicolon
+                        elseif (strpos($value, ';') !== false) {
+                            $assocArray = array_filter(explode(
+                                ';',
+                                $value
+                            )); // create array of string separated by semicolon
                             //create an assoc array
                             $value = [];
                             foreach ($assocArray as $v) {
@@ -286,8 +312,10 @@ abstract class Tag extends Wire
             }
         } else {
             // boolean attributes
-            if ((str_starts_with($key, 'data-uk-')) || (str_starts_with($key, 'uk-')) || (in_array($key,
-                    self::BOOLEANATTR))) {
+            if ((str_starts_with($key, 'data-uk-')) || (str_starts_with($key, 'uk-')) || (in_array(
+                    $key,
+                    self::BOOLEANATTR
+                ))) {
                 $this->attributes[$key] = $key;
             }
         }
@@ -360,6 +388,15 @@ abstract class Tag extends Wire
     {
         $class = $this->getCSSClass($className);
         if ((!is_null($class)) && ($class != '')) {
+            // if a backend override is configured for this class name, clear
+            // any classes already present first - setAttribute() merges
+            // multi-value attributes like "class" rather than replacing
+            // them, so without this the override would just be appended
+            // alongside whatever was already set (e.g. the framework
+            // default), instead of replacing it.
+            if (!empty($this->frontendforms['input_' . $className])) {
+                $this->removeAttribute('class');
+            }
             $this->setAttribute('class', $class);
         }
         return $this;
@@ -370,13 +407,13 @@ abstract class Tag extends Wire
      * @param string $className
      * @return string|null
      */
-    protected function getCSSClass(string $className): ?string
+    public function getCSSClass(string $className): ?string
     {
         if (isset($this->classes->$className)) {
             $inputName = 'input_' . $className;
             // if a default class was overwritten - use it instead
-            if (isset($this->$inputName) && (!empty($this->$inputName))) {
-                return $this->$inputName;
+            if (!empty($this->frontendforms[$inputName])) {
+                return $this->frontendforms[$inputName];
             }
             return $this->classes->$className;
         }
@@ -403,7 +440,6 @@ abstract class Tag extends Wire
      * @param string $attributeName -> the attribute name (fe class)
      * @param string|null $attributeValue (fe my class)
      * @return $this
-     * TODO: check for simplification
      */
     public function removeAttributeValue(string $attributeName, ?string $attributeValue = null): self
     {
@@ -417,35 +453,32 @@ abstract class Tag extends Wire
             return $this;
         }
 
-        if ($attributeValue) {
-            $value = trim($attributeValue);
-            // check if the attribute exists in the attributes array
-            if (isset($this->getAttributes()[$key])) {
-                // remove values form assoc. arrays like style attribute
-                if (is_array($this->getAttributes()[$key]) && ($this->isAssoc($this->getAttributes()[$key]))) {
-                    if (array_key_exists($attributeValue, $this->attributes[$key])) {
-                        if (in_array($key, self::MULTIVALUEATTR)) {
-                            unset($this->attributes[$key][$value]);
-                        }
-                    }
-                } else {
-                    // remove values from non assoc. arrays like class, rel, id,...
-                    if (array_key_exists($key, $this->getAttributes())) {
-                        //if (in_array($value, $this->getAttributes())) {
-                        if (in_array($key, self::MULTIVALUEATTR)) {
-                            if (count($this->attributes[$key]) > 1) {
-                                $this->attributes[$key] = array_diff($this->attributes[$key], [$value]);
-                            } else {
-                                unset($this->attributes[$key]);
-                            }
-                        } else {
-                            unset($this->attributes[$key]);
-                        }
-                        //}
-                    }
+        $value = trim($attributeValue);
+
+        // remove values form assoc. arrays like style attribute
+        if (is_array($this->attributes[$key]) && $this->isAssoc($this->attributes[$key])) {
+            if (array_key_exists($value, $this->attributes[$key])) {
+                if (in_array($key, self::MULTIVALUEATTR)) {
+                    unset($this->attributes[$key][$value]);
                 }
             }
+        } else {
+            // remove values from non assoc. arrays like class, rel, id,...
+            if (in_array($key, self::MULTIVALUEATTR)) {
+                // only act if the value is actually present - otherwise this must be a no-op,
+                // not a removal of the whole attribute
+                if (in_array($value, $this->attributes[$key], true)) {
+                    if (count($this->attributes[$key]) > 1) {
+                        $this->attributes[$key] = array_diff($this->attributes[$key], [$value]);
+                    } else {
+                        unset($this->attributes[$key]);
+                    }
+                }
+            } else {
+                unset($this->attributes[$key]);
+            }
         }
+
         return $this;
     }
 
@@ -501,9 +534,9 @@ abstract class Tag extends Wire
                     : implode(' ', $value);
             }
 
-            $attributes[] = in_array($value, self::BOOLEANATTR) && $name !== 'type'
+            $attributes[] = in_array($name, self::BOOLEANATTR, true)
                 ? $value
-                : $name . '="' . htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8') . '"';
+                : $name . '="' . htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8') . '"';
         }
 
         return $attributes ? ' ' . implode(' ', $attributes) : '';

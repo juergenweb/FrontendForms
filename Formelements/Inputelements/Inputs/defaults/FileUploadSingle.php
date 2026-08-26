@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -7,7 +8,7 @@ namespace FrontendForms;
  * Pre-defined file upload field for a single file
  *
  * Created by Jürgen K.
- * https://github.com/juergenweb 
+ * https://github.com/juergenweb
  * File name: FileUpload.php
  * Created: 15.02.2023
  * Optimized via Claude AI 06.05.26
@@ -17,7 +18,6 @@ use Exception;
 
 class FileUploadSingle extends InputFile
 {
-
     /**
      * @param string $id
      * @throws Exception

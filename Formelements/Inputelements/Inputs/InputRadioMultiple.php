@@ -20,10 +20,14 @@ use ProcessWire\WirePermissionException;
 
 class InputRadioMultiple extends Input
 {
-    use TraitPWOptions, TraitCheckboxesAndRadios, TraitCheckboxesAndRadiosMultiple, TraitOptionElements;
+    use TraitPWOptions;
+    use TraitCheckboxesAndRadios;
+    use TraitCheckboxesAndRadiosMultiple;
+    use TraitOptionElements;
 
     protected array $radios = [];
     protected bool $directionHorizontal = true;
+    protected bool $retainSubmittedValue = true;
     public TextElements $topLabel;
 
     /**
@@ -44,7 +48,7 @@ class InputRadioMultiple extends Input
      * Returns an array of all option objects
      * @return array
      */
-    protected function getOptions(): array
+    public function getOptions(): array
     {
         return $this->radios;
     }
@@ -55,6 +59,26 @@ class InputRadioMultiple extends Input
     public function alignVertical(): void
     {
         $this->directionHorizontal = false;
+    }
+
+    /**
+     * Control whether a previously submitted (or default) value stays
+     * selected when the radio group is re-rendered.
+     *
+     * Defaults to true, matching normal radio group behavior (e.g. the
+     * user's previous choice stays selected after a validation failure on
+     * some other field). Set to false for cases where retaining the value
+     * would be undesirable - most notably the image CAPTCHA's radio
+     * group, where the previously submitted answer must NOT stay
+     * pre-selected on re-render, otherwise the visitor could resubmit the
+     * same (potentially already-known-correct, or simply stale) answer
+     * without actually looking at the newly generated CAPTCHA image again.
+     * @param bool $retain
+     * @return void
+     */
+    public function retainSubmittedValue(bool $retain): void
+    {
+        $this->retainSubmittedValue = $retain;
     }
 
     /**
@@ -105,8 +129,19 @@ class InputRadioMultiple extends Input
         $appendLabel = $this->getAppendLabel();
         $name = $this->getAttribute('name');
         $isRequired = $this->hasAttribute('required');
-        $defaultValues = (array)$this->getDefaultValue();
-        $postValue = $this->getPostValue();
+        // Only fall back to the default values before the form has ever
+        // been submitted - once submitted, whether a default should still
+        // apply depends solely on the actual submitted value, not on an
+        // unconditional default check (see InputCheckboxMultiple for the
+        // same reasoning; applies less often in practice for radios, but
+        // the underlying assumption is the same).
+        //
+        // When retainSubmittedValue is false (e.g. the image CAPTCHA's
+        // radio group), neither the default nor the submitted value
+        // should ever pre-select an option, regardless of submission
+        // state.
+        $defaultValues = (!$this->retainSubmittedValue || $this->isSubmitted()) ? [] : (array)$this->getDefaultValue();
+        $postValue = $this->retainSubmittedValue ? $this->getPostValue() : null;
         $out = '';
 
         foreach ($this->radios as $key => $radio) {
@@ -116,6 +151,11 @@ class InputRadioMultiple extends Input
             $radio->useInputWrapper(false);
             $radio->useFieldWrapper(false);
             $radio->getLabel()->disableAsterisk();
+            // propagate this group's setting to the individual radio -
+            // otherwise renderInputRadio() would independently re-check
+            // the post value on its own, bypassing the group-level
+            // decision made just above
+            $radio->retainSubmittedValue($this->retainSubmittedValue);
 
             if ($isRequired) {
                 $radio->setAttribute('required');
@@ -128,7 +168,7 @@ class InputRadioMultiple extends Input
             $this->applyRadioMarkupFormatting($radio);
 
             if (in_array($radio->getAttribute('value'), $defaultValues, strict: true)
-                || $postValue === $radio->getAttribute('value')
+                || ($postValue !== null && $postValue === $radio->getAttribute('value'))
             ) {
                 $radio->setAttribute('checked');
             }

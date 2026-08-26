@@ -1,15 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 /*
  * Class for creating a captcha with a simple math calculation
  *
  * Created by Jürgen K.
- * https://github.com/juergenweb 
+ * https://github.com/juergenweb
  * File name: SimpleMathTextCaptcha.php
- * Created: 18.08.2022 
+ * Created: 18.08.2022
  */
-
 
 namespace FrontendForms;
 
@@ -18,8 +18,6 @@ use ProcessWire\WirePermissionException;
 
 class SimpleMathTextCaptcha extends AbstractMath
 {
-
-
     /**
      * @throws WireException
      * @throws WirePermissionException
@@ -32,7 +30,12 @@ class SimpleMathTextCaptcha extends AbstractMath
     }
 
     /**
-     * Set the characters inside the captcha in reverse order as value for the captcha validation
+     * Set the calculated result (not the displayed expression) as the
+     * value for the captcha validation. The $content parameter (the
+     * expression shown in the image, e.g. "3+5") is intentionally ignored -
+     * the user has to enter the RESULT of the calculation, not the
+     * expression itself, so $this->result (computed and stored by
+     * AbstractMath::createRandomCalculation()) is used instead.
      * @param string $content
      * @return AbstractTextCaptcha
      */

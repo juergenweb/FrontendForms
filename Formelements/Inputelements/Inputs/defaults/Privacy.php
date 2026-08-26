@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -16,11 +17,11 @@ namespace FrontendForms;
 use Exception;
 use ProcessWire\WireException;
 use ProcessWire\WirePermissionException;
+
 use function ProcessWire\wire;
 
 class Privacy extends InputCheckbox
 {
-
     protected Link $privacyLink;
 
     /**
@@ -55,16 +56,16 @@ class Privacy extends InputCheckbox
     public static function setPrivacyPageUrl(array $frontendformsConfig, Link $link): bool
     {
         if ($frontendformsConfig['input_privacypageselect'] === 'int' && ($frontendformsConfig['input_privacy'] ?? null)) {
-            $link->setPageLink(wire('pages')->get($frontendformsConfig['input_privacy']));
+            $link->setPageLink(\ProcessWire\wire('pages')->get($frontendformsConfig['input_privacy']));
             return true;
         }
 
         if ($frontendformsConfig['input_privacypageselect'] === 'ext' && ($frontendformsConfig['input_privacypageurl'] ?? null)) {
             $urlKey = 'input_privacypageurl';
 
-            $languages = wire('languages');
+            $languages = \ProcessWire\wire('languages');
             if ($languages) {
-                $userLanguage = wire('user')->language;
+                $userLanguage = \ProcessWire\wire('user')->language;
                 if (!$userLanguage->isDefault()) {
                     $langKey = 'input_privacypageurl__' . $userLanguage->id;
                     if (!empty($frontendformsConfig[$langKey])) {

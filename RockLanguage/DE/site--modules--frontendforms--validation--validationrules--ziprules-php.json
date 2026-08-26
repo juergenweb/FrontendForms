@@ -1,0 +1,36 @@
+{
+    "file": "site\/modules\/FrontendForms\/Validation\/ValidationRules\/ZipRules.php",
+    "textdomain": "site--modules--frontendforms--validation--validationrules--ziprules-php",
+    "translations": {
+        "77cbc184e465bcd0a014347b7dc86302": {
+            "text": "enth\u00e4lt mindestens ein ZIP-Archiv mit mehr Dateien als die zul\u00e4ssige H\u00f6chstanzahl von %s Dateien."
+        },
+        "1c3a75332a0f1757d09b01d1ea6f8b15": {
+            "text": "enth\u00e4lt ein ZIP-Archiv mit weniger Dateien als die erforderliche Mindestanzahl von %s Dateien."
+        },
+        "9e3b06866962330d7013c46418e37926": {
+            "text": "enth\u00e4lt ein ZIP-Archiv, dessen entpackte Dateien die maximale Gesamtdateigr\u00f6\u00dfe von %s \u00fcberschreitet."
+        },
+        "26fe082934d697a0965d38c52bf74009": {
+            "text": "enth\u00e4lt nicht alle erforderlichen Dateien innerhalb des ZIP-Archivs."
+        },
+        "4c5e1ab19e71d6161786bb19b48ed55e": {
+            "text": "enth\u00e4lt mehr als die zul\u00e4ssige H\u00f6chstanzahl von %s ZIP-Archiven."
+        },
+        "d8ebbeaa2ccb6e8f0af052dbf7934794": {
+            "text": "enth\u00e4lt ein ZIP-Archiv mit mehr verschachtelten Ordnerebenen als die zul\u00e4ssige H\u00f6chstanzahl von %s Ebenen."
+        },
+        "04a319fab486d27009813daa7fe1f599": {
+            "text": "enth\u00e4lt mindestens eine Datei eines nicht erlaubten Typs."
+        },
+        "28c3d0d2e001e75348d51860eed62856": {
+            "text": "enth\u00e4lt mindestens eine Datei mit einer nicht erlaubten Dateiendung."
+        },
+        "bd26fbd30c9d542987f65e458291a3c9": {
+            "text": "enth\u00e4lt mindestens eine verbotene Dateiendung."
+        },
+        "7e17353e4f2f4265b8a97d208b3f2117": {
+            "text": "enth\u00e4lt mindestens eine Datei, die die zul\u00e4ssige maximale Dateigr\u00f6\u00dfe von %s \u00fcberschreitet."
+        }
+    }
+}

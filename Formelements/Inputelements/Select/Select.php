@@ -19,7 +19,10 @@ use ProcessWire\WirePermissionException;
 
 class Select extends Inputfields
 {
-    use TraitOption, TraitPWOptions, TraitOptionElements, TraitInputfields;
+    use TraitOption;
+    use TraitPWOptions;
+    use TraitOptionElements;
+    use TraitInputfields;
 
     protected ?Wrapper $selectWrapper = null;
 
@@ -60,7 +63,7 @@ class Select extends Inputfields
      * Returns an array of all option objects
      * @return array
      */
-    protected function getOptions(): array
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -84,10 +87,16 @@ class Select extends Inputfields
             return '';
         }
 
-        $selectedValues = array_merge(
-            (array) $this->getDefaultValue(),
-            (array) $this->getPostValue()
-        );
+        // Only fall back to the default values before the form has ever
+        // been submitted - once submitted, only the actual post value
+        // should decide which option is selected (see the same reasoning
+        // in InputCheckboxMultiple/InputRadioMultiple/InputRadio/
+        // InputCheckbox). Otherwise, a visitor who deliberately selects
+        // the blank/empty option after submission could have the default
+        // value incorrectly merged back in and marked selected instead.
+        $selectedValues = $this->isSubmitted()
+            ? (array) $this->getPostValue()
+            : array_merge((array) $this->getDefaultValue(), (array) $this->getPostValue());
 
         $options = '';
         foreach ($this->options as $option) {

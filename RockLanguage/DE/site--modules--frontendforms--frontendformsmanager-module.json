@@ -122,9 +122,6 @@
         "2a3db08ece9db0589d17f4a28b9958f8": {
             "text": "Eine neue Frage erstellen"
         },
-        "4d6068e701c464a4b4023a05ecd65d0d": {
-            "text": "Bis jetzt wurden noch keine Fragen erstellt."
-        },
         "d0031a5235e9b380ac6e5bb32339871f": {
             "text": "Wenn Sie das EINFACHE FRAGE CAPTCHA verwenden m\u00f6chten, dann k\u00f6nnen Sie hier Frage erstellen, bearbeiten oder l\u00f6schen indem Sie auf den Button weiter unten klicken."
         },
@@ -220,9 +217,6 @@
         },
         "ec6643b8937c561563dd33a8e91a617c": {
             "text": "Anzahl der Sperrungen"
-        },
-        "fa9c4cb43f1d45a9bcb3c17aac3b8603": {
-            "text": "Nicht gesperrt"
         },
         "258de28492189633a51ef184dda6f87b": {
             "text": "Nicht blockiert - Die IP steht nicht auf der Liste der dauerhaft gesperrten IPs (Blacklist)."

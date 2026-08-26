@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -19,7 +20,6 @@ use ProcessWire\WirePermissionException;
 
 class Wrapper extends Tag
 {
-
     /**
      * @throws WireException
      * @throws WirePermissionException
@@ -39,6 +39,11 @@ class Wrapper extends Tag
         return $this->renderNonSelfclosingTag($this->getTag());
     }
 
+    /**
+     * Allow the element to be cast directly to a string, producing the
+     * same output as render().
+     * @return string
+     */
     public function __toString(): string
     {
         return $this->render();

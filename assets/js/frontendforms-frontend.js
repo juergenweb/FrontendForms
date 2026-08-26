@@ -1,0 +1,1391 @@
+/*
+JavaScript file for the FrontendForms module
+contains no JQuery - pure JavaScript
+*/
+
+(function () {
+    "use strict";
+
+    /**
+     * Function to make a white space after every forth character inside an input element
+     * Will be used for the IBAN input field for better readability
+     */
+    function groupIbanInFour() {
+        let ibanInputs = document.querySelectorAll('[data-checkiban="true"]');
+        if (ibanInputs.length > 0) {
+            for (let i = 0; i < ibanInputs.length; i++) {
+                ibanInputs[i].addEventListener('input', function (e) {
+                    e.target.value = e.target.value.replace(/[^\da-zA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim();
+                });
+            }
+        }
+    }
+
+
+    /*
+    Escape dangerous symbols and letter to prevent XSS attacks
+     */
+    function escapeHTML(str) {
+        return str.replace(/[&<>"']/g, function (m) {
+            return ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            })[m];
+        });
+    }
+
+    /*
+    JavaScript counter in seconds
+    Outputs a timer in seconds depending on values set in data attributes
+    */
+    function submitCounter() {
+
+        // get all elements that contain the data attribute "data-submittime"
+        let timeAlerts = document.querySelectorAll('[data-submittime]');
+        if (timeAlerts.length > 0) {
+            for (let i = 0; i < timeAlerts.length; i++) {
+                let formID = timeAlerts[i].dataset.submittime;
+                // jump to the time alert box
+
+                let allwrapper = document.getElementById(formID + "-allwrapper");
+                let timeAlert = document.getElementById(formID + "-ff-time-alert");
+                jumpTo(allwrapper, formID + "-ff-time-alert");
+
+                let el = document.getElementById(formID + "-timecounter");
+
+                if (el) {
+
+                    let minTimeEl = document.getElementById(formID + "-minTime");
+
+                    if (minTimeEl) {
+
+                        let timeleft = parseInt(minTimeEl.getAttribute("data-time"));
+                        let timetext = minTimeEl.getAttribute("data-unit");
+                        timetext = timetext.split(";");
+
+                        let downloadTimer = setInterval(function () {
+                            if (timeleft <= 0) {
+                                clearInterval(downloadTimer);
+                                el.remove();
+
+                                if (timeAlert) {
+                                    let fadeEffect = setInterval(function () {
+                                        if (!timeAlert.style.opacity) {
+                                            timeAlert.style.opacity = "1";
+                                        }
+                                        if (timeAlert.style.opacity > 0) {
+                                            timeAlert.style.opacity -= "0.1";
+                                        } else {
+                                            clearInterval(fadeEffect);
+                                            timeAlert.remove();
+                                        }
+                                    }, 200);
+                                }
+                                return;
+                            }
+                            let text = timetext[0];
+                            if (timeleft <= 1) {
+                                text = timetext[1];
+                            }
+                            el.innerText = timeleft + " " + text;
+                            timeleft -= 1;
+                        }, 1000);
+                    }
+                }
+
+
+            }
+        }
+
+
+    }
+
+
+    /*
+    Function to validate multiple checkboxes with browser validation
+    Checks if at least one checkbox is checked inside checkbox multiple
+     */
+    function checkMultiCheckboxesRequired() {
+        const forms = document.getElementsByTagName('form');
+
+        if (forms && forms.length) {
+
+            //const validationMessage = document.getElementById('validation-message');
+            for (let i = 0; i < forms.length; i++) {
+
+                // check if HTML5 validation is enabled
+                if (!forms[i].noValidate) {
+
+                    // find all multi-checkboxes inside this form
+                    const checkboxes = forms[i].querySelectorAll('[data-multicheckbox]');
+
+                    if (checkboxes.length) {
+                        // group all checkboxes
+                        const groupedByName = {};
+
+                        checkboxes.forEach(checkbox => {
+                            if (!groupedByName[checkbox.name]) {
+                                groupedByName[checkbox.name] = [];
+                            }
+                            groupedByName[checkbox.name].push(checkbox);
+                        });
+
+                        if (Object.keys(groupedByName).length) {
+
+                            for (let [key, value] of Object.entries(groupedByName)) {
+                                // check first if at least one checkbox is checked by default
+                                let hasValue = false;
+                                for (let j = 0; j < value.length; j++) {
+                                    if (value[j].checked) {
+                                        hasValue = true;
+                                    }
+                                }
+
+                                for (let j = 0; j < value.length; j++) {
+                                    if (hasValue) {
+                                        // remove required attribute first
+                                        value[j].required = false;
+                                    }
+                                    value[j].addEventListener('change', function () {
+                                        let items = document.getElementsByName(key);
+                                        // re-evaluate whether at least one checkbox of the
+                                        // group is currently checked, instead of relying on
+                                        // the previous "required" state of the toggled box
+                                        let anyChecked = false;
+                                        for (let k = 0; k < items.length; k++) {
+                                            if (items[k].checked) {
+                                                anyChecked = true;
+                                                break;
+                                            }
+                                        }
+                                        if (anyChecked) {
+                                            for (let k = 0; k < items.length; k++) {
+                                                items[k].removeAttribute("required");
+                                            }
+                                        } else {
+                                            for (let l = 0; l < items.length; l++) {
+                                                items[l].required = true;
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+    Handler for File Uploads
+     */
+    function handleFileUploads() {
+
+
+        let fileuploadFields = document.querySelectorAll(".fileupload");
+
+        if (fileuploadFields.length > 0) {
+
+            for (let i = 0; i < fileuploadFields.length; i++) {
+
+                // file list
+
+                // one DataTransfer object per upload field, created once and reused
+                // across multiple selection events of that same field, so files never
+                // get mixed with those of other upload fields on the same page
+                const dt = new DataTransfer();
+
+                fileuploadFields[i].addEventListener("change", function () {
+
+                    let fileuploadField = fileuploadFields[i];
+                    let multiple = fileuploadField.hasAttribute("multiple");
+                    let framework = fileuploadField.dataset.framework;
+                    let fileuploadFieldID = fileuploadField.id;
+                    let fileList = document.getElementById(fileuploadFieldID + "-files");
+                    let totalFileSize = parseInt(fileuploadFields[i].dataset.filesize) || 0;
+                    let allowedFileSize = 0;
+                    let allowedTotalFileSize = 0;
+
+                    // check if maxfilesize is present
+                    if (fileuploadField.dataset.maxfilesize) {
+                        allowedFileSize = fileuploadField.dataset.maxfilesize;
+                    }
+
+                    // check if maxtotalfilesize is present
+                    if (fileuploadField.dataset.maxtotalfilesize) {
+                        allowedTotalFileSize = fileuploadField.dataset.maxtotalfilesize;
+                    }
+
+                    let validFileSize = true;
+                    let invalidFileSizeClass = "";
+                    let invalidfilezSizeSpanClass = "";
+                    let invalidNotesClass = "";
+                    let invalidTotalFileSizeNotesClass = "";
+                    let notesAllowedFileSizeElement = document.getElementById(fileuploadFieldID + "-allowedFileSize");
+                    // special treatment for single upload fields
+                    if (!notesAllowedFileSizeElement) {
+                        let str = fileuploadFieldID;
+                        str = str.replace("-fileupload", "");
+                        notesAllowedFileSizeElement = document.getElementById(str + "-allowedFileSize");
+                    }
+
+                    let notesAllowedTotalFileSizeElement = document.getElementById(fileuploadFieldID + "-allowedTotalFileSize");
+
+                    // Loop through selected files and handle each one
+                    for (let i = 0; i < this.files.length; i++) {
+                        let file = this.files[i];
+
+                        let fileSize = formatBytes(file.size, 2);
+
+                        totalFileSize += file.size;
+
+                        //remove previous file block if file upload does not allow multiple files
+                        if (!multiple) {
+                            if (fileList) {
+                                fileList.innerHTML = "";
+                            }
+                            totalFileSize = file.size;
+                        }
+
+                        // Create file block
+                        let fileBlock = document.createElement("div");
+                        fileBlock.className = "file-block";
+
+                        // compare allowed filesize and current file size
+                        if (allowedFileSize !== 0 && file.size > allowedFileSize) {
+                            validFileSize = false;
+
+                        }
+
+                        switch (framework) {
+                            case "uikit3":
+                                if (!validFileSize) {
+                                    invalidFileSizeClass = " uk-badge-danger";
+                                    invalidfilezSizeSpanClass = " ff-invalid-fs";
+                                    invalidNotesClass = "uk-text-danger";
+                                }
+                                invalidTotalFileSizeNotesClass = " uk-text-danger";
+
+                                // create the badge markup
+                                let badgeContentUK = "<span class='uk-light uk-badge uk-padding-small uk-margin-xsmall-top" + invalidFileSizeClass + "'>";
+                                badgeContentUK += "<span class='file-delete uk-margin-xsmall-right'><span class='close-icon'>&#10006;</span></span>";
+                                badgeContentUK += "<span class='ff-file-name'>" + escapeHTML(file.name) + "</span>";
+                                badgeContentUK += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
+                                fileBlock.innerHTML = badgeContentUK;
+
+                                if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
+                                    notesAllowedFileSizeElement.className += invalidNotesClass;
+                                } else {
+                                    if (!multiple) {
+                                        if (notesAllowedFileSizeElement) {
+                                            notesAllowedFileSizeElement.removeAttribute("class");
+                                        }
+                                    }
+                                }
+
+                                validFileSize = true;
+                                invalidFileSizeClass = "";
+                                invalidfilezSizeSpanClass = "";
+                                invalidNotesClass = "";
+
+                                break;
+                            case "bootstrap5":
+                                if (!validFileSize) {
+                                    invalidFileSizeClass = " bg-danger";
+                                    invalidfilezSizeSpanClass = " ff-invalid-fs";
+                                    invalidNotesClass = "text-danger";
+                                } else {
+                                    invalidFileSizeClass = " bg-primary";
+                                }
+
+                                invalidTotalFileSizeNotesClass = " text-danger";
+
+                                // create the badge markup
+                                let badgeContentBS = "<span class='badge mt-2 p-2" + invalidFileSizeClass + "'>";
+                                badgeContentBS += "<span class='file-delete me-1'><span class='ff-close'></span></span>";
+                                badgeContentBS += "<span class='ff-file-name'>" + escapeHTML(file.name) + "</span>";
+                                badgeContentBS += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
+                                fileBlock.innerHTML = badgeContentBS;
+
+                                if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
+                                    notesAllowedFileSizeElement.className += invalidNotesClass;
+                                } else {
+                                    if (!multiple) {
+                                        if (notesAllowedFileSizeElement) {
+                                            notesAllowedFileSizeElement.removeAttribute("class");
+                                        }
+                                    }
+                                }
+                                validFileSize = true;
+                                invalidFileSizeClass = "";
+                                invalidfilezSizeSpanClass = "";
+
+                                break;
+                            default:
+
+                                if (!validFileSize) {
+                                    invalidFileSizeClass = " text-danger";
+                                    invalidfilezSizeSpanClass = " ff-invalid-fs";
+                                    invalidNotesClass = "text-danger";
+                                }
+
+                                invalidTotalFileSizeNotesClass = " text-danger";
+
+                                // create the badge markup
+                                let badgeContentDef = "<span class='ff-file-item" + invalidFileSizeClass + "'>";
+                                badgeContentDef += "<span class='file-delete'><span class='ff-close'></span></span>";
+                                badgeContentDef += "<span class='ff-file-name'>" + escapeHTML(file.name) + "</span>";
+                                badgeContentDef += "<span class='ff-file-size " + invalidfilezSizeSpanClass + "'>(" + fileSize + ")</span></span>";
+                                fileBlock.innerHTML = badgeContentDef;
+
+                                if (notesAllowedFileSizeElement && !validFileSize && !notesAllowedFileSizeElement.hasAttribute("class")) {
+                                    notesAllowedFileSizeElement.className += invalidNotesClass;
+                                } else {
+                                    if (!multiple) {
+                                        if (notesAllowedFileSizeElement)
+                                            notesAllowedFileSizeElement.removeAttribute("class");
+                                    }
+                                }
+                                invalidFileSizeClass = "";
+                                invalidfilezSizeSpanClass = "";
+                                validFileSize = true;
+
+                        }
+
+                        // Add block to list
+                        if (fileList) {
+                            fileList.appendChild(fileBlock);
+                        }
+
+                        // Add event listener for delete
+                        fileBlock.querySelector(".file-delete").addEventListener("click", (e) => deleteFileBlock(e, fileBlock, dt, fileuploadField));
+
+                        // Add file to DataTransfer object - for a
+                        // single-file field, clear any files already
+                        // added in a previous loop iteration first, so
+                        // only the last file of this selection ends up
+                        // in dt.files (and therefore in this.files once
+                        // reassigned below), matching the single visible
+                        // file block left in fileList above. Without
+                        // this, dt would accumulate every file from
+                        // this.files regardless of the multiple
+                        // attribute, and this.files = dt.files at the
+                        // end of this handler would then reintroduce
+                        // all of them into the input's own files list -
+                        // even for a field that never allowed multiple
+                        // selection in the first place.
+                        if (!multiple) {
+                            dt.items.clear();
+                        }
+                        dt.items.add(file);
+                    }
+
+                    let totalSizeDiv = document.getElementById(fileuploadFieldID + "-total");
+
+                    // compare allowed total filesize and file sizes of all selected files
+                    if (allowedTotalFileSize !== 0 && totalFileSize > allowedTotalFileSize) {
+
+                        if (notesAllowedTotalFileSizeElement) {
+                            notesAllowedTotalFileSizeElement.className += invalidTotalFileSizeNotesClass;
+                        }
+
+                        if (totalSizeDiv) {
+                            totalSizeDiv.className += invalidTotalFileSizeNotesClass;
+                        }
+
+                    }
+
+                    fileuploadFields[i].dataset.filesize = String(totalFileSize);
+
+                    if (totalSizeDiv) {
+                        totalSizeDiv.innerHTML = formatBytes(totalFileSize);
+                    }
+
+                    // Update the file input with the new DataTransfer file list
+                    this.files = dt.files;
+
+                });
+
+            }
+        }
+
+    }
+
+// Function to delete a file block
+    function deleteFileBlock(e, fileBlock, dt, inputfield) {
+
+        let totalFileSize = inputfield.dataset.filesize;
+        let notesAllowedFileSizeElement = document.getElementById(inputfield.id + "-allowedFileSize");
+        let notesAllowedTotalFileSizeElement = document.getElementById(inputfield.id + "-allowedTotalFileSize");
+        let totalSizeDiv = document.getElementById(inputfield.id + "-total");
+        let newTotalFileSize = 0;
+
+        // Find the position of this specific fileBlock among its siblings BEFORE
+        // removing it from the DOM - this corresponds 1:1 to its position inside
+        // dt.items, since both are appended in the same order when files are
+        // selected (see handleFileUploads()). Matching by this index - rather
+        // than by file name, as before - correctly identifies the exact file
+        // that was clicked, even when multiple selected files happen to share
+        // the same name (name-based matching would always remove the first
+        // match, which could be the wrong file).
+        let fileListEl = fileBlock.parentElement;
+        let indexToRemove = fileListEl ? Array.prototype.indexOf.call(fileListEl.children, fileBlock) : -1;
+
+        fileBlock.remove();
+
+        if (indexToRemove !== -1 && dt.items[indexToRemove]) {
+            let fileSizeRemoved = dt.items[indexToRemove].getAsFile().size;
+            dt.items.remove(indexToRemove);
+            newTotalFileSize = totalFileSize - fileSizeRemoved;
+            inputfield.dataset.filesize = String(newTotalFileSize);
+            if (totalSizeDiv) {
+                totalSizeDiv.innerHTML = formatBytes(newTotalFileSize);
+            }
+        }
+
+        let fileSizes = [];
+        for (let i = 0; i < dt.items.length; i++) {
+            fileSizes.push(dt.items[i].getAsFile().size);
+        }
+
+        // check if there is at least 1 file which is larger than allowed, otherwise remove the warning text class from the notes
+        if (fileSizes.every(value => {
+            return value <= inputfield.dataset.maxfilesize
+        })) {
+            if (totalSizeDiv) {
+                totalSizeDiv.removeAttribute("class");
+            }
+            if (notesAllowedFileSizeElement) {
+                notesAllowedFileSizeElement.removeAttribute("class");
+            }
+        }
+
+        // check if total files size is not larger than allowed
+        if (Number.isInteger(newTotalFileSize) && inputfield.dataset.maxtotalfilesize && newTotalFileSize <= inputfield.dataset.maxtotalfilesize) {
+            if (notesAllowedTotalFileSizeElement) {
+                notesAllowedTotalFileSizeElement.removeAttribute("class");
+            }
+        }
+        inputfield.files = dt.files;
+    }
+
+    function initializeConditionalFields() {
+        // initialize all forms for the conditional form dependencies
+        let frontendforms = document.getElementsByTagName("form");
+
+        if (frontendforms.length > 0) {
+            for (let i = 0; i < frontendforms.length; i++) {
+
+
+                let formID = frontendforms[i].id;
+                if (formID) {
+                    if (typeof mfConditionalFields !== "undefined") {
+                        mfConditionalFields("#" + formID, {
+                            rules: "inline",
+                            dynamic: true,
+                            debug: false
+                        });
+                    }
+                    if (frontendforms[i].getAttribute("data-valid")) {
+                        // jump to error alert box
+                        let allwrapper = document.getElementById(formID + "-allwrapper");
+                        jumpTo(allwrapper, formID + "-alert");
+                    }
+                }
+            }
+        }
+    }
+
+// check if DOM is loaded completely
+    window.addEventListener("DOMContentLoaded", function () {
+
+        submitCounter();
+        ajaxSubmit();
+        maxCharsCounterReverse();
+        handleFileUploads();
+        editLinks();
+        prevLinks();
+        initializeConditionalFields();
+        checkMultiCheckboxesRequired();
+        groupIbanInFour();
+
+
+        /**
+         * Change HTML 5 validation attributes depending on values of another field
+         */
+
+            // get all input HTML elements
+        let numInputs = document.querySelectorAll("input,select");
+
+        // check if something has been changed inside an input field
+        for (let i = 0; i < numInputs.length; i++) {
+
+            numInputs[i].addEventListener("input", changeHTML5AttributeValue, false);
+            numInputs[i].addEventListener("change", calculateTimeRange, false);
+        }
+
+        // listen to click on submit button of the last step form
+        let submitButtons = document.getElementsByTagName("button");
+        for (let i = 0; i < submitButtons.length; i++) {
+            if (submitButtons[i].type === "submit") {
+                submitButtons[i].addEventListener("click", function (e) {
+                    // this next function runs only if HTML5 validation is enabled
+                    openHiddenWrapper(e);
+                });
+            }
+        }
+
+        // check if there is a success alert box
+        let successAlerts = document.querySelectorAll('[data-ffsuccess]');
+
+        if (successAlerts.length > 0) {
+            for (let i = 0; i < successAlerts.length; i++) {
+                if (i === 0) {
+                    let alertID = successAlerts[i].id;
+                    let formID = successAlerts[i].dataset.formid;
+                    let allwrapper = document.getElementById(formID + "-allwrapper");
+                    jumpTo(allwrapper, alertID);
+                }
+            }
+        }
+
+    });
+
+    /**
+     * Check if an edit link in the final step of a multistep form has been clicked
+     */
+    function editLinks() {
+        let editLinks = document.getElementsByClassName("ff-edit-link");
+        if (editLinks && editLinks.length > 0) {
+            for (let i = 0; i < editLinks.length; i++) {
+
+                editLinks[i].addEventListener("click", function (e) {
+                    e.preventDefault();
+                    let id = editLinks[i].dataset.element;
+                    let wrapper = document.getElementById(id);
+                    if (wrapper) {
+                        // get link text
+                        if ((editLinks[i]).textContent === editLinks[i].dataset.edit) {
+                            wrapper.classList.remove("ff-final-list-hidden");
+                            editLinks[i].textContent = editLinks[i].dataset.close;
+                        } else {
+                            wrapper.classList.add("ff-final-list-hidden");
+                            editLinks[i].textContent = editLinks[i].dataset.edit;
+
+                            // add the changed value back to ff-final-list-value element
+
+                            let inputwrapper = wrapper.getElementsByClassName("inputwrap")[0];
+
+                            if (inputwrapper) {
+                                let newValue = inputwrapper.children[0].value; // get the value of a single value field
+
+                                // do not show undefined as new value
+                                if (newValue === undefined) {
+                                    let values = [];
+                                    // get all inputfields inside the wrapper
+                                    let inputs = inputwrapper.getElementsByTagName('input');
+                                    // works for checkboxes and radios multiple
+                                    if (inputs.length > 0) {
+                                        for (let i = 0; i < inputs.length; i++) {
+                                            let input = inputs[i];
+                                            if (input.checked) {
+                                                values.push(input.value);
+                                            }
+                                        }
+                                    }
+
+                                    if (values.length > 0) {
+                                        newValue = values.toString();
+                                    } else {
+                                        newValue = '';
+                                    }
+
+                                }
+                                // use previousElementSibling instead of previousSibling, since
+                                // whitespace text nodes in the markup would otherwise be picked
+                                // up (which have no .innerHTML and silently fail to update)
+                                let targetEl = editLinks[i].parentElement.previousElementSibling;
+                                if (targetEl) {
+                                    targetEl.innerHTML = escapeHTML(newValue);
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * Redirect to the previous step if the prev button is clicked
+     */
+    function prevLinks() {
+        let prevLinks = document.getElementsByClassName("ff-prev-button");
+
+        if (prevLinks && prevLinks.length > 0) {
+            for (let i = 0; i < prevLinks.length; i++) {
+                prevLinks[i].addEventListener("click", function (e) {
+                    e.preventDefault();
+                    window.location.href = prevLinks[i].dataset.prev;
+                });
+            }
+        }
+    }
+
+    /**
+     * Output bytes in different Units depending on the bytes size
+     * @param bytes
+     * @param decimals
+     * @returns {string}
+     */
+    function formatBytes(bytes, decimals = 2) {
+
+        if (!+bytes) return "0 B";
+
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+    }
+
+// Reload the captcha image
+    function reloadCaptcha(id, event) {
+        event.preventDefault();
+        let captcha = document.getElementById(id);
+        if (captcha) {
+            let src = captcha.src;
+            src = removeURLParameter(src, "time");
+            captcha.src = src + "&time=" + Date.now();
+        }
+    }
+// exposed on window because it is called from inline onclick="" HTML
+// attributes (see AbstractImageCaptcha.php / AbstractTextCaptcha.php),
+// which can only reach global functions
+    window.reloadCaptcha = reloadCaptcha;
+
+    /*
+    Show or hide the password in the password field by checking/unchecking the show/hide checkbox below the input field
+    */
+    document.addEventListener("click", function (element) {
+
+        if (element.target.classList.contains("pwtoggle")) {
+
+            let passwordInputID = element.target.dataset.toggle;
+            let passwordInput = this.getElementById(passwordInputID);
+
+            if (passwordInput) {
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                } else {
+                    passwordInput.type = "password";
+                }
+            }
+        }
+
+    });
+
+    /**
+     * Remove a specific query string parameter from a url
+     * @param url
+     * @param parameter
+     * @returns {string|*}
+     */
+    function removeURLParameter(url, parameter) {
+        //prefer to use l.search if you have a location/link object
+        let urlparts = url.split("?");
+        if (urlparts.length >= 2) {
+
+            let prefix = encodeURIComponent(parameter) + "=";
+            let pars = urlparts[1].split(/[&;]/g);
+
+            //reverse iteration as may be destructive
+            for (let i = pars.length; i-- > 0;) {
+                //idiom for string.startsWith
+                if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+                    pars.splice(i, 1);
+                }
+            }
+
+            url = urlparts[0] + "?" + pars.join("&");
+            return url;
+        } else {
+            return url;
+        }
+    }
+
+    function requiredIfEqualHTML5Validation(field, compareField) {
+
+        let value;
+
+        // get comparison input type
+        switch (compareField.type) {
+            case "checkbox":
+                value = requiredIfEqualCheckbox(field, compareField);
+                break;
+            case "select-one":
+            case "select-multiple":
+                value = requiredIfEqualSelect(field, compareField);
+                break;
+            default:
+                value = requiredIfEqualDefault(field, compareField)
+        }
+        return value;
+
+    }
+
+    /*
+     * Function to add required attribute to a dependence field if conditional field is a checkbox input field
+     */
+    function requiredIfEqualCheckbox(field, compareField) {
+        let i;
+        let comparisonValue = "";
+
+        let compareValue = field.dataset.ff_equal;
+
+        // create array of string if "|" is present
+        if (compareValue && compareValue.includes("|")) {
+            compareValue = compareValue.split('|');
+        }
+
+        if (compareField.checked) {
+            if (compareField.value !== "on") {
+                comparisonValue = compareField.value;
+            } else {
+                // checkbox without value attribute
+                compareValue = comparisonValue = "ff-equal-checked";
+
+            }
+        }
+
+        let matches;
+        if (Array.isArray(compareValue)) {
+
+            // get operator
+            let operator = field.dataset.ff_operator;
+            let checked = [];
+            let chks = document.getElementsByName(compareField.name);
+
+            if (operator === "AND") {
+
+                compareValue = compareValue.map(String);
+
+                // Loop and push the checked CheckBox value in Array.
+                for (i = 0; i < chks.length; i++) {
+                    if (chks[i].checked) {
+                        checked.push(chks[i].value);
+                    }
+                }
+
+                // check if every element is checked
+                if (compareValue.every(r => checked.includes(r))) {
+                    return "required";
+                }
+                return "";
+            } else {
+                // OR-condition
+                compareValue = compareValue.map(String);
+
+                // Loop and push the checked CheckBox value in Array.
+                for (i = 0; i < chks.length; i++) {
+                    if (chks[i].checked) {
+                        checked.push(chks[i].value);
+                    }
+                }
+                matches = checked.filter(e => compareValue.indexOf(e) !== -1);
+                if (matches.length > 0) {
+                    return "required";
+                }
+                return "";
+            }
+        } else {
+            // is string
+
+            let chks = document.getElementsByName(compareField.name);
+
+            if (chks.length > 1) {
+                // multiple checkbox
+
+                let checked = [];
+                // Loop and push the checked CheckBox value in Array.
+                for (i = 0; i < chks.length; i++) {
+                    if (chks[i].checked) {
+                        checked.push(chks[i].value);
+                    }
+                }
+                // compareValue is a single string here (no "|" present), so use an
+                // exact match instead of a substring check (indexOf on a string
+                // would produce false positives for partial matches)
+                matches = checked.filter(e => e === compareValue);
+                if (matches.length > 0) {
+                    return "required";
+                }
+                return "";
+            } else {
+                // single checkbox
+                if (comparisonValue === "ff-equal-checked") {
+                    return "required";
+                } else {
+                    if (comparisonValue === compareValue) {
+                        return "required";
+                    }
+                }
+                return "";
+            }
+        }
+    }
+
+
+    /*
+     * Function to add required attribute to a dependence field if conditional field is a select input field
+     */
+    function requiredIfEqualSelect(field, compareField) {
+
+        let i;
+        let compareValue = field.dataset.ff_equal;
+
+        // create array of string if "|" is present
+        if (compareValue.includes("|")) {
+            compareValue = compareValue.split('|');
+        }
+
+        let matches;
+        if (Array.isArray(compareValue)) {
+
+            // get operator
+            let operator = field.dataset.ff_operator;
+            if (!operator) {
+                operator = "AND"
+            }
+
+            let selected = [];
+            let select = document.querySelector("[name='" + compareField.name + "']");
+            let options = select.options;
+
+            if (operator === "AND") {
+
+                compareValue = compareValue.map(String);
+
+                // Loop and push the selected option value in Array.
+                for (i = 0; i < options.length; i++) {
+                    if (options[i].selected) {
+                        selected.push(options[i].value);
+                    }
+                }
+                // check if every element is checked
+                if (compareValue.every(r => selected.includes(r))) {
+                    return "required";
+                }
+                return "";
+            } else {
+                // OR-condition
+                compareValue = compareValue.map(String);
+
+                // Loop and push the selected option value in Array.
+                for (i = 0; i < options.length; i++) {
+                    if (options[i].selected) {
+                        selected.push(options[i].value);
+                    }
+                }
+                matches = selected.filter(e => compareValue.indexOf(e) !== -1);
+                if (matches.length > 0) {
+                    return "required";
+                }
+                return "";
+            }
+        } else {
+            // is string
+            if (compareField.value === compareValue) {
+                return "required";
+            }
+            return "";
+        }
+    }
+
+    /**
+     * Function to add required attribute to a dependence field if conditional field is a radio input field
+     * @param field
+     * @param compareField
+     * @returns {string}
+     */
+    function requiredIfEqualDefault(field, compareField) {
+
+        let compareValue = field.dataset.ff_equal;
+
+        // create array of string if "|" is present
+        if (compareValue.includes("|")) {
+            compareValue = compareValue.split('|');
+        }
+
+        if (Array.isArray(compareValue)) {
+            if (compareValue.includes(compareField.value)) {
+                return "required";
+            }
+            return "";
+        } else {
+            // is string
+            if (compareField.value === compareValue) {
+                return "required";
+            }
+            return "";
+        }
+    }
+
+// Change the HTML5 attribute on change for a field depending on another field
+    function changeHTML5AttributeValue() {
+
+        let field_data_ID = this.name.replace(this.form.id + "-", ""); // remove the form id suffix
+        let fieldName = field_data_ID.replace(/[\[\]]/g, ''); // remove brackets from name on multi-value fields
+
+        // find all instances where data-attribute is present
+        if (field_data_ID) {
+            let fields = document.querySelectorAll("[data-ff_field=" + fieldName + "]");
+
+            if (fields.length > 0) {
+
+                for (let i = 0; i < fields.length; i++) {
+                    // get the field object
+
+                    let field = document.getElementById(fields[i].id);
+
+                    if (field) {
+
+                        // get which attribute should be changed
+                        let attribute = field.dataset.ff_attribute;
+                        // special treatment for required attribute
+                        if (attribute === "ff-required") {
+                            attribute = "required";
+                        }
+                        let value = this.value;
+                        let validator = field.dataset.ff_validator;
+                        let label = field.form.querySelector(
+                            "label[for='" + field.id + "']"
+                        );
+                        let labelText = label ? label.innerHTML : '';
+
+                        if (attribute && value) {
+                            if (validator) {
+                                // check if validator is dateBeforeField
+                                if (validator === "dateBeforeField") {
+                                    value = calculateBeforeAfterValue(-1, value);
+                                    value = value.toISOString().split("T")[0];
+                                }
+                                // check if validator is dateAfterField
+                                if (validator === "dateAfterField") {
+                                    value = calculateBeforeAfterValue(1, value);
+                                    value = value.toISOString().split("T")[0];
+                                }
+                                // check if validator is requiredIf or requiredIfEqual
+                                if (validator === "requiredIfEmpty") {
+                                    value = 'required';
+                                }
+                                if ((validator === "requiredIfEqual")) {
+                                    value = requiredIfEqualHTML5Validation(field, this);
+
+                                }
+                            }
+                            // add asterisk if field is required
+                            if (value === "required" && label) {
+                                label.innerHTML = labelText + asterisk;
+                                // add class required to the label tag
+                                label.classList.add("required");
+                            }
+                            field.setAttribute(attribute, value);
+                        }
+                        if (attribute && !value) {
+                            // check if validator is requiredIf or requiredIfEqual
+                            if ((validator === "requiredIfEmpty") || (validator === "requiredIfEqual")) {
+                                field.removeAttribute(attribute);
+                                if (label) {
+                                    labelText = labelText.replace(asterisk, "");
+                                    label.innerHTML = labelText;
+                                    // add class required to the label tag
+                                    label.classList.remove("required");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Add or subtract 1 day from the date set, depending on if before or after was set
+     * Result of the calculation will be set to the attribute
+     * @param days
+     * @param value
+     */
+    function calculateBeforeAfterValue(days, value) {
+        let result = new Date(value);
+        result.setDate(result.getDate() + days);
+        return result;
+    }
+
+    /**
+     * Special function for time range Validation dateWithinDaysRange amd dateOutsideOfDaysRange
+     * Sets the second parameter of the time range (min or max)
+     */
+    function calculateTimeRange() {
+
+        let fields = document.querySelectorAll("[data-ff_validator]");
+
+        if (fields.length > 0) {
+            for (let i = 0; i < fields.length; i++) {
+
+                // get the field object
+                let field = document.getElementById(fields[i].id);
+                if (field && ((field.dataset.ff_validator === "dateWithinDaysRange") || (field.dataset.ff_validator === "dateOutsideOfDaysRange"))) {
+                    // get which attribute should be changed
+                    let attribute = field.dataset.ff_attribute;
+                    let value = this.value;
+                    let days = field.dataset.ff_days;
+
+                    if (attribute === "min") {
+                        if (attribute && value) {
+                            // calculate new date value
+                            let value2 = calculateNewDate(value, days, "+");
+                            // convert to YYYY-mm-dd
+                            value2 = new Date(value2).toISOString().slice(0, 10);
+                            // validator dateOutsideOfDaysRange (min or max attribute)
+                            if (field.dataset.ff_validator === "dateOutsideOfDaysRange") {
+                                if (days > 0) {
+                                    // positive days value
+                                    field.setAttribute("min", value2);
+                                } else if (days < 0) {
+                                    // negative days value
+                                    field.setAttribute("max", value2);
+                                } else {
+                                    // value is zero - remove max attribute
+                                    field.removeAttribute("max");
+                                }
+                            } else {
+                                // validator dateWithinDaysRange (min and max attribute)
+                                if (days > 0) {
+                                    field.setAttribute("min", value);
+                                    field.setAttribute("max", value2);
+                                } else {
+                                    field.setAttribute("max", value);
+                                    field.setAttribute("min", value2);
+                                }
+                            }
+                        }
+                    } else {
+
+                        field.removeAttribute("max");
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Add or subtract days to a given date and output the new date
+     * @param date
+     * @param days
+     * @param operator
+     * @returns {Date}
+     */
+    function calculateNewDate(date, days, operator) {
+        let result = new Date(date);
+        if (operator === "+") {
+            result.setDate(result.getDate() + parseInt(days));
+        } else {
+            result.setDate(result.getDate() - parseInt(days));
+        }
+        return result;
+    }
+
+    /**
+     * Jump to an internal anchor
+     * @param allwrapper
+     * @param anchor_id
+     */
+    function jumpTo(allwrapper, anchor_id) {
+
+        if (!allwrapper) return;
+        // check if jump to form is disabled
+        if (allwrapper.dataset.preventjumptoform === "false") {
+            let url = location.href; //Saving URL without a hash.
+            location.href = "#" + anchor_id; //Navigate to the target element.
+            history.replaceState(null, null, url); //method modifies the current history entry.
+        }
+
+    }
+
+    /**
+     * Submit forms and send their form data via Ajax
+     * Returns the validated form without reloading the page
+     */
+    function ajaxSubmit(formid = null) {
+
+        if (formid) {
+            let form = document.getElementById(formid);
+            subAjax(form);
+        } else {
+            let pageforms = document.querySelectorAll("[data-submitajax]");
+
+            // get all forms that contain the data-submitajax attribute
+            if (pageforms.length) {
+                let i = 0;
+                for (i; i < pageforms.length; i++) {
+
+                    subAjax(pageforms[i]);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Submit a form via Ajax
+     * @param form
+     */
+    function subAjax(form) {
+
+
+        if (typeof (form) === "string") {
+            form = document.getElementById(form);
+        }
+
+        if (form) {
+
+            // add eventlistener to all forms which include the data-submit attribute
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                let formid = form.dataset.submitajax;
+                let action = form.getAttribute("action");
+                let progress = document.getElementById(formid + "-form-submission");
+                // show the info (text, progressbar, ...) by removing display:none from the outer container
+                if (progress) {
+                    progress.style.display = null;
+                }
+
+                // make the Ajax request
+                let xhr = new XMLHttpRequest();
+
+                xhr.upload.addEventListener("progress", function (event) {
+                    if (event.lengthComputable) {
+                        let percent = Math.round((event.loaded / event.total) * 100);
+                        percent = percent - 1;
+
+                        let progressBar = document.getElementById(formid + "-progressbar");
+                        if (progressBar) {
+                            progressBar.dataset.percent = String(percent);
+                            progressBar.style.width = percent + "%";
+                        }
+                    }
+                });
+
+                let formData = new FormData(form);
+                xhr.onload = function () {
+
+                    let result = this.responseText;
+
+                    const parser = new DOMParser();
+                    let doc = parser.parseFromString(result, "text/html");
+
+                    let wrapper = doc.getElementById(formid + "-ajax-wrapper");
+                    let content = '';
+                    if (wrapper) {
+                        content = wrapper.innerHTML;
+                    }
+
+                    if (xhr.readyState === 4 && xhr.status === 200 && wrapper) {
+                        let redirectFieldName = formid + "-ajax_redirect";
+                        let redirectUrl = formData.get(redirectFieldName);
+
+                        // check if the form is valid because redirect should only happen after a valid submission
+                        if (wrapper.dataset.validated === "1") {
+                            let anchorQueryString = "";
+
+                            // check if a special redirect data attribute is present
+                            if (redirectUrl) {
+                                let urlParts = redirectUrl.split("#");
+                                // check if an internal anchor is set
+                                if (urlParts.length > 1) {
+                                    // an internal anchor is set
+                                    redirectUrl = urlParts[0];
+                                    let anchor = urlParts[1];
+                                    anchorQueryString = "#" + anchor;
+                                }
+                                window.location = redirectUrl + anchorQueryString;
+                            } else {
+                                // load the validated form back into the target div
+                                document.getElementById(formid + "-ajax-wrapper").innerHTML = content;
+                                // jump to the start of the form
+                                let allwrapper = document.getElementById(formid + "-allwrapper");
+                                jumpTo(allwrapper, formid + "-ajax-wrapper");
+                            }
+                        } else {
+
+                            // form is not valid
+                            // load the validated form back into the target div
+                            document.getElementById(formid + "-ajax-wrapper").innerHTML = content;
+                            // jump to the start of the form
+                            let allwrapper = document.getElementById(formid + "-allwrapper");
+                            jumpTo(allwrapper, formid + "-ajax-wrapper");
+                            // load a new CAPTCHA if CAPTCHA is used
+                            reloadCaptcha(formid + "-captcha-image", e);
+                            // start as the first page load
+                            ajaxSubmit();
+                            // start counter
+                            submitCounter();
+                            // handle file uploads
+                            handleFileUploads();
+                            // handle edit links in multi-step forms
+                            editLinks();
+                            prevLinks();
+                            // initialze conditional fields
+                            initializeConditionalFields();
+                            // multicheckboxes required check
+                            checkMultiCheckboxesRequired();
+                            // format IBAN input
+                            groupIbanInFour();
+                            // load star rating again if it exists
+                            if (typeof stars !== "undefined" && stars !== null) {
+                                // variable is not undefined or not null
+                                stars.rebuild();
+                            }
+                            // load a new Slider CAPTCHA if this CAPTCHA type has been selected
+                            if (typeof listenToSliderCaptchaCheckboxes === "function") {
+                                listenToSliderCaptchaCheckboxes();
+                            }
+                        }
+
+                    }
+                };
+                // get the method for sending the form data (get or post)
+                let method = form.method;
+
+                //sanitize method to be all uppercase
+                method = method.toUpperCase();
+
+                // convert all methods which are not GET or POST to POST
+                const allowedMethods = ["POST", "GET"];
+                if (!allowedMethods.includes(method)) {
+                    method = "POST";
+                }
+
+
+                // convert formData to query string if GET method is chosen
+                let queryString;
+                if (method === "GET") {
+                    queryString = new URLSearchParams(formData);
+                    action = action + "?" + String(queryString);
+                }
+
+                xhr.open(method, action);
+                xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+                xhr.send(formData);
+            });
+
+        }
+    }
+
+    /**
+     * Count the letters inside a textarea and output the characters left
+     */
+    function maxCharsCounterReverse() {
+        const textareas = document.querySelectorAll("textarea");
+
+        if (!textareas) {
+            return;
+        }
+
+        textareas.forEach(textarea => {
+
+            textarea.addEventListener("input", event => {
+                const target = event.currentTarget;
+                const maxLength = target.getAttribute("maxlength");
+
+                if (maxLength) {
+
+                    const currentLength = target.value.length;
+                    const counterSpan = document.getElementById(target.id + "-char_count");
+
+                    if (counterSpan) {
+                        // if max number of characters is reached, output a special info message
+                        if (currentLength === parseInt(maxLength, 10)) {
+                            counterSpan.innerHTML = counterSpan.dataset.maxreached;
+                        } else {
+                            // change the current length inside the span element
+                            counterSpan.children[0].innerHTML = String(maxLength - currentLength);
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    /**
+     * Function to open the hidden field wrapper on the last step if there is an error on the field and
+     * HTML 5 browser validation is enabled.
+     * @param event
+     */
+    function openHiddenWrapper(event) {
+
+        let form = event.target.form;
+
+        // run only on the last step form if browser validation is enabled
+        if (form.noValidate === false && form.hasAttribute("data-step") && form.dataset.step === "last") {
+
+            let formID = form.id;
+
+            // loop all fields inside the table
+            for (let f = 0; f < form.elements.length; f++) {
+
+                // get field
+                let field = form.elements[f];
+
+                // ignore buttons, fieldsets, etc.
+                if (field.nodeName !== "INPUT" && field.nodeName !== "TEXTAREA" && field.nodeName !== "SELECT") continue;
+
+                // is native browser validation available?
+                if (typeof field.willValidate !== "undefined") {
+
+                    // native validation available
+
+                    if (field.nodeName === "INPUT" && field.type !== field.getAttribute("type")) {
+
+                        // input type not supported! Use legacy JavaScript validation
+                        field.setCustomValidity(LegacyValidation(field) ? "" : "error");
+
+                    }
+
+                    // native browser check
+                    field.checkValidity();
+
+                }
+
+                // check if field is not valid
+                if (!field.validity.valid) {
+
+                    // remove the hidden class from the hidden wrapper element
+                    let fieldID = field.id;
+                    let fieldName = fieldID.replace(formID + "-", "");
+                    let hiddenWrapper = document.getElementById(fieldName + "-hidden-wrapper");
+                    if (hiddenWrapper) {
+                        hiddenWrapper.classList.remove("ff-final-list-hidden");
+                        // change the text from the edit link back to "close"
+                        let toggleLink = document.getElementById(fieldID + "-edit");
+                        if (toggleLink) {
+                            toggleLink.innerHTML = toggleLink.dataset.close;
+                        }
+                    }
+                    break;
+
+                }
+
+            }
+
+        }
+    }
+
+})();

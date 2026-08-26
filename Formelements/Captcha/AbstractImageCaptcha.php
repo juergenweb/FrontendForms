@@ -1,13 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 /*
  * Abstract class for creating a captcha using images (no text)
  *
  * Created by Jürgen K.
- * https://github.com/juergenweb 
+ * https://github.com/juergenweb
  * File name: AbstractImageCaptcha.php
- * Created: 05.08.2022 
+ * Created: 05.08.2022
  */
 
 namespace FrontendForms;
@@ -18,7 +19,6 @@ use ProcessWire\WireException;
 
 abstract class AbstractImageCaptcha extends AbstractCaptcha
 {
-
     protected string $imagePath = ''; // the path to the captcha images directory
     protected InputRadioMultiple $captchaInput; // the multi-checkbox input field
     protected string $randomImage = ''; // path to the random image
@@ -26,12 +26,25 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
 
     public string $title = ''; // the title of the image CAPTCHA
     public string $desc = ''; // the description of the image CAPTCHA
+    /**
+     * Set up the image CAPTCHA: mark the category as "image", resolve the
+     * path to the captcha-images folder, and create the underlying
+     * InputRadioMultiple field used to select the correct image category.
+     * @throws WireException
+     * @throws WirePermissionException
+     * @throws Exception
+     */
     public function __construct()
     {
         parent::__construct();
         $this->category = 'image';
-        $this->imagePath = $this->wire('config')->paths->siteModules . 'FrontendForms/captchaimages/';
+        $this->imagePath = $this->wire('config')->paths->siteModules . 'FrontendForms/assets/captcha-images/';
         $this->captchaInput = new InputRadioMultiple('captcha');
+        // unlike a normal radio group, the CAPTCHA answer must never stay
+        // pre-selected after a failed/re-rendered submission - otherwise
+        // a visitor could resubmit the same answer without looking at the
+        // newly generated CAPTCHA image again.
+        $this->captchaInput->retainSubmittedValue(false);
         $this->captchaInput->setDescription($this->_('Please select what you see in the image above.'));
     }
 
@@ -47,7 +60,7 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
             if ($this->frontendforms['input_blurlevel'] > 10) {
                 return 10;
             } else {
-                return $this->frontendforms['input_blurlevel'];
+                return (int) $this->frontendforms['input_blurlevel'];
             }
         }
     }
@@ -64,7 +77,7 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
             if ($this->frontendforms['input_pixelatelevel'] > 5) {
                 return 5;
             } else {
-                return $this->frontendforms['input_pixelatelevel'];
+                return (int) $this->frontendforms['input_pixelatelevel'];
             }
         }
     }
@@ -82,10 +95,18 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
      * Choose a random image of one of the captcha directories ('car, house,...)
      * @return void
      * @throws WireException
+     * @throws \RuntimeException If no captcha images were found.
      */
     protected function setRandomImage(): void
     {
         $images = $this->wire('files')->find($this->imagePath, ['recursive' => 2, 'extensions' => ['jpg']]);
+
+        if (!$images) {
+            throw new \RuntimeException(
+                'No captcha images found under "' . $this->imagePath . '". Please check the image captcha configuration.'
+            );
+        }
+
         $imgNumber = array_rand($images);
         $this->randomImage = $images[$imgNumber];
     }
@@ -106,10 +127,17 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
      * @param int $h
      * @param bool $crop
      * @return GdImage
+     * @throws \RuntimeException If the image dimensions could not be read.
      */
     protected function resizeImage(string $file, int $w, int $h, bool $crop = false): GdImage
     {
-        list($width, $height) = getimagesize($file);
+        $size = getimagesize($file);
+
+        if ($size === false) {
+            throw new \RuntimeException('The captcha image "' . $file . '" could not be read.');
+        }
+
+        [$width, $height] = $size;
         $r = $width / $height;
         if ($crop) {
             if ($width > $height) {
@@ -249,8 +277,10 @@ abstract class AbstractImageCaptcha extends AbstractCaptcha
                 ->render() . // render captcha image
             $this->createReloadLink()
                 ->setAttribute('id', $formID . '-reload-link')
-                ->setAttribute('onclick',
-                    'reloadCaptcha(\'' . $formID . '-captcha-image\', event); loadCaptchaSolutions(\'' . $formID . '-captcha-inputwrapper\', event)')
+                ->setAttribute(
+                    'onclick',
+                    'reloadCaptcha(\'' . $formID . '-captcha-image\', event); loadCaptchaSolutions(\'' . $formID . '-captcha-inputwrapper\', event)'
+                )
                 ->render().'<div class="captcha-input-wrapper">'); // render the reload link
 
         if (!$this->catOptions) { // prevent the same options being added multiple times after reloading the page

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -18,11 +19,10 @@ use ProcessWire\WireException;
 use ProcessWire\WirePermissionException;
 
 /**
- * Class with pre-defined values for creating an email input field
+ * Class with pre-defined values for creating a password confirmation input field
  */
 class PasswordConfirmation extends InputPassword
 {
-
     /**
      * @param string $id
      * @param string $passwordFieldName

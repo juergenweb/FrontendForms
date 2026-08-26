@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -17,7 +18,6 @@ use ProcessWire\WirePermissionException;
 
 class FieldWrapper extends Wrapper
 {
-
     /**
      * @throws WireException
      * @throws WirePermissionException
@@ -37,6 +37,10 @@ class FieldWrapper extends Wrapper
         return $this->getCSSClass('field_wrapper_errorClass');
     }
 
+    /**
+     * Grab the CSS class for success on form inputs
+     * @return string
+     */
     protected function getSuccessClass(): string
     {
         return $this->getCSSClass('field_wrapper_successClass');

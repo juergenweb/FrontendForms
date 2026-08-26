@@ -1,0 +1,60 @@
+{
+    "file": "site\/modules\/FrontendForms\/Validation\/ValidationRules\/FileRules.php",
+    "textdomain": "site--modules--frontendforms--validation--validationrules--filerules-php",
+    "translations": {
+        "0746f15ee8777d4d9b986ea1f9b320da": {
+            "text": "enth\u00e4lt Dateien, deren Dateigr\u00f6\u00dfe die maximale Server-Uploadgr\u00f6\u00dfe von %s pro Datei \u00fcberschreitet."
+        },
+        "2d44e1f3709b0b0b60ca5112d4ab4a44": {
+            "text": "enth\u00e4lt Dateien, deren gesamte Dateigr\u00f6\u00dfe die maximal erlaubte Server-Uploadgr\u00f6\u00dfe von %s f\u00fcr alle Dateien zusammen \u00fcberschreitet."
+        },
+        "04dd7e6cf9288571803ff2e96e6ef39f": {
+            "text": "enth\u00e4lt hochgeladene Dateien, deren Gesamtgr\u00f6\u00dfe %s \u00fcberschreitet."
+        },
+        "ac1e597dcdc2a3fc67bcb55e89dca689": {
+            "text": "enth\u00e4lt Dateien, deren gesamte Upload-Gr\u00f6\u00dfe das Maximum von %s \u00fcberschreitet."
+        },
+        "e5979030ccad3054f4c2ff42c94a6a88": {
+            "text": "enth\u00e4lt mindestens eine Datei, die gr\u00f6\u00dfer ist als die erlaubte Dateigr\u00f6\u00dfe von %s."
+        },
+        "693b2a5a5dd748e013b6198af3aec46f": {
+            "text": "ist beim Hochladen ein Fehler aufgetreten."
+        },
+        "fd60d93e97c6afdd52d60e46df574fa2": {
+            "text": "enth\u00e4lt mindestens eine Datei mit einem ung\u00fcltigen MIME-Typ."
+        },
+        "60bdea5e6f4fbd736f3a862b9a55705e": {
+            "text": "enth\u00e4lt mindestens eine Datei mit einem nicht erlaubten MIME-Typ."
+        },
+        "8df0f9a046c73a407032be0688664792": {
+            "text": "enth\u00e4lt mindestens eine Datei, die nicht zu den erlaubten Dateitypen geh\u00f6rt: %s."
+        },
+        "9758cefdeadcd486e9d2fc0a8fb9a067": {
+            "text": "enth\u00e4lt mindestens eine Datei mit einer nicht erlaubten Dateiendung: %s."
+        },
+        "875503796e0edb5de80741dca5ed066a": {
+            "text": "enth\u00e4lt mehr als %s Dateien."
+        },
+        "49ccd07620c9a314fa38af7bcdba9790": {
+            "text": "enth\u00e4lt weniger als %s Dateien."
+        },
+        "1002190a710f4fe5151143bccdc91c63": {
+            "text": "enth\u00e4lt mindestens eine Datei, deren Upload abgelehnt wurde."
+        },
+        "ee66f9c9930cb33d2a5dde9b240d3f7e": {
+            "text": "ist erforderlich."
+        },
+        "2b00ce3258fa5473d2a8e8225ff834e7": {
+            "text": "darf keine leeren Dateien enthalten."
+        },
+        "b662c0fbf0069c6d364ad46fc3ff9e62": {
+            "text": "enth\u00e4lt Bilder, deren Abmessungen kleiner sind als die minimale Breite und H\u00f6he von %s"
+        },
+        "93d70b54efb0067fa6ebe5e93ae01049": {
+            "text": "enth\u00e4lt mindestens ein Bild, dessen Seitenverh\u00e4ltnis nicht zu den erlaubten Seitenverh\u00e4ltnissen entspricht: {1}."
+        },
+        "bf330947ce194486a9bca42c565e6843": {
+            "text": "enth\u00e4lt eine Datei, deren Namen einer bestehenden Datei im Zielverzeichnis gleicht."
+        }
+    }
+}

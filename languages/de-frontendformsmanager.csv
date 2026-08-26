@@ -34,7 +34,6 @@ IPs,=,,site/modules/FrontendForms/FrontendFormsManager.module,fef48b3b39a9c7cdf3
 "Top 10 IPs with the most blockings","Top 10 IPs mit den meisten Sperrungen",,site/modules/FrontendForms/FrontendFormsManager.module,179c5a3e05d658ac00e7fce8f0d7f2a1
 IP,=,,site/modules/FrontendForms/FrontendFormsManager.module,a12a3079e14ced46e69ba52b8a90b21a
 "Number of blockings","Anzahl der Sperrungen",,site/modules/FrontendForms/FrontendFormsManager.module,ec6643b8937c561563dd33a8e91a617c
-"Not banned","Nicht gesperrt",,site/modules/FrontendForms/FrontendFormsManager.module,fa9c4cb43f1d45a9bcb3c17aac3b8603
 "Not blocked - The IP is not on the list of permanent blocked IPs (Blacklist).","Nicht blockiert - Die IP steht nicht auf der Liste der dauerhaft gesperrten IPs (Blacklist).",,site/modules/FrontendForms/FrontendFormsManager.module,258de28492189633a51ef184dda6f87b
 "Blocked - The IP is currently on the list of permanent blocked IPs (Blacklist).","Blockiert - Die IP steht derzeit auf der Liste der dauerhaft gesperrten IPs (Blacklist).",,site/modules/FrontendForms/FrontendFormsManager.module,838b86b4a41333131eaf8865bf9bbb74
 "To all temporarily blocked IPs","Zu allen temporär gesperrten IPs",,site/modules/FrontendForms/FrontendFormsManager.module,d886dadad6f4bbcbe945bea88b35637a
@@ -69,7 +68,6 @@ User,Benutzer,,site/modules/FrontendForms/FrontendFormsManager.module,8f9bfe9d13
 "will not be used (shown) as CAPTCHA question on the frontend","wird nicht im Frontend beim CAPTCHA angezeigt",,site/modules/FrontendForms/FrontendFormsManager.module,91f9f3dcf32e3b35db975d303846f22c
 "There are no questions.","Es gibt keine Fragen.",,site/modules/FrontendForms/FrontendFormsManager.module,78132c6a7ffcd380dc877b1dbe22442e
 "Add new question","Eine neue Frage erstellen",,site/modules/FrontendForms/FrontendFormsManager.module,2a3db08ece9db0589d17f4a28b9958f8
-"No questions have been created yet.","Bis jetzt wurden noch keine Fragen erstellt.",,site/modules/FrontendForms/FrontendFormsManager.module,4d6068e701c464a4b4023a05ecd65d0d
 "If you want to use the SIMPLE QUESTION CAPTCHA, you can add, edit or delete the related questions in this section by clicking on the button below.","Wenn Sie das EINFACHE FRAGE CAPTCHA verwenden möchten, dann können Sie hier Frage erstellen, bearbeiten oder löschen indem Sie auf den Button weiter unten klicken.",,site/modules/FrontendForms/FrontendFormsManager.module,d0031a5235e9b380ac6e5bb32339871f
 "Questions with status ""published""","Fragen mit Status ""veröffentlicht""",,site/modules/FrontendForms/FrontendFormsManager.module,ce0627ddbd2ef785a69b2dade92a6526
 "Questions with status ""unpublished""","Fragen mit Status ""unveröffentlicht""",,site/modules/FrontendForms/FrontendFormsManager.module,b238945e7898bc2cede56b8869597000

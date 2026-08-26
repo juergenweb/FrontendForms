@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -7,11 +8,10 @@ declare(strict_types=1);
  * Will be used for random text and math captcha
  *
  * Created by Jürgen K.
- * https://github.com/juergenweb 
+ * https://github.com/juergenweb
  * File name: AbstractTextCaptcha.php
- * Created: 05.08.2022 
+ * Created: 05.08.2022
  */
-
 
 namespace FrontendForms;
 
@@ -23,7 +23,6 @@ use ProcessWire\WirePermissionException;
 
 abstract class AbstractTextCaptcha extends AbstractCaptcha
 {
-
     protected string $captchaContent = ''; // the content of the captcha (random string or calculation) as shown in the image
     protected string $pathToFonts = ''; // the path to the ttf font files directory
     public string $title = ''; // the name for the captcha in the backend select
@@ -71,10 +70,22 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
     /**
      * Set the number of colors, which should be used for the background
      * The higher the number, the more colorful the background
+     *
+     * NOTE: deliberately named differently from AbstractCaptcha's
+     * setNumberOfColors()/getNumberOfColors() (which control the
+     * distortion LINES' color count, via input_numberOfColorsOfLines).
+     * Reusing the same method name here previously caused this class's
+     * background-specific override to silently shadow the parent's
+     * line-color method too (since createRGBColorArray() in
+     * AbstractCaptcha calls $this->getNumberOfColors() and PHP dispatches
+     * to the overriding subclass method) - meaning
+     * input_numberOfColorsOfLines had no effect at all for text
+     * CAPTCHAs, since the background's input_bgnumberOfColors setting was
+     * used instead.
      * @param int $number
      * @return $this
      */
-    protected function setNumberOfColors(int $number): self
+    protected function setNumberOfBackgroundColors(int $number): self
     {
         $this->frontendforms['input_bgnumberOfColors'] = $number;
         return $this;
@@ -82,11 +93,12 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
 
     /**
      * Get the number of colors that should be used for the background
+     * Needs typecasting because value will be stored as string in the database
      * @return int
      */
-    protected function getNumberOfColors(): int
+    protected function getNumberOfBackgroundColors(): int
     {
-        return $this->frontendforms['input_bgnumberOfColors'];
+        return (int) $this->frontendforms['input_bgnumberOfColors'];
     }
 
     /**
@@ -186,19 +198,41 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
 
         if ($this->frontendforms['input_charactersOffLine']) {
             // text off the line
-            $captcha_string = str_split($content);
+            // multibyte-safe split (not str_split(), which operates on
+            // bytes) - otherwise multi-byte UTF-8 characters (e.g.
+            // Cyrillic letters) would be split mid-character here, and
+            // imagettftext() would then be asked to draw an invalid,
+            // incomplete byte fragment for that position instead of the
+            // actual character.
+            $captcha_string = mb_str_split($content);
             $initial = 15;
             $randomHeight = ($this->getHeight() - $this->getFontSize());
             $heightInterval = [(int)($randomHeight * 1.0), (int)($randomHeight * 1.1)];
 
             for ($i = 0; $i < count($captcha_string); $i++) {
                 $letter_space = ($this->getWidth() - ($initial * 2)) / (count($captcha_string));
-                imagettftext($img, $this->getFontSize(), rand(-15, 15), (int)($initial + $i * $letter_space),
-                    rand($heightInterval[0], $heightInterval[1]), $color, $this->getFontFamily(), $captcha_string[$i]);
+                imagettftext(
+                    $img,
+                    $this->getFontSize(),
+                    rand(-15, 15),
+                    (int)($initial + $i * $letter_space),
+                    rand($heightInterval[0], $heightInterval[1]),
+                    $color,
+                    $this->getFontFamily(),
+                    $captcha_string[$i]
+                );
             }
         } else {
-            imagettftext($img, $this->getFontSize(), 0, $coordinates['x'], $coordinates['y'], $color,
-                $this->getFontFamily(), $content);
+            imagettftext(
+                $img,
+                $this->getFontSize(),
+                0,
+                $coordinates['x'],
+                $coordinates['y'],
+                $color,
+                $this->getFontFamily(),
+                $content
+            );
         }
     }
 
@@ -271,10 +305,8 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
     {
         $colors = [];
 
-        for ($i = 1; $i <= $number; $i++) {
-            for ($i = 0; $i < $number; $i++) {
-                $colors[$i] = [rand(0, 255), rand(0, 255), rand(0, 255)];
-            }
+        for ($i = 0; $i < $number; $i++) {
+            $colors[$i] = [rand(0, 255), rand(0, 255), rand(0, 255)];
         }
         return $colors;
     }
@@ -297,13 +329,13 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
         } else {
             // random colors
 
-            if ($this->getNumberOfColors() == 0) { // unlimited
-                $this->setNumberOfColors($numberOfRectangles);
+            if ($this->getNumberOfBackgroundColors() == 0) { // unlimited
+                $this->setNumberOfBackgroundColors($numberOfRectangles);
             }
-            $colors = $this->createRandomColorsArray($this->getNumberOfColors());
+            $colors = $this->createRandomColorsArray($this->getNumberOfBackgroundColors());
         }
 
-        $this->wire('session')->set('color', $this->getNumberOfColors());
+        $this->wire('session')->set('color', $this->getNumberOfBackgroundColors());
         $bgc = imagecolorallocate($img, $colors[0][0], $colors[0][1], $colors[0][2]);
         imagefill($img, 0, 0, $bgc);
         unset($colors[0]);
@@ -328,8 +360,14 @@ abstract class AbstractTextCaptcha extends AbstractCaptcha
                     for ($i = 0; $i <= $numberOfRectangles; $i++) {
                         imagesetthickness($img, rand(2, 10));
                         $rect_color = imagecolorallocate($img, $colorList[$i][0], $colorList[$i][1], $colorList[$i][2]);
-                        imagerectangle($img, rand(-10, $this->getHeight() + 10), rand(-10, 0),
-                            rand(-10, $this->getWidth() + 10), rand(-10, $this->getWidth() + 10), $rect_color);
+                        imagerectangle(
+                            $img,
+                            rand(-10, $this->getHeight() + 10),
+                            rand(-10, 0),
+                            rand(-10, $this->getWidth() + 10),
+                            rand(-10, $this->getWidth() + 10),
+                            $rect_color
+                        );
                     }
                 }
             }

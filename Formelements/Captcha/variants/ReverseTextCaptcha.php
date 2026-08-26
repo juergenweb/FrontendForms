@@ -1,15 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 /*
  * Class for creating a captcha with a random string that has to be entered in reverse order
  *
  * Created by Jürgen K.
- * https://github.com/juergenweb 
+ * https://github.com/juergenweb
  * File name: ReverseTextCaptcha.php
- * Created: 05.08.2022 
+ * Created: 05.08.2022
  */
-
 
 namespace FrontendForms;
 
@@ -18,8 +18,6 @@ use ProcessWire\WirePermissionException;
 
 class ReverseTextCaptcha extends AbstractCharset
 {
-
-
     /**
      * @throws WireException
      * @throws WirePermissionException
@@ -33,12 +31,15 @@ class ReverseTextCaptcha extends AbstractCharset
 
     /**
      * Set the characters inside the captcha in reverse order as value for the captcha validation
+     * Uses a multibyte-safe reversal (not strrev(), which operates on bytes
+     * and would corrupt multibyte characters such as accented letters if
+     * the configured CAPTCHA charset ever contains any)
      * @param string $content
      * @return AbstractTextCaptcha
      */
     protected function setCaptchaValidValue(string $content): AbstractTextCaptcha
     {
-        $content =  strrev($content);
+        $content = implode('', array_reverse(mb_str_split($content)));
         return parent::setCaptchaValidValue($content);
     }
 

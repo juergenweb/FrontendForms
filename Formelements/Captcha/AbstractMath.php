@@ -1,22 +1,22 @@
 <?php
+
 declare(strict_types=1);
 
 /*
- * File description
+ * Abstract class for creating a simple math (arithmetic) CAPTCHA
  *
  * Created by Jürgen K.
- * https://github.com/juergenweb 
+ * https://github.com/juergenweb
  * File name: AbstractMath.php
- * Created: 16.08.2022 
+ * Created: 16.08.2022
  */
-
 
 namespace FrontendForms;
 
 use ProcessWire\WireException;
 use ProcessWire\WirePermissionException;
 
-class AbstractMath extends AbstractTextCaptcha
+abstract class AbstractMath extends AbstractTextCaptcha
 {
     protected string $result = '';
     /**
@@ -29,6 +29,14 @@ class AbstractMath extends AbstractTextCaptcha
         $this->setCaptchaContent($this->createRandomCalculation()); // set a random calculation as content
     }
 
+    /**
+     * Calculate the result of a simple arithmetic operation between two
+     * integers (addition, subtraction, or multiplication)
+     * @param int $varOne
+     * @param string $operator
+     * @param int $varTwo
+     * @return string
+     */
     protected function calculate(int $varOne, string $operator, int $varTwo): string
     {
         $result = match ($operator) {
@@ -47,10 +55,10 @@ class AbstractMath extends AbstractTextCaptcha
     protected function createRandomCalculation(): string
     {
         $operators = ['+', '-', '*'];
-        $randOperator = $operators[rand(0,2)];
-        $num1 = rand(1,9);
-        $num2 = rand(1,9);
-        $this->result = $this->calculate($num1,$randOperator, $num2);
+        $randOperator = $operators[rand(0, 2)];
+        $num1 = rand(1, 9);
+        $num2 = rand(1, 9);
+        $this->result = $this->calculate($num1, $randOperator, $num2);
         return $num1.$randOperator.$num2;
     }
 

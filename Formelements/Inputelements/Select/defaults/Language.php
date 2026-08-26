@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -9,7 +10,7 @@ namespace FrontendForms;
  * Outputs the language names always in the current user language
  *
  * Created by Jürgen K.
- * https://github.com/juergenweb 
+ * https://github.com/juergenweb
  * File name: Language.php
  * Created: 06.03.2023
  * Optimized via Claude AI 06.05.26
@@ -21,7 +22,6 @@ use ProcessWire\WirePermissionException;
 
 class Language extends Select
 {
-
     protected int|null $fixed_lang_id = null; // set fixed language as default independent of site language
     protected int $user_lang_id = 1010; // the current site language
 
@@ -68,7 +68,7 @@ class Language extends Select
      * @return string
      * @throws WireException
      */
-    public function renderLanguage(): string
+    public function ___renderLanguage(): string
     {
         if (count($this->wire('languages')) > 1) {
             $this->setDefaultValue($this->fixed_lang_id ?? $this->user_lang_id);

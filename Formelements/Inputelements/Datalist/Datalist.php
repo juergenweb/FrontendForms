@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -19,8 +20,10 @@ use ProcessWire\WirePermissionException;
 
 class Datalist extends InputText
 {
-
-    use TraitOption, TraitPWOptions, TraitOptionElements, TraitInputfields;
+    use TraitOption;
+    use TraitPWOptions;
+    use TraitOptionElements;
+    use TraitInputfields;
 
     protected string $listID = '';
 
@@ -60,8 +63,10 @@ class Datalist extends InputText
         $options = '';
 
         foreach ($this->options as $option) {
-            if ($option->hasAttribute('selected') && !$this->hasAttribute('value')) {
-                $this->setAttribute('value', $option->getAttribute('value'));
+            if ($option->hasAttribute('selected')) {
+                if (!$this->hasAttribute('value')) {
+                    $this->setAttribute('value', $option->getAttribute('value'));
+                }
                 $option->removeAttribute('selected');
             }
             $options .= $option->render();

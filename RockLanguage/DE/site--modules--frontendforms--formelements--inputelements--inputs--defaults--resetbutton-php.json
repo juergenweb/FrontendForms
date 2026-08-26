@@ -1,0 +1,9 @@
+{
+    "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Inputs\/defaults\/ResetButton.php",
+    "textdomain": "site--modules--frontendforms--formelements--inputelements--inputs--defaults--resetbutton-php",
+    "translations": {
+        "526d688f37a86d3c3f27d0c5016eb71d": {
+            "text": "Zur\u00fccksetzen"
+        }
+    }
+}

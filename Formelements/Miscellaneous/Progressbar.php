@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -15,14 +16,19 @@ namespace FrontendForms;
 
 class Progressbar extends Element
 {
-    protected string $markup = '';
-
+    /**
+     * @param string|null $id
+     */
     public function __construct(?string $id = null)
     {
         parent::__construct($id);
         $this->setTag('progress'); // default is progress
     }
 
+    /**
+     * Render the progressbar
+     * @return string
+     */
     public function ___render(): string
     {
         return $this->renderNonSelfclosingTag($this->getTag(), true, true);

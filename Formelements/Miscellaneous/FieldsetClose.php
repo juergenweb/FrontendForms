@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -15,12 +16,20 @@ namespace FrontendForms;
 
 class FieldsetClose extends Element
 {
+    /**
+     * Set up the fieldset closing tag
+     */
     public function __construct()
     {
         parent::__construct();
         $this->setTag('fieldset');
     }
 
+    /**
+     * Allow the element to be cast directly to a string, producing the
+     * same output as render().
+     * @return string
+     */
     public function __toString(): string
     {
         return $this->render();
@@ -30,7 +39,7 @@ class FieldsetClose extends Element
      * Render the fieldset close tag
      * @return string
      */
-    public function render(): string
+    public function ___render(): string
     {
         return '</' . $this->getTag() . '>';
     }

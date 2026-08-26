@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FrontendForms;
@@ -17,7 +18,6 @@ use Exception;
 
 class InputCheckbox extends InputRadioCheckbox
 {
-
     /**
      * @param string $id
      * @throws Exception
@@ -37,7 +37,7 @@ class InputCheckbox extends InputRadioCheckbox
      */
     public function setChecked(): self
     {
-        if (!$this->getServerMethod() || isset($_POST[$this->getAttribute('name')])) {
+        if (!$this->getServerMethod() || $this->hasPostValue()) {
             $this->setAttribute('checked');
         }
         return $this;
@@ -52,7 +52,14 @@ class InputCheckbox extends InputRadioCheckbox
     {
         $value = $this->getAttribute('value');
 
-        $isChecked = in_array($value, (array) $this->getDefaultValue(), strict: true)
+        // Only consider the default value before the form has ever been
+        // submitted - once submitted, only the actual post value should
+        // decide whether this checkbox is checked (see the same reasoning
+        // in InputCheckboxMultiple/InputRadioMultiple/InputRadio).
+        $isDefaultChecked = !$this->isSubmitted()
+            && in_array($value, (array) $this->getDefaultValue(), strict: true);
+
+        $isChecked = $isDefaultChecked
             || in_array($value, (array) $this->getPostValue(), strict: true);
 
         if ($isChecked) {

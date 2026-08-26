@@ -1,0 +1,12 @@
+{
+    "file": "site\/modules\/FrontendForms\/Validation\/ValidationRules\/FinancialRules.php",
+    "textdomain": "site--modules--frontendforms--validation--validationrules--financialrules-php",
+    "translations": {
+        "4817ffde994bd1a3a94835d0417faa75": {
+            "text": "ist keine g\u00fcltige IBAN."
+        },
+        "d92479f7ad57b27feac462877771b8e2": {
+            "text": "ist keine g\u00fcltige BIC."
+        }
+    }
+}
