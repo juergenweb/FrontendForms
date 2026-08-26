@@ -1943,11 +1943,187 @@ For a more detailed explanation of each validation rule, click on the link next 
 | [maxFileNumber](#maxFileNumber) (alias of previous allowedFileNumber) | Verifies that no more files than allowed are uploaded |
 | [minFileNumber](#minFileNumber) | Verifies that at least the required minimum number of files is uploaded |
 | [matchingExtMimeType](#matchingExtMimeType) | Security check: verifies that MIME type, file extension, and magic bytes all match <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
-| [fileRequired](#fileRequired) | Special "required" validator for file upload fields |
 | [noEmptyFiles](#noEmptyFiles) | Rejects empty files (zero bytes) from the upload <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
 | [minImageDimensions](#minImageDimensions) | Validates that all uploaded images meet a minimum width and height |
 | [aspectRatio](#aspectRatio) | Validates that all uploaded images match one of the allowed aspect ratios |
 | [uniqueFilenameInDir](#uniqueFilenameInDir) | Checks that an uploaded file's name is unique inside the upload destination directory |
+
+
+### phpIniUploadMaxFileSize
+Checks that upload_max_filesize (max size of a single file) is not exceeded. This rule takes care of server restrictions and limits. 
+
+```php
+$field->setRule('phpIniUploadMaxFileSize');
+```
+You do not need to add this rule to file upload fields, as it is already added by default.
+
+### phpIniPostMaxFileSize
+Checks that post_max_size (max total size of all uploaded files) is not exceeded. This rule takes care of server restrictions and limits. 
+
+```php
+$field->setRule('phpIniPostMaxFileSize');
+```
+You do not need to add this rule to file upload fields, as it is already added by default.
+
+### maxTotalFileSize
+Checks that the total size of all uploaded files does not exceed a configured limit. 
+
+```php
+$field->setRule('maxTotalFileSize', 10000); // as an integer in Bytes OR
+$field->setRule('maxTotalFileSize', '10000'); // as a string without a unit OR
+$field->setRule('maxTotalFileSize', '10 MB'); // as a string with a unit OR
+$field->setRule('maxTotalFileSize', 10*1024*1024); // as a calculation value
+```
+
+### maxSingleFileSize
+This validation checks if an uploaded file is not larger than the allowed filesize. It takes the value of
+$_FILES['size'] and compares it with the max file size set as second parameter.
+Returns true if the uploaded file is not larger than the allowed file size, otherwise false.
+
+First parameter: validation name / Second parameter: allowed filesize as an integer in Bytes or as a string with or without the unit in B, KB, MB, GB, TB or PB. If you do not enter a unit to a string, then the value will be interpreted automatically as bytes. 
+
+```php
+$field->setRule('maxSingleFileSize', 10000); // as an integer in Bytes OR
+$field->setRule('maxSingleFileSize', '10000'); // as a string without a unit OR
+$field->setRule('maxSingleFileSize', '10 MB'); // as a string with a unit OR
+$field->setRule('maxSingleFileSize', 10*1024*1024); // as a calculation value
+```
+Please note: If you enter the value without a unit, the converted filesize in KB, MB or something else will be a calculated number.
+Example: You enter 100 000 Bytes as the max filesize. This will be converted, e.g., to 100 000/1024 = 98 KB and not 100 KB. Please keep this in mind if you are using numbers without units.
+
+### noErrorOnUpload
+This validation checks if an error occurs during the upload of a file. It takes the value of
+$_FILES['error'] and outputs an error message if the value is not 0. Returns true if $_FILES['error'] = 0, otherwise false.
+
+Parameter: validation name
+
+
+```php
+$field->setRule('noErrorOnUpload');
+```
+
+Please note: This validator will be added to each input type file automatically. You can remove it if you want by using the removeRule('noErrorOnUpload') method.
+
+### allowedMimeTypes
+Verifies that all uploaded files have an allowed MIME type.
+
+```php
+$field->setRule('allowedMimeTypes', ['image/jpeg', 'image/png']);
+```
+
+Please note: This validator will be added to each input type file automatically, if you have set allowed mime types in the backend configuration. You can remove it if you want by using the removeRule('allowedMimeTypes') method.
+
+### forbiddenMimeTypes
+Verifies that no uploaded file has a forbidden MIME type. This is the opposite as *allowedMimeTypes*.
+
+```php
+$field->setRule('forbiddenMimeTypes', ['image/jpeg', 'image/png']);
+```
+
+### allowedFileExt
+This validation checks if an uploaded file is of one of the allowed extensions. It takes the value of
+$_FILES['name'] and extracts the extension. If the extension is not in the array of allowed extensions,
+an error message will be displayed. Returns true if the file's type is among the allowed file types, otherwise false.
+
+First parameter: validation name / Second parameter: array of allowed file extensions
+
+```php
+$field->setRule('allowedFileExt', ['jpg','pdf','doc']);
+```
+
+### forbiddenFileExt
+This validation checks if an uploaded file is of one of the forbidden extensions. It takes the value of
+$_FILES['name'] and extracts the extension. If the extension is in the array of forbidden extensions,
+an error message will be displayed. Returns true if the file's type is not among the forbidden file types, otherwise false.
+
+First parameter: validation name / Second parameter: array of forbidden file extensions
+
+```php
+$field->setRule('forbiddenFileExt', ['exe','pps']);
+```
+
+### maxFileNumber
+This validator checks if the number of files selected inside a file upload multiple field is not higher than the allowed number of files.
+
+Add the number of allowed files as the second parameter.
+
+```php
+$field->setRule('maxFileNumber', 3); // in this case the user is allowed to upload max. 3 files
+```
+
+### minFileNumber
+Verifies that at least the required minimum number of files is uploaded.
+
+Add the number of required files as the second parameter.
+
+```php
+$field->setRule('minFileNumber', 3); // in this case the user must upload at least 3 files
+```
+
+### matchingExtMimeType
+Security check: verifies that MIME type, file extension, and magic bytes all match.
+
+```php
+$field->setRule('matchingExtMimeType');
+```
+This validation rule will be added by default to each file upload field. 
+
+### noEmptyFiles
+Rejects empty files (zero bytes) from the upload 
+
+```php
+$field->setRule('noEmptyFiles');
+```
+This validation rule will be added by default to each file upload field. 
+
+### minImageDimensions
+Validates that all uploaded images meet a minimum width and height in pixels. 
+
+```php
+$field->setRule('minImageDimensions', [400,200]); // add width and height in pixels
+```
+First parameter is width and second is height.
+
+### aspectRatio
+Validates that all uploaded images match one of the allowed aspect ratios. 
+
+```php
+$field->setRule('aspectRatio', '16:9'); // add width and height as aspect ratio
+```
+
+
+### uniqueFilenameInDir
+This validation rule checks if a newly uploaded file has the same filename as a file inside the destination directory.
+
+In other words: If the filename of the uploaded file is textA.txt and inside the destination directory exists a file with the same name, this validator returns an error.
+
+```php
+$field->setRule('uniqueFilenameInDir');// Returns true or false
+```
+*Be aware*: Use this validator only if you want to store a file inside a directory/folder. Do not add it if you are only sending files as attachments via mails, because it is possible that you will get an error if the validator finds a file with the same name inside the asset folder of the page the upload form belongs to.
+
+As an addition you can set a parameter to force an overwrite of duplicate filenames.
+
+```php
+$field->setRule('uniqueFilenameInDir', true);// Returns always true but overwrites existing filenames
+```
+
+If you add true as the second parameter, every filename duplicate will be overwritten by adding the timestamp after the filename to make the filename unique.
+
+Example: testfile.txt will be overwritten, e.g., to testfile-95846567.txt if it exists inside the destination directory.
+
+In this case the validation rule returns always true.
+
+One thing to mention: Unfortunately, Valitron does not support the output of the value of the duplicate filename, so if you are having a multiple file upload field the user will get no information about which filename is a duplicate. 
+
+In this case it would be better to add true as second parameter and overwrite the filename.
+
+Maybe other custom validation rules will be added in the future. If you have an idea for a useful validator, please let me know.
+
+Inside the folder 'examples' you will find examples of the usage of validation rules inside the validationTypes.php.
+Take a look at these examples on how to write and add validation rules to your input fields.
+You can use as many validators to a field as you need.
+
 
 ### Validation rules for ZIP files
 | Validation rule name  | Explanation                                                                                                  |
@@ -2124,71 +2300,6 @@ Parameter: validation name
 $field->setRule('safePassword');
 ```
 
-### allowedFileSize
-This validation checks if an uploaded file is not larger than the allowed filesize. It takes the value of
-$_FILES['size'] and compare it with the max file size set as second parameter.
-Returns true if the uploaded file is not larger than the allowed file size, otherwise false.
-
-First parameter: validation name / Second parameter: allowed filesize as an integer in Bytes or as a string with or without the unit in B, KB, MB, GB, TB or PB. If you do not enter a unit to a string, than the value will be interpreted automatically as bytes. 
-
-```php
-$field->setRule('allowedFileSize', 10000); // as an integer in Bytes OR
-$field->setRule('allowedFileSize', '10000'); // as a string without an unit OR
-$field->setRule('allowedFileSize', '10 MB'); // as a string with an unit OR
-$field->setRule('allowedFileSize', 10*1024*1024); // as a calculation value
-```
-Please note: If you enter the value without an unit, the converted filesize in KB, MB or something else will be a calculated number.
-Example: You enter 100 000 Bytes as the max filesize. This will be converted fe to 100 000/1024 = 98KB and not 100 KB. Please keep this in mind if you are using numbers without units.
-
-### noErrorOnUpload
-This validation checks if an error occurs during the upload of a file. It takes the value of
-$_FILES['error'] and outputs an error message if the value is not 0. Returns true if $_FILES['error'] = 0, otherwise false.
-
-Parameter: validation name
-
-
-```php
-$field->setRule('noErrorOnUpload');
-```
-
-Please note: This validator will be added to each input type file automatically. You can remove it if you want by using the removeRule('noErrorOnUpload') method.
-
-
-### allowedFileExt
-This validation checks if an uploaded file is of one of the allowed extensions. It takes the value of
-$_FILES['name'] and extracts the extension. If the extension is not in the array of allowed extensions
-an error message will be displayed. Returns true if file is type of the allowed file types, otherwise false.
-
-First parameter: validation name / Second parameter: array of allowed file extensions
-
-```php
-$field->setRule('allowedFileExt', ['jpg','pdf','doc']);
-```
-
-### forbiddenFileExt
-This validation checks if an uploaded file is of one of the forbidden extensions. It takes the value of
-$_FILES['name'] and extracts the extension. If the extension is in the array of forbidden extensions
-an error message will be displayed. Returns true if file is not type of the forbidden file types, otherwise false.
-
-First parameter: validation name / Second parameter: array of forbidden file extensions
-
-```php
-$field->setRule('forbiddenFileExt', ['exe','pps']);
-```
-
-### phpIniFilesize
-This validation checks if an uploaded file is not larger than the allowed filesize as declared in the php.ini file.
-It takes the value of $_FILES['size'] and compare it the max file size of the php.ini file. Returns true if file is smaller than the allowed file size in php.ini file, otherwise false.
-
-Parameter: validation name
-
-```php
-$field->setRule('phpIniFilesize');
-```
-
-Please note: This validator will be added to each input type file automatically. You can remove it if you want by using the removeRule('phpIniFilesize') method.
-
-
 ### week
 This validation checks if the entered value is in the correct format of a week.
 The syntax should be YYYY-Www. The first 4 digits are the year followed by a hyphen an a W and the week of the number. The 12th week in 2023 should be written as followed: 2023-W12. Returns true if the week is written in the correct syntax, otherwise false.
@@ -2280,37 +2391,7 @@ The regex contains only allowed characters for international names. You can use 
 $field->setRule('firstAndLastname');
 ```
 
-### uniqueFilenameInDir
-This validation rule checks if a newly uploaded file has the same filename as a file inside the destination directory.
 
-In other words: If the filname of the uploaded file is textA.txt and inside the destination directory exists a file with the same name, this validator returns an error.
-
-```php
-$field->setRule('uniqueFilenameInDir');// Returns true or false
-```
-*Be aware*: Use this validator only if you want to store a file inside a directory/folder. Do not add it if you are only sending files as attachements via mails, because it is possible that you will get an error if the validator finds a file with the same name inside the asset folder of the page the upload form belongs too.
-
-As an addition you can set a parameter to force an overwrite of duplicate filenames.
-
-```php
-$field->setRule('uniqueFilenameInDir', true);// Returns always true but overwrites existing filenames
-```
-
-If you add true as the second parameter, ever filename duplicate will be overwritten by adding the timestamp after the filename to make the filename unique.
-
-Example: testfile.text will be overwritten fe to testfile-95846567.txt if it exists inside the destination directory.
-
-In this case the validation rule returns always true.
-
-One thing to mention: Unfortunately, Valitron does not support the output of the value of the duplicate filename, so if you are having an multiple file upload field the user will get no information about, which filename is a duplication. 
-
-In this case it would be better to add true as second parameter and overwrite the filename.
-
-Maybe other custom validation rules will be added in the future. If you have an idea for an useful validator, please let me know.
-
-Inside the folder 'examples' you will find examples of the usage of validation rules inside the validationTypes.php.
-Take a look at these examples on how to write and add validation rules to your input fields.
-You can use as many validators to a field as you need.
 
 ### compareTexts
 This validation rule checks if a text entered in an inputfield is present in an array of texts.
@@ -2345,26 +2426,7 @@ This validator checks if a name entered has the correct syntax of a cyrillic nam
 ```php
 $field->setRule('cyrillicName');
 ```
-### allowedFileNumber
-This validator checks if the number of files selected inside a file upload multiple field is not higher than the allowed number of files.
 
-Add the number of allowed files as the second parameter.
-
-```php
-$field->setRule('allowedFileNumber', 3); // in this case the user is allowed to upload max. 3 files
-```
-
-### allowedTotalFileSize
-This validator checks if the total size of all selected files inside a file upload multiple field is not higher than the allowed total file size.
-
-Add the total file size as the second parameter.
-
-```php
-$field->setRule('allowedTotalFileSize', 10000); // as an integer in Bytes OR
-$field->setRule('allowedTotalFileSize', '10000'); // as a string without an unit OR
-$field->setRule('allowedTotalFileSize', '10 MB'); // as a string with an unit OR
-$field->setRule('allowedTotalFileSize', 10*1024*1024); // as a calculation value
-```
 
 ### noLetters
 This validator checks if a string does not contain letters (a-z, A-Z and German Umlauts).
