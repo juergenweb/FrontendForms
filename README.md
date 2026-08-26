@@ -1931,20 +1931,20 @@ For a more detailed explanation of each validation rule, click on the link next 
 ### Validation rules for file uploads
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
-| [phpIniUploadMaxFileSize](#phpIniUploadMaxFileSize) | Checks that upload_max_filesize (max size of a single file) is not exceeded ![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
-| [phpIniPostMaxFileSize](#phpIniPostMaxFileSize) | Checks that post_max_size (max total size of all uploaded files) is not exceeded ![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange) |
+| [phpIniUploadMaxFileSize](#phpIniUploadMaxFileSize) | Checks that upload_max_filesize (max size of a single file) is not exceeded <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
+| [phpIniPostMaxFileSize](#phpIniPostMaxFileSize) | Checks that post_max_size (max total size of all uploaded files) is not exceeded <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange) |
 | [maxTotalFileSize](#maxTotalFileSize) (alias for previous allowedTotalFileSize) | Checks that the total size of all uploaded files does not exceed a configured limit |
 | [maxSingleFileSize](#maxSingleFileSize) (alias for previous allowedFileSize) | Checks that no single file exceeds a configured size limit (does not check files inside a ZIP archive) |
-| [noErrorOnUpload](#noErrorOnUpload) | Verifies that no error occurred during the upload ![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
+| [noErrorOnUpload](#noErrorOnUpload) | Verifies that no error occurred during the upload <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
 | [allowedMimeTypes](#allowedMimeTypes) | Verifies that all uploaded files have an allowed MIME type |
 | [forbiddenMimeTypes](#forbiddenMimeTypes) | Verifies that no uploaded file has a forbidden MIME type |
 | [allowedFileExt](#allowedFileExt) | Verifies that all uploaded files have an allowed file extension |
 | [forbiddenFileExt](#forbiddenFileExt) | Verifies that no uploaded file has a forbidden file extension |
 | [maxFileNumber](#maxFileNumber) (alias of previous allowedFileNumber) | Verifies that no more files than allowed are uploaded |
 | [minFileNumber](#minFileNumber) | Verifies that at least the required minimum number of files is uploaded |
-| [matchingExtMimeType](#matchingExtMimeType) | Security check: verifies that MIME type, file extension, and magic bytes all match ![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
+| [matchingExtMimeType](#matchingExtMimeType) | Security check: verifies that MIME type, file extension, and magic bytes all match <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
 | [fileRequired](#fileRequired) | Special "required" validator for file upload fields |
-| [noEmptyFiles](#noEmptyFiles) | Rejects empty files (zero bytes) from the upload ![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
+| [noEmptyFiles](#noEmptyFiles) | Rejects empty files (zero bytes) from the upload <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
 | [minImageDimensions](#minImageDimensions) | Validates that all uploaded images meet a minimum width and height |
 | [aspectRatio](#aspectRatio) | Validates that all uploaded images match one of the allowed aspect ratios |
 | [uniqueFilenameInDir](#uniqueFilenameInDir) | Checks that an uploaded file's name is unique inside the upload destination directory |
