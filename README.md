@@ -404,6 +404,14 @@ If you have an idea for an additional regex, let me know :-)
 
 Only to mention: not all browsers support each attribute and the design of the validation messages can differ from browser to browser.
 
+### Measure 8: STOP words to identify SPAM texts
+
+Here you can enter special STOP words that are typically for SPAM texts. Your custom STOP words will be used in combination with a STOP word list of WordPress which can be found [here](https://github.com/splorp/wordpress-comment-blocklist/blob/master/blacklist.txt). This list contains more than 60 000 SPAM words. All these words are used inside the *checkContentForSpam* validation rule, which searches for SPAM words inside a text.
+
+### Measure 9: Only allow certain MIME types for file uploads
+Some MIME types pose a higher security risk because they can execute code, bypass browser restrictions, or compromise your server if uploaded to a web-accessible directory.
+The most secure approach is to allow only specific MIME types rather than blocking specific MIME types.
+If a user uploads a file with a MIME type that is not allowed, the form submission will fail and an error message will be displayed. 
 
 ## Prevent double form submission
 There is also a session active which prevents double form submission after successful validation.
