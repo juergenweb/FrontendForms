@@ -1915,7 +1915,7 @@ $field->setRule('usernameSyntax');
 
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
-| [meetsPasswordConditions](#meetsPasswordConditions)  | Checks if a password entered meets the required conditions set in the backend <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20password%20fields-orange)|
+| [meetsPasswordConditions](#meetsPasswordConditions)  | Checks if a password entered meets the required conditions set in the backend <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20InputPassword-orange)|
 | [checkPasswordOfUser](#checkPasswordOfUser)  | This validation rule is for logged-in users only. Checks if entered password is the same as stored in the DB |
 | [differentPassword](#differentPassword)  | Checks if the password entered is different from the old password stored inside the database                 |
 | [safePassword](#safePassword)  | Checks if a password entered is not on the blacklist of forbidden passwords                                    |
@@ -2013,8 +2013,8 @@ $field->setRule('uniqueEmail');
 
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
-| [week](#week)  | Checks if the entered value is in the correct format of a week. The syntax should be YYYY-Www (fe 2023-W09)  <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20week%20fields-orange)|
-| [month](#month)  | Checks if the entered value is in the correct format of a month. The syntax should be YYYY-MM (fe 2023-09)   <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20month%20fields-orange)|                             
+| [week](#week)  | Checks if the entered value is in the correct format of a week. The syntax should be YYYY-Www (fe 2023-W09)  <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20InputWeek-orange)|
+| [month](#month)  | Checks if the entered value is in the correct format of a month. The syntax should be YYYY-MM (fe 2023-09)   <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20InputMonth-orange)|                             
 | [dateBeforeField](#datebeforefield)  | Checks if the entered date is before a given date set in another field                                       |
 | [dateAfterField](#dateafterfield)  | Checks if the entered date is after a given date set in another field                                        |
 | [dateWithinDaysRange](#datewithindaysrange)  | Checks if the entered date is within a given time range in days starting from a date set in another field     |
@@ -2095,19 +2095,19 @@ $field->setRule('dateOutsideOfDaysRange', 'date' 7);
 ### Validation rules for file uploads
 | Validation rule name  | Explanation                                                                                                  |
 | ------------- |--------------------------------------------------------------------------------------------------------------|
-| [phpIniUploadMaxFileSize](#phpIniUploadMaxFileSize) | Checks that upload_max_filesize (max size of a single file) is not exceeded <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
-| [phpIniPostMaxFileSize](#phpIniPostMaxFileSize) | Checks that post_max_size (max total size of all uploaded files) is not exceeded <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange) |
+| [phpIniUploadMaxFileSize](#phpIniUploadMaxFileSize) | Checks that upload_max_filesize (max size of a single file) is not exceeded <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20InputFile-orange)|
+| [phpIniPostMaxFileSize](#phpIniPostMaxFileSize) | Checks that post_max_size (max total size of all uploaded files) is not exceeded <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20InputFile-orange) |
 | [maxTotalFileSize](#maxTotalFileSize) (alias for previous allowedTotalFileSize) | Checks that the total size of all uploaded files does not exceed a configured limit |
 | [maxSingleFileSize](#maxSingleFileSize) (alias for previous allowedFileSize) | Checks that no single file exceeds a configured size limit (does not check files inside a ZIP archive) |
-| [noErrorOnUpload](#noErrorOnUpload) | Verifies that no error occurred during the upload <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
+| [noErrorOnUpload](#noErrorOnUpload) | Verifies that no error occurred during the upload <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20InputFile-orange)|
 | [allowedMimeTypes](#allowedMimeTypes) | Verifies that all uploaded files have an allowed MIME type |
 | [forbiddenMimeTypes](#forbiddenMimeTypes) | Verifies that no uploaded file has a forbidden MIME type |
 | [allowedFileExt](#allowedFileExt) | Verifies that all uploaded files have an allowed file extension |
 | [forbiddenFileExt](#forbiddenFileExt) | Verifies that no uploaded file has a forbidden file extension |
 | [maxFileNumber](#maxFileNumber) (alias of previous allowedFileNumber) | Verifies that no more files than allowed are uploaded |
 | [minFileNumber](#minFileNumber) | Verifies that at least the required minimum number of files is uploaded |
-| [matchingExtMimeType](#matchingExtMimeType) | Security check: verifies that MIME type, file extension, and magic bytes all match <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
-| [noEmptyFiles](#noEmptyFiles) | Rejects empty files (zero bytes) from the upload <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20fileupload%20fields-orange)|
+| [matchingExtMimeType](#matchingExtMimeType) | Security check: verifies that MIME type, file extension, and magic bytes all match <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20InputFile-orange)|
+| [noEmptyFiles](#noEmptyFiles) | Rejects empty files (zero bytes) from the upload <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20InputFile-orange)|
 | [minImageDimensions](#minImageDimensions) | Validates that all uploaded images meet a minimum width and height |
 | [aspectRatio](#aspectRatio) | Validates that all uploaded images match one of the allowed aspect ratios |
 | [uniqueFilenameInDir](#uniqueFilenameInDir) | Checks that an uploaded file's name is unique inside the upload destination directory |
@@ -2489,7 +2489,7 @@ This validation rule makes only sense for text fields, especially for textarea f
 | [compareTexts](#compareTexts)  | Checks if a text entered in an inputfield is present in an array of texts.  |
 | [firstAndLastname](#firstAndLastname)  | Validate that a name (first name, last name) contains only allowed letters, spaces, hyphens, apostrophes, and dots. |
 | [cyrillicname](#cyrillicname)  | Checks if a name entered in an inputfield is in the correct format of a cyrillic name.  |
-| [noLetters](#noletters) | Check if a string does not contain any letters and German Umlauts <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20phone%20fields-orange)|
+| [noLetters](#noletters) | Check if a string does not contain any letters and German Umlauts <br>![Notice](https://img.shields.io/badge/Please%20note-Added%20by%20default%20to%20InputPhone-orange)|
 | [noNumbers](#nonumbers) | Check if a string does not contain any number at all|
 | [requiredIfEqual](#requiredifequal) | Checks if a field is not empty if a conditional field is not empty too and has a specific value|
 | [requiredIfEmpty](#requiredifempty) | Checks if a field is not empty if aconditional field is empty|
