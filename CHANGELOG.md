@@ -2038,6 +2038,40 @@ There was a but displaying the text next to single upload fields. This has been 
 
 The new version of FrontendForms has been completely reworked with the help of AI. Security vulnerabilities have been fixed, bugs have been resolved, and new features have been added. The entire structure has also been redesigned to make the code more organized, scalable, and easier to maintain.
 
-This was therefore not a typical refactoring, but almost a complete rewrite of the entire module. More than 1,700 unit tests were also created with the help of AI to help ensure the functionality of the entire module. 
+Here are some of the milestones (though not all) of the refactoring.
 
-Please note that you will need to redo some translations in the backend because some of the translatable strings have changed.
+### New Security features:
+
+#### Extended ZIP Content Validation
+Comprehensive checks against ZIP-based attacks, including maximum file count and directory depth within the archive, maximum total uncompressed size (protection against ZIP bombs), and allowed/forbidden file extensions, including those in nested ZIP archives.
+
+#### Image Re-Encoding to Remove Hidden Code 
+Uploaded images are fully decoded and re-encoded using GD. This reliably removes any appended code (such as polyglot files containing both an image and PHP code) as well as payloads hidden in metadata, regardless of the specific attack technique. 
+File Permission Hardening
+chmod($targetFile, 0644) is applied after every successful upload to explicitly enforce secure, non-executable file permissions, regardless of the server's umask configuration.
+
+#### HTML Purifier Instead of Blind Escaping 
+Email placeholders are sanitized rather than fully escaped. This removes potentially dangerous HTML, such as <script> tags, event-handler attributes, and javascript: URLs, while preserving legitimate HTML, such as activation links. 
+
+#### escapeHTML() in JavaScript 
+Prevents HTML injection when elements are dynamically created using innerHTML (such as the image preview widget), in case values are ever influenced by less-trusted sources.
+
+##### Integrity Checks for External Downloads
+A defense-in-depth check for word lists downloaded from GitHub (password blacklist, stopwords) before they are stored locally. The checks include a size limit, rejection of PHP/script tags and null bytes, and validation of UTF-8 encoding. This helps prevent a compromised or manipulated source from injecting malicious code into local files.
+
+### New Security setting in the backend
+#### Restrict allowed MIME types for file uploads
+With this new feature, you can globally allow only certain file types for upload. Executable files with MIME types such as application/x-php, application/javascript, and others can no longer be uploaded.
+
+### New Validators added
+According to the new security features, many new validators have been added for file uploads. Some of them are added by default to file upload fields, while others have to be added manually.
+
+### JavaScript runs in its own namespace
+To prevent conflicts with other JavaScript code, FrontendForms now runs its JavaScript in its own namespace.
+
+### Buttons for manually updating all external lists
+Until now, only the password list could be updated manually by pressing a button. This is now also possible for other lists, such as the STOP word list.
+
+This was therefore not a typical refactoring, but almost a complete rewrite of the entire module. More than 1,700 unit tests were also created with the help of AI to help ensure the functionality of the entire module.
+
+Please note that you will need to redo some of the translations in the backend because some of the translatable strings have changed.
