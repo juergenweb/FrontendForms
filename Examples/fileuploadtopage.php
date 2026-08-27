@@ -29,11 +29,11 @@ $form = new \FrontendForms\Form('upload');
 
 $file1 = new \FrontendForms\InputFile('fileupload1');
 $file1->setLabel('Multiple files upload');
-$file1->setMultiple(true); // this method makes converts the upload field to be a multi-upload field
 $form->add($file1);
 
 $file2 = new \FrontendForms\InputFile('fileupload2');
 $file2->setLabel('Single file upload');
+$file2->setMultiple(false); // make single upload field
 $form->add($file2);
 
 $button = new \FrontendForms\Button('submit');
