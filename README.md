@@ -24,6 +24,7 @@ A module for ProcessWire to create and validate forms on the frontend easily usi
 * PHP>=8.0.0
 * ProcessWire>=3.0.181
 * GD-Library for CAPTCHA image creation
+* LazyCron 
 
 This module will work without GD-Library too, but you will not be able to use CAPTCHA in this case.
 
