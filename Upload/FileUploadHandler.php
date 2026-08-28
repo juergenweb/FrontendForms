@@ -136,6 +136,38 @@ final class FileUploadHandler
             return;
         }
 
+        // Correct the orientation before re-encoding, for JPEGs only
+        // (the format EXIF orientation actually applies to in practice).
+        // GD's imagecreatefromjpeg() never applies EXIF orientation
+        // automatically - without this step, a portrait phone photo
+        // (stored as landscape pixel data + an "Orientation" tag telling
+        // viewers to rotate it) would come out sideways after re-encoding,
+        // since the tag itself is discarded but the pixels were never
+        // physically rotated to match. Only the single, bounded
+        // Orientation value (1-8) is read here - not arbitrary EXIF
+        // bytes - so this doesn't reopen the metadata-based attack
+        // surface reEncodeIfImage() exists to close.
+        if ($type === IMAGETYPE_JPEG && function_exists('exif_read_data')) {
+            $exif = @exif_read_data($path);
+            $orientation = $exif['Orientation'] ?? 1;
+
+            $rotated = match ($orientation) {
+                2 => imageflip($image, IMG_FLIP_HORIZONTAL) ? $image : null,
+                3 => imagerotate($image, 180, 0),
+                4 => imageflip($image, IMG_FLIP_VERTICAL) ? $image : null,
+                5 => imageflip($image, IMG_FLIP_VERTICAL) ? imagerotate($image, -90, 0) : null,
+                6 => imagerotate($image, -90, 0),
+                7 => imageflip($image, IMG_FLIP_HORIZONTAL) ? imagerotate($image, -90, 0) : null,
+                8 => imagerotate($image, 90, 0),
+                default => null, // orientation 1 (normal) or unrecognized value - no change needed
+            };
+
+            if ($rotated !== null && $rotated !== $image) {
+                imagedestroy($image);
+                $image = $rotated;
+            }
+        }
+
         // PNG/GIF/WebP can have transparency - preserve it instead of
         // silently flattening to a solid background, which would
         // visibly corrupt the image
