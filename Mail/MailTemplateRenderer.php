@@ -77,17 +77,6 @@ final class MailTemplateRenderer extends Wire
      */
     public function includeMailTemplate(Module|Wire|WireArray|WireData $mail, string $defaultTemplate): void
     {
-        // TEMPORARY DIAGNOSTIC - remove after debugging
-        file_put_contents(
-            $this->form->wire('config')->paths->root . 'template-debug.txt',
-            date('Y-m-d H:i:s')
-            . " | BEFORE - mail->email_template=" . var_export($mail->email_template, true)
-            . " | defaultTemplate (arg)=" . var_export($defaultTemplate, true)
-            . " | this->template (MailTemplateRenderer property)=" . var_export($this->template, true)
-            . "\n",
-            FILE_APPEND
-        );
-
         // set email_template property if it was not set before
         if (!$mail->email_template) {
             $mail->email_template = $defaultTemplate;
@@ -100,15 +89,6 @@ final class MailTemplateRenderer extends Wire
                 // use the value from the FrontendForms module configuration
                 $mail->email_template = $defaultTemplate;
             }
-
-            // TEMPORARY DIAGNOSTIC - remove after debugging
-            file_put_contents(
-                $this->form->wire('config')->paths->root . 'template-debug.txt',
-                date('Y-m-d H:i:s')
-                . " | AFTER resolution - mail->email_template=" . var_export($mail->email_template, true)
-                . "\n",
-                FILE_APPEND
-            );
 
             if ($mail->email_template != 'none') {
 
