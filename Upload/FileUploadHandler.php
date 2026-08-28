@@ -188,6 +188,24 @@ final class FileUploadHandler
     }
 
     /**
+     * Resolve whether image re-rendering should happen for a given
+     * upload field: an explicit per-field override (set via
+     * InputFile::setImageReRender()) always wins; otherwise falls back
+     * to the global "Measure 10: Re-render uploaded images" module
+     * setting.
+     * @param InputFile $element
+     * @return bool
+     */
+    private function shouldReRenderImages(InputFile $element): bool
+    {
+        $override = $element->getImageReRender();
+        if ($override !== null) {
+            return $override;
+        }
+        return (bool) ($this->form->wire('modules')->getConfig('FrontendForms')['input_reRenderImages'] ?? 1);
+    }
+
+    /**
      * Store all uploaded files from InputFile fields inside the form in the
      * configured upload folder. Remembers the resulting paths internally,
      * retrievable via getUploadedFiles().
@@ -222,7 +240,9 @@ final class FileUploadHandler
                                         // server's umask/PHP process configuration
                                         chmod($targetFile, 0644);
                                         $uploadedFiles[] = $targetFile;
-                                        $this->reEncodeIfImage($targetFile);
+                                        if ($this->shouldReRenderImages($element)) {
+                                            $this->reEncodeIfImage($targetFile);
+                                        }
                                     }
                                 }
                             }
@@ -240,7 +260,9 @@ final class FileUploadHandler
                                 // server's umask/PHP process configuration
                                 chmod($targetFile, 0644);
                                 $uploadedFiles[] = $targetFile;
-                                $this->reEncodeIfImage($targetFile);
+                                if ($this->shouldReRenderImages($element)) {
+                                    $this->reEncodeIfImage($targetFile);
+                                }
                             }
                         }
                     }
