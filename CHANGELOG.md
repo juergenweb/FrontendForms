@@ -2079,4 +2079,5 @@ Please note that you will need to redo some of the translations in the backend b
 ## 2026-08-28
 
 **Debug function in MailTemplateRenderer.php removed**
+
 A debug function was still present in this file and has now been removed.
