@@ -2089,3 +2089,8 @@ Add EXIF orientation correction for JPEG images before re-encoding to ensure pro
 **Implement image re-rendering settings in form**
 
 Added a fieldset for re-rendering uploaded images with detailed settings and notes.
+
+
+**Language files updated**
+
+Default language files and RockLanguage files have been updated.
