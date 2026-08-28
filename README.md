@@ -414,6 +414,10 @@ Some MIME types pose a higher security risk because they can execute code, bypas
 The most secure approach is to allow only specific MIME types rather than blocking specific MIME types.
 If a user uploads a file with a MIME type that is not allowed, the form submission will fail and an error message will be displayed. 
 
+### Measure 10: Re-render images after upload
+Re-render (decode and re-save) uploaded images to strip any hidden payload that might be smuggled inside the original file bytes or metadata.
+This removes anything that relied on the original file bytes surviving untouched - e.g. a "polyglot" file that is simultaneously a valid image and valid PHP/HTML/JS code, or a payload hidden inside EXIF/metadata fields - regardless of the specific technique used. If unchecked, uploaded images are stored exactly as received.
+
 ## Prevent double form submission
 There is also a session active which prevents double form submission after successful validation.
 It compares the session value with the value of a hidden field. If the values are different, it is an indication that
@@ -1647,6 +1651,9 @@ These methods can only be used on certain input fields and not at all.
 | [getCharacterCounter()](#getcharactercounter---get-the-character-counter-object-described-in-the-previous-method-for-further-manipulations)  | get the character counter object for further manipulations  |
 | [addHorizontalRule()](#addhorizontalrule---add-a-hr-tag-to-select-input-fields-to-help-visually-break-up-the-options-for-a-better-user-experience)  | add hr tag to input selects for visually break up the options for a better user experience  |
 | [showTotalFileSize()](#showtotalfilesize---show-the-total-filesize-of-all-selected-files-inside-a-file-upload-field)| show total filesize of all selected files inside a file upload field
+| [setImageReRender()](#setImageReRender---Re-render-images-after-storing-them)| Re-render (decode and re-save) uploaded images to strip any hidden payload that might be smuggled inside the original file bytes or metadata.
+
+
 
 #### alignVertical() - set the alignment for checkboxes and radio buttons
 This is only a method for multiple checkboxes and radio buttons to align them vertical instead of horizontal (default).
@@ -1853,6 +1860,15 @@ $uploadfield->showTotalFileSize(true); // true or false
 ```
 
 ![Show total filesize](https://github.com/juergenweb/FrontendForms/blob/main/images/totalfilesize.png?raw=true)
+
+
+#### setImageReRender() - Re-render images after storing them
+
+This removes anything that relied on the original file bytes surviving untouched - e.g. a "polyglot" file that is simultaneously a valid image and valid PHP/HTML/JS code, or a payload hidden inside EXIF/metadata fields - regardless of the specific technique used. If set to false, uploaded images are stored exactly as received. Otherwise all data except the image data will be removed (fe. Exif data)
+
+```php
+$uploadfield->setImageReRender(true); // true or false
+```
 
 ## Additional Markup
 
