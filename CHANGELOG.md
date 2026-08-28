@@ -2085,3 +2085,7 @@ A debug function was still present in this file and has now been removed.
 **Implement JPEG EXIF orientation correction**
 
 Add EXIF orientation correction for JPEG images before re-encoding to ensure proper display.
+
+**Implement image re-rendering settings in form**
+
+Added a fieldset for re-rendering uploaded images with detailed settings and notes.
