@@ -2,32 +2,11 @@
     "file": "site\/modules\/FrontendForms\/Validation\/ValidationRules\/MiscellaneousRules.php",
     "textdomain": "site--modules--frontendforms--validation--validationrules--miscellaneousrules-php",
     "translations": {
-        "3bfd649d64d7881e876082ba4296ea72": {
-            "text": "enth\u00e4lt nicht den erwarteten Wert."
-        },
-        "1b3b26005f85ec26d26c406e2d604a55": {
-            "text": "unterscheidet sich nicht vom gegebenen Wert."
-        },
         "47d0b991eb42ea41be94a77c66ad608b": {
             "text": "ist kein g\u00fcltiger hexadezimaler Farbcode."
         },
-        "f0b8295b9f9bd13d9312262cd70f1365": {
-            "text": "enth\u00e4lt nicht die richtige Antwort."
-        },
-        "49b2b559e1b6ea96f3508dc155023d48": {
-            "text": "enth\u00e4lt ung\u00fcltige Zeichen. Ein kyrillischer Name darf nur Klein- und Gro\u00dfbuchstaben (\u0430-\u044f) sowie Bindestriche enthalten, jedoch keine Leerzeichen."
-        },
-        "f72b05ac0a4658c473ef8b455ecf0dbb": {
-            "text": "enth\u00e4lt mindestens eine Zahl, dies ist jedoch nicht erlaubt."
-        },
         "ee66f9c9930cb33d2a5dde9b240d3f7e": {
             "text": "ist erforderlich."
-        },
-        "09e1d1816564a23aa73ff34af0abad3b": {
-            "text": "wird bereits verwendet. Bitte geben Sie einen anderen Wert ein."
-        },
-        "81528df11236c294939dc2d6ef6a07b6": {
-            "text": "enth\u00e4lt Buchstaben, dies ist jedoch nicht erlaubt."
         }
     }
 }

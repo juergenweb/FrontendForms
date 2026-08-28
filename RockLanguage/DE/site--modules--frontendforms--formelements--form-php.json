@@ -2,6 +2,12 @@
     "file": "site\/modules\/FrontendForms\/Formelements\/Form.php",
     "textdomain": "site--modules--frontendforms--formelements--form-php",
     "translations": {
+        "e4e8a61a31a079875c2721207825142e": {
+            "text": "Bitte haben Sie etwas Geduld... Das Formular wird gepr\u00fcft!"
+        },
+        "274b68192b056e268f128ff63bfcd4a4": {
+            "text": "k.A."
+        },
         "eae639a70006feff484a39363c977e24": {
             "text": "="
         },
@@ -41,6 +47,21 @@
         "552663e8ba6eb0a7c5c16727f8d19bcc": {
             "text": "Es sind leider Fehler aufgetreten. Bitte \u00fcberpr\u00fcfen Sie Ihre Eingaben noch einmal."
         },
+        "dd1f775e443ff3b9a89270713580a51b": {
+            "text": "zur\u00fcck"
+        },
+        "10ac3d04253ef7e1ddc73e6091c0cd55": {
+            "text": "weiter"
+        },
+        "a3d9ae2d065e5a27c531a7dacd1735a4": {
+            "text": "Die Antwort ist falsch!"
+        },
+        "85b79eefe57522eeae18cd39fb97837a": {
+            "text": "Das Slider-Captcha wurde nicht richtig gel\u00f6st."
+        },
+        "d057415baac33355d5a125df279bd512": {
+            "text": "CAPTCHA"
+        },
         "79845fb11e473b1a0811ca2543f04b9c": {
             "text": "Versuche"
         },
@@ -56,14 +77,35 @@
         "8f42b5d8ad7d0119ad65510e26fa715c": {
             "text": "Sie haben Javascript nicht aktiviert. Dies k\u00f6nnte zu Problemen f\u00fchren. Bitte aktivieren Sie Javascript, um das Formular problemlos absenden zu k\u00f6nnen."
         },
+        "a359e357b438643f4ecddfa685e3ab68": {
+            "text": "Das Hochladen von Dateien per GET-Anfrage ist nicht m\u00f6glich. Bitte verwenden Sie stattdessen POST."
+        },
+        "da2d1e91e66ed810febf41c2857e1705": {
+            "text": "Ein Datei-Upload ist erst im letzten Schritt m\u00f6glich. Bitte verschieben Sie das\/die Datei-Upload-Feld(er) in den letzten Schritt. Sonst wird es nicht funktionieren."
+        },
         "092284a62a0f8c62fa528c0cfd3d157c": {
             "text": "Es tut uns leid, aber Ihre IP-Adresse %s steht auf der Liste der verbotenen IP-Adressen. Daher wird das Formular nicht angezeigt. Wenn Sie glauben, dass Ihre IP-Adresse f\u00e4lschlicherweise auf der Liste steht, wenden Sie sich bitte an den Administrator der Website."
+        },
+        "1bb62f28bc5d389b36a0e42b2a2d6a63": {
+            "text": "Sie haben keine Frage f\u00fcr Ihre Fragen-CAPTCHA hinzugef\u00fcgt!"
+        },
+        "1661e10f0e3721d8a4c907fee18e6425": {
+            "text": "Sie haben keine Antworten f\u00fcr Ihre Fragen-CAPTCHA hinzugef\u00fcgt!"
+        },
+        "7101c396b133aa31a4ddfc686b2c093a": {
+            "text": "Wenn Sie diesen Fehler nicht korrigieren, k\u00f6nnen Sie dieses Fragen-CAPTCHA nicht verwenden und es wird auch nicht angezeigt."
         },
         "9604672fb8882c926b1fcf42c89576d7": {
             "text": "Sie haben die max. Anzahl von Versuchen erreicht und aus diesem Grund k\u00f6nnen Sie das Formular nun nicht mehr absenden. Um die Sperrung aufzuheben und das Formular dennoch abzusenden schlie\u00dfen Sie bitte den Browser, \u00f6ffnen ihn erneut und besuchen Sie diese Seite noch einmal."
         },
-        "e4e8a61a31a079875c2721207825142e": {
-            "text": "Bitte haben Sie etwas Geduld... Das Formular wird gepr\u00fcft!"
+        "cc8c4c54107b291b093ffed9bf40f2f5": {
+            "text": "Schritt %s von %s"
+        },
+        "716f6b30598ba30945d84485e61c1027": {
+            "text": "schlie\u00dfen"
+        },
+        "de95b43bceeb4b998aed4aed5cef1ae7": {
+            "text": "bearbeiten"
         },
         "84cdc76cabf41bd7c961f6ab12f117d8": {
             "text": "Jahr"
@@ -103,48 +145,6 @@
         },
         "72cf6df09879e3c5e34778bf6f1bc965": {
             "text": "E-Mail konnte aufgrund einer fehlerhaften Konfiguration in den Einstellungen nicht gesendet werden."
-        },
-        "d057415baac33355d5a125df279bd512": {
-            "text": "CAPTCHA"
-        },
-        "a3d9ae2d065e5a27c531a7dacd1735a4": {
-            "text": "Die Antwort ist falsch!"
-        },
-        "1bb62f28bc5d389b36a0e42b2a2d6a63": {
-            "text": "Sie haben keine Frage f\u00fcr Ihre Fragen-CAPTCHA hinzugef\u00fcgt!"
-        },
-        "1661e10f0e3721d8a4c907fee18e6425": {
-            "text": "Sie haben keine Antworten f\u00fcr Ihre Fragen-CAPTCHA hinzugef\u00fcgt!"
-        },
-        "7101c396b133aa31a4ddfc686b2c093a": {
-            "text": "Wenn Sie diesen Fehler nicht korrigieren, k\u00f6nnen Sie dieses Fragen-CAPTCHA nicht verwenden und es wird auch nicht angezeigt."
-        },
-        "85b79eefe57522eeae18cd39fb97837a": {
-            "text": "Das Slider-Captcha wurde nicht richtig gel\u00f6st."
-        },
-        "274b68192b056e268f128ff63bfcd4a4": {
-            "text": "k.A."
-        },
-        "a359e357b438643f4ecddfa685e3ab68": {
-            "text": "Das Hochladen von Dateien per GET-Anfrage ist nicht m\u00f6glich. Bitte verwenden Sie stattdessen POST."
-        },
-        "de95b43bceeb4b998aed4aed5cef1ae7": {
-            "text": "bearbeiten"
-        },
-        "10ac3d04253ef7e1ddc73e6091c0cd55": {
-            "text": "weiter"
-        },
-        "cc8c4c54107b291b093ffed9bf40f2f5": {
-            "text": "Schritt %s von %s"
-        },
-        "716f6b30598ba30945d84485e61c1027": {
-            "text": "schlie\u00dfen"
-        },
-        "dd1f775e443ff3b9a89270713580a51b": {
-            "text": "zur\u00fcck"
-        },
-        "da2d1e91e66ed810febf41c2857e1705": {
-            "text": "Ein Datei-Upload ist erst im letzten Schritt m\u00f6glich. Bitte verschieben Sie das\/die Datei-Upload-Feld(er) in den letzten Schritt. Sonst wird es nicht funktionieren."
         }
     }
 }

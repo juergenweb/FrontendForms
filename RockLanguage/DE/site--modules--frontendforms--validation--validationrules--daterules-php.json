@@ -8,6 +8,9 @@
         "b0d908ec678733c7502c937c811a7a32": {
             "text": "ist kein g\u00fcltiger Monat. Bitte verwende das Format JJJJ-MM (z. B. 2023-06)."
         },
+        "ebd6f3c1b3bc3828c5ed85710fa192b4": {
+            "text": "ist kein g\u00fcltiges Zeitformat. Verwenden Sie das Format HH:MM oder HH:MM:SS (z. B. 14:30)."
+        },
         "631c49fb2a0a41ae81fb7c7dc09a6571": {
             "text": "muss ein Datum vor %s sein."
         },
@@ -19,9 +22,6 @@
         },
         "8fd6a6fab1412320fa0de60e984c37cc": {
             "text": "muss au\u00dferhalb des eingeschr\u00e4nkten Zeitraums liegen."
-        },
-        "ebd6f3c1b3bc3828c5ed85710fa192b4": {
-            "text": "ist kein g\u00fcltiges Zeitformat. Verwenden Sie das Format HH:MM oder HH:MM:SS (z. B. 14:30)."
         }
     }
 }

@@ -848,6 +848,33 @@
         "b78ab1cd18483245a5ab325e6b209ed0": {
             "text": "Das Formular wird in jedem Fall auf dem Server validiert, aber Sie k\u00f6nnen auch die HTML5-Browservalidierung verwenden, damit die Formularwerte auch validiert werden, bevor sie an den Server gesendet werden."
         },
+        "25b3f0eaa795100fe4f9c24291ec3f15": {
+            "text": "Ma\u00dfnahme 8: Stoppw\u00f6rter zur Identifizierung von SPAM-Texten"
+        },
+        "7123d891b4eff7c50e0b9306bc457b69": {
+            "text": "Definieren Sie einige Stoppw\u00f6rter, die \u00fcber den Validator \"checkContentForSpam\" \u00fcberpr\u00fcft werden k\u00f6nnen."
+        },
+        "b44b67b26c628993f0fef14e305a1fba": {
+            "text": "STOP-Wortliste"
+        },
+        "f568d5a999a59a5aabff2e2f23cb7179": {
+            "text": "Geben Sie W\u00f6rter ein, die in Texten nicht erlaubt sind (jedes Wort in einer neuen Zeile)."
+        },
+        "bc7aafc341a5978f2bd04c20859772d7": {
+            "text": "Diese Liste wird vom \"checkContentForSpam\"-Validator verwendet, um ein Textfeld mit STOP-W\u00f6rtern und anderen SPAM-Indikatoren zu \u00fcberpr\u00fcfen."
+        },
+        "38f6995b9ef89f27b1e80d9c2d5f761f": {
+            "text": "Der Validator gibt false zur\u00fcck, wenn viele SPAM-Indikatoren (nicht nur STOP-W\u00f6rter) gefunden wurden, ansonsten true."
+        },
+        "0ec1afdafb938691c120e2ed55b6fa9b": {
+            "text": "Dieser Validator wurde speziell f\u00fcr Texarea-Felder entwickelt, die beispielsweise eine Nachricht eines Kontaktformulars enthalten."
+        },
+        "5b761e0a69a936f27a374af9329e6737": {
+            "text": "Diese Liste ist f\u00fcr Ihre eigenen benutzerdefinierten SPAM-W\u00f6rter. Alle anderen SPAM-W\u00f6rter (\u00fcber 60.000) werden aus %s \u00fcbernommen und alle 4 Wochen automatisch in FrontendForms heruntergeladen."
+        },
+        "e108a8c086d39b0e1af2467862132a59": {
+            "text": "Der Validator pr\u00fcft, ob W\u00f6rter aus dieser langen Liste im Text enthalten sind, und markiert den Text dann als SPAM."
+        },
         "8f2bb91c583e42fa3e2b720a6c8a192f": {
             "text": "Statistiken blockierter Besucher"
         },
@@ -887,33 +914,6 @@
         "eac81cf85a218bdfa7a2b63d062fe715": {
             "text": "Standardm\u00e4\u00dfig werden alle E-Mails mit WireMail versendet, aber Sie k\u00f6nnen in diesem Feld auch ein benutzerdefiniertes Modul f\u00fcr den Versand von E-Mails ausw\u00e4hlen."
         },
-        "25b3f0eaa795100fe4f9c24291ec3f15": {
-            "text": "Ma\u00dfnahme 8: Stoppw\u00f6rter zur Identifizierung von SPAM-Texten"
-        },
-        "7123d891b4eff7c50e0b9306bc457b69": {
-            "text": "Definieren Sie einige Stoppw\u00f6rter, die \u00fcber den Validator \"checkContentForSpam\" \u00fcberpr\u00fcft werden k\u00f6nnen."
-        },
-        "b44b67b26c628993f0fef14e305a1fba": {
-            "text": "STOP-Wortliste"
-        },
-        "f568d5a999a59a5aabff2e2f23cb7179": {
-            "text": "Geben Sie W\u00f6rter ein, die in Texten nicht erlaubt sind (jedes Wort in einer neuen Zeile)."
-        },
-        "bc7aafc341a5978f2bd04c20859772d7": {
-            "text": "Diese Liste wird vom \"checkContentForSpam\"-Validator verwendet, um ein Textfeld mit STOP-W\u00f6rtern und anderen SPAM-Indikatoren zu \u00fcberpr\u00fcfen."
-        },
-        "38f6995b9ef89f27b1e80d9c2d5f761f": {
-            "text": "Der Validator gibt false zur\u00fcck, wenn viele SPAM-Indikatoren (nicht nur STOP-W\u00f6rter) gefunden wurden, ansonsten true."
-        },
-        "0ec1afdafb938691c120e2ed55b6fa9b": {
-            "text": "Dieser Validator wurde speziell f\u00fcr Texarea-Felder entwickelt, die beispielsweise eine Nachricht eines Kontaktformulars enthalten."
-        },
-        "5b761e0a69a936f27a374af9329e6737": {
-            "text": "Diese Liste ist f\u00fcr Ihre eigenen benutzerdefinierten SPAM-W\u00f6rter. Alle anderen SPAM-W\u00f6rter (\u00fcber 60.000) werden aus %s \u00fcbernommen und alle 4 Wochen automatisch in FrontendForms heruntergeladen."
-        },
-        "e108a8c086d39b0e1af2467862132a59": {
-            "text": "Der Validator pr\u00fcft, ob W\u00f6rter aus dieser langen Liste im Text enthalten sind, und markiert den Text dann als SPAM."
-        },
         "5b69485d8306131960b9de0e500d3d7f": {
             "text": "Entschuldigung, aber die angeforderte Datei konnte nicht von GitHub heruntergeladen werden."
         },
@@ -928,6 +928,21 @@
         },
         "f16756cb9600a2b61f6007d4d0e8a904": {
             "text": "Die IP-Adresse %s wurde in der IP-Blacklist nicht gefunden und konnte nicht entfernt werden."
+        },
+        "f8d3589fa7a033404829e74246630287": {
+            "text": "Die Website wurde nach neuen Schriftarten durchsucht."
+        },
+        "f5b7e47d1a36b3cfc76c0b1df6049037": {
+            "text": "In diesem Formular gibt es nicht gespeicherte \u00c4nderungen. Wenn Sie weitermachen, gehen diese \u00c4nderungen verloren, da diese Aktion nur die zugeh\u00f6rigen Einstellungen speichert. Bitte speichern Sie zuerst Ihre \u00c4nderungen oder w\u00e4hlen Sie \"Weiter\", um sie zu verwerfen."
+        },
+        "a0bfb8e59e6c13fc8d990781f77694fe": {
+            "text": "Weiter"
+        },
+        "ea4788705e6873b424c65e91c2846b19": {
+            "text": "Abbrechen"
+        },
+        "e0aa021e21dddbd6d8cecec71e9cf564": {
+            "text": "Ok"
         },
         "b902686b3f281acb10482c7d26fa8f87": {
             "text": "Letzte automatische Passwort\u00fcberpr\u00fcfung mittels CronJob: %s (%s)."
@@ -983,20 +998,26 @@
         "d74a3a593a22d4f3e3812012f0d24ff0": {
             "text": "Beispiele f\u00fcr MIME-Typen:"
         },
-        "e0aa021e21dddbd6d8cecec71e9cf564": {
-            "text": "Ok"
+        "de25d7fa7d62d750a846b81dcb3b37f9": {
+            "text": "\u00d6ffnet in einem neuen Fenster"
         },
-        "f8d3589fa7a033404829e74246630287": {
-            "text": "Die Website wurde nach neuen Schriftarten durchsucht."
+        "97e598afb062542d895c9001de901a0c": {
+            "text": "Ma\u00dfnahme 10: Hochgeladene Bilder neu rendern"
         },
-        "f5b7e47d1a36b3cfc76c0b1df6049037": {
-            "text": "In diesem Formular gibt es nicht gespeicherte \u00c4nderungen. Wenn Sie weitermachen, gehen diese \u00c4nderungen verloren, da diese Aktion nur die zugeh\u00f6rigen Einstellungen speichert. Bitte speichern Sie zuerst Ihre \u00c4nderungen oder w\u00e4hlen Sie \"Weiter\", um sie zu verwerfen."
+        "45702437a67f53c4e4ed0c3b576f2c5d": {
+            "text": "Hochgeladene Bilder neu rendern (dekodieren und erneut speichern), um versteckte und sch\u00e4dliche Daten zu entfernen, die in den urspr\u00fcnglichen Dateibytes oder Metadaten eingeschleust worden sein k\u00f6nnten."
         },
-        "a0bfb8e59e6c13fc8d990781f77694fe": {
-            "text": "Weiter"
+        "7fb4a8c7243dfe742fd7722be452ebad": {
+            "text": "Einstellung f\u00fcr die Bild-Neuverarbeitung"
         },
-        "ea4788705e6873b424c65e91c2846b19": {
-            "text": "Abbrechen"
+        "12df93cb0dfdb44947e6f9999b26dde6": {
+            "text": "Hochgeladene Bilder nach dem Speichern neu rendern"
+        },
+        "60f07bac226563a41dd1977620cd7c08": {
+            "text": "Wenn diese Option aktiviert ist, wird jedes hochgeladene Bild dekodiert und anschlie\u00dfend als neue Datei gespeichert, die ausschlie\u00dflich die eigentlichen Pixeldaten enth\u00e4lt. Dadurch werden m\u00f6gliche sch\u00e4dliche Inhalte entfernt \u2013 beispielsweise eine \u201ePolyglot\u201c-Datei, die gleichzeitig ein g\u00fcltiges Bild und g\u00fcltiger PHP-\/HTML-\/JS-Code ist, oder in EXIF-\/Metadatenfeldern versteckte Nutzdaten \u2013 unabh\u00e4ngig davon, welche konkrete Technik verwendet wurde.\nWenn diese Option deaktiviert ist, werden hochgeladene Bilder exakt so gespeichert, wie sie empfangen wurden."
+        },
+        "8d124deed6028b4cb723e877cd8f114e": {
+            "text": "Hinweis: Diese globale Einstellung kann f\u00fcr jedes Datei-Upload-Feld individuell \u00fcberschrieben werden, indem die Methode %s f\u00fcr das Upload-Feld verwendet wird."
         }
     }
 }

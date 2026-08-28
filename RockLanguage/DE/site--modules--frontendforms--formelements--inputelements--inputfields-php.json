@@ -2,78 +2,6 @@
     "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Inputfields.php",
     "textdomain": "site--modules--frontendforms--formelements--inputelements--inputfields-php",
     "translations": {
-        "d8b0ef2b22e79194c0cb1e79340e6767": {
-            "text": "Bitte laden Sie keine Dateien hoch, die gr\u00f6\u00dfer als %s sind"
-        },
-        "a0072ad6390e4bf1839ad0ede52c2e69": {
-            "text": "Erlaubte Dateitypen: %s"
-        },
-        "1200911cc09227463a876a1e56e34536": {
-            "text": "%s darf nur Buchstaben enthalten"
-        },
-        "4083de02c277bb0425f3aa9bad2332d0": {
-            "text": "%s darf nur Buchstaben und Zahlen enthalten"
-        },
-        "9dde428a87d3efada8d9a0c198ac0edd": {
-            "text": "%s darf nur ASCII-Zeichen enthalten"
-        },
-        "fbb7405f1ba06168450a02769a5e518e": {
-            "text": "%s darf nur Buchstaben, Zahlen, Unterstriche oder Bindestriche enthalten"
-        },
-        "120dffae912cfa02a117a7684bed3c95": {
-            "text": "%s muss eine g\u00fcltige URL beginnend die mit http:\/\/ oder https:\/\/ sein"
-        },
-        "b250e98dcbdfaed9ef7c189ee93dbdd9": {
-            "text": "%s muss eine g\u00fcltige E-Mail-Adresse sein"
-        },
-        "175b959de6b30258c49097a92d3b3957": {
-            "text": "%s darf nur Ganzzahlen enthalten"
-        },
-        "0b7dbda7a3f1f8322681cca8107c4e86": {
-            "text": "%s darf nur eine g\u00fcltige IP-Adresse im Format x.x.x.x enthalten"
-        },
-        "a0d61e675ea7f8e7b05398a8b1a65cb9": {
-            "text": "%s darf nur eine g\u00fcltige IPv4-Adresse im Format x.x.x.x enthalten"
-        },
-        "c524413c58ede6f4029283b534da7846": {
-            "text": "%s darf nur eine g\u00fcltige IPv6-Adresse im Format x:x:x:x:x:x:x:x enthalten"
-        },
-        "d8c7bf5cd88682b17b9f4b1eba991f92": {
-            "text": "%s darf nur ein g\u00fcltiges Datum im Format %s enthalten"
-        },
-        "bb4345694f2874fabb71ab8e01c48df6": {
-            "text": "%s enth\u00e4lt einen ung\u00fcltigen Wert"
-        },
-        "5023212f0c2560a1dfd4a1547f2e738c": {
-            "text": "%s muss genau den Wert %s enthalten"
-        },
-        "5bf4df175a2c543ba607e1f8e8ffcd65": {
-            "text": "%s darf nicht den Wert %s enthalten"
-        },
-        "b5636cc5ae7dc2e4495ac2dd2adada93": {
-            "text": "%s muss eine g\u00fcltige Woche im Format YYYY-Www enthalten"
-        },
-        "e1c152c6ff80439f69e2db72bb3ade3b": {
-            "text": "muss ein g\u00fcltiges Monat im Format YYYY-MM enthalten"
-        },
-        "98be58eb3446f813bc644faac5e42264": {
-            "text": "%s muss ein g\u00fcltiger Hexadecimal Code im Format #XXX oder #XXXXXX sein"
-        },
-        "2e11a9d7108deb69fe82819f5905bfee": {
-            "text": "Bitte w\u00e4hlen Sie nicht mehr als %s Dateien aus"
-        },
-        "679c8947fd87698642698e9571b87b66": {
-            "text": "Die Gesamtgr\u00f6\u00dfe aller hochgeladenen Dateien darf %s nicht \u00fcberschreiten."
-        },
-        "0dbf6eced8bc871d39cec4d5a145f8a2": {
-            "text": "Dieses Feld"
-        },
-        "bf6ac479841bb45d2ee40e1cced66241": {
-            "text": "%s enth\u00e4lt Buchstaben welche aber nicht erlaubt sind"
-        },
-        "6facae2989c4f1db93ede942ce268737": {
-            "text": "%s darf nur erlaubte Zeichen f\u00fcr Namen enthalten."
-        },
         "f1ad5d525baf191da55e02d01616fc29": {
             "text": "ZIP-Ordner m\u00fcssen mindestens %s Dateien enthalten"
         },
@@ -98,8 +26,41 @@
         "e685a1c86131e8f78ed6531ec20cbbde": {
             "text": "ZIP-Dateien d\u00fcrfen keine Dateien der folgenden Dateitypen enthalten: %s"
         },
+        "d8b0ef2b22e79194c0cb1e79340e6767": {
+            "text": "Bitte laden Sie keine Dateien hoch, die gr\u00f6\u00dfer als %s sind"
+        },
+        "679c8947fd87698642698e9571b87b66": {
+            "text": "Die Gesamtgr\u00f6\u00dfe aller hochgeladenen Dateien darf %s nicht \u00fcberschreiten."
+        },
+        "2e11a9d7108deb69fe82819f5905bfee": {
+            "text": "Bitte w\u00e4hlen Sie nicht mehr als %s Dateien aus"
+        },
+        "a0072ad6390e4bf1839ad0ede52c2e69": {
+            "text": "Erlaubte Dateitypen: %s"
+        },
         "becc30bc5291a8631f3681343530de6a": {
             "text": "Erlaubte Dateitypen innerhalb von ZIP-Dateien: %s"
+        },
+        "1200911cc09227463a876a1e56e34536": {
+            "text": "%s darf nur Buchstaben enthalten"
+        },
+        "4083de02c277bb0425f3aa9bad2332d0": {
+            "text": "%s darf nur Buchstaben und Zahlen enthalten"
+        },
+        "6facae2989c4f1db93ede942ce268737": {
+            "text": "%s darf nur erlaubte Zeichen f\u00fcr Namen enthalten."
+        },
+        "9dde428a87d3efada8d9a0c198ac0edd": {
+            "text": "%s darf nur ASCII-Zeichen enthalten"
+        },
+        "fbb7405f1ba06168450a02769a5e518e": {
+            "text": "%s darf nur Buchstaben, Zahlen, Unterstriche oder Bindestriche enthalten"
+        },
+        "120dffae912cfa02a117a7684bed3c95": {
+            "text": "%s muss eine g\u00fcltige URL beginnend die mit http:\/\/ oder https:\/\/ sein"
+        },
+        "b250e98dcbdfaed9ef7c189ee93dbdd9": {
+            "text": "%s muss eine g\u00fcltige E-Mail-Adresse sein"
         },
         "3b63e2f928f8efe8734bba58bb54eb83": {
             "text": "%s ist keine g\u00fcltige Zeit. Sie m\u00fcssen die Zeit in diesem Format eingeben: HH:MM:SS (z.B. 19:00:00)"
@@ -107,14 +68,53 @@
         "e1670e29ba274f888823e37043649475": {
             "text": "%s sollte nur Zahlen enthalten (ganze Zahlen oder Kommazahlen mit Punkt, kein Komma)"
         },
+        "175b959de6b30258c49097a92d3b3957": {
+            "text": "%s darf nur Ganzzahlen enthalten"
+        },
+        "0b7dbda7a3f1f8322681cca8107c4e86": {
+            "text": "%s darf nur eine g\u00fcltige IP-Adresse im Format x.x.x.x enthalten"
+        },
+        "a0d61e675ea7f8e7b05398a8b1a65cb9": {
+            "text": "%s darf nur eine g\u00fcltige IPv4-Adresse im Format x.x.x.x enthalten"
+        },
+        "c524413c58ede6f4029283b534da7846": {
+            "text": "%s darf nur eine g\u00fcltige IPv6-Adresse im Format x:x:x:x:x:x:x:x enthalten"
+        },
         "1561967c772eb4b2cd22b3bfeb59a6bf": {
             "text": "%s enth\u00e4lt nicht erlaubten Zeichen oder ist l\u00e4nger als 128 Zeichen. Erlaubte Zeichen sind: Buchstaben, Zahlen, Unterstriche und Striche (keine Leerzeichen)"
+        },
+        "d8c7bf5cd88682b17b9f4b1eba991f92": {
+            "text": "%s darf nur ein g\u00fcltiges Datum im Format %s enthalten"
+        },
+        "bb4345694f2874fabb71ab8e01c48df6": {
+            "text": "%s enth\u00e4lt einen ung\u00fcltigen Wert"
+        },
+        "5023212f0c2560a1dfd4a1547f2e738c": {
+            "text": "%s muss genau den Wert %s enthalten"
+        },
+        "5bf4df175a2c543ba607e1f8e8ffcd65": {
+            "text": "%s darf nicht den Wert %s enthalten"
+        },
+        "b5636cc5ae7dc2e4495ac2dd2adada93": {
+            "text": "%s muss eine g\u00fcltige Woche im Format YYYY-Www enthalten"
         },
         "18ae9260caf7ce5a05c34b70bddff18c": {
             "text": "%s sollte nur ein g\u00fcltiges Datum im Format dd.MM.YYYY enthalten."
         },
         "e578185cfdb5bb878f5b48f7901848d2": {
             "text": "%s muss das Wort %s enthalten"
+        },
+        "e1c152c6ff80439f69e2db72bb3ade3b": {
+            "text": "muss ein g\u00fcltiges Monat im Format YYYY-MM enthalten"
+        },
+        "98be58eb3446f813bc644faac5e42264": {
+            "text": "%s muss ein g\u00fcltiger Hexadecimal Code im Format #XXX oder #XXXXXX sein"
+        },
+        "0dbf6eced8bc871d39cec4d5a145f8a2": {
+            "text": "Dieses Feld"
+        },
+        "bf6ac479841bb45d2ee40e1cced66241": {
+            "text": "%s enth\u00e4lt Buchstaben welche aber nicht erlaubt sind"
         },
         "df0fc2bb94d191c9cd93d5890ad8efc6": {
             "text": "ZIP-Dateien d\u00fcrfen nur die folgenden Dateitypen enthalten: %s"
