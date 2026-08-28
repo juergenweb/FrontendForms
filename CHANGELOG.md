@@ -2075,3 +2075,8 @@ Until now, only the password list could be updated manually by pressing a button
 This was therefore not a typical refactoring, but almost a complete rewrite of the entire module. More than 1,700 unit tests were also created with the help of AI to help ensure the functionality of the entire module.
 
 Please note that you will need to redo some of the translations in the backend because some of the translatable strings have changed.
+
+## 2026-08-28
+
+**Debug function in MailTemplateRenderer.php removed**
+A debug function was still present in this file and has now been removed.
