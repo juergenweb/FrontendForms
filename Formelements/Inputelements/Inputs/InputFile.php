@@ -25,6 +25,7 @@ class InputFile extends Input
     protected bool $multiple = true;
     protected bool $showClearLink = true;
     protected bool $showTotalFileSize = false;
+    protected ?bool $imageReRender = null; // null = no per-field override, follow the global module setting
 
     /**
      * @throws Exception
@@ -123,6 +124,30 @@ class InputFile extends Input
     public function showClearLink(bool $show = false): void
     {
         $this->showClearLink = $show;
+    }
+
+    /**
+     * Explicitly enable or disable image re-rendering for this specific
+     * upload field, overriding the global "Measure 10: Re-render
+     * uploaded images" module setting for this field only.
+     * @param bool $reRender
+     * @return $this
+     */
+    public function setImageReRender(bool $reRender = true): self
+    {
+        $this->imageReRender = $reRender;
+        return $this;
+    }
+
+    /**
+     * Get the per-field image re-rendering override, if one was set via
+     * setImageReRender(). Returns null if no override was set for this
+     * field, meaning the global module setting should be used instead.
+     * @return bool|null
+     */
+    public function getImageReRender(): ?bool
+    {
+        return $this->imageReRender;
     }
 
     /**
