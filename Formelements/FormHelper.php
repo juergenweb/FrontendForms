@@ -352,4 +352,33 @@ class FormHelper
     {
         return preg_replace('/[^A-Za-z\d-]+/', '-', $string);
     }
+
+    /**
+     * Convert a string that looks like a PHP array literal (e.g.
+     * "['16:9', '4:3']" or "[4, 3]") into a plain, comma-separated
+     * string (e.g. "16:9, 4:3" or "4, 3") - strips the surrounding
+     * brackets and any single/double quotes around individual elements,
+     * and normalizes comma spacing. A string that has no surrounding
+     * brackets to begin with is returned unchanged (aside from
+     * whitespace trimming).
+     * @param string $input
+     * @return string
+     */
+    public static function arrayLikeStringToCommaSeparated(string $input): string
+    {
+        $trimmed = trim($input);
+
+        // strip a single pair of surrounding brackets, if present
+        if (str_starts_with($trimmed, '[') && str_ends_with($trimmed, ']')) {
+            $trimmed = substr($trimmed, 1, -1);
+        }
+
+        // remove quotes (single or double) around/within elements
+        $trimmed = str_replace(["'", '"'], '', $trimmed);
+
+        // normalize whitespace around commas to a single ", "
+        $trimmed = preg_replace('/\s*,\s*/', ', ', $trimmed);
+
+        return trim($trimmed);
+    }
 }
