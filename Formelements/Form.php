@@ -1937,6 +1937,26 @@ class Form extends Tag
     public function ___isValid(): bool
     {
 
+        // Keep allowedFileExt/forbiddenFileExt consistent with
+        // allowedMimeTypes/forbiddenMimeTypes on every InputFile field,
+        // for every call of this method - deliberately unconditional,
+        // before any check of whether this particular form/request was
+        // actually submitted. addHTML5allowedFileExt()/
+        // addHTML5forbiddenFileExt() (triggered from within setRule()
+        // itself) is what sets the field's rendered HTML5 pattern/accept
+        // attribute, so this has to run before the field is rendered at
+        // all - not only when validating an actual submission - or a
+        // fresh, not-yet-submitted page load would still show the
+        // original, unfiltered (and potentially self-contradictory)
+        // extension list in the markup. See
+        // FormHelper::alignExtensionRulesWithMimeTypeRules().
+        $mimeHelper = new MimeHelper();
+        foreach ($this->getFormElements() as $element) {
+            if ($element instanceof InputFile) {
+                FormHelper::alignExtensionRulesWithMimeTypeRules($element, $mimeHelper);
+            }
+        }
+
         // if it is a multi-step form -> remove all not used form elements from each step
         if ($this->stepController->hasSteps()) {
 
@@ -2406,6 +2426,13 @@ class Form extends Tag
                 // here. See FormHelper::RULE_PRIORITIES to add more
                 // rule-ordering priorities (e.g. MIME-type checks before
                 // extension checks) in the future.
+                //
+                // Note: allowedFileExt/forbiddenFileExt were already
+                // aligned with allowedMimeTypes/forbiddenMimeTypes
+                // earlier in this method (before the submission-guard
+                // check), so $element->getRules() here already reflects
+                // any filtering - see
+                // FormHelper::alignExtensionRulesWithMimeTypeRules().
                 $rules = FormHelper::sortRulesByPriority($element->getRules());
                 $cl = [];
                 foreach ($rules as $validatorName => $parameters) {
