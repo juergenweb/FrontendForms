@@ -2094,3 +2094,7 @@ Added a fieldset for re-rendering uploaded images with detailed settings and not
 **Language files updated**
 
 Default language files and RockLanguage files have been updated.
+
+**Validation rule priority system added**
+
+A general, extensible priority system was added for validation rules: each rule can be assigned a numeric priority in FormHelper::RULE_PRIORITIES, where a lower number runs earlier and the default is 100. This currently ensures allowedMimeTypes/forbiddenMimeTypes always run before allowedFileExt/forbiddenFileExt, and required/fileRequired always run first. New ordering rules can be added later with a single entry in the map. This is only for me as dev and not for public usage.
