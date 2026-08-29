@@ -190,6 +190,97 @@ class FormHelper
     }
 
     /**
+     * Keep allowedFileExt/forbiddenFileExt consistent with
+     * allowedMimeTypes/forbiddenMimeTypes on the same field: if both a
+     * MIME-type rule and its matching extension rule are present, any
+     * extension in the extension rule that isn't actually possible for
+     * one of the allowed/forbidden MIME types (per
+     * MimeHelper::getAllValidExtensions()) is removed.
+     *
+     * This exists because the two rules describe overlapping ground
+     * (MIME type and file extension) independently - without this, it's
+     * possible to configure them so they contradict each other, e.g.
+     * allowedMimeTypes => ['image/png'] together with
+     * allowedFileExt => ['png', 'exe']: "exe" could never actually occur
+     * for a file whose MIME type is image/png, but would still sit in
+     * the extension allow-list, implying (incorrectly) that it's
+     * accepted.
+     *
+     * Only extensions actually present in the field's own extension
+     * rule are ever kept - this narrows that list, it never adds
+     * extensions to it that weren't already there. If a field's
+     * allowedFileExt/forbiddenFileExt end up empty after filtering, that
+     * reflects a genuine configuration conflict (none of the configured
+     * extensions are possible for any of the configured MIME types) and
+     * is left as an empty array rather than silently falling back to
+     * the original, contradictory list.
+     *
+     * Takes the field itself (not just its rules array) and, when a
+     * filtered list actually differs from the current one, calls
+     * $element->setRule() again with it - a plain array transformation
+     * wouldn't be enough here, since addHTML5allowedFileExt()/
+     * addHTML5forbiddenFileExt() (called from within setRule() itself)
+     * is what sets the field's rendered HTML5 pattern/accept attribute;
+     * only re-calling setRule() refreshes that attribute to match the
+     * filtered list too. Must therefore be called early enough (see
+     * Form::___isValid()) to run before the field is actually rendered,
+     * not just before/during server-side validation of a submission.
+     * @param Inputfields $element
+     * @param MimeHelper $mimeHelper
+     * @return void
+     */
+    public static function alignExtensionRulesWithMimeTypeRules(Inputfields $element, MimeHelper $mimeHelper): void
+    {
+        $rules = $element->getRules();
+
+        $pairs = [
+            'allowedMimeTypes' => 'allowedFileExt',
+            'forbiddenMimeTypes' => 'forbiddenFileExt',
+        ];
+
+        foreach ($pairs as $mimeRuleName => $extRuleName) {
+            if (!array_key_exists($mimeRuleName, $rules) || !array_key_exists($extRuleName, $rules)) {
+                continue;
+            }
+
+            $mimeTypes = $rules[$mimeRuleName]['options'][0] ?? [];
+            if (!is_array($mimeTypes)) {
+                $mimeTypes = [$mimeTypes];
+            }
+
+            $possibleExtensions = [];
+            foreach ($mimeTypes as $mimeType) {
+                foreach ($mimeHelper->getAllValidExtensions((string) $mimeType) as $ext) {
+                    // normalize for a robust, case-/dot-insensitive
+                    // comparison below - the actual, original values
+                    // from the field's own extension rule (not this
+                    // normalized form) are what get kept in the result
+                    $possibleExtensions[strtolower(ltrim($ext, '.'))] = true;
+                }
+            }
+
+            $currentExtensions = $rules[$extRuleName]['options'][0] ?? [];
+            if (!is_array($currentExtensions)) {
+                $currentExtensions = [$currentExtensions];
+            }
+            $currentExtensions = array_values($currentExtensions);
+
+            $filteredExtensions = array_values(array_filter(
+                $currentExtensions,
+                static fn ($ext) => isset($possibleExtensions[strtolower(ltrim((string) $ext, '.'))])
+            ));
+
+            // only re-set the rule if the filtered list actually differs -
+            // avoids needlessly re-triggering setRule()'s other side
+            // effects (rebuilding the note text, etc.) on every single
+            // isValid() call when nothing would actually change
+            if ($filteredExtensions !== $currentExtensions) {
+                $element->setRule($extRuleName, $filteredExtensions);
+            }
+        }
+    }
+
+    /**
      * Move an array item from one position to another position
      * @param array $array
      * @param $key
