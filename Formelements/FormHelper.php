@@ -101,6 +101,17 @@ class FormHelper
      * place of a field's validation rules array
      * Checking if a value is present is always logically the first step
      * before checking for other things
+     *
+     * @deprecated No longer called from Form::isValid() - superseded by
+     * sortRulesByPriority(), which also guarantees required/fileRequired
+     * run first (both have priority 0 in RULE_PRIORITIES) as part of its
+     * general rule-ordering mechanism. It's also strictly more correct
+     * than this method for the edge case where a field has BOTH
+     * "required" and "fileRequired" set at once (a file upload field
+     * with the required rule): this method only moves "fileRequired" to
+     * the front, leaving "required" wherever it originally was, while
+     * sortRulesByPriority() moves both to the front. Kept here, unused
+     * internally, only in case external code still calls it directly.
      * @param array $rules
      * @return array
      */
@@ -116,6 +127,66 @@ class FormHelper
             }
         }
         return $rules;
+    }
+
+    /**
+     * Priority values used by sortRulesByPriority() to order a field's
+     * validation rules before they're registered with the Valitron
+     * validator, which runs rules in registration order. Lower values
+     * run first - the same convention ProcessWire's own hook priority
+     * system uses (default priority is 100). Any rule not listed here
+     * keeps that default and, since the sort is stable, retains its
+     * original relative order among other default-priority rules.
+     *
+     * MIME-type checks are prioritized ahead of extension checks: the
+     * MIME type reflects the file's actual content, while the extension
+     * is only a claim made by the filename - running the content-based
+     * check first means a spoofed/mismatched file is already rejected
+     * by the time the (weaker) extension check would run.
+     *
+     * required/fileRequired are also listed here (matching
+     * putRequiredOnTop()'s own guarantee) so the two mechanisms stay
+     * consistent with each other rather than only one of them deciding
+     * what "first" means.
+     *
+     * To give another rule priority over others in the future, add it
+     * here - no other code needs to change. Lower numbers run earlier;
+     * leave gaps between values (as below) so new rules can be inserted
+     * between existing ones without renumbering everything.
+     */
+    public const RULE_PRIORITIES = [
+        'required' => 0,
+        'fileRequired' => 0,
+        'allowedMimeTypes' => 10,
+        'forbiddenMimeTypes' => 10,
+        'allowedFileExt' => 20,
+        'forbiddenFileExt' => 20,
+    ];
+
+    /**
+     * Sort a field's validation rules by priority - see RULE_PRIORITIES
+     * for the current priority values and how to extend them. Rules
+     * without an explicit entry default to priority 100 and keep their
+     * original relative order (the sort is stable).
+     * @param array $rules
+     * @return array
+     */
+    public static function sortRulesByPriority(array $rules): array
+    {
+        if (count($rules) < 2) {
+            return $rules;
+        }
+
+        $priorities = self::RULE_PRIORITIES;
+        $names = array_keys($rules);
+        usort($names, static fn (string $a, string $b): int
+        => ($priorities[$a] ?? 100) <=> ($priorities[$b] ?? 100));
+
+        $sorted = [];
+        foreach ($names as $name) {
+            $sorted[$name] = $rules[$name];
+        }
+        return $sorted;
     }
 
     /**
