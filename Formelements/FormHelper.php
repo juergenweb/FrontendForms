@@ -180,7 +180,7 @@ class FormHelper
         $priorities = self::RULE_PRIORITIES;
         $names = array_keys($rules);
         usort($names, static fn (string $a, string $b): int
-        => ($priorities[$a] ?? 100) <=> ($priorities[$b] ?? 100));
+            => ($priorities[$a] ?? 100) <=> ($priorities[$b] ?? 100));
 
         $sorted = [];
         foreach ($names as $name) {
@@ -380,5 +380,22 @@ class FormHelper
         $trimmed = preg_replace('/\s*,\s*/', ', ', $trimmed);
 
         return trim($trimmed);
+    }
+
+    /**
+     * Replace every array-like substring in a text (e.g. "['16:9','4:3']"
+     * or "[4,3]") with its plain, comma-separated form (e.g. "16:9, 4:3"
+     * or "4, 3"), leaving the rest of the text untouched. Uses
+     * arrayLikeStringToCommaSeparated() to convert each match found.
+     * @param string $text
+     * @return string
+     */
+    public static function replaceArrayLikeStringsInText(string $text): string
+    {
+        return preg_replace_callback(
+            '/\[[^\]]*\]/',
+            static fn (array $matches): string => self::arrayLikeStringToCommaSeparated($matches[0]),
+            $text
+        );
     }
 }
