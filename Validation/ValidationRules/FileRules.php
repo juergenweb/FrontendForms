@@ -186,7 +186,7 @@ class FileRules extends BaseRules
                 'aspectRatio' => [
                     'validateAspectRatio',
                     $this->_(
-                        'contains at least one image whose aspect ratio is not among the allowed aspect ratios: {1}.'
+                        'contains at least one image whose aspect ratio is not among the allowed aspect ratios: %s.'
                     ),
                 ],
 
