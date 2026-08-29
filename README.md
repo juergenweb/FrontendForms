@@ -2282,7 +2282,7 @@ This validation rule will be added by default to each file upload field.
 Validates that all uploaded images meet a minimum width and height in pixels. 
 
 ```php
-$field->setRule('minImageDimensions', [400,200]); // add width and height in pixels
+$field->setRule('minImageDimensions', '400x200'); // add width and height in pixels as a string
 ```
 First parameter is width and second is height.
 
