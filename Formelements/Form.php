@@ -2399,8 +2399,14 @@ class Form extends Tag
                         }
                     }
                 }
-                // add required validation to be the first
-                $rules = FormHelper::putRequiredOnTop($element->getRules());
+                // Sort rules by priority - this also guarantees
+                // required/fileRequired run first (both have priority 0
+                // in FormHelper::RULE_PRIORITIES), so the previous,
+                // separate putRequiredOnTop() call is no longer needed
+                // here. See FormHelper::RULE_PRIORITIES to add more
+                // rule-ordering priorities (e.g. MIME-type checks before
+                // extension checks) in the future.
+                $rules = FormHelper::sortRulesByPriority($element->getRules());
                 $cl = [];
                 foreach ($rules as $validatorName => $parameters) {
 
