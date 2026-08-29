@@ -429,9 +429,11 @@ abstract class Inputfields extends Element
                 $notes[$validator] = ['text' => sprintf($this->_('ZIP files may not contain files of the following file types: %s'), implode(', ', $variables[0])), 'value' => $variables[0]];
                 break;
             case 'allowedFileSize':
+            case 'maxSingleFileSize':
                 $notes[$validator] = ['text' => sprintf($this->_('Please do not upload files larger than %s'), wireBytesStr($variables[0])), 'value' => $variables[0]];
                 break;
             case 'allowedTotalFileSize':
+            case 'maxTotalFileSize':
                 if (array_key_exists(0, $variables) && !is_null($variables[0])) {
                     $notes[$validator] = ['text' => sprintf($this->_('The total size of all uploaded files must not exceed %s.'), wireBytesStr($variables[0])), 'value' => $variables[0]];
                 } else {
@@ -439,8 +441,13 @@ abstract class Inputfields extends Element
                 }
                 break;
             case 'allowedFileNumber':
+            case 'maxFileNumber':
                 BaseHelper::getPositiveInt($variables, 'allowedFileNumber');
-                $notes[$validator] = ['text' => sprintf($this->_('Please do not upload more than %s files'), $variables[0]), 'value' => $variables[0]];
+                $notes[$validator] = ['text' => sprintf($this->_('Please do not upload more than %s files.'), $variables[0]), 'value' => $variables[0]];
+                break;
+            case 'minFileNumber':
+                BaseHelper::getPositiveInt($variables, 'minFileNumber');
+                $notes[$validator] = ['text' => sprintf($this->_('Please upload at least %s files.'), $variables[0]), 'value' => $variables[0]];
                 break;
             case 'allowedFileExt':
                 if (isset($variables[0])) {
@@ -456,6 +463,25 @@ abstract class Inputfields extends Element
                 $maxFileSize = self::convertToBytes(ini_get('upload_max_filesize'), true);
                 $notes[$validator] = ['text' => sprintf($this->_('Please do not upload files larger than %s'), wireBytesStr($maxFileSize)), 'value' => $maxFileSize];
                 break;
+            case 'forbiddenFileExt':
+                if (isset($variables[0])) {
+                    $mimeTypes = implode(', ', $variables[0]);
+                    $notes[$validator] = ['text' => sprintf($this->_('Files with the following extensions are forbidden: %s'), $mimeTypes), 'value' => $variables[0]];
+                }
+                break;
+            case 'minImageDimensions':
+                if (isset($variables[0])) {
+                    $dimensions = is_array($variables[0]) ? implode(', ', $variables[0]) : $variables[0];
+                    $notes[$validator] = ['text' => sprintf($this->_('Please upload only images with dimensions equal to or larger than %s px.'), $dimensions), 'value' => $variables[0]];
+                }
+                break;
+            case 'aspectRatio':
+                if (isset($variables[0])) {
+                    $ratios = is_array($variables[0]) ? implode(', ', $variables[0]) : $variables[0];
+                    $notes[$validator] = ['text' => sprintf($this->_('Uploaded images must be in the format %s.'), $ratios), 'value' => $variables[0]];
+                }
+                break;
+
         }
     }
 
