@@ -2290,7 +2290,8 @@ First parameter is width and second is height.
 Validates that all uploaded images match one of the allowed aspect ratios. 
 
 ```php
-$field->setRule('aspectRatio', '16:9'); // add width and height as aspect ratio
+$field->setRule('aspectRatio', ['16:9']); // add width and height as aspect ratio for a single ratio
+$field->setRule('aspectRatio', ['16:9','4:3]); // add multiple allowed aspect ratios
 ```
 
 
