@@ -2,41 +2,8 @@
     "file": "site\/modules\/FrontendForms\/Formelements\/Inputelements\/Inputfields.php",
     "textdomain": "site--modules--frontendforms--formelements--inputelements--inputfields-php",
     "translations": {
-        "f1ad5d525baf191da55e02d01616fc29": {
-            "text": "ZIP-Ordner m\u00fcssen mindestens %s Dateien enthalten"
-        },
-        "9d7b73d29ea9f85b12c024be902eb74a": {
-            "text": "ZIP-Ordner d\u00fcrfen nicht mehr als %s Dateien enthalten"
-        },
-        "c1a5e479c839d57058bed6198849eedb": {
-            "text": "ZIP-Dateien d\u00fcrfen nach dem Extrahieren die Gesamtgr\u00f6\u00dfe von %s  nicht \u00fcberschreiten"
-        },
-        "26e303a657e662b5f9f1453e7f514182": {
-            "text": "ZIP-Dateien m\u00fcssen folgende Dateien enthalten: %s"
-        },
-        "04298dbff163b83c60c6b8994eb7eb51": {
-            "text": "Bitte laden Sie nicht mehr als %s ZIP-Dateien hoch"
-        },
-        "289e04d80d8c7b4d9c26acf2a8366ea0": {
-            "text": "Die maximal erlaubte Ordner-\/Verzeichnistiefe in einer ZIP-Datei betr\u00e4gt %s"
-        },
-        "6a04bb2130627555c413868486fd4132": {
-            "text": "ZIP-Dateien k\u00f6nnen nur Dateien enthalten, deren Dateigr\u00f6\u00dfe nicht %s \u00fcberschreitet"
-        },
-        "e685a1c86131e8f78ed6531ec20cbbde": {
-            "text": "ZIP-Dateien d\u00fcrfen keine Dateien der folgenden Dateitypen enthalten: %s"
-        },
-        "d8b0ef2b22e79194c0cb1e79340e6767": {
-            "text": "Bitte laden Sie keine Dateien hoch, die gr\u00f6\u00dfer als %s sind"
-        },
         "679c8947fd87698642698e9571b87b66": {
             "text": "Die Gesamtgr\u00f6\u00dfe aller hochgeladenen Dateien darf %s nicht \u00fcberschreiten."
-        },
-        "2e11a9d7108deb69fe82819f5905bfee": {
-            "text": "Bitte w\u00e4hlen Sie nicht mehr als %s Dateien aus"
-        },
-        "a0072ad6390e4bf1839ad0ede52c2e69": {
-            "text": "Erlaubte Dateitypen: %s"
         },
         "becc30bc5291a8631f3681343530de6a": {
             "text": "Erlaubte Dateitypen innerhalb von ZIP-Dateien: %s"
@@ -116,8 +83,53 @@
         "bf6ac479841bb45d2ee40e1cced66241": {
             "text": "%s enth\u00e4lt Buchstaben welche aber nicht erlaubt sind"
         },
-        "df0fc2bb94d191c9cd93d5890ad8efc6": {
-            "text": "ZIP-Dateien d\u00fcrfen nur die folgenden Dateitypen enthalten: %s"
+        "8caf794d4808e4f2a0a78af058b2d1e0": {
+            "text": "ZIP-Ordner m\u00fcssen mindestens %s Dateien enthalten."
+        },
+        "f211647a22f8568d71f1ff6d1902497a": {
+            "text": "ZIP-Ordner d\u00fcrfen nicht mehr als %s Dateien enthalten."
+        },
+        "7bc50f85a0135a21e4bc74849accbc49": {
+            "text": "ZIP-Dateien d\u00fcrfen nach dem Extrahieren die Gesamtgr\u00f6\u00dfe von %s nicht \u00fcberschreiten."
+        },
+        "6f9bd1331d4649bea59aca0465a7be08": {
+            "text": "ZIP-Dateien m\u00fcssen folgende Dateien enthalten: %s."
+        },
+        "b8fa12c640494eb6d8a6e3ec1e324c3b": {
+            "text": "Bitte laden Sie nicht mehr als %s ZIP-Datei(en) hoch."
+        },
+        "8af359c29b446deb0aa3caf302a97359": {
+            "text": "Die maximal erlaubte Ordner-\/Verzeichnistiefe in einer ZIP-Datei betr\u00e4gt %s."
+        },
+        "c34e6f7714814447da5f7504e509b3cd": {
+            "text": "ZIP-Dateien d\u00fcrfen nur die folgenden Dateitypen enthalten: %s."
+        },
+        "e29d761de45801e9b58e50c58e7fc8d5": {
+            "text": "ZIP-Dateien d\u00fcrfen nur Dateien enthalten, deren Dateigr\u00f6\u00dfe %s nicht \u00fcberschreitet."
+        },
+        "d6018a36f3da0214fb5f3d12a1ccdb01": {
+            "text": "ZIP-Dateien d\u00fcrfen keine Dateien der folgenden Dateitypen enthalten: %s."
+        },
+        "b1cad8a026ae8d8a2c55bb0e613918b5": {
+            "text": "Bitte laden Sie keine Dateien hoch, die gr\u00f6\u00dfer sind als %s."
+        },
+        "1cd5b2653faadc5925fb45ea04f25d65": {
+            "text": "Bitte w\u00e4hlen Sie nicht mehr als %s Dateien aus."
+        },
+        "9841810fd7050e87c3ba7abe0786423a": {
+            "text": "Bitte laden Sie mindestens %s Dateien hoch."
+        },
+        "5d931d7c5f0fb5cf520e960dda6e4d7b": {
+            "text": "Erlaubte Dateitypen: %s."
+        },
+        "f061bd69919c651a4d31d106c2316f94": {
+            "text": "Dateien mit den folgenden Dateiendungen sind nicht zul\u00e4ssig: %s."
+        },
+        "c281399b6e8b7c0751bec30785daa4b5": {
+            "text": "Bitte laden Sie nur Bilder mit Abmessungen von mindestens %s px hoch."
+        },
+        "bd331609149c61c9b047fb7512d1e1e0": {
+            "text": "Hochgeladene Bilder d\u00fcrfen nur im Format bzw. in den Formaten %s vorliegen."
         }
     }
 }

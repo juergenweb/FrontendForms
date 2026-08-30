@@ -50,11 +50,11 @@
         "b662c0fbf0069c6d364ad46fc3ff9e62": {
             "text": "enth\u00e4lt Bilder, deren Abmessungen kleiner sind als die minimale Breite und H\u00f6he von %s"
         },
-        "93d70b54efb0067fa6ebe5e93ae01049": {
-            "text": "enth\u00e4lt mindestens ein Bild, dessen Seitenverh\u00e4ltnis nicht zu den erlaubten Seitenverh\u00e4ltnissen entspricht: {1}."
-        },
         "bf330947ce194486a9bca42c565e6843": {
             "text": "enth\u00e4lt eine Datei, deren Namen einer bestehenden Datei im Zielverzeichnis gleicht."
+        },
+        "fee1ba8119b08a10b40c34a38d3cd969": {
+            "text": "enth\u00e4lt mindestens ein Bild, dessen Seitenverh\u00e4ltnis nicht zu den erlaubten Seitenverh\u00e4ltnissen von %s entspricht."
         }
     }
 }
