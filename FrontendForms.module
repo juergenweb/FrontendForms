@@ -1011,7 +1011,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
             if (self::isModuleEditPage(['FrontendForms'])) {
                 $this->wire('config')->styles->add($this->wire('config')->urls->{$this->className} . 'assets/css/frontendforms-backend.css?v=' . $version);
-                $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'assets/js/frontendforms-backend.js?v=' . $version.'-'.time());
+                $this->wire('config')->scripts->add($this->wire('config')->urls->{$this->className} . 'assets/js/frontendforms-backend.js?v=' . $version);
             }
 
             // add image picker js and CSS files to the backend (used for the email template select)
@@ -2107,7 +2107,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $js = '';
             // check if at field conditions are used inside this form, if so add the JavaScript file to the page
             if ($page->field_conditions) {
-                $js = '<script src="' . $this->wire('config')->urls->$this . 'assets/js/mf-conditional-fields.js?v=' . $version .time(). '"></script>' . PHP_EOL;
+                $js = '<script src="' . $this->wire('config')->urls->$this . 'assets/js/mf-conditional-fields.min.js?v=' . $version . '"></script>' . PHP_EOL;
             }
 
             // set the asterisk as JS constant, because it could be changed via Hook
@@ -2115,7 +2115,7 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $label = new Label();
             $asterisk = $label->renderAsterisk();
             $js .= '<script>const asterisk = \'' . $asterisk . '\';</script>' . PHP_EOL;
-            $js .= '<script src="' . $this->wire('config')->urls->$this . 'assets/js/frontendforms-frontend.js?v=' . $version . time() . '" defer></script>' . PHP_EOL;
+            $js .= '<script src="' . $this->wire('config')->urls->$this . 'assets/js/frontendforms-frontend.min.js?v=' . $version . '" defer></script>' . PHP_EOL;
 
             // load slidercaptcha.js only if this captcha type is selected
             if ($this->input_captchaType == 'SliderCaptcha' && $page->sliderCaptcha) {
