@@ -422,7 +422,7 @@ class FileLogic extends BaseLogic
             return true;
         }
 
-        $allowedRatios = $this->resolveStringParam($params[0], 'allowed aspect ratios');
+        $allowedRatios = $this->resolveStringParam($params, 'allowed aspect ratios');
 
         if (empty($allowedRatios)) {
             return true;
@@ -584,20 +584,15 @@ class FileLogic extends BaseLogic
      * Accepts the dimensions either as a plain string (the intended,
      * documented usage - e.g. setRule('minImageDimensions', '400x200'))
      * or, for backward compatibility, already wrapped in an array (e.g.
-     * ['400x200']) - resolveStringParam() itself requires an array
-     * argument, so a plain string gets wrapped here before being passed
-     * to it.
+     * ['400x200']) - both shapes are handled by resolveStringParam()
+     * itself (via BaseLogic::normalizeStringArray()), so no extra
+     * unwrapping/wrapping is needed here.
      * @return array{0:int,1:int}
      */
     protected function resolveDimensionsParam(array $params): array
     {
-        $param = $params[0] ?? null;
-        if (is_string($param)) {
-            $param = [$param];
-        }
-
         $values = $this->resolveStringParam(
-            $param,
+            $params,
             'minimum width and height as WIDTHxHEIGHT'
         );
 
