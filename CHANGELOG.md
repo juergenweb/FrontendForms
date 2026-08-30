@@ -2098,3 +2098,15 @@ Default language files and RockLanguage files have been updated.
 **Validation rule priority system added**
 
 A general, extensible priority system was added for validation rules: each rule can be assigned a numeric priority in FormHelper::RULE_PRIORITIES, where a lower number runs earlier and the default is 100. This currently ensures allowedMimeTypes/forbiddenMimeTypes always run before allowedFileExt/forbiddenFileExt, and required/fileRequired always run first. New ordering rules can be added later with a single entry in the map. This is only for me as dev and not for public usage.
+
+**Syncronization between allowedMimeTypes/forbiddenMimeTypes and allowedFileExt/forbiddenFileExt rules added**
+
+When a field has allowedMimeTypes or forbiddenMimeTypes set, the corresponding allowedFileExt or forbiddenFileExt rule is kept automatically in sync:
+
+* Missing extension rule: created from scratch, populated with every extension the configured MIME type(s) map to.
+* allowedFileExt (if present): narrowed — any extension not actually possible for one of the allowed MIME types is removed.
+* forbiddenFileExt (if present): widened — any extension possible for one of the forbidden MIME types is added, if missing.
+
+**Missing notes for users for the new validation rules added**
+
+The missing notes for users for some of the new validation rules (fe aspectRatio, minImageDimensions) have been added. 
