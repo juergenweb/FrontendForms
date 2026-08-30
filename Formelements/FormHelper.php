@@ -191,38 +191,43 @@ class FormHelper
 
     /**
      * Keep allowedFileExt/forbiddenFileExt consistent with
-     * allowedMimeTypes/forbiddenMimeTypes on the same field: if both a
-     * MIME-type rule and its matching extension rule are present, any
-     * extension in the extension rule that isn't actually possible for
-     * one of the allowed/forbidden MIME types (per
-     * MimeHelper::getAllValidExtensions()) is removed.
+     * allowedMimeTypes/forbiddenMimeTypes on the same field. The two
+     * pairs are synchronized in opposite directions, deliberately:
      *
-     * This exists because the two rules describe overlapping ground
-     * (MIME type and file extension) independently - without this, it's
-     * possible to configure them so they contradict each other, e.g.
-     * allowedMimeTypes => ['image/png'] together with
-     * allowedFileExt => ['png', 'exe']: "exe" could never actually occur
-     * for a file whose MIME type is image/png, but would still sit in
-     * the extension allow-list, implying (incorrectly) that it's
-     * accepted.
+     * - allowedFileExt is NARROWED: any extension in it that isn't
+     *   actually possible for one of the allowed MIME types (per
+     *   MimeHelper::getAllValidExtensions()) is removed. An "allow"
+     *   list should never end up wider than what's actually possible -
+     *   e.g. allowedMimeTypes => ['image/png'] together with
+     *   allowedFileExt => ['png', 'exe'] would otherwise leave "exe"
+     *   sitting in the allow-list, implying (incorrectly) that it's
+     *   accepted, even though it could never actually occur for a file
+     *   whose MIME type is image/png.
      *
-     * Only extensions actually present in the field's own extension
-     * rule are ever kept - this narrows that list, it never adds
-     * extensions to it that weren't already there. If a field's
-     * allowedFileExt/forbiddenFileExt end up empty after filtering, that
+     * - forbiddenFileExt is WIDENED: any extension that's possible for
+     *   one of the forbidden MIME types but isn't yet in
+     *   forbiddenFileExt is added to it. A "forbid" list should never
+     *   end up narrower than what it's meant to block - e.g.
+     *   forbiddenMimeTypes => ['application/x-msdownload'] should also
+     *   forbid "exe" and any other extension that MIME type maps to,
+     *   even if the developer only explicitly listed some of them (or
+     *   none at all) in forbiddenFileExt, so a forbidden file type
+     *   can't slip through under an extension nobody thought to list.
+     *
+     * If a field's allowedFileExt ends up empty after narrowing, that
      * reflects a genuine configuration conflict (none of the configured
      * extensions are possible for any of the configured MIME types) and
      * is left as an empty array rather than silently falling back to
      * the original, contradictory list.
      *
-     * Takes the field itself (not just its rules array) and, when a
-     * filtered list actually differs from the current one, calls
+     * Takes the field itself (not just its rules array) and, whenever
+     * the resulting list actually differs from the current one, calls
      * $element->setRule() again with it - a plain array transformation
      * wouldn't be enough here, since addHTML5allowedFileExt()/
      * addHTML5forbiddenFileExt() (called from within setRule() itself)
      * is what sets the field's rendered HTML5 pattern/accept attribute;
      * only re-calling setRule() refreshes that attribute to match the
-     * filtered list too. Must therefore be called early enough (see
+     * updated list too. Must therefore be called early enough (see
      * Form::___isValid()) to run before the field is actually rendered,
      * not just before/during server-side validation of a submission.
      * @param Inputfields $element
@@ -234,11 +239,11 @@ class FormHelper
         $rules = $element->getRules();
 
         $pairs = [
-            'allowedMimeTypes' => 'allowedFileExt',
-            'forbiddenMimeTypes' => 'forbiddenFileExt',
+            'allowedMimeTypes' => ['allowedFileExt', 'narrow'],
+            'forbiddenMimeTypes' => ['forbiddenFileExt', 'widen'],
         ];
 
-        foreach ($pairs as $mimeRuleName => $extRuleName) {
+        foreach ($pairs as $mimeRuleName => [$extRuleName, $mode]) {
             if (!array_key_exists($mimeRuleName, $rules) || !array_key_exists($extRuleName, $rules)) {
                 continue;
             }
@@ -248,14 +253,15 @@ class FormHelper
                 $mimeTypes = [$mimeTypes];
             }
 
+            // extensions possible for the configured MIME type(s),
+            // keyed by their normalized (lowercase, no leading dot)
+            // form for robust lookups, with the original casing (as
+            // returned by getAllValidExtensions()) as the value - used
+            // by "widen" mode when adding a missing extension
             $possibleExtensions = [];
             foreach ($mimeTypes as $mimeType) {
                 foreach ($mimeHelper->getAllValidExtensions((string) $mimeType) as $ext) {
-                    // normalize for a robust, case-/dot-insensitive
-                    // comparison below - the actual, original values
-                    // from the field's own extension rule (not this
-                    // normalized form) are what get kept in the result
-                    $possibleExtensions[strtolower(ltrim($ext, '.'))] = true;
+                    $possibleExtensions[strtolower(ltrim($ext, '.'))] = $ext;
                 }
             }
 
@@ -265,17 +271,38 @@ class FormHelper
             }
             $currentExtensions = array_values($currentExtensions);
 
-            $filteredExtensions = array_values(array_filter(
-                $currentExtensions,
-                static fn ($ext) => isset($possibleExtensions[strtolower(ltrim((string) $ext, '.'))])
-            ));
+            if ($mode === 'narrow') {
+                $newExtensions = array_values(array_filter(
+                    $currentExtensions,
+                    static fn ($ext) => isset($possibleExtensions[strtolower(ltrim((string) $ext, '.'))])
+                ));
+            } else {
+                // widen: keep every currently configured extension, and
+                // add any extension implied by the forbidden MIME
+                // type(s) that isn't already present (compared in its
+                // normalized form, so e.g. ".EXE" already present isn't
+                // duplicated as a separate "exe" entry)
+                $currentNormalized = [];
+                foreach ($currentExtensions as $ext) {
+                    $currentNormalized[strtolower(ltrim((string) $ext, '.'))] = true;
+                }
 
-            // only re-set the rule if the filtered list actually differs -
-            // avoids needlessly re-triggering setRule()'s other side
-            // effects (rebuilding the note text, etc.) on every single
-            // isValid() call when nothing would actually change
-            if ($filteredExtensions !== $currentExtensions) {
-                $element->setRule($extRuleName, $filteredExtensions);
+                $missingExtensions = [];
+                foreach ($possibleExtensions as $normalized => $originalCasing) {
+                    if (!isset($currentNormalized[$normalized])) {
+                        $missingExtensions[] = $originalCasing;
+                    }
+                }
+
+                $newExtensions = array_merge($currentExtensions, $missingExtensions);
+            }
+
+            // only re-set the rule if the resulting list actually
+            // differs - avoids needlessly re-triggering setRule()'s
+            // other side effects (rebuilding the note text, etc.) on
+            // every single isValid() call when nothing would change
+            if ($newExtensions !== $currentExtensions) {
+                $element->setRule($extRuleName, $newExtensions);
             }
         }
     }
