@@ -180,7 +180,7 @@ class FormHelper
         $priorities = self::RULE_PRIORITIES;
         $names = array_keys($rules);
         usort($names, static fn (string $a, string $b): int
-            => ($priorities[$a] ?? 100) <=> ($priorities[$b] ?? 100));
+        => ($priorities[$a] ?? 100) <=> ($priorities[$b] ?? 100));
 
         $sorted = [];
         foreach ($names as $name) {
@@ -191,8 +191,17 @@ class FormHelper
 
     /**
      * Keep allowedFileExt/forbiddenFileExt consistent with
-     * allowedMimeTypes/forbiddenMimeTypes on the same field. The two
-     * pairs are synchronized in opposite directions, deliberately:
+     * allowedMimeTypes/forbiddenMimeTypes on the same field.
+     *
+     * If the extension rule (allowedFileExt/forbiddenFileExt) isn't set
+     * on the field at all yet, it's created from scratch, populated
+     * with every extension the configured MIME type(s) imply - a
+     * MIME-type rule alone shouldn't leave the matching extension rule
+     * unset/unsynchronized just because the developer never explicitly
+     * added it.
+     *
+     * If the extension rule IS already present, the two pairs are
+     * synchronized in opposite directions, deliberately:
      *
      * - allowedFileExt is NARROWED: any extension in it that isn't
      *   actually possible for one of the allowed MIME types (per
@@ -244,7 +253,7 @@ class FormHelper
         ];
 
         foreach ($pairs as $mimeRuleName => [$extRuleName, $mode]) {
-            if (!array_key_exists($mimeRuleName, $rules) || !array_key_exists($extRuleName, $rules)) {
+            if (!array_key_exists($mimeRuleName, $rules)) {
                 continue;
             }
 
@@ -263,6 +272,18 @@ class FormHelper
                 foreach ($mimeHelper->getAllValidExtensions((string) $mimeType) as $ext) {
                     $possibleExtensions[strtolower(ltrim($ext, '.'))] = $ext;
                 }
+            }
+
+            if (!array_key_exists($extRuleName, $rules)) {
+                // the extension rule doesn't exist on this field at all
+                // yet - create it from scratch, populated with every
+                // extension the configured MIME type(s) imply, rather
+                // than leaving the two rules unsynchronized just
+                // because only one of them was set
+                if ($possibleExtensions) {
+                    $element->setRule($extRuleName, array_values($possibleExtensions));
+                }
+                continue;
             }
 
             $currentExtensions = $rules[$extRuleName]['options'][0] ?? [];
