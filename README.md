@@ -2209,6 +2209,15 @@ Please note: This validator will be added to each input type file automatically.
 ### allowedMimeTypes
 Verifies that all uploaded files have an allowed MIME type.
 
+This validation rule also adds the *allowedFileExt* rule if it has not been set manually, and adds all allowed file extensions based on the allowed MIME types. 
+If the *allowedFileExt* rule has been set, it will be synchronized with the extensions allowed by the specified MIME types. Any file extensions defined in the *allowedFileExt* rule that are not valid for the given MIME types will be removed from the rule automatically.
+
+Just to mention: using the *allowedMimeTypes* rule alone, without the *allowedFileExt* rule, is recommended. You do not need to add *allowedFileExt* in addition to it.
+
+The only use case where it really makes sense to use *allowedFileExt* as well is if you want to further restrict the extensions allowed by the *allowedMimeTypes* rule. For example, if the allowed MIME type is *image/jpeg*, files with the following extensions will be allowed: *jpg, jpeg*, and *jpe*. You can then further restrict the allowed extensions to, for example, only allow files with the jpg extension.
+
+For real-world use cases, using the *allowedMimeTypes* rule alone is considered best practice. The same applies to the *forbiddenMimeTypes* validator as well.
+
 ```php
 $field->setRule('allowedMimeTypes', ['image/jpeg', 'image/png']);
 ```
@@ -2216,7 +2225,7 @@ $field->setRule('allowedMimeTypes', ['image/jpeg', 'image/png']);
 Please note: This validator will be added to each input type file automatically, if you have set allowed mime types in the backend configuration. You can remove it if you want by using the removeRule('allowedMimeTypes') method.
 
 ### forbiddenMimeTypes
-Verifies that no uploaded file has a forbidden MIME type. This is the opposite as *allowedMimeTypes*.
+Verifies that no uploaded file has a forbidden MIME type. This is the opposite as *allowedMimeTypes* so please read the instruction there as well.
 
 ```php
 $field->setRule('forbiddenMimeTypes', ['image/jpeg', 'image/png']);
@@ -2226,6 +2235,8 @@ $field->setRule('forbiddenMimeTypes', ['image/jpeg', 'image/png']);
 This validation checks if an uploaded file is of one of the allowed extensions. It takes the value of
 $_FILES['name'] and extracts the extension. If the extension is not in the array of allowed extensions,
 an error message will be displayed. Returns true if the file's type is among the allowed file types, otherwise false.
+
+Important note: The *allowedMimeTypes* validation rule should be used instead of this validation rule in most cases. See the [allowedMimeTypes description](#allowedMimeTypes) above for more information.
 
 First parameter: validation name / Second parameter: array of allowed file extensions
 
@@ -2237,6 +2248,8 @@ $field->setRule('allowedFileExt', ['jpg','pdf','doc']);
 This validation checks if an uploaded file is of one of the forbidden extensions. It takes the value of
 $_FILES['name'] and extracts the extension. If the extension is in the array of forbidden extensions,
 an error message will be displayed. Returns true if the file's type is not among the forbidden file types, otherwise false.
+
+Important note: The *forbiddenMimeTypes* validation rule should be used instead of this validation rule in most cases. See the [forbiddenMimeTypes description](#forbiddenMimeTypes) above for more information.
 
 First parameter: validation name / Second parameter: array of forbidden file extensions
 
