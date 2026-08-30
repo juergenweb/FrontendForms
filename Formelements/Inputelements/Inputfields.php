@@ -397,40 +397,40 @@ abstract class Inputfields extends Element
         switch ($validator) {
             case 'minFilesInZIPFolder':
                 BaseHelper::getPositiveInt($variables, 'minFilesInZIPFolder');
-                $notes[$validator] = ['text' => sprintf($this->_('ZIP folder(s) must contain at least %s files'), $variables[0]), 'value' => $variables[0]];
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP folder(s) must contain at least %s files.'), $variables[0]), 'value' => $variables[0]];
                 break;
             case 'maxFilesInZIPFolder':
                 BaseHelper::getPositiveInt($variables, 'maxFilesInZIPFolder');
-                $notes[$validator] = ['text' => sprintf($this->_('ZIP folders may not contain more than %s files'), $variables[0]), 'value' => $variables[0]];
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP folders may not contain more than %s files.'), $variables[0]), 'value' => $variables[0]];
                 break;
             case 'maxTotalFileSizeZipUncompressed':
-                $notes[$validator] = ['text' => sprintf($this->_('ZIP files must not exceed a total size of %s when extracted'), $variables[0]), 'value' => $variables[0]];
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP files must not exceed a total size of %s when extracted.'), $variables[0]), 'value' => $variables[0]];
                 break;
             case 'requiredFileNamesInZip':
-                $notes[$validator] = ['text' => sprintf($this->_('ZIP files must contain the following files: %s'), implode(', ', $variables[0])), 'value' => $variables[0]];
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP files must contain the following files: %s.'), implode(', ', $variables[0])), 'value' => $variables[0]];
                 break;
             case 'maxNumberOfZipFolders':
                 // do not allow other values than a positive integer for the param
                 BaseHelper::getPositiveInt($variables, 'maxNumberOfZipFolders');
-                $notes[$validator] = ['text' => sprintf($this->_('Please do not upload more than %s ZIP file(s)'), $variables[0]), 'value' => $variables[0]];
+                $notes[$validator] = ['text' => sprintf($this->_('Please do not upload more than %s ZIP file(s).'), $variables[0]), 'value' => $variables[0]];
                 break;
             case 'maxDepthOfZipFolders':
                 // do not allow other values than a positive integer for the param
                 BaseHelper::getPositiveInt($variables, 'maxDepthOfZipFolders');
-                $notes[$validator] = ['text' => sprintf($this->_('The maximum allowed folder/directory depth in a ZIP file is %s'), $variables[0]), 'value' => $variables[0]];
+                $notes[$validator] = ['text' => sprintf($this->_('The maximum allowed folder/directory depth in a ZIP file is %s.'), $variables[0]), 'value' => $variables[0]];
                 break;
             case 'allowedFileTypesInZipFolder':
-                $notes[$validator] = ['text' => sprintf($this->_('ZIP files may only contain the following file types: %s'), implode(', ', $variables[0])), 'value' => $variables[0]];
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP files may only contain the following file types: %s.'), implode(', ', $variables[0])), 'value' => $variables[0]];
                 break;
             case 'maxAllowedFileSizeOfFileInZipFolder':
-                $notes[$validator] = ['text' => sprintf($this->_('ZIP files may only contain files which are not larger than %s'), $variables[0]), 'value' => $variables[0]];
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP files may only contain files which are not larger than %s.'), $variables[0]), 'value' => $variables[0]];
                 break;
             case 'notAllowedFileTypesInZipFolder':
-                $notes[$validator] = ['text' => sprintf($this->_('ZIP files may not contain files of the following file types: %s'), implode(', ', $variables[0])), 'value' => $variables[0]];
+                $notes[$validator] = ['text' => sprintf($this->_('ZIP files may not contain files of the following file types: %s.'), implode(', ', $variables[0])), 'value' => $variables[0]];
                 break;
             case 'allowedFileSize':
             case 'maxSingleFileSize':
-                $notes[$validator] = ['text' => sprintf($this->_('Please do not upload files larger than %s'), wireBytesStr($variables[0])), 'value' => $variables[0]];
+                $notes[$validator] = ['text' => sprintf($this->_('Please do not upload files larger than %s.'), wireBytesStr($variables[0])), 'value' => $variables[0]];
                 break;
             case 'allowedTotalFileSize':
             case 'maxTotalFileSize':
@@ -451,7 +451,7 @@ abstract class Inputfields extends Element
                 break;
             case 'allowedFileExt':
                 if (isset($variables[0])) {
-                    $notes[$validator] = ['text' => sprintf($this->_('Allowed file types: %s'), implode(', ', $variables[0])), 'value' => implode(', ', $variables[0])];
+                    $notes[$validator] = ['text' => sprintf($this->_('Allowed file types: %s.'), implode(', ', $variables[0])), 'value' => implode(', ', $variables[0])];
                 }
                 break;
             case 'compressedContentAllowedFileExt':
@@ -461,12 +461,12 @@ abstract class Inputfields extends Element
                 break;
             case 'phpIniFilesize':
                 $maxFileSize = self::convertToBytes(ini_get('upload_max_filesize'), true);
-                $notes[$validator] = ['text' => sprintf($this->_('Please do not upload files larger than %s'), wireBytesStr($maxFileSize)), 'value' => $maxFileSize];
+                $notes[$validator] = ['text' => sprintf($this->_('Please do not upload files larger than %s.'), wireBytesStr($maxFileSize)), 'value' => $maxFileSize];
                 break;
             case 'forbiddenFileExt':
                 if (isset($variables[0])) {
                     $mimeTypes = implode(', ', $variables[0]);
-                    $notes[$validator] = ['text' => sprintf($this->_('Files with the following extensions are forbidden: %s'), $mimeTypes), 'value' => $variables[0]];
+                    $notes[$validator] = ['text' => sprintf($this->_('Files with the following extensions are forbidden: %s.'), $mimeTypes), 'value' => $variables[0]];
                 }
                 break;
             case 'minImageDimensions':
