@@ -2110,3 +2110,7 @@ When a field has allowedMimeTypes or forbiddenMimeTypes set, the corresponding a
 **Missing notes for users for the new validation rules added**
 
 The missing notes for users for some of the new validation rules (fe aspectRatio, minImageDimensions) have been added. 
+
+**Updated the .gitattributes file to exclude more files from downloads.**
+
+A lot of files used for unit tests, as well as some others, have been added to export-ignore, so they will no longer be included in the download.
