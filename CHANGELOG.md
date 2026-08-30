@@ -2076,7 +2076,7 @@ This was therefore not a typical refactoring, but almost a complete rewrite of t
 
 Please note that you will need to redo some of the translations in the backend because some of the translatable strings have changed.
 
-## 2026-08-28
+## [3.0.1] 2026-08-28
 
 **Debug function in MailTemplateRenderer.php removed**
 
