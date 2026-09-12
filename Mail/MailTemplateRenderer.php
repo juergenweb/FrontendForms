@@ -147,7 +147,24 @@ final class MailTemplateRenderer extends Wire
                 // add pre-header text (if present) right after the opening body tag
                 if ($mail->title) {
                     $doc = new DOMDocument();
+                    // Suppress libxml warnings/errors for this parse:
+                    // $body may contain the (deliberately unsanitized,
+                    // see MailPlaceholderRegistry::allSanitized()) [[BODY]]
+                    // placeholder content, which can include a literal
+                    // "&" that isn't part of a properly closed HTML
+                    // entity (e.g. inside a URL query string, or in
+                    // plain text like "Tom & Jerry") - DOMDocument's
+                    // strict HTML parser reports this as
+                    // "htmlParseEntityRef: expecting ';' in Entity",
+                    // even though it still parses the document
+                    // correctly enough for the simple pre-header
+                    // insertion below. Errors are cleared afterwards so
+                    // they don't leak into unrelated code elsewhere that
+                    // might check libxml_get_errors() later.
+                    $previousUseInternalErrors = libxml_use_internal_errors(true);
                     $doc->loadHTML($body);
+                    libxml_clear_errors();
+                    libxml_use_internal_errors($previousUseInternalErrors);
                     $bodyTags = $doc->getElementsByTagName('body');
                     if ($bodyTags->length > 0) {
                         $bodyElement = $bodyTags->item(0);
