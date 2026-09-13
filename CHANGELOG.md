@@ -2114,3 +2114,9 @@ The missing notes for users for some of the new validation rules (fe aspectRatio
 **Updated the .gitattributes file to exclude more files from downloads.**
 
 A lot of files used for unit tests, as well as some others, have been added to export-ignore, so they will no longer be included in the download.
+
+## 2026-09-13
+
+**Refine array_filter_recursive to exclude null values**
+
+Updated array_filter_recursive to filter only null values, preserving other falsy values.
