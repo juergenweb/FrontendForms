@@ -319,8 +319,17 @@ abstract class Inputfields extends Element
     }
 
     /**
-     * Recursively apply array_filter() to an array, also filtering out
-     * empty/falsy values inside any nested sub-arrays.
+     * Recursively apply array_filter() to an array, filtering out only genuinely empty (null)
+     * values - including inside any nested sub-arrays.
+     *
+     * Deliberately uses an explicit callback instead of PHP's default array_filter() behaviour.
+     * Without a callback, array_filter() also strips out every other "falsy" value - 0, "0",
+     * false, "", an empty array - and those can be perfectly legitimate rule parameters (e.g. an
+     * "in"/"equals" rule whose allowed value list includes "0", or a "min"/"max" rule with a
+     * boundary of 0). The previous, callback-less version silently dropped such values before
+     * they ever reached the validator, causing rules like setRule('in', ['0', '1']) to validate
+     * against ['1'] only.
+     *
      * @param array $input
      * @return array
      */
@@ -331,7 +340,9 @@ abstract class Inputfields extends Element
                 $value = self::array_filter_recursive($value);
             }
         }
-        return array_filter($input);
+        unset($value);
+
+        return array_filter($input, static fn($value) => $value !== null);
     }
 
     /**
