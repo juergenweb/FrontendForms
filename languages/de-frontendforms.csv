@@ -557,6 +557,12 @@ hour,Stunde,,site/modules/FrontendForms/Security/TimingGuard.php,896c55cc5e46fab
 minute,Minute,,site/modules/FrontendForms/Security/TimingGuard.php,0a7d55be9d12a369a6a8da0fb517fba4
 second,Sekunde,,site/modules/FrontendForms/Security/TimingGuard.php,a9f0e61a137d86aa9db53465e0801612
 and,und,,site/modules/FrontendForms/Security/TimingGuard.php,be5d5d37542d75f93a87094459f76678
+months,Monate,,site/modules/FrontendForms/Security/TimingGuard.php,da36cfaf48b9e19896e23e1207040d1e
+weeks,Wochen,,site/modules/FrontendForms/Security/TimingGuard.php,ae60f11ab51860bdb22794a943335a34
+days,Tage,,site/modules/FrontendForms/Security/TimingGuard.php,44fdec47036f482b68b748f9d786801b
+hours,Stunden,,site/modules/FrontendForms/Security/TimingGuard.php,73cdddd7730abfc13a55efb9f5685a3b
+minutes,Minuten,,site/modules/FrontendForms/Security/TimingGuard.php,640fd0cc0ffa0316ae087652871f4486
+seconds,Sekunden,,site/modules/FrontendForms/Security/TimingGuard.php,783e8e29e6a8c3e22baa58a19420eb4f
 "is not a valid week. Use the format YYYY-Www (e.g. 2023-W06).","ist keine gültige Kalenderwoche. Bitte verwende das Format JJJJ-Www (z. B. 2023-W06).",,site/modules/FrontendForms/Validation/ValidationRules/DateRules.php,517f147e900a0639e744394798b38d14
 "is not a valid month. Use the format YYYY-MM (e.g. 2023-06).","ist kein gültiger Monat. Bitte verwende das Format JJJJ-MM (z. B. 2023-06).",,site/modules/FrontendForms/Validation/ValidationRules/DateRules.php,b0d908ec678733c7502c937c811a7a32
 "is not a valid time. Use the format HH:MM or HH:MM:SS (e.g. 14:30).","ist kein gültiges Zeitformat. Verwenden Sie das Format HH:MM oder HH:MM:SS (z. B. 14:30).",,site/modules/FrontendForms/Validation/ValidationRules/DateRules.php,ebd6f3c1b3bc3828c5ed85710fa192b4
