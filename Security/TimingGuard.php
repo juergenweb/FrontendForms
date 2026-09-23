@@ -132,17 +132,17 @@ class TimingGuard extends BaseGuard
     public function secondsToReadable(int $ss): string
     {
         $units = [
-            'month' => [floor($ss / 2592000), $this->_('month'), $this->_('months')],
-            'week' => [floor(($ss % 2592000) / 604800), $this->_('week'), $this->_('weeks')],
-            'day' => [floor(($ss % 604800) / 86400), $this->_('day'), $this->_('days')],
-            'hour' => [floor(($ss % 86400) / 3600), $this->_('hour'), $this->_('hours')],
-            'minute' => [floor(($ss % 3600) / 60), $this->_('minute'), $this->_('minutes')],
+            'month' => [intdiv($ss, 2592000), $this->_('month'), $this->_('months')],
+            'week' => [intdiv($ss % 2592000, 604800), $this->_('week'), $this->_('weeks')],
+            'day' => [intdiv($ss % 604800, 86400), $this->_('day'), $this->_('days')],
+            'hour' => [intdiv($ss % 86400, 3600), $this->_('hour'), $this->_('hours')],
+            'minute' => [intdiv($ss % 3600, 60), $this->_('minute'), $this->_('minutes')],
             'second' => [$ss % 60, $this->_('second'), $this->_('seconds')],
         ];
 
         $parts = [];
         foreach ($units as [$value, $singular, $plural]) {
-            if ($value != 0) {
+            if ($value !== 0) {
                 $parts[] = $value . ' ' . $this->_n($singular, $plural, $value);
             }
         }
