@@ -2115,7 +2115,7 @@ The missing notes for users for some of the new validation rules (fe aspectRatio
 
 A lot of files used for unit tests, as well as some others, have been added to export-ignore, so they will no longer be included in the download.
 
-## 2026-09-13
+## [3.0.2] 2026-09-13
 
 **Refine array_filter_recursive to exclude null values**
 
