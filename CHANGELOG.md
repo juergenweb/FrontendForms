@@ -2120,3 +2120,11 @@ A lot of files used for unit tests, as well as some others, have been added to e
 **Refine array_filter_recursive to exclude null values**
 
 Updated array_filter_recursive to filter only null values, preserving other falsy values.
+
+**Fix slider captcha JS injection logic**
+
+Refactored slider captcha logic to rely solely on page-specific setting, removing dependency on site-wide captcha type.
+
+**Fix of mistakes in German translations**
+
+There were some errors in alert box texts in the German translations that have been fixed now.
