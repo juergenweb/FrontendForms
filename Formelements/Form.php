@@ -4110,7 +4110,7 @@ class Form extends Tag
      * Get the max time value
      * @return int
      */
-    protected function getMaxTime(): int
+    public function getMaxTime(): int
     {
         return (int) $this->frontendforms['input_maxTime'];
     }
