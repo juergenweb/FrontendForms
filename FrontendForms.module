@@ -2087,8 +2087,19 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
 
         // add js variables as translatable strings to the head section if slider captcha is selected
         // inject them only if the page contains at least 1 form or the page is selected in the module config
+        //
+        // Real bug found and fixed: this used to also require $this->input_captchaType (the
+        // SITE-WIDE module setting) to equal "SliderCaptcha" - but $page->sliderCaptcha is already
+        // set by Form::applySliderCaptchaPageFlag() based on each individual FORM's own resolved
+        // captcha type (which honors any per-form/per-field override, e.g. FrontendComments'
+        // "input_fc_captcha"), independently of the site-wide default. Requiring the site-wide
+        // setting on top of that meant: if the site-wide default was anything other than
+        // "SliderCaptcha", a form that itself resolved to "SliderCaptcha" via such an override never
+        // got its slider variables/JS injected at all, even though $page->sliderCaptcha correctly
+        // said it needed them - the slider rendered but was completely inert. $page->sliderCaptcha
+        // alone is already the correct, precise signal.
         if (!is_null($page->ff_forms)) {
-            if ($this->input_captchaType == 'SliderCaptcha' && $page->sliderCaptcha) {
+            if ($page->sliderCaptcha) {
                 $sliderdata = [
                     'barText' => $this->_('Slide right to fill'),
                     'loadingText' => $this->_('Loading'),
@@ -2118,7 +2129,10 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $js .= '<script src="' . $this->wire('config')->urls->$this . 'assets/js/frontendforms-frontend.min.js?v=' . $version . '" defer></script>' . PHP_EOL;
 
             // load slidercaptcha.js only if this captcha type is selected
-            if ($this->input_captchaType == 'SliderCaptcha' && $page->sliderCaptcha) {
+            // Same fix as above: rely solely on $page->sliderCaptcha, which already reflects the
+            // actually resolved captcha type of every form rendered on this page, regardless of the
+            // site-wide "input_captchaType" default.
+            if ($page->sliderCaptcha) {
                 $js .= '<script src="' . $this->wire('config')->urls->$this . 'assets/js/frontendforms-slidercaptcha.min.js?v=' . $version . '" defer></script>' . PHP_EOL;
             }
 
