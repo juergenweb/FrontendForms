@@ -901,6 +901,10 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             $inputfields->attr('name+id', 'pagecommentstab'); // we need both unique ID and Name
 
             $pageEditTab = $form->find('id=ProcessPageEditContent')->first();
+            // Repeater items (modal edit) and other forms without the content tab: nothing to insert after
+            if (!$pageEditTab) {
+                return;
+            }
             $form->insertAfter($inputfields, $pageEditTab);
 
             // inserting in the right place is not enough to set the tab order
