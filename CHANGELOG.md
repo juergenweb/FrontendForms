@@ -2128,3 +2128,11 @@ Refactored slider captcha logic to rely solely on page-specific setting, removin
 **Fix of mistakes in German translations**
 
 There were some errors in alert box texts in the German translations that have been fixed now.
+
+## [3.0.3] 2026-11-25
+
+### Fixed
+- Admin: Opening or adding repeater items on pages that have a FrontendComments field
+  no longer throws "Invalid value for $existingItem argument". The hook that adds the
+  "Comments" tab to the page editor now returns early if the form has no content tab
+  (as is the case when editing a repeater item).
