@@ -788,6 +788,12 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
             /** @var WireMail $mail */
             $form = $event->arguments(0);
 
+            // the form passed here is also the form this mail belongs to (placeholders,
+            // email template) - unless it was set explicitly via $mail->useForm() before
+            if ($form instanceof \FrontendForms\Form && !($mail->get(\FrontendForms\MailTemplateRenderer::MAIL_FORM_PROPERTY) instanceof \FrontendForms\Form)) {
+                $mail->set(\FrontendForms\MailTemplateRenderer::MAIL_FORM_PROPERTY, $form);
+            }
+
             $keep_files = $event->arguments(1) && $event->arguments(1);
 
             // get the paths of the currently uploaded files
@@ -826,6 +832,25 @@ class FrontendForms extends WireData implements Module, ConfigurableModule
                     }
                 }
             }
+            $event->return = $mail;
+            return $mail;
+        });
+
+        /**
+         * Additional Hook method to assign the mail to a specific form
+         * The placeholders and the email template settings of this form will be used for the mail.
+         * Only needed if more than one form is on a page or if the mail is not sent right after a
+         * successful submission of the form - otherwise the submitted form is used automatically.
+         * Usage: $mail->useForm($form);
+         */
+        wire()->addHookMethod('WireMail::useForm', function ($event) {
+            $mail = $event->object;
+            /** @var WireMail $mail */
+            $form = $event->arguments(0);
+            if (!$form instanceof \FrontendForms\Form) {
+                throw new WireException('WireMail::useForm() expects an instance of FrontendForms\\Form.');
+            }
+            $mail->set(\FrontendForms\MailTemplateRenderer::MAIL_FORM_PROPERTY, $form);
             $event->return = $mail;
             return $mail;
         });

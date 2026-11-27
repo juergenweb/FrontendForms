@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace FrontendForms\Tests\Unit;
 
+use FrontendForms\FormFieldHelper;
 use FrontendForms\Textarea;
 use PHPUnit\Framework\TestCase;
+use ProcessWire\WireInputData;
 
 /**
  * Unit tests for Textarea.
@@ -133,5 +135,86 @@ final class TextareaTest extends TestCase
 
         $this->assertStringContainsString('fc-counter', $out);
         $this->assertStringContainsString('100', $out);
+    }
+
+    // --- escaping of the textarea content (XSS) ---
+
+    /**
+     * 10) A default value containing "</textarea>" must not close the
+     * textarea: the content is escaped, so the injected markup is shown as
+     * text inside the textarea instead of being rendered as HTML.
+     */
+    public function testDefaultValueCannotBreakOutOfTextarea(): void
+    {
+        $textarea = new Textarea('mytextarea');
+        $textarea->setDefaultValue('a</textarea><b id=x>injected</b>');
+
+        $out = $textarea->renderTextarea();
+
+        $this->assertStringNotContainsString('<b id=x>', $out);
+        $this->assertSame(1, substr_count($out, '</textarea>'));
+        $this->assertStringContainsString('>a&lt;/textarea&gt;&lt;b id=x&gt;injected&lt;/b&gt;</textarea>', $out);
+    }
+
+    /**
+     * 11) A submitted value is written back unchanged into the "value"
+     * attribute by FormFieldHelper::sanitizePostValue() and re-displayed after
+     * a validation error - it must be escaped the same way.
+     */
+    public function testSubmittedValueCannotBreakOutOfTextarea(): void
+    {
+        $textarea = new Textarea('mytextarea');
+        $payload = 'Teststrasse 1</textarea><b id="xss-marker">INJECTED</b>';
+        $post = [$textarea->getAttribute('name') => $payload];
+        $helper = new FormFieldHelper(new WireInputData($post));
+
+        $this->assertSame($payload, $helper->sanitizePostValue($textarea));
+        $out = $textarea->renderTextarea();
+
+        $this->assertStringNotContainsString('<b id="xss-marker">', $out);
+        $this->assertStringContainsString('Teststrasse 1&lt;/textarea&gt;&lt;b id=&quot;xss-marker&quot;&gt;INJECTED&lt;/b&gt;', $out);
+    }
+
+    /**
+     * 12) Umlauts and other non-ASCII characters are not converted to
+     * entities - only the HTML special characters are escaped.
+     */
+    public function testUmlautsAreNotEncoded(): void
+    {
+        $textarea = new Textarea('mytextarea');
+        $textarea->setAttribute('value', "Grüße aus Wien & Linz\nZeile 2");
+
+        $out = $textarea->renderTextarea();
+
+        $this->assertStringContainsString(">Grüße aus Wien &amp; Linz\nZeile 2</textarea>", $out);
+    }
+
+    /**
+     * 13) A value with invalid UTF-8 is not dropped (without ENT_SUBSTITUTE
+     * htmlspecialchars() would return an empty string).
+     */
+    public function testValueWithInvalidUtf8IsNotDropped(): void
+    {
+        $textarea = new Textarea('mytextarea');
+        $textarea->setAttribute('value', "abc\xff</textarea>");
+
+        $out = $textarea->renderTextarea();
+
+        $this->assertStringContainsString(">abc\u{FFFD}&lt;/textarea&gt;</textarea>", $out);
+    }
+
+    /**
+     * 14) Rendering twice does not escape the value twice - the content is
+     * always built from the unescaped "value" attribute.
+     */
+    public function testRenderingTwiceDoesNotDoubleEscape(): void
+    {
+        $textarea = new Textarea('mytextarea');
+        $textarea->setAttribute('value', 'Tom & Jerry');
+
+        $textarea->renderTextarea();
+        $out = $textarea->renderTextarea();
+
+        $this->assertStringContainsString('>Tom &amp; Jerry</textarea>', $out);
     }
 }
