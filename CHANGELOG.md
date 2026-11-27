@@ -2136,3 +2136,28 @@ There were some errors in alert box texts in the German translations that have b
   no longer throws "Invalid value for $existingItem argument". The hook that adds the
   "Comments" tab to the page editor now returns early if the form has no content tab
   (as is the case when editing a repeater item).
+
+## [3.0.4] unreleased
+
+### Fixed
+- Mail template hook no longer affects every mail of the request ([#34](https://github.com/juergenweb/FrontendForms/issues/34)).
+  FrontendForms now only processes mails that belong to a form: a mail assigned via the new
+  `$mail->useForm($form)` method (or `$mail->sendAttachments($form)`), otherwise the form that was
+  successfully submitted in this request, otherwise - only if the mail calls `$mail->mailTemplate()` -
+  the most recently created form. All other mails (fe sent by other modules) are left untouched.
+- An empty template name is now treated like "none": sending a mail no longer throws
+  "Mail could not be sent, because the mail template with the name  does not exist" (plus a PHP
+  warning from `FormHelper::checkForPath('')`) if the email template is set to "none" in the module configuration.
+- The `WireMail::send` hook is registered only once per request instead of once per form. With
+  several forms on a page, the first form's hook removed the placeholders of the other forms
+  (fe `[[NAMEVALUE]]`) before their own hook ran, so mails were sent with empty values.
+- The "templateloaded" session flag is no longer used: double inclusion of the template is now
+  prevented per mail. A failed send can no longer leave the flag behind and disable the template for
+  all further mails of the session.
+
+### Added
+- New WireMail method `useForm($form)` to assign a mail to a specific form.
+
+### Deprecated
+- `Form::removeTemplateSession()` / `MailTemplateRenderer::removeTemplateSession()` - no longer needed,
+  kept for backwards compatibility.

@@ -28,8 +28,11 @@ class FormHelper
      */
     public static function checkForPath(string $pathfilename): bool
     {
+        if ($pathfilename === '') {
+            return false; // pathinfo('') has no "dirname" key - an empty name is never a path
+        }
         $pathInfo = pathinfo($pathfilename);
-        if ($pathInfo['dirname'] !== '.') {
+        if (($pathInfo['dirname'] ?? '.') !== '.') {
             return true;
         }
         return false;

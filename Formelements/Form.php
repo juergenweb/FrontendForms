@@ -356,10 +356,11 @@ class Form extends Tag
             $this->captchaManager->config()->descriptionPosition = $this->general_desc_position;
         }
 
-        // add a hook method to render mail templates before sending the mail
-        $this->addHookBefore('WireMail::send', $this->mailTemplateRenderer, 'renderTemplate');
-        // add a hook method after sending the mail to remove the session variable "templateloaded"
-        $this->addHookAfter('WireMail::send', $this->mailTemplateRenderer, 'removeTemplateSession');
+        // register the hook that renders mail templates before sending the mail - only once per
+        // request, not once per form (see MailTemplateRenderer::registerHooks())
+        MailTemplateRenderer::registerHooks($this);
+        // remember this form as fallback for mails that explicitly request a template
+        MailTemplateRenderer::registerForm($this);
 
         // create the questions array for the simple text CAPTCHA
         $this->captchaManager->addQuestions($this->captchaQuestionRepository->getAll());
@@ -1123,7 +1124,9 @@ class Form extends Tag
     }
 
     /**
-     * This method prevents the multiple embedding of the email template if there are multiple forms on one page.
+     * Remove the former "templateloaded" session flag.
+     * No longer needed - double inclusion of the email template is now prevented per mail.
+     * @deprecated since 3.0.4, kept for backwards compatibility only
      * @return void
      * @throws WireException
      */
@@ -2590,6 +2593,10 @@ class Form extends Tag
                 }
             }
             /*** Multi-step form end */
+
+            // mails sent after a successful submission belong to this form by default
+            // (unless $mail->useForm() says otherwise) - see MailTemplateRenderer::resolveForm()
+            MailTemplateRenderer::markSubmitted($this);
 
             return true;
 

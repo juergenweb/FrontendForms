@@ -1645,6 +1645,7 @@ These methods can only be used on certain input fields and not at all.
 | [sendAttachment()](#sendattachment---send-files-via-the-wiremail-class)  | send files via the WireMail class  |
 | [setMultiple()](#setmultiple---for-file-input-fields)  | Create an upload field for just a single file or for multiple files  |
 | [mailTemplate()](#mailtemplate---changedisable-the-usage-of-an-email-template-manually)  | change/disable the usage of an email template manually  |
+| [useForm()](#useform---assign-a-mail-to-a-specific-form)  | assign a mail to a specific form (placeholders and email template of this form are used)  |
 | [showClearLink()](#showclearlink---show-or-hide-a-link-to-clear-a-file-input-field)  | show/hide all files for upload under the file upload field  |
 | [getClearLink()](#getclearlink---get-the-link-object-described-in-the-previous-method-for-further-manipulations)  | get the link object for the clear input link for further manipulations  |
 | [useCharacterCounter()](#usecharactercounter---add-a-reverse-character-counter-below-a-textarea-if-maxlength-validator-is-set)  | add a character counter to a textarea if lengthMax validator is set  |
@@ -1792,6 +1793,22 @@ $m->mailTemplate('template1,html'); // use template1.html for sending emails wit
 ```php
 $m = wireMail();
 $m->mailTemplate('none'); // disable the usage of email templates for sending emails with this form
+```
+
+#### useForm() - assign a mail to a specific form
+This is a new method for the WireMail class. It tells FrontendForms which form a mail belongs to, so that the placeholders and the email template settings of this form are used for this mail.
+
+In most cases you do not need this method: a mail that is sent after a successful form submission (inside `if ($form->isValid()) {...}`) automatically belongs to the submitted form, and `sendAttachments($form)` assigns the mail to the given form too.
+
+Use it if
+* there is more than one form on the page and the mail should use the placeholders of a specific form, or
+* the mail is not sent right after a successful submission of the form (fe inside a hook or a LazyCron job).
+
+Mails that do not belong to any form (fe mails sent by other modules) are not changed by FrontendForms at all.
+
+```php
+$m = wireMail();
+$m->useForm($form); // use the placeholders and the email template settings of $form for this mail
 ```
 
 #### showClearLink() - show or hide all files for upload under the file upload input field
