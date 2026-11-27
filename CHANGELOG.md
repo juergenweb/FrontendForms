@@ -2137,7 +2137,7 @@ There were some errors in alert box texts in the German translations that have b
   "Comments" tab to the page editor now returns early if the form has no content tab
   (as is the case when editing a repeater item).
 
-## [3.0.4] unreleased
+## [3.0.4] 2026-11-27
 
 ### Security
 - Textarea content is now escaped. A default value or a submitted value containing `</textarea>`
