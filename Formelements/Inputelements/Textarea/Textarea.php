@@ -72,7 +72,14 @@ class Textarea extends Inputfields
      */
     public function ___renderTextarea(): string
     {
-        $this->setContent($this->getAttribute('value'));
+        // Escape the value before it becomes the content of the textarea: unlike attribute
+        // values (escaped in Tag::attributesToString()), Tag content is output as it is,
+        // so a default or submitted value containing "</textarea>" would otherwise close
+        // the textarea and everything after it would be rendered as HTML (XSS).
+        // A textarea decodes character references, so the text is displayed unchanged.
+        // ENT_SUBSTITUTE: without it htmlspecialchars() returns an empty string for
+        // invalid UTF-8, and the whole submitted text would disappear.
+        $this->setContent(htmlspecialchars((string) $this->getAttribute('value'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
 
         $counter = '';
 

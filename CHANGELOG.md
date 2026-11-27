@@ -2139,7 +2139,22 @@ There were some errors in alert box texts in the German translations that have b
 
 ## [3.0.4] unreleased
 
+### Security
+- Textarea content is now escaped. A default value or a submitted value containing `</textarea>`
+  could close the textarea, and everything after it was rendered as HTML (XSS) - fe stored data in
+  profile/edit forms, or a submitted value shown again after a validation error.
+  `Textarea::___renderTextarea()` now escapes the value with `htmlspecialchars()` like attribute
+  values. Umlauts and other characters are displayed unchanged.
+
+  **Note:** if you escape textarea default values yourself, remove that now, otherwise they are
+  escaped twice. The same applies to formatted ProcessWire field values (fe with the "HTML Entity
+  Encoder" text formatter): use `$page->getUnformatted('field')` as default value instead of
+  `$page->field`, otherwise "Tom &amp; Jerry" is shown instead of "Tom & Jerry". Input fields
+  already behave this way.
+
 ### Fixed
+- Attribute values (and textarea content) with invalid UTF-8 are no longer dropped completely:
+  `htmlspecialchars()` now uses `ENT_SUBSTITUTE`, so only the invalid character is replaced.
 - Mail template hook no longer affects every mail of the request ([#34](https://github.com/juergenweb/FrontendForms/issues/34)).
   FrontendForms now only processes mails that belong to a form: a mail assigned via the new
   `$mail->useForm($form)` method (or `$mail->sendAttachments($form)`), otherwise the form that was

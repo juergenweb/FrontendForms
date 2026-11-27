@@ -536,7 +536,9 @@ abstract class Tag extends Wire
 
             $attributes[] = in_array($name, self::BOOLEANATTR, true)
                 ? $value
-                : $name . '="' . htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8') . '"';
+                // ENT_SUBSTITUTE: without it htmlspecialchars() returns an empty string for
+                // invalid UTF-8, and the whole attribute value would disappear
+                : $name . '="' . htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '"';
         }
 
         return $attributes ? ' ' . implode(' ', $attributes) : '';

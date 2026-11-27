@@ -563,6 +563,20 @@ final class TagTest extends TestCase
     }
 
     /**
+     * 33b) An attribute value with invalid UTF-8 is not dropped: without
+     * ENT_SUBSTITUTE, htmlspecialchars() returns an empty string for invalid
+     * UTF-8 and the whole value would disappear. The invalid byte is replaced
+     * with U+FFFD instead, and the rest is still escaped.
+     */
+    public function testAttributesToStringKeepsValueWithInvalidUtf8(): void
+    {
+        $tag = $this->tag();
+        $tag->setAttribute('value', "abc\xff\"><b>");
+
+        $this->assertSame(" value=\"abc\u{FFFD}&quot;&gt;&lt;b&gt;\"", $tag->exposeAttributesToString());
+    }
+
+    /**
      * 34) A plain value with no special characters renders exactly as
      * before - the escaping fix doesn't visibly change ordinary values.
      */
